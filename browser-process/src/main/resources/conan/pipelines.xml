@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<conan-pipelines xmlns="http://www.ebi.ac.uk/arrayexpress/conan/pipelines"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://www.ebi.ac.uk/arrayexpress/conan/pipelines
+                                     http://www.ebi.ac.uk/arrayexpress/conan/pipelines.xsd">
+
+  <pipeline name="browser_blast" creator="tgacbrowser">
+    <processes>
+      <process name="blast_to_lsf"/>
+    </processes>
+  </pipeline>
+
+  <!--<pipeline name="gzip" creator="tgaclims">-->
+    <!--<processes>-->
+      <!--<process name="lsf_gzip"/>-->
+    <!--</processes>-->
+  <!--</pipeline>-->
+
+</conan-pipelines>
