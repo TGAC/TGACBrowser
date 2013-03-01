@@ -157,15 +157,6 @@ public class DnaSequenceService {
       else if (trackId.indexOf("cs") >= 0) {
         response.put(trackName, sequenceStore.getAssembly(queryid, trackId, delta));
       }
-      else if (trackName.indexOf("repeat") >= 0) {
-        if (sequenceStore.countRepeat(queryid, trackId, start, end) < 5000) {
-                 response.put(trackName, sequenceStore.processRepeat(sequenceStore.getRepeat(queryid, trackId, start, end), start, end, delta, queryid, trackId));
-               }
-               else {
-                 response.put("type", "graph");
-                 response.put(trackName, sequenceStore.getHitGraph(queryid, trackId, start, end));
-               }
-            }
       else if (sequenceStore.getLogicNameByAnalysisId(Integer.parseInt(trackId)).matches("(?i).*gene.*")) {
         if (sequenceStore.countGene(queryid, trackId, start, end) < 5000) {
           response.put(trackName, sequenceStore.processGenes(sequenceStore.getGenes(queryid, trackId), start, end));
@@ -260,7 +251,12 @@ public class DnaSequenceService {
     int to = json.getInt("to");
     try {
       String queryid = sequenceStore.getSeqRegion(query).toString();
-      response.put("seq", sequenceStore.getSeq(queryid, from, to));
+      if (from <= to) {
+        response.put("seq", sequenceStore.getSeq(queryid, from, to));
+      }
+      else {
+        response.put("seq", sequenceStore.getSeq(queryid, to, from));
+      }
       return response;
     }
     catch (IOException e) {
@@ -273,9 +269,9 @@ public class DnaSequenceService {
 //      JSONArray sam = new JSONArray();
 //      JSONObject response = new JSONObject();
 //      try {
-//        final File inputfile = new File("../webapps/vietnamese_rice/temp/temp.sam");
-////        final File inputfile = new File("../webapps/vietnamese_rice/temp/Pla.bam");
-////        final File index = new File("../webapps/vietnamese_rice/temp/Pla.bam.bai");
+//        final File inputfile = new File("../webapps/pst_v130/temp/temp.sam");
+////        final File inputfile = new File("../webapps/pst_v130/temp/Pla.bam");
+////        final File index = new File("../webapps/pst_v130/temp/Pla.bam.bai");
 //        final SAMFileReader inputSam;
 //        inputSam = new SAMFileReader(inputfile);//, index, false);
 //

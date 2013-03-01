@@ -29,12 +29,11 @@ function newpopup(track, i, j) {
   var width = jQuery("#popup").width();
   jQuery('#blastselector').hide();
   jQuery("#popuptrack").html(track);
-  var position = window[track][i].start+ "-"+position_func();
-  
+  var position = window[track][i].start + position_func();
+
   function position_func() {
-  console.log(window[track][i].end)
     if (window[track][i].end) {
-      return window[track][i].end;
+      return window[track][i].start
     }
     else {
       return "";
@@ -215,6 +214,13 @@ function preBlast(begin, end, popup) {
                        "<option value=\"9\">9</option>   " +
                        "<option value=\"10\">10</option>  " +
                        "</select> </td>" +
+//                       "<tr><td>Blast DB<select name=\"blastdb\" id=\"blastdb\">  " +
+////                       "<option value=\"/net/tgac-cfs3/ifs/TGAC/browser/jobs/choblastdb/assembly_POOLED_non-redundant_contigs_over_1000.fa\">Version 1.0 Contigs</option> " +
+////                       "<option value=\"/net/tgac-cfs3/ifs/TGAC/browser/jobs/choblastdb/assembly_abyss-q30-80_sspace-all_OVER_1kb.fasta\">Version 1.1 Contigs</option> " +
+////                       "<option  value=\"/net/tgac-cfs3/ifs/TGAC/browser/jobs/choblastdb/TGAC_CHO_v1.2_COMPLETE.fa\">Version 1.2 Contigs</option> " +
+//                       "<option selected value=\"/net/tgac-cfs3/ifs/TGAC/browser/jobs/choblastdb/TGAC_CHO_v2.0_COMPLETE.fa\">Version 2.0 Scaffolds</option> " +
+//                       "<option VALUE =\"/net/tgac-cfs3/ifs/TGAC/browser/jobs/choblastdb/unplaced.scaf.fa\">BGI CHO scaffolds </option>" +
+//                       "</select> </td>" +
                        "<td><span class=\"fg-button ui-icon ui-widget ui-state-default ui-corner-all ui-icon-close\" id=\"dontblast\"></span>" +
                        "<span class=\"fg-button ui-icon ui-widget ui-state-default ui-corner-all ui-icon-check\" id=\"doblast\"></span> </td></tr></table>";
 
@@ -330,20 +336,36 @@ function deleteTrack(track, i, j) {
 function flagTrack(track, i, j) {
   if (j) {
     if (window[track][i].transcript[j].flag == true) {
+//      jQuery.each(window[track], function(index, result) {
+//      if(result.desc == 'flag' && result.id == window[track][i].id) {
+//          //Remove from array
+//          window[track].splice(index, 1);
+//      }
+//   });
       window[track][i].transcript[j].flag = false;
     }
     else {
+//      window[track].push({id: window[track][i].id, start: window[track][i].start, end: window[track][i].end, desc: 'flag', transcript:[{transcript_start:window[track][i].transcript[j].transcript_start,transcript_end:window[track][i].transcript[j].transcript_end}]});
       window[track][i].transcript[j].flag = true;
     }
   }
   else {
     if (window[track][i].flag == true) {
+      //      jQuery.each(window[track], function(index, result) {
+//      if(result.desc == 'flag' && result.id == window[track][i].id) {
+//          //Remove from array
+//          window[track].splice(index, 1);
+//      }
+//   });
       window[track][i].flag = false;
     }
     else {
+//      window[track].push({id: window[track][i].id, start: window[track][i].start, end: window[track][i].end, desc: 'flag'});
       window[track][i].flag = true;
     }
   }
+
+
   trackToggle(track);
   removePopup();
 }
@@ -647,6 +669,13 @@ function convertPeptide(cdnaseq) {
 }
 
 function fetchFasta(begin, end, track, i, j) {
+  var reverseText = "";
+
+  if (window[track][i].transcript[j].start > window[track][i].transcript[j].end) {
+
+    reverseText = "<br/><b>(Minus strand, you will need to reverse-complement)</b><br/><br/>";
+  }
+
   jQuery.colorbox({
                     width: "90%",
                     height: "100%",
@@ -654,7 +683,7 @@ function fetchFasta(begin, end, track, i, j) {
                           "onclick=\"selectText('fastaoutput');\"')\">Select Sequence</button><br/>" +
                           "<td><div id=fastadownload></div></td></td></tr></table><br/>" +
                             // "<b>Position: </b>" + begin + " - " + end+
-                          "<br/><b>Fasta:</b> <br/>" +
+                          "<br/><b>Fasta:</b> <br/>" + reverseText +
                           "<div id=\"fastaoutput\" style=' font-family: Courier, \"Courier New\", monospace'><img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'></div>"});
 
   Fluxion.doAjax(
@@ -662,24 +691,35 @@ function fetchFasta(begin, end, track, i, j) {
           'loadSequence',
           {'query': seqregname, 'from': begin, 'to': end, 'url': ajaxurl},
           {'doOnSuccess': function (json) {
-            var seq = json.seq;
+            var seq = (json.seq).toLowerCase();
             if (i) {
-              var newseq = "";
-              var start = window[track][i].transcript[j].start;
-              var stop = window[track][i].transcript[j].end;
-              var exons = window[track][i].transcript[j].Exons.length;
-              var last = 0;
-              for (var k = 0; k < exons; k++) {
-                var substart = window[track][i].transcript[j].Exons[k].start - start;
-                var subend = window[track][i].transcript[j].Exons[k].end - start;
-                newseq += seq.substring(last, substart).toLowerCase();
-                newseq += seq.substring(substart, subend);
-                last = subend;
+              var start, stop;
+
+              if (window[track][i].transcript[j].start > window[track][i].transcript[j].end) {
+                start = window[track][i].transcript[j].end;
+                stop = window[track][i].transcript[j].start;
               }
-              newseq += seq.substring(last, stop).toLowerCase();
-              jQuery('#fastaoutput').html(">" + seqregname + ": " + begin + " - " + end + " <font color='green'> " + convertFasta(newseq) + "</font>");
+              else {
+                start = window[track][i].transcript[j].start;
+                stop = window[track][i].transcript[j].end;
+              }
+              var exons = window[track][i].transcript[j].Exons.length;
+              for (var k = 0; k < exons; k++) {
+                var substart, subend;
+                if (window[track][i].transcript[j].start > window[track][i].transcript[j].end) {
+                  substart = window[track][i].transcript[j].Exons[k].end - start;
+                  subend = window[track][i].transcript[j].Exons[k].start - start;
+                }
+                else {
+                  substart = window[track][i].transcript[j].Exons[k].start - start;
+                  subend = window[track][i].transcript[j].Exons[k].end - start;
+                }
+                var exonSeq = seq.substring(substart,subend);
+                seq = seq.substring(0,substart)+exonSeq.toUpperCase()+seq.substring(subend+1,seq.length);
+              }
+              jQuery('#fastaoutput').html(">" + seqregname + ": " + begin + " - " + end + " <font color='green'> " + convertFasta(seq) + "</font>");
               jQuery('#fastaoutput').each(function () {
-                var pattern = /([A-Z])/g;
+                var pattern = /([ATCG]+)/g;
                 var before = '<span style="color: red;">';
                 var after = '</span>';
                 jQuery(this).html(jQuery('#fastaoutput').html().replace(pattern, before + "$1" + after));
@@ -708,6 +748,14 @@ function blast(begin, end, hit, blastdb) {
             blastTrackSearch(seq, begin, end, hit, blastdb);
           }
           });
+
+
+//    blastTrackSearch(seq.substring(begin, end), begin, end, hit, blastdb);
+//  }
+//  else {
+//    alert("BLAST limit applies less than 10kb");
+//  }
+
   removeMenu();
 }
 
@@ -720,8 +768,12 @@ function convertFasta(string) {
   while (oldString.length > 70) {
     newString = newString + '<br/>' + oldString.substring(start, end);
     oldString = oldString.substring(end, oldString.length);
+//    start = start + 70;
+//    end = end + 70;
   }
   newString += "<br />" + oldString;
+
+
   return newString;
 }
 

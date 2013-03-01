@@ -53,7 +53,7 @@ public class SQLSequenceDAO implements SequenceStore {
   public static final String GET_DISPLAYLABLE_FROM_ANALYSIS_ID = "SELECT display_label FROM analysis_description where analysis_id =?";
   public static final String GET_SEQ_FROM_SEQ_REGION_ID = "SELECT sequence FROM dna WHERE seq_region_id = ?";
   public static final String GET_SEQ_REGION_ID_FROM_NAME = "SELECT seq_region_id FROM seq_region WHERE name like ? limit 1";
-  public static final String GET_SEQ_REGION_ID_SEARCH = "SELECT * FROM seq_region WHERE name like ?";
+  public static final String GET_SEQ_REGION_ID_SEARCH = "SELECT * FROM seq_region WHERE name like ? limit 100";
   public static final String GET_GENE_SEARCH = "SELECT * FROM gene WHERE description like ?";
   public static final String GET_TRANSCRIPT_SEARCH = "SELECT * FROM transcript WHERE description like ?";
   public static final String GET_SEQ_REGION_NAME_FROM_ID = "SELECT name FROM seq_region WHERE seq_region_id = ?";
@@ -98,9 +98,9 @@ public class SQLSequenceDAO implements SequenceStore {
   public static final String GET_Tracks_Name = "select analysis_id from analysis where logic_name = ?";
   public static final String GET_hit_name_from_ID = "SELECT hit_name FROM dna_align_feature where dna_align_feature_id =?";
   public static final String GET_Gene_by_view = "select g.gene_id, g.seq_region_start as gene_start, g.seq_region_end as gene_end, g.seq_region_strand as gene_strand, g. description as gene_name, t.transcript_id, t.seq_region_start as transcript_start, t.seq_region_end as transcript_end, t.description as transcript_name, e.exon_id, e.seq_region_start as exon_start, e.seq_region_end as exon_end from gene g, transcript t, exon_transcript et, exon e where t.gene_id = g.gene_id and t.transcript_id = et.transcript_id and et.exon_id = e.exon_id and  g.seq_region_id = ? and g.analysis_id = ?;";
+
+
   public static final String GET_Assembly = "SELECT a.asm_seq_region_id,a.cmp_seq_region_id,a.asm_start,a.asm_end FROM assembly a, seq_region s where a.asm_seq_region_id =? and a.cmp_seq_region_id = s.seq_region_id and s.coord_system_id = ? ORDER BY asm_start ASC";
-  public static final String GET_REPEAT = "SELECT repeat_feature_id as id,seq_region_start as start, seq_region_end as end,seq_region_strand as strand, repeat_start as repeatstart,repeat_end as repeatend, score as score FROM repeat_feature where seq_region_id =? and analysis_id = ? AND ((seq_region_start > ? AND seq_region_end < ?) OR (seq_region_start < ? AND seq_region_end > ?) OR (seq_region_end > ? AND seq_region_end < ?) OR (seq_region_start > ? AND seq_region_start < ?)) ORDER BY start,(end-start) asc"; //seq_region_start ASC";//" AND ((hit_start >= ? AND hit_end <= ?) OR (hit_start <= ? AND hit_end >= ?) OR (hit_end >= ? AND hit_end <= ?) OR (hit_start >= ? AND hit_start <= ?))";
-  public static final String GET_REPEAT_SIZE = "SELECT COUNT(*) FROM repeat_feature where seq_region_id =? and analysis_id = ?";
 
   private JdbcTemplate template;
 
@@ -510,99 +510,6 @@ public class SQLSequenceDAO implements SequenceStore {
     }
   }
 
-  public JSONArray getRepeatGraph(int id, String trackId, long start, long end) throws IOException {
-      try {
-        JSONArray trackList = new JSONArray();
-        long from = start;
-        long to = 0;
-        for (int i = 1; i <= 200; i++) {
-          JSONObject eachTrack = new JSONObject();
-          to = start + (i * (end - start) / 200);
-          int no_of_tracks = template.queryForObject(GET_HIT_SIZE_SLICE, new Object[]{id, trackId, from, to}, Integer.class);
-          eachTrack.put("start", from);
-          eachTrack.put("end", to);
-          eachTrack.put("graph", no_of_tracks);
-          trackList.add(eachTrack);
-          from = to;
-        }
-        return trackList;
-      }
-      catch (EmptyResultDataAccessException e) {
-        throw new IOException("getHit no result found");
-      }
-    }
-  public int countRepeat(int id, String trackId, long start, long end) {
-      return template.queryForObject(GET_HIT_SIZE_SLICE, new Object[]{id, trackId, start, end}, Integer.class);
-    }
-
-    //  @Cacheable(cacheName = "hitCache",
-  //             keyGenerator = @KeyGenerator(
-  //                     name = "HashCodeCacheKeyGenerator",
-  //                     properties = {
-  //                             @Property(name = "includeMethod", value = "false"),
-  //                             @Property(name = "includeParameterTypes", value = "false")
-  //                     }
-  //             )
-  //  )
-    public List<Map<String, Object>> getRepeat(int id, String trackId, long start, long end) throws IOException {
-      return template.queryForList(GET_REPEAT, new Object[]{id, trackId, start, end, start, end, end, end, start, start});
-    }
-
-    public JSONArray processRepeat(List<Map<String, Object>> maps, long start, long end, int delta, int id, String trackId) throws IOException {
-      try {
-        JSONArray trackList = new JSONArray();
-
-        List<Integer> ends = new ArrayList<Integer>();
-        ends.add(0, 0);
-
-        if (template.queryForObject(GET_REPEAT_SIZE, new Object[]{id, trackId}, Integer.class) > 0) {
-          if (maps.size() > 0) {
-            if (Integer.parseInt(maps.get(0).get("end").toString()) - Integer.parseInt(maps.get(0).get("start").toString()) > 1) {
-              for (Map<String, Object> map : maps) {
-                int start_pos = Integer.parseInt(map.get("start").toString());
-                int end_pos = Integer.parseInt(map.get("end").toString());
-                if (start_pos >= start && end_pos <= end || start_pos <= start && end_pos >= end || end_pos >= start && end_pos <= end || start_pos >= start && start_pos <= end) {
-                  for (int i = 0; i < ends.size(); i++) {
-                              if (start_pos - ends.get(i) > delta) {
-                                ends.remove(i);
-                                ends.add(i, end_pos);
-                                map.put("layer", i + 1);
-
-                                break;
-                              }
-                              else if ((start_pos - ends.get(i) < delta) && (i + 1) == ends.size()) {
-                                if (i == 0) {
-//                                  read.put("layer", ends.size());
-                                  ends.add(i, end_pos);
-                                }
-                                else {
-                                  map.put("layer", ends.size());
-                                  ends.add(ends.size(), end_pos);
-                                }
-                                break;
-                              }
-                              else {
-                                continue;
-                              }
-                            }
-                  log.info(map.get("strand")+"");
-
-                  trackList.add(map);
-                }
-              }
-            }
-          }
-        }
-        else {
-          trackList.add("getHit no result found");
-        }
-        return trackList;
-      }
-      catch (EmptyResultDataAccessException e) {
-        throw new IOException("getHit no result found");
-      }
-    }
-
   public JSONArray getAssembly(int id, String trackId, int delta) throws IOException {
     try {
       JSONArray trackList = new JSONArray();
@@ -676,11 +583,11 @@ public class SQLSequenceDAO implements SequenceStore {
 
   @Cacheable(cacheName = "geneCache",
              keyGenerator = @KeyGenerator(
-                     name = "HashCodeCacheKeyGenerator",
-                     properties = {
-                             @Property(name = "includeMethod", value = "false"),
-                             @Property(name = "includeParameterTypes", value = "false")
-                     }
+                 name = "HashCodeCacheKeyGenerator",
+                 properties = {
+                     @Property(name = "includeMethod", value = "false"),
+                     @Property(name = "includeParameterTypes", value = "false")
+                 }
              )
   )
 
@@ -759,6 +666,12 @@ public class SQLSequenceDAO implements SequenceStore {
         eachTrack.put("layer", layer);
         eachTrack.put("domain", 0);
         eachTrack.put("flag", false);
+
+        List<Map<String, Object>> domains = template.queryForList(GET_Domain_per_Gene, new Object[]{filteredgenes.getJSONObject(i).get("transcript_id")});
+        System.out.print("\n\ndomain " + domains.toString());
+        for (Map domain : domains) {
+          eachTrack.put("domain", domain.get("value"));
+        }
 
         JSONObject eachExon = new JSONObject();
         eachExon.put("id", filteredgenes.getJSONObject(i).get("exon_id"));
@@ -893,7 +806,7 @@ public class SQLSequenceDAO implements SequenceStore {
   public String getDisplayableByAnalysisId(String id) throws IOException {
     try {
       String str = template.queryForObject(GET_DISPLAYABLE_FROM_ANALYSIS_ID, new Object[]{id}, String.class);
-      log.info(id+"\t"+str);
+      log.info(id + "\t" + str);
 
       return str;
     }
@@ -993,6 +906,7 @@ public class SQLSequenceDAO implements SequenceStore {
       for (Map map : maps) {
         attrib = map.get("attrib").toString();
       }
+      System.out.print("\n\n\n" + from + "-" + to + ":" + query + ":" + attrib + " - " + attrib.indexOf("sequence") + "\n\n\n");
       if (attrib.indexOf("sequence") >= 0) {
         seq = template.queryForObject(GET_Seq_API, new Object[]{query}, String.class);
       }
@@ -1005,7 +919,13 @@ public class SQLSequenceDAO implements SequenceStore {
           seq += (template.queryForObject(GET_Seq_API, new Object[]{map.get("cmp_seq_region_id")}, String.class)).substring(start, end);
         }
       }
-      seq = seq.substring(from, to);
+      // string index start with 0, not 1
+      //if (from <= to) {
+        seq = seq.substring(from - 1, to - 1);
+      //}
+      //else {
+      //  seq = seq.substring(to - 1, from - 1);
+      //}
       return seq;
     }
     catch (EmptyResultDataAccessException e) {
