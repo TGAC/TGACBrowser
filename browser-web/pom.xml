@@ -2,8 +2,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
-        <artifactId>vietnamese_rice</artifactId>
-        <groupId>uk.ac.bbsrc.tgac.vietnamese_rice</groupId>
+        <artifactId>tgac-browser</artifactId>
+        <groupId>uk.ac.bbsrc.tgac.tgac-browser</groupId>
         <version>0.0.1</version>
     </parent>
     <groupId>${parent.groupId}</groupId>
@@ -15,7 +15,7 @@
     <url>http://maven.apache.org</url>
     <build>
 
-        <finalName>${parent.artifactId}</finalName>
+        <finalName>${profile}</finalName>
         <plugins>
             <!--<plugin>-->
             <!--<groupId>org.apache.maven.plugins</groupId>-->
@@ -40,6 +40,7 @@
                 <executions>
                     <execution>
                         <id>war</id>
+
                         <phase>package</phase>
                         <goals>
                             <goal>war</goal>
@@ -47,7 +48,7 @@
                         <configuration>
                             <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
                             <filters>
-                                <filter>/storage/browser/${parent.artifactId}.properties</filter>
+                                <filter>/storage/browser/${profile}.properties</filter>
                             </filters>
                         </configuration>
                     </execution>
@@ -66,6 +67,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
+
                 <executions>
                     <execution>
                         <id>unpack-fluxion-ajax-js</id>
@@ -84,7 +86,9 @@
                                 </artifactItem>
                             </artifactItems>
                             <excludes>META-INF</excludes>
-                            <outputDirectory>target/${parent.artifactId}/scripts/fluxion-ajax/</outputDirectory>
+                                <outputDirectory>target/${profile}/scripts/fluxion-ajax/</outputDirectory>
+                            <!--<outputDirectory>target/${parent.artifactId}/scripts/fluxion-ajax/</outputDirectory>-->
+
                             <overWriteReleases>true</overWriteReleases>
                         </configuration>
                     </execution>
@@ -124,7 +128,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>uk.ac.bbsrc.tgac.vietnamese_rice</groupId>
+            <groupId>uk.ac.bbsrc.tgac.tgac-browser</groupId>
             <artifactId>service</artifactId>
             <version>0.0.1</version>
         </dependency>

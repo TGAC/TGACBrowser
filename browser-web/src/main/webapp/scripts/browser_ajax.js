@@ -542,3 +542,49 @@ function processingOverlay() {
 function fileUploadSuccess() {
   alert("upload done");
 }
+
+function getReferences(show) {
+  Fluxion.doAjax(
+          'dnaSequenceService',
+          'searchSeqRegionforMap',
+          {'url': ajaxurl},
+          {'doOnSuccess': function (json) {
+            var max = Math.max.apply(Math, json.seqregion.map(function (o) {
+              return o.length;
+            }));
+
+            var referenceLength = json.seqregion.length;
+            if (!maxLen) {
+              maxLen = jQuery(window).width();
+            }
+            var width = 25;
+            var distance = (parseInt(maxLen) - (width * referenceLength)) / (referenceLength + 1);
+            jQuery("#mapmarker").animate({"width": width}, 100);
+            while (referenceLength--) {
+              var left = parseInt(referenceLength * (width)) + parseInt(distance * referenceLength) + parseInt(distance);
+              var height = (json.seqregion[referenceLength].length * 150 / max);
+              var length = json.seqregion[referenceLength].length;
+              if (seqregname == json.seqregion[referenceLength].name) {
+                refheight = height;
+              }
+              var top = parseInt(jQuery("#map").css('height')) - height - 25;
+              console.log(top)
+              if (seqregname == json.seqregion[referenceLength].name) {
+                jQuery("#refmap").append("<div onclick='jumpToHere(event);' class='refmap' id='" + json.seqregion[referenceLength].name + "' style='top:" + top + "px; left: " + left + "px; width:" + width + "px; height:" + height + "px;'></div>");
+              }
+              else {
+                jQuery("#refmap").append("<div onclick='jumpToOther(event, " + length + ",\"" + json.seqregion[referenceLength].name + "\");' class='refmap' id='" + json.seqregion[referenceLength].name + "' style='top:" + top + "px; left: " + left + "px; width:" + width + "px; height:" + height + "px;'></div>");
+              }
+              jQuery("#refmap").append("<div style='position:absolute; bottom: 0px; left: " + (left - 5) + "px; '>" + stringTrim(json.seqregion[referenceLength].name, width) + "</div>");
+            }
+            if (show) {
+
+              jQuery("#searchresultMap").html("<center><h1>References</h1><br>Click to jump to reference</center>" + jQuery("#refmap").html());
+            }
+            setMapMarkerLeft();
+            setMapMarkerTop(getBegin());
+            setMapMarkerHeight(getEnd() - getBegin())
+
+          }
+          });
+}

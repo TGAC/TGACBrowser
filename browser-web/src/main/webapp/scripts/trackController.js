@@ -443,7 +443,7 @@ function dispGenes(div, track, expand) {
                           "<div style='" + labeltoogle + "' class = \"label" + track + "\"> <p>" + label + "</p></div></div>");
 
           if (stopposition > 10) {
-            track_html.push(dispGeneExon(genes[len].transcript[transcript_len]), genes[len].strand);
+            track_html.push(dispGeneExon(genes[len].transcript[transcript_len], genes[len].strand));
           }
           else {
             track_html.push("<div class='exon' STYLE=\"TOP:" + top + "px; " +
@@ -504,7 +504,8 @@ function dispGeneExon(track, genestrand) {
     var strand = genestrand;
 
     var spanclass = "ui-icon ui-icon-carat-1-e";
-    if (strand == -1) {
+
+    if (strand == -1 || strand == "-1") {
       spanclass = "ui-icon ui-icon-carat-1-w";
     }
 
@@ -831,6 +832,7 @@ function dispTrack(div, trackName) {
               spanclass = "ui-icon ui-icon-carat-1-w";
             }
 
+
         var track_start = track[track_len].start;
         var track_stop = track[track_len].end ? track[track_len].end : parseInt(track[track_len].start) + 1;
 
@@ -855,7 +857,7 @@ function dispTrack(div, trackName) {
         var trackClass, label;
 
         if (trackName.toLowerCase().indexOf("snp") >= 0) {
-
+         spanclass = "";
           if (stopposition < 2) {
             stopposition = 2;
           }

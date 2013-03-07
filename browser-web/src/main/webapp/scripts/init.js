@@ -750,3 +750,18 @@ function selectAllCheckbox() {
   }
 
 }
+
+function unSelectAllCheckbox() {
+ if (jQuery("#unelectAllCheckbox").is(':checked')) {
+   jQuery("#tracklist input").each(function () {
+     if (jQuery(this).is(':checked')) {
+       jQuery(this).attr('checked', false);
+       eval(jQuery(this).attr('onClick'));
+     }
+     else {
+       //    do nothing
+     }
+   })
+ }
+
+}

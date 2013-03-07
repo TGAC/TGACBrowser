@@ -236,11 +236,11 @@ function updateJSON() {
 
   for (var j = 0; j < track_list.length; j++) {
     if (track_list[j].graph == "true") {
-      if (parseInt(lastStart) < parseInt(getBegin()) && parseInt(lastEnd) > parseInt(getEnd())) {
-        from = Math.ceil(parseInt(getEnd()) - partial - (getEnd() - getBegin()));
-        to = Math.ceil(parseInt(getEnd()) + partial + (getEnd() - getBegin()));
+//      if (parseInt(lastStart) < parseInt(getBegin()) && parseInt(lastEnd) > parseInt(getEnd())) {
+        from = Math.ceil(parseInt(getBegin()) - partial );
+        to = Math.ceil(parseInt(getEnd()) + partial );
         addJSON(from, to, track_list[j].name, track_list[j].id);
-      }
+//      }
     }
   }
 
@@ -249,7 +249,7 @@ function updateJSON() {
 
 //      console.log("right");
     if (parseInt(lastStart) < parseInt(getBegin()) || parseInt(lastEnd) < parseInt(newEnd)) {
-      from = Math.ceil(parseInt(getEnd()) - partial);
+      from = Math.ceil(parseInt(getBegin()) - partial);
       to = Math.ceil(parseInt(getEnd()) + partial);
 
       addJSON(from, to);

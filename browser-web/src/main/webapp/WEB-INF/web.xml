@@ -86,19 +86,19 @@
     <listener>
         <listener-class>uk.ac.bbsrc.tgac.browser.web.BrowserAppListener</listener-class>
     </listener>
-    <context-param>
-        <param-name>webAppRootKey</param-name>
-        <param-value>vietnamese_rice</param-value>
-    </context-param>
+    <!--<context-param>-->
+        <!--<param-name>webAppRootKey</param-name>-->
+        <!--<param-value>vietnamese_rice</param-value>-->
+    <!--</context-param>-->
 
     <servlet>
-        <servlet-name>vietnamese_rice</servlet-name>
+        <servlet-name>tgacbrowser</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
-        <servlet-name>vietnamese_rice</servlet-name>
-        <url-pattern>/vietnamese_rice/*</url-pattern>
+        <servlet-name>tgacbrowser</servlet-name>
+        <url-pattern>/${browser.urlpath}/*</url-pattern>
     </servlet-mapping>
 
     <session-config>

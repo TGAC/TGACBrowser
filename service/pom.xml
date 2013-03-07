@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
-        <artifactId>vietnamese_rice</artifactId>
-        <groupId>uk.ac.bbsrc.tgac.vietnamese_rice</groupId>
+        <artifactId>tgac-browser</artifactId>
+        <groupId>uk.ac.bbsrc.tgac.tgac-browser</groupId>
         <version>0.0.1</version>
     </parent>
 
@@ -38,7 +38,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>uk.ac.bbsrc.tgac.vietnamese_rice</groupId>
+            <groupId>uk.ac.bbsrc.tgac.tgac-browser</groupId>
             <artifactId>core</artifactId>
             <version>0.0.1</version>
         </dependency>
@@ -49,7 +49,7 @@
         </dependency>
 
         <dependency>
-            <groupId>uk.ac.bbsrc.tgac.vietnamese_rice</groupId>
+            <groupId>uk.ac.bbsrc.tgac.tgac-browser</groupId>
             <artifactId>ensembl-store</artifactId>
             <version>0.0.1</version>
         </dependency>

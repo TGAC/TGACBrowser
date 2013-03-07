@@ -9,7 +9,7 @@
 
 
     <jee:jndi-lookup id="dataSource"
-                     jndi-name="/jdbc/vietnamese_riceDB"
+                     jndi-name="/jdbc/primulaDB"
                      resource-ref="true"/>
 
     <bean name="interfaceTemplate" class="org.springframework.jdbc.core.JdbcTemplate">

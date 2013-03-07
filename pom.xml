@@ -4,12 +4,12 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>uk.ac.bbsrc.tgac.vietnamese_rice</groupId>
+    <groupId>uk.ac.bbsrc.tgac.tgac-browser</groupId>
     <version>0.0.1</version>
-    <artifactId>vietnamese_rice</artifactId>
+    <artifactId>tgac-browser</artifactId>
     <packaging>pom</packaging>
     <name>TGAC Browser Framework</name>
-    <url>http://www.tgac.bbsrc.ac.uk/software/vietnamese_rice</url>
+    <url>http://www.tgac.bbsrc.ac.uk/software/tgac-browser</url>
 
     <!-- Reporting/Documentation output -->
     <reporting>
@@ -137,13 +137,13 @@
     <!-- SVN connection -->
     <scm>
         <connection>
-            scm:svn:https://repos.tgac.bbsrc.ac.uk/subversion/browser/branches/vietnamese_rice/
+            scm:svn:https://repos.tgac.bbsrc.ac.uk/subversion/browser/branches/tgac-browser/
         </connection>
         <developerConnection>
-            scm:svn:https://repos.tgac.bbsrc.ac.uk/subversion/browser/branches/vietnamese_rice/
+            scm:svn:https://repos.tgac.bbsrc.ac.uk/subversion/browser/branches/tgac-browser/
         </developerConnection>
         <url>
-            https://repos.tgac.bbsrc.ac.uk/subversion/browser/branches/vietnamese_rice/
+            https://repos.tgac.bbsrc.ac.uk/subversion/browser/branches/tgac-browser/
         </url>
     </scm>
 
@@ -162,7 +162,7 @@
         </snapshotRepository>
         <site>
             <id>browser-site</id>
-            <url>scp://repos.tgac.bbsrc.ac.uk/var/www/html/vietnamese_rice</url>
+            <url>scp://repos.tgac.bbsrc.ac.uk/var/www/html/tgac-browser</url>
         </site>
     </distributionManagement>
 

@@ -45,7 +45,7 @@ public class BrowserAppListener implements ServletContextListener {
     SequenceStore ss = (SequenceStore) context.getBean("sequenceStore");
 
     try {
-      JSONArray reference_list = ss.getSeqRegionIdSearch("");
+//      JSONArray reference_list = ss.getSeqRegionIdSearch("");
 
 //      for (int i = 0; i < reference_list.size(); i++) {
 //        JSONArray tracks = ss.getAnnotationIdList(Integer.parseInt(reference_list.get(i).toString()));
@@ -63,7 +63,7 @@ public class BrowserAppListener implements ServletContextListener {
       Cache a = c.getCache("hitCache");
       log.info("hitCache size: "+a.getKeys().size());
     }
-    catch (IOException e) {
+    catch (Exception e) {
       log.info(e.toString());
       e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
     }
