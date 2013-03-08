@@ -742,7 +742,7 @@ function blast(begin, end, hit, blastdb) {
   Fluxion.doAjax(
           'dnaSequenceService',
           'loadSequence',
-          {'query': seqregname, 'from': getBegin(), 'to': getEnd(), 'url': ajaxurl},
+          {'query': seqregname, 'from': begin, 'to': end, 'url': ajaxurl},
           {'doOnSuccess': function (json) {
             var seq = json.seq;
             blastTrackSearch(seq, begin, end, hit, blastdb);

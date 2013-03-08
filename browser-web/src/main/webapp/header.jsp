@@ -54,7 +54,7 @@
         _gaq.push(['_setAccount', 'UA-21666189-7']);
         _gaq.push(['_trackPageview']);
 
-        (function() {
+        (function () {
             var ga = document.createElement('script');
             ga.type = 'text/javascript';
             ga.async = true;
@@ -71,10 +71,15 @@
 <div class="blasttab">
     <input type="text" id="search" class="seachbox" value="Chr1"/>
     <%--<button id="searchbutton" class="ui-state-default ui-corner-all"--%>
-            <%--onclick="search(jQuery('#search').val(), oldTracklist);">Search--%>
+    <%--onclick="search(jQuery('#search').val(), oldTracklist);">Search--%>
     <%--</button>--%>
-    ${initParam.fasta == "true" && initParam.blast == "true"? "| <a href=\"blast.jsp\"><span>Blast Search</span></a>" : ""}
+    <c:set var="databases">${initParam.blastdblink} </c:set>
 
+    <c:set var="dateParts" value="${fn:split(databases, ',')}"/>
+
+    <c:set var="length">${fn:length(dateParts)}</c:set>
+
+    ${initParam.fasta == "true" && length > 0 ? "| <a href=\"blast.jsp\"><span>Blast Search</span></a>" : ""}
 
 
     | <a href="<c:url value="session.jsp"/>"><span>Load Session</span></a>
@@ -85,10 +90,13 @@
         <table>
             <tr>
                 <td>
-                    <a class="headerlink" href="<c:url value="/"/>"> <font color=white> <b>TGAC Browser - ${initParam.header} </font></a>
+                    <a class="headerlink" href="<c:url value="/"/>"> <font color=white> <b>TGAC Browser
+                        - ${initParam.header} </font></a>
                 </td>
                 <td>
-                    <font color=white> <div id="seqnameh1"></div></font> </b>
+                    <font color=white>
+                        <div id="seqnameh1"></div>
+                    </font> </b>
                 </td>
             </tr>
         </table>

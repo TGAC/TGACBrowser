@@ -11,7 +11,7 @@
     </select> Blast DB
     <select name="blastdb" id="blastdb">
 
-        <c:set var="databases">${initParam.blastdbname} </c:set>
+        <c:set var="databases">${initParam.blastdblink} </c:set>
 
         <c:set var="dateParts" value="${fn:split(databases, ',')}"/>
 
@@ -21,7 +21,16 @@
 
 
         <c:forEach var="i" begin="1" end='${fn:length(dateParts)}' step="1">
-            <option value=${datePartsloc[i-1]}>${dateParts[i-1]}</option>
+           <%--splitting by /--%>
+                       <c:set var="text" value="${fn:split(datePartsloc[i-1],'/')}" />
+                       <%--considering last entry--%>
+                       <c:set var="text" value="${text[fn:length(text)-1]}"/>
+                       <%--index of . --%>
+                       <c:set var="to" value="${fn:indexOf(text,'.' )}"/>
+                       <%--substring to . --%>
+                       <c:set var="filename" value="${fn:substring(text,0,to) }" />
+
+                       <option id=${dateParts[i-1]} value="${datePartsloc[i-1]}:${dateParts[i-1]}">${filename}</option>
         </c:forEach>
 
 

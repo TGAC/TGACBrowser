@@ -182,9 +182,16 @@
             <table>
                 <tr>
                     <th>
-                        Track List <span title='selectAll'><input type="checkbox" id='selectAllCheckbox'
-                                                                  name='selectAllCheckbox'
-                                                                  onClick=selectAllCheckbox(); >  Select All</span>
+                        Track List
+
+                        <span title='selectAll'><input type="checkbox" id='selectAllCheckbox'
+                                                       name='selectAllCheckbox'
+                                                       onClick=selectAllCheckbox();>  Select All</span>
+
+                        <span title='unSelectAll'><input type="checkbox" id='unSelectAllCheckbox'
+                                                         name='unSelectAllCheckbox'
+                                                         onClick=unSelectAllCheckbox();>  Diselect All</span>
+
                     </th>
 
                 </tr>
@@ -240,7 +247,7 @@
             </table>
         </div>
         <%--<div id="openCloseWrap" style="display: none; cursor: pointer" onclick="tracklistopenclose();">--%>
-            <%--<font color="white"> Contrasdfols </font>--%>
+        <%--<font color="white"> Contrasdfols </font>--%>
         <%--</div>--%>
     </div>
 </div>
@@ -252,7 +259,13 @@
                 ${initParam.fasta == "true" ? "<span title=\"Fasta\" class=\"ui-button  ui-widget  ui-corner-all ui-fasta\" onclick=fetchFasta(getBegin(),getEnd());></span>" : ""}
             </td>
             <td>
-                ${initParam.blast == "true" ? "<span title=\"Blast\" class=\"ui-button  ui-widget  ui-corner-all ui-blast\"  onclick=\"preBlast(getBegin(),getEnd(),'#menu');\"></span>" : ""}
+                <c:set var="databases">${initParam.blastdblink} </c:set>
+
+                <c:set var="dateParts" value="${fn:split(databases, ',')}"/>
+
+                <c:set var="length">${fn:length(dateParts)}</c:set>
+
+                ${initParam.fasta == "true" && length > 0 ?  "<span title=\"Blast\" class=\"ui-button  ui-widget  ui-corner-all ui-blast\"  onclick=\"preBlast(getBegin(),getEnd(),'#menu');\"></span>" : ""}
             </td>
             <td align="right">
                 <span class="ui-button ui-icon ui-icon-close" onclick="removeAllPopup();"></span>
@@ -299,7 +312,13 @@
 
                 ${initParam.fasta == "true" ? "<div class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" id=\"FASTAme\"> </div>" : ""}
 
-                ${initParam.blast == "true" ? "<div class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" id=\"BLASTme\"> </div>" : ""}
+                <c:set var="databases">${initParam.blastdblink} </c:set>
+
+                <c:set var="dateParts" value="${fn:split(databases, ',')}"/>
+
+                <c:set var="length">${fn:length(dateParts)}</c:set>
+
+                ${initParam.fasta == "true" && length > 0 ? "<div class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" id=\"BLASTme\"> </div>" : ""}
 
                 <div class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" id="ZoomHere">
                 </div>
@@ -352,7 +371,13 @@
                 <div class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" id="CenterHere">
                 </div>
 
-                ${initParam.blast == "true" ? "<div class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" id=\"fetchBLAST\"> </div>" : ""}
+                <c:set var="databases">${initParam.blastdblink} </c:set>
+
+                <c:set var="dateParts" value="${fn:split(databases, ',')}"/>
+
+                <c:set var="length">${fn:length(dateParts)}</c:set>
+
+                ${initParam.fasta == "true" && length > 0  ? "<div class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" id=\"fetchBLAST\"> </div>" : ""}
 
             </td>
         </tr>
@@ -467,7 +492,7 @@
 <div id=blastselector class="popupmenu" style="position: absolute; display: none">
     Blast DB
     <select name="blastdb" id="blastdb">
-        <c:set var="databases">${initParam.blastdbname} </c:set>
+        <c:set var="databases">${initParam.blastdblink} </c:set>
 
         <c:set var="dateParts" value="${fn:split(databases, ',')}"/>
 
@@ -477,7 +502,18 @@
 
 
         <c:forEach var="i" begin="1" end='${fn:length(dateParts)}' step="1">
-            <option value=${datePartsloc[i-1]}>${dateParts[i-1]}</option>
+            <%--splitting by /--%>
+            <c:set var="text" value="${fn:split(datePartsloc[i-1],'/')}"/>
+            <%--considering last entry--%>
+            <c:set var="text" value="${text[fn:length(text)-1]}"/>
+            <%--index of . --%>
+            <c:set var="to" value="${fn:indexOf(text,'.' )}"/>
+            <%--substring to . --%>
+            <c:set var="filename" value="${fn:substring(text,0,to) }"/>
+
+            <option value="${datePartsloc[i-1]}:${dateParts[i-1]}">${filename}</option>
+
+            <%--<option value=${datePartsloc[i-1]}>${dateParts[i-1]}</option>--%>
         </c:forEach>
     </select>
 

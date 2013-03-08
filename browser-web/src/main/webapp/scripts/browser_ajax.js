@@ -3,6 +3,7 @@ var track_list, minWidth;
 var start_global, end_global, hit_global, blastid = 0, blastdb = "", oldTracklist;
 
 function blastSearch(query, blastdb) {
+  var link = blastdb.split(":");
   jQuery('#blastresult').html("<span style=\"position:relative; left:50%;\"> Blasting &nbsp; <img alt=\"Loading\" src=\"./images/browser/loading_big.gif\" style=\"position: relative;\"> </span> </div>");
 
   submitBlastTask(query, blastdb, 6);
@@ -13,27 +14,123 @@ function blastSearch(query, blastdb) {
 
 function blastTrackSearch(query, start, end, hit, blastdb) {
   if (!window['blasttrack']) {
+
     jQuery("#tracklist").append("<p title='blast' id=blastcheck><input type=\"checkbox\" checked id='blasttrackCheckbox' name='blasttrackCheckbox' onClick=loadTrackAjax(\"blasttrack\",\"blasttrack\");\>  Blasttrack\  </p>");
+
     jQuery("#mergetracklist").append("<span id=blasttrackspan> <input type=\"checkbox\" id='blasttrackmergedCheckbox' name='blasttrackmergedCheckbox' onClick=mergeTrack(\"blasttrack\"); value=blasttrack >Blast Track</span>");
+
     jQuery("#tracks").append("<div id='blasttrack_div' class='feature_tracks'> Blast Track </div>");
+
     jQuery("#blasttrack_div").html("<div align='left' class='handle'><b> Blasttrack </b> <div title='Close' class='closehandle ui-icon ui-icon-close' onclick=removeTrack(\"blasttrack_div\",\"blasttrack\");></div></div> <img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
     jQuery("#blasttrack_div").fadeIn();
+
+    track_list.push(
+            {name: "blasttrack", id: 0, desc: "blast from browser", disp: 1, merge: 0}
+    );
+    window['blasttrack'] = "running";
+    //delete window['blasttrack'];
+    //delete track_list.splice(track_list.length, 1);
+    //jQuery("#blasttrack_div").remove();
+    //jQuery("#blastcheck").remove();
+    //jQuery("#blastcheckmerge").remove();
   }
 
+
+
+  submitBlastTask(query, blastdb, 5, start, end, hit);
+  start_global = start;
+  end_global = end;
+  hit_global = hit;
+}
+
+function submitBlastTask(query, db, format, start, end, hit) {
+  // format 5 for plain text, 6 for xml
   var id = randomString(8);
-  window[id + "start_global"] = start;
-  window[id + "end_global"] = end;
-  window[id + "hit_global"] = hit;
-  submitBlastTask(query, blastdb, 5, id);
+  var database = db.split(":");
+  db = database[0];
+  var link = database[1];
+  if (format == 5) {
+
+    blastid = id;
+    blastdb = db;
+
+  }
+
+  Fluxion.doAjax(
+          'blastservice',
+          'submitBlastTask',
+          {'url': ajaxurl, 'querystring': query, 'blastdb': db, 'location':link, 'BlastAccession': id, 'format': format},
+          {'doOnSuccess': processTaskSubmission,
+            'doOnError': function (json) {
+              alert(json.error);
+            }
+          });
+  checkTask(id, db, format, start, end, hit, link);
+}
+
+var processTaskSubmission = function (json) {
+  if (json.response) {
+    console.log(json.response);
+  }
+};
+
+function checkTask(task, db, format, start, end, hit, link) {
+  Fluxion.doAjax(
+          'blastservice',
+          'checkTask',
+          {'url': ajaxurl, 'taskid': task},
+          {'ajaxType': 'periodical', 'updateFrequency': 5, 'doOnSuccess': function (json) {
+            if (json.result == 'FAILED') {
+              alert('Blast search: ' + json.result);
+            }
+            else if (json.result == 'COMPLETED') {
+              if (format == 6) {
+                Fluxion.doAjax(
+                        'blastservice',
+                        'blastSearchSequence',
+                        {'accession': task, 'db': db,'location':link, 'url': ajaxurl},
+                        {'doOnSuccess': function (json) {
+                          jQuery('#blastresult').html(json.html);
+                          jQuery("#blasttable").tablesorter();
+                        }
+                        });
+              }
+              else if (format == 5) {
+                Fluxion.doAjax(
+                        'blastservice',
+                        'blastSearchTrack',
+                        {'start': start, 'end': end, 'hit': hit, 'accession': task, 'location':link,'db': db, 'url': ajaxurl},
+                        {'doOnSuccess': function (json) {
+
+                          if (window['blasttrack'] == "running") {
+                            window['blasttrack'] = json.blast;//(decodeURIComponent(json.blast.replace(/\s+/g, ""))).replace(/>/g, "");
+                          }
+                          else {
+//                          window['blasttrack'].push(json.blast);
+                            jQuery.merge(window['blasttrack'], json.blast);
+                          }
+                          jQuery('input[name=blasttrackCheckbox]').attr('checked', true);
+//                          jQuery("#mergetracklist").append("<span id=blastcheckmerge> <input type=\"checkbox\" id='blasttrackmergedCheckbox' name='blasttrackmergedCheckbox' onClick=mergeTrack(\"blasttrack\"); value=blasttrack >Blast Track</span>");
+                          trackToggle("blasttrack");
+                        }
+                        });
+              }
+            }
+          },
+            'doOnError': function (json) {
+              alert(json.error);
+            }
+          });
 }
 
 function seqregionSearch(query) {
   jQuery(window.location).attr('href', "./index.jsp?query=" + query + "&&blast=").attr("target", "_new");
 }
 
-function seqregionSearchPopup(query, oldtracks) {
+function seqregionSearchPopup(query, from, to, blast) {
 
   jQuery("#searchresult").fadeOut();
+  jQuery("#searchresultMap").fadeOut();
   jQuery('#sessioninput').fadeOut();
   jQuery("#sessionid").html("");
   minWidth = null;
@@ -84,14 +181,26 @@ function seqregionSearchPopup(query, oldtracks) {
               trackList(track_list);
 
               minWidth = findminwidth();
-              setBegin((sequencelength - minWidth) / 2);
-              setEnd(parseInt(getBegin()) + minWidth);
+              if (from && to) {
+                setBegin(from);
+                setEnd(parseInt(to));
+              }
+              else {
+                setBegin((sequencelength - minWidth) / 2);
+                setEnd(parseInt(getBegin()) + minWidth);
+              }
+              if (blast) {
+                loadPreBlast(blast, query);
+              }
               jumpToSeq();
               dispSeqCoord();
               displayCursorPosition();
               setNavPanel();
+              getReferences();
               loadDefaultTrack(track_list);
               jQuery("#controlsbutton").colorbox({width: "90%", inline: true, href: "#controlpanel"});
+
+
             }
           }
           });
@@ -229,6 +338,7 @@ function loadTrackAjax(trackId, trackname) {
     //this is the object in the array, index is the index of the object in the array
     if (jQuery("#" + track_list[index].name + "Checkbox").attr('checked')) {//
       this.disp = 1;
+      jQuery("#unSelectAllCheckbox").attr('checked', false)
     }
     else {
       this.disp = 0;
@@ -284,6 +394,7 @@ function loadTrackAjax(trackId, trackname) {
 
 function metaData() {
   ajaxurl = '/' + jQuery('#title').text() + '/' + jQuery('#title').text() + '/fluxion.ajax';
+//  ajaxurl = "/" +  jQuery('#title').text()    + '/fluxion.ajax';
   Fluxion.doAjax(
           'dnaSequenceService',
           'metaInfo',
@@ -381,88 +492,6 @@ function reloadTracks(tracks, tracklist) {
   }
 }
 
-
-function submitBlastTask(query, db, format, id) {
-  // format 5 for plain text, 6 for xml
-
-  if (format == 5) {
-    if (!window['blasttrack']) {
-      window['blasttrack'] = "running";
-      track_list.push(
-              {name: "blasttrack", id: 0, desc: "blast from browser", disp: 1, merge: 0}
-      );
-    }
-
-    blastid = id;
-    blastdb = db;
-
-  }
-
-  Fluxion.doAjax(
-          'blastservice',
-          'submitBlastTask',
-          {'url': ajaxurl, 'querystring': query, 'blastdb': db, 'BlastAccession': id, 'format': format},
-          {'doOnSuccess': processTaskSubmission,
-            'doOnError': function (json) {
-              alert(json.error);
-            }
-          });
-  checkTask(id, db, format);
-}
-
-var processTaskSubmission = function (json) {
-  if (json.response) {
-    console.log(json.response);
-  }
-};
-
-function checkTask(task, db, format) {
-  Fluxion.doAjax(
-          'blastservice',
-          'checkTask',
-          {'url': ajaxurl, 'taskid': task},
-          {'ajaxType': 'periodical', 'updateFrequency': 5, 'doOnSuccess': function (json) {
-            if (json.result == 'FAILED') {
-              alert('Blast search: ' + json.result);
-            }
-            else if (json.result == 'COMPLETED') {
-              if (format == 6) {
-                Fluxion.doAjax(
-                        'blastservice',
-                        'blastSearchSequence',
-                        {'accession': task, 'db': db, 'url': ajaxurl},
-                        {'doOnSuccess': function (json) {
-                          jQuery('#blastresult').html(json.html);
-                          jQuery("#blasttable").tablesorter();
-                        }
-                        });
-              }
-              else if (format == 5) {
-                Fluxion.doAjax(
-                        'blastservice',
-                        'blastSearchTrack',
-                        {'start': window[task + "start_global"], 'end': window[task + "end_global"], 'hit': window[task + "hit_global"], 'accession': task, 'db': db, 'url': ajaxurl},
-                        {'doOnSuccess': function (json) {
-
-                          if (window['blasttrack'] == "running") {
-                            window['blasttrack'] = json.blast;
-                          }
-                          else {
-                            jQuery.merge(window['blasttrack'], json.blast);
-                          }
-                          jQuery('input[name=blasttrackCheckbox]').attr('checked', true);
-//                          jQuery("#mergetracklist").append("<span id=blastcheckmerge> <input type=\"checkbox\" id='blasttrackmergedCheckbox' name='blasttrackmergedCheckbox' onClick=mergeTrack(\"blasttrack\"); value=blasttrack >Blast Track</span>");
-                          trackToggle("blasttrack");
-                        }
-                        });
-              }
-            }
-          },
-            'doOnError': function (json) {
-              alert(json.error);
-            }
-          });
-}
 
 function randomString(length) {
   var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz'.split('');
@@ -568,7 +597,6 @@ function getReferences(show) {
                 refheight = height;
               }
               var top = parseInt(jQuery("#map").css('height')) - height - 25;
-              console.log(top)
               if (seqregname == json.seqregion[referenceLength].name) {
                 jQuery("#refmap").append("<div onclick='jumpToHere(event);' class='refmap' id='" + json.seqregion[referenceLength].name + "' style='top:" + top + "px; left: " + left + "px; width:" + width + "px; height:" + height + "px;'></div>");
               }

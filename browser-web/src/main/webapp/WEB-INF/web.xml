@@ -51,9 +51,10 @@
     </context-param>
 
     <context-param>
-        <param-name>blastdbname</param-name>
-        <param-value>${browser.blastdbname}</param-value>
-    </context-param>
+         <param-name>blastdblink</param-name>
+         <param-value>${browser.blastdblink}</param-value>
+     </context-param>
+
     <context-param>
         <param-name>blastdblocation</param-name>
         <param-value>${browser.blastdblocation}</param-value>

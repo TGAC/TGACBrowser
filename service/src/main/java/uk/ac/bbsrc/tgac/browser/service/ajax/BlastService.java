@@ -47,6 +47,7 @@ public class BlastService {
     try {
       String blastDB = json.getString("db");
       String blastAccession = json.getString("accession");
+      String location = json.getString("location");
       StringBuilder sb = new StringBuilder();
 
       FileInputStream fstream = new FileInputStream("/net/tgac-cfs3/ifs/TGAC/browser/jobs/" + blastAccession + ".xml");
@@ -84,13 +85,12 @@ public class BlastService {
             id = str1.split("<td>");
             Pattern pline = Pattern.compile(".*1_.*");
             String seqregionName = id[1];
+            String hsp_from = id[8];
+            String hsp_to = id[9];
+
             String str2 = "";
-            if (blastDB.equals("/net/tgac-cfs3/ifs/TGAC/browser/jobs/choblastdb/TGAC_CHO_v2.0_COMPLETE.fa")) {
-              str2 = str1.replaceAll(id[1], " <a target='_blank' href='../vietnamese_rice/index.jsp?query=" + seqregionName + "&blasttrack=" + blastAccession + "'>"
-                                            + seqregionName + "</a>");
-            }
-            else if (blastDB.equals("/net/tgac-cfs3/ifs/TGAC/browser/jobs/choblastdb/unplaced.scaf.fa")) {
-              str2 = str1.replaceAll(id[1], " <a target='_blank' href='../chobgi/index.jsp?query=" + seqregionName + "&blasttrack=" + blastAccession + "'>"
+            if (location.length() > 0) {
+              str2 = str1.replaceAll(id[1], " <a target='_blank' href='../" + location + "/index.jsp?query=" + seqregionName + "&from=" + hsp_from + "&to=" + hsp_to + "&blasttrack=" + blastAccession + "'>"
                                             + seqregionName + "</a>");
             }
             else {
@@ -227,6 +227,7 @@ public class BlastService {
     int query_start = json.getInt("start");
     int query_end = json.getInt("end");
     int noofhits = json.getInt("hit");
+    String location = json.getString("location");
     StringBuilder sb1 = new StringBuilder();
 
     File fastaTmp = File.createTempFile("blast", ".fa");
@@ -277,12 +278,8 @@ public class BlastService {
               eachBlast.put("end", query_start + Integer.parseInt(hsp_to));
 
 
-              if (blastDB.equals("/net/tgac-cfs3/ifs/TGAC/browser/jobs/choblastdb/TGAC_CHO_v2.0_COMPLETE.fa")) {
-                eachBlast.put("desc", " <a target='_blank' href='../CHO/index.jsp?query=" + hit_id + "&blast='>"
-                                      + hit_id + "</a>");
-              }
-              else if (blastDB.equals("/net/tgac-cfs3/ifs/TGAC/browser/jobs/choblastdb/unplaced.scaf.fa")) {
-                eachBlast.put("desc", " <a target='_blank' href='../chobgi/index.jsp?query=" + hit_id.replaceAll("(gi\\-[0-9]+\\-gb\\-[0-9A-z]+\\.[0-9]\\-).*", "$1") + "&blast='>"
+              if (location.length() > 0) {
+                eachBlast.put("desc", " <a target='_blank' href='../" + location + "/index.jsp?query=" + hit_id + "&blast='>"
                                       + hit_id + "</a>");
               }
               else {
