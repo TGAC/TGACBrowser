@@ -15,7 +15,7 @@
     <url>http://maven.apache.org</url>
     <build>
 
-        <finalName>${profile}</finalName>
+        <finalName>tgac-browser</finalName>
         <plugins>
             <!--<plugin>-->
             <!--<groupId>org.apache.maven.plugins</groupId>-->
@@ -48,7 +48,7 @@
                         <configuration>
                             <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
                             <filters>
-                                <filter>/storage/browser/${profile}.properties</filter>
+                                <filter>/storage/browser/tgac-browser.properties</filter>
                             </filters>
                         </configuration>
                     </execution>
@@ -86,7 +86,7 @@
                                 </artifactItem>
                             </artifactItems>
                             <excludes>META-INF</excludes>
-                                <outputDirectory>target/${profile}/scripts/fluxion-ajax/</outputDirectory>
+                                <outputDirectory>target/tgac-browser/scripts/fluxion-ajax/</outputDirectory>
                             <!--<outputDirectory>target/${parent.artifactId}/scripts/fluxion-ajax/</outputDirectory>-->
 
                             <overWriteReleases>true</overWriteReleases>

@@ -39,7 +39,7 @@ body {
 }
 
 .headerbar a:visited{
-    color: #666666;
+    color:#ffffff;
     text-decoration: none;
     -moz-user-select: -moz-none;
     -webkit-user-select: none;
@@ -47,7 +47,7 @@ body {
 }
 
 .headerbar a:hover{
-    color: #666666;
+    color: yellow;
     text-decoration: none;
     -moz-user-select: -moz-none;
     -webkit-user-select: none;

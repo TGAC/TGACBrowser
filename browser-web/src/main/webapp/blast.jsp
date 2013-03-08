@@ -54,8 +54,8 @@
     var seq;
     jQuery(document).ready(function() {
         getUrlVars();
-        jQuery(".blasttab").html('<a href="<c:url value="index.jsp"/>"><span>Browser</span></a>');
-        jQuery("#seqnameh1").html('<a href="<c:url value="/blast.jsp"/>"> Blast Search</a>');
+        <%--jQuery(".blasttab").html('<a href="<c:url value="index.jsp"/>"><span>Browser</span></a>');--%>
+        <%--jQuery("#seqnameh1").html('<a href="<c:url value="/blast.jsp"/>"> Blast Search</a>');--%>
     });
 
     function getUrlVars() {

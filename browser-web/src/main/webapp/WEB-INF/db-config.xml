@@ -9,7 +9,7 @@
 
 
     <jee:jndi-lookup id="dataSource"
-                     jndi-name="/jdbc/primulaDB"
+                     jndi-name="/jdbc/tgac-browserDB"
                      resource-ref="true"/>
 
     <bean name="interfaceTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
