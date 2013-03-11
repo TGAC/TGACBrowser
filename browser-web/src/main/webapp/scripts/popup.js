@@ -41,6 +41,7 @@ function newpopup(track, i, j) {
   }
 
   if (j) {
+
     jQuery("#makemetop").html('<span title="Make Me Top" class="ui-button ui-icon ui-icon-arrowthick-1-n" onclick=makeMeTop(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
     jQuery("#peptides").html('<span title="peptides" class="ui-button ui-icon ui-icon-comment" onclick=showPeptides(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
     jQuery("#position").html(stringTrim(window[track][i].transcript[j].start + "-" + window[track][i].transcript[j].end, width));
@@ -51,9 +52,9 @@ function newpopup(track, i, j) {
     jQuery("#EditDescription").html('<span title="Edit" class="ui-button ui-icon ui-icon-pencil" onclick=showEditDesc(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
     jQuery("#deleteTrack").html('<span title="Remove" class="ui-button ui-icon ui-icon-trash" onclick=deleteTrack(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
     jQuery("#flagTrack").html('<span title="Flag" class="ui-button ui-icon ui-icon-flag" onclick=flagTrack(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
-    jQuery("#Ensemblme").html("<a target='_blank' href='http://www.ensembl.org/Mus_musculus/Gene/Summary?g=" + window[track][i].desc + "'> <span title=\"Ensembl\" class=\"ui-button ui-ensembl\"></span></a>");
+    jQuery("#Ensemblme").html("");
     jQuery("#revertme").html('<span title="Revert_Name" class="ui-button ui-icon ui-icon-arrowreturnthick-1-w" onclick=revertTrack(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
-    jQuery("#Detail").html(stringTrim(window[track][i].desc, width));
+    jQuery("#Detail").html(stringTrim(window[track][i].trasncript[j].desc+"("+window[track][i].desc+")", width));
 
   }
   else {
@@ -78,7 +79,7 @@ function newpopup(track, i, j) {
     jQuery("#EditDescription").html('<span title="Edit" class="ui-button ui-icon ui-icon-pencil" onclick=showEditDesc(\"' + track + '\",\'' + i + '\');></span>');
     jQuery("#deleteTrack").html('<span title="Remove" class="ui-button ui-icon ui-icon-trash" onclick=deleteTrack(\"' + track + '\",\'' + i + '\');></span>');
     jQuery("#flagTrack").html('<span title="Flag" class="ui-button ui-icon ui-icon-flag" onclick=flagTrack(\"' + track + '\",\'' + i + '\');></span>');
-    jQuery("#Detail").html(stringTrim(window[track][i].cigarline, width));
+    jQuery("#Detail").html(stringTrim(window[track][i].desc, width));
 
   }
 
@@ -496,17 +497,17 @@ function showPeptides(track, i, k) {
                 var track_end = window[track][i].transcript[k].end;
 
                 if (exon_start <= transcript_start && exon_end >= transcript_end) {
-                  cdnaseq = seq.substring(parseInt(transcript_start) - parseInt(track_start) - 1, parseInt(transcript_end) - parseInt(track_start));
+                  cdnaseq = seq.substring(parseInt(transcript_start) - parseInt(track_start) , parseInt(transcript_end) - parseInt(track_start));
                 }
                 else if (exon_start <= transcript_start) {
-                  cdnaseq = seq.substring(parseInt(transcript_start) - parseInt(track_start) - 1, parseInt(exon_end) - parseInt(track_start));
+                  cdnaseq = seq.substring(parseInt(transcript_start) - parseInt(track_start), parseInt(exon_end) - parseInt(track_start));
                 }
                 else if (exon_end >= transcript_end) {
-                  cdnaseq += seq.substring(parseInt(exon_start) - parseInt(track_start) - 1, parseInt(transcript_end) - parseInt(track_start));
+                  cdnaseq += seq.substring(parseInt(exon_start) - parseInt(track_start) , parseInt(transcript_end) - parseInt(track_start));
                   break;
                 }
                 else if (exon_start > transcript_start) {
-                  cdnaseq += seq.substring(parseInt(exon_start) - parseInt(track_start) - 1, parseInt(exon_end) - parseInt(track_start));
+                  cdnaseq += seq.substring(parseInt(exon_start) - parseInt(track_start) , parseInt(exon_end) - parseInt(track_start));
                 }
                 else {
                 }

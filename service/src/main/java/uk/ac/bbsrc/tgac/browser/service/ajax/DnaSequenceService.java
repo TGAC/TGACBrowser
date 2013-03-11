@@ -163,7 +163,7 @@ public class DnaSequenceService {
                }
                else {
                  response.put("type", "graph");
-                 response.put(trackName, sequenceStore.getHitGraph(queryid, trackId, start, end));
+                 response.put(trackName, sequenceStore.getRepeatGraph(queryid, trackId, start, end));
                }
             }
       else if (sequenceStore.getLogicNameByAnalysisId(Integer.parseInt(trackId)).matches("(?i).*gene.*")) {

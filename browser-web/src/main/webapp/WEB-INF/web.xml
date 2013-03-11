@@ -60,6 +60,11 @@
         <param-value>${browser.blastdblocation}</param-value>
     </context-param>
 
+     <context-param>
+        <param-name>defaultRef</param-name>
+        <param-value>${browser.defaultRef}</param-value>
+    </context-param>
+
     <context-param>
         <param-name>trackfiles</param-name>
         <param-value>${browser.trackfiles}</param-value>

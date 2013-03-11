@@ -133,7 +133,7 @@ function onLoad() {
     if (randomnumber) {
       saveSession();
     }
-    jQuery.cookie('trackslist', track_list.toJSON(), { path: '/'+path, expires: 10});
+    jQuery.cookie('trackslist', track_list.toJSON(), { path: '/' + path, expires: 10});
   });
 
   jQuery("#draggable").mouseover(function () {
@@ -447,8 +447,25 @@ function trackList(tracklist) {
 
   jQuery("#mergetracklist").html(mergeTrack);
   jQuery("#tracklist").html(tracks);
-  jQuery("#tracks").html("<div id=\"mergedtrack\" style=\"display:none\" > <div id= \"mergelabel\" align='left' class='handle'></div> </div>");
-
+  jQuery("#tracks").html("<div id='mergedtrack_wrapper' class='feature_tracks' style=\"display:none\">  " +
+                         "<div align='left' class='handle'>" +
+                         "<table>" +
+                         "<tr>" +
+                         "<td><b>Merged Track  </b></td>" +
+                         "<td><div class=\"ui-icon ui-icon-comment\" onclick=toogleLabelMerged();> </div></td>" +
+                         "<td><div class='closehandle ui-icon ui-icon-close' onclick=removeMergedTrack()></div></td>" +
+                         "<td><div id= \"mergelabel\" align='left'></div></td>" +
+                         "</tr>" +
+                         "</table>" +
+                         "</div>" +
+                         "<div id=\"mergedtrack\" style=\"display:none\" > </div>" +
+                         "</div>");
+  jQuery("#mergedtrack_wrapper").resizable({
+                                             handles: "s",
+                                             alsoResize: "#mergedtrack",
+                                             minHeight: "50px",
+                                             borderBottom: '1px solid black'
+                                           });
   for (i = 0; i < Tracklist.length; i++) {
     jQuery("#tracks").append("<div id='" + Tracklist[i].name + "_wrapper' class='feature_tracks' style=\"display:none\">" +
                              "<div align='left' class='handle'><table><tr><td><b>" + Tracklist[i].display_label + "</b></td><td><div class=\"ui-icon ui-icon-comment\" onclick=toogleLabel(\"" + Tracklist[i].name + "\");> </div></td>" + checkGene(Tracklist[i].name) +
@@ -748,20 +765,31 @@ function selectAllCheckbox() {
       }
     })
   }
+  else {
+//     jQuery("#tracklist input").each(function () {
+//     if (jQuery(this).is(':checked')) {
+//       jQuery(this).attr('checked', false);
+//       eval(jQuery(this).attr('onClick'));
+//     }
+//     else {
+//       //    do nothing
+//     }
+//   })
+  }
 
 }
 
 function unSelectAllCheckbox() {
- if (jQuery("#unelectAllCheckbox").is(':checked')) {
-   jQuery("#tracklist input").each(function () {
-     if (jQuery(this).is(':checked')) {
-       jQuery(this).attr('checked', false);
-       eval(jQuery(this).attr('onClick'));
-     }
-     else {
-       //    do nothing
-     }
-   })
- }
+  if (jQuery("#unSelectAllCheckbox").is(':checked')) {
+    jQuery("#tracklist input").each(function () {
+      if (jQuery(this).is(':checked')) {
+        jQuery(this).attr('checked', false);
+        eval(jQuery(this).attr('onClick'));
+      }
+      else {
+        //    do nothing
+      }
+    })
+  }
 
 }

@@ -71,7 +71,7 @@ public class SQLSequenceDAO implements SequenceStore {
   public static final String GET_HIT_SIZE = "SELECT COUNT(*) FROM dna_align_feature where seq_region_id =? and analysis_id = ?";
   public static final String GET_HIT_SIZE_SLICE = "SELECT COUNT(*) FROM dna_align_feature where seq_region_id =? and analysis_id = ? and seq_region_start >= ? and seq_region_start <= ?";
   public static final String GET_Gene_SIZE_SLICE = "SELECT COUNT(*) FROM gene where seq_region_id =? and analysis_id = ? and seq_region_start >= ? and seq_region_start <= ?";
-  public static final String GET_HIT = "SELECT dna_align_feature_id as id,seq_region_start as start, seq_region_end as end,seq_region_strand as strand,hit_start as hitstart, hit_end as hitend, hit_name as 'desc', cigar_line as cigarline FROM dna_align_feature where seq_region_id =? and analysis_id = ? AND ((seq_region_start > ? AND seq_region_end < ?) OR (seq_region_start < ? AND seq_region_end > ?) OR (seq_region_end > ? AND seq_region_end < ?) OR (seq_region_start > ? AND seq_region_start < ?)) ORDER BY start,(end-start) asc"; //seq_region_start ASC";//" AND ((hit_start >= ? AND hit_end <= ?) OR (hit_start <= ? AND hit_end >= ?) OR (hit_end >= ? AND hit_end <= ?) OR (hit_start >= ? AND hit_start <= ?))";
+  public static final String GET_HIT = "SELECT dna_align_feature_id as id,seq_region_start as start, seq_region_end as end,seq_region_strand as strand,hit_start as hitstart, hit_end as hitend, hit_name as 'desc', cigar_line as cigarline FROM dna_align_feature where seq_region_id =? and analysis_id = ? AND ((seq_region_start >= ? AND seq_region_end <= ?) OR (seq_region_start <= ? AND seq_region_end >= ?) OR (seq_region_end >= ? AND seq_region_end <= ?) OR (seq_region_start >= ? AND seq_region_start <= ?)) ORDER BY start,(end-start) asc"; //seq_region_start ASC";//" AND ((hit_start >= ? AND hit_end <= ?) OR (hit_start <= ? AND hit_end >= ?) OR (hit_end >= ? AND hit_end <= ?) OR (hit_start >= ? AND hit_start <= ?))";
   public static final String GET_Tracks_API = "select analysis_id, logic_name from analysis";
   public static final String Get_Tracks_Desc = "select description from analysis_description where analysis_id = ?";
   public static final String Get_Tracks_Info = "select * from analysis_description";
@@ -97,10 +97,16 @@ public class SQLSequenceDAO implements SequenceStore {
   public static final String GET_Transcript_name_from_ID = "SELECT description FROM transcript where transcript_id =?";
   public static final String GET_Tracks_Name = "select analysis_id from analysis where logic_name = ?";
   public static final String GET_hit_name_from_ID = "SELECT hit_name FROM dna_align_feature where dna_align_feature_id =?";
-  public static final String GET_Gene_by_view = "select g.gene_id, g.seq_region_start as gene_start, g.seq_region_end as gene_end, g.seq_region_strand as gene_strand, g. description as gene_name, t.transcript_id, t.seq_region_start as transcript_start, t.seq_region_end as transcript_end, t.description as transcript_name, e.exon_id, e.seq_region_start as exon_start, e.seq_region_end as exon_end from gene g, transcript t, exon_transcript et, exon e where t.gene_id = g.gene_id and t.transcript_id = et.transcript_id and et.exon_id = e.exon_id and  g.seq_region_id = ? and g.analysis_id = ?;";
+  public static final String GET_Gene_by_view = "select g.gene_id, g.seq_region_start as gene_start, g.seq_region_end as gene_end, g.seq_region_strand as gene_strand, g. description as gene_name, t.transcript_id, t.seq_region_start as transcript_start, t.seq_region_end as transcript_end, t.description as transcript_name, e.exon_id, e.seq_region_start as exon_start, e.seq_region_end as exon_end, tl.seq_start as translation_start, tl.seq_end as translation_end from gene g, transcript t, exon_transcript et, exon e, translation tl where t.gene_id = g.gene_id and t.transcript_id = et.transcript_id and et.exon_id = e.exon_id and tl.transcript_id = t.transcript_id and  g.seq_region_id = ? and g.analysis_id = ?;";
   public static final String GET_Assembly = "SELECT a.asm_seq_region_id,a.cmp_seq_region_id,a.asm_start,a.asm_end FROM assembly a, seq_region s where a.asm_seq_region_id =? and a.cmp_seq_region_id = s.seq_region_id and s.coord_system_id = ? ORDER BY asm_start ASC";
   public static final String GET_REPEAT = "SELECT repeat_feature_id as id,seq_region_start as start, seq_region_end as end,seq_region_strand as strand, repeat_start as repeatstart,repeat_end as repeatend, score as score FROM repeat_feature where seq_region_id =? and analysis_id = ? AND ((seq_region_start > ? AND seq_region_end < ?) OR (seq_region_start < ? AND seq_region_end > ?) OR (seq_region_end > ? AND seq_region_end < ?) OR (seq_region_start > ? AND seq_region_start < ?)) ORDER BY start,(end-start) asc"; //seq_region_start ASC";//" AND ((hit_start >= ? AND hit_end <= ?) OR (hit_start <= ? AND hit_end >= ?) OR (hit_end >= ? AND hit_end <= ?) OR (hit_start >= ? AND hit_start <= ?))";
   public static final String GET_REPEAT_SIZE = "SELECT COUNT(*) FROM repeat_feature where seq_region_id =? and analysis_id = ?";
+  public static final String GET_REPEAT_SIZE_SLICE = "SELECT COUNT(*) FROM repeat_feature where seq_region_id =? and analysis_id = ? and seq_region_start >= ? and seq_region_start <= ?";
+  public static final String GET_GO_for_Transcripts = "select value from transcript_attrib where transcript_id =  ?";
+  public static final String GET_GO_for_Genes = "select value from gene_attrib where gene_id = ?";
+
+
+
 
   private JdbcTemplate template;
 
@@ -518,7 +524,7 @@ public class SQLSequenceDAO implements SequenceStore {
         for (int i = 1; i <= 200; i++) {
           JSONObject eachTrack = new JSONObject();
           to = start + (i * (end - start) / 200);
-          int no_of_tracks = template.queryForObject(GET_HIT_SIZE_SLICE, new Object[]{id, trackId, from, to}, Integer.class);
+          int no_of_tracks = template.queryForObject(GET_REPEAT_SIZE_SLICE, new Object[]{id, trackId, from, to}, Integer.class);
           eachTrack.put("start", from);
           eachTrack.put("end", to);
           eachTrack.put("graph", no_of_tracks);
@@ -532,7 +538,7 @@ public class SQLSequenceDAO implements SequenceStore {
       }
     }
   public int countRepeat(int id, String trackId, long start, long end) {
-      return template.queryForObject(GET_HIT_SIZE_SLICE, new Object[]{id, trackId, start, end}, Integer.class);
+      return template.queryForObject(GET_REPEAT_SIZE_SLICE, new Object[]{id, trackId, start, end}, Integer.class);
     }
 
     //  @Cacheable(cacheName = "hitCache",
@@ -689,6 +695,36 @@ public class SQLSequenceDAO implements SequenceStore {
     return template.queryForList(GET_Gene_by_view, new Object[]{id, trackId});
   }
 
+//  @Cacheable(cacheName = "transcriptGoCache",
+//                  keyGenerator = @KeyGenerator(
+//                          name = "HashCodeCacheKeyGenerator",
+//                          properties = {
+//                                  @Property(name = "includeMethod", value = "false"),
+//                                  @Property(name = "includeParameterTypes", value = "false")
+//                          }
+//                  )
+//       )
+
+  public List<Map<String, Object>> getTranscriptsGO(String transcriptId) throws IOException {
+
+       return template.queryForList(GET_GO_for_Transcripts, new Object[]{transcriptId});//template.queryForList(GET_Gene_by_view, new Object[]{id, trackId});
+     }
+
+
+//  @Cacheable(cacheName = "geneGoCache",
+//                 keyGenerator = @KeyGenerator(
+//                         name = "HashCodeCacheKeyGenerator",
+//                         properties = {
+//                                 @Property(name = "includeMethod", value = "false"),
+//                                 @Property(name = "includeParameterTypes", value = "false")
+//                         }
+//                 )
+//      )
+
+  public List<Map<String, Object>> getGenesGO(String geneId) throws IOException {
+
+      return template.queryForList(GET_GO_for_Genes, new Object[]{geneId});//template.queryForList(GET_Gene_by_view, new Object[]{id, trackId});
+    }
 
   public JSONArray processGenes(List<Map<String, Object>> genes, long start, long end) throws IOException {
 
@@ -704,7 +740,7 @@ public class SQLSequenceDAO implements SequenceStore {
       int layer = 1;
       int lastsize = 0;
       int thissize = 0;
-
+      List<Map<String, Object>> domains;
 
       for (Map gene : genes) {
         int start_pos = Integer.parseInt(gene.get("gene_start").toString());
@@ -723,6 +759,23 @@ public class SQLSequenceDAO implements SequenceStore {
           transcript_id = filteredgenes.getJSONObject(i).get("transcript_id").toString();
           exonList = new JSONArray();
 
+          eachTrack = new JSONObject();
+
+          eachTrack.put("id", filteredgenes.getJSONObject(i).get("transcript_id"));
+          eachTrack.put("start", filteredgenes.getJSONObject(i).get("transcript_start"));
+          eachTrack.put("end", filteredgenes.getJSONObject(i).get("transcript_end"));
+          eachTrack.put("transcript_start", filteredgenes.getJSONObject(i).get("translation_start"));
+          eachTrack.put("transcript_end", filteredgenes.getJSONObject(i).get("translation_end"));
+          eachTrack.put("desc", filteredgenes.getJSONObject(i).get("transcript_name"));
+
+          eachTrack.put("layer", layer);
+          eachTrack.put("domain", 0);
+          domains = getTranscriptsGO(filteredgenes.getJSONObject(i).get("transcript_id").toString());
+          for (Map domain : domains) {
+            eachTrack.put("domain", domain.get("value"));
+          }
+//          log.info("transcript "+filteredgenes.getJSONObject(i).get("transcript_id"));
+          eachTrack.put("flag", false);
         }
         if (!gene_id.equalsIgnoreCase(filteredgenes.getJSONObject(i).get("gene_id").toString())) {
           if (!gene_id.equalsIgnoreCase("")) {
@@ -731,41 +784,39 @@ public class SQLSequenceDAO implements SequenceStore {
           }
           gene_id = filteredgenes.getJSONObject(i).get("gene_id").toString();
           transcriptList = new JSONArray();
+          eachGene.put("id", filteredgenes.getJSONObject(i).get("gene_id"));
+          eachGene.put("start", filteredgenes.getJSONObject(i).get("gene_start"));
+          eachGene.put("end", filteredgenes.getJSONObject(i).get("gene_end"));
+          eachGene.put("desc", filteredgenes.getJSONObject(i).get("gene_name"));
+          eachGene.put("strand", filteredgenes.getJSONObject(i).get("gene_strand"));
+          eachGene.put("layer", i % 2 + 1);
+          eachGene.put("domain", 0);
+          domains = getGenesGO(filteredgenes.getJSONObject(i).get("gene_id").toString());
+          for (Map domain : domains) {
+            eachGene.put("domain", domain.get("value"));
+          }
+          if (lastsize < 2 && layer > 2) {
+            layer = 1;
+          }
+          else {
+            layer = layer;
+          }
+
+          if (thissize > 1) {
+            layer = 1;
+          }
+          layer++;
+          log.info("gene "+filteredgenes.getJSONObject(i).get("gene_id"));
+
         }
 
-        eachTrack = new JSONObject();
-        eachGene.put("id", filteredgenes.getJSONObject(i).get("gene_id"));
-        eachGene.put("start", filteredgenes.getJSONObject(i).get("gene_start"));
-        eachGene.put("end", filteredgenes.getJSONObject(i).get("gene_end"));
-        eachGene.put("desc", filteredgenes.getJSONObject(i).get("gene_name"));
-        eachGene.put("strand", filteredgenes.getJSONObject(i).get("gene_strand"));
-        eachGene.put("layer", i % 2 + 1);
-        eachGene.put("domain", 0);
-
-        if (lastsize < 2 && layer > 2) {
-          layer = 1;
-        }
-        else {
-          layer = layer;
-        }
-
-        if (thissize > 1) {
-          layer = 1;
-        }
-        eachTrack.put("id", filteredgenes.getJSONObject(i).get("transcript_id"));
-        eachTrack.put("start", filteredgenes.getJSONObject(i).get("transcript_start"));
-        eachTrack.put("end", filteredgenes.getJSONObject(i).get("transcript_end"));
-        eachTrack.put("desc", filteredgenes.getJSONObject(i).get("transcript_name"));
-        eachTrack.put("layer", layer);
-        eachTrack.put("domain", 0);
-        eachTrack.put("flag", false);
 
         JSONObject eachExon = new JSONObject();
         eachExon.put("id", filteredgenes.getJSONObject(i).get("exon_id"));
         eachExon.put("start", filteredgenes.getJSONObject(i).get("exon_start"));
         eachExon.put("end", filteredgenes.getJSONObject(i).get("exon_end"));
         exonList.add(eachExon);
-        layer++;
+
         lastsize = thissize;
       }
 
