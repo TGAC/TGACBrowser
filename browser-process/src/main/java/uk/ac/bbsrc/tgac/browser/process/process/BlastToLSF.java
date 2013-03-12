@@ -85,8 +85,8 @@ public class BlastToLSF extends AbstractTgacLsfProcess {
       // do the blast
       sb.append(blastBinary);
       sb.append(" -db " +  parameters.get(blastDB));
-      sb.append(" -query /net/tgac-cfs3/ifs/TGAC/browser/jobs/" + parameters.get(blastAccession) + ".fa ");
-      sb.append(" -out /net/tgac-cfs3/ifs/TGAC/browser/jobs/" + parameters.get(blastAccession) + ".xml ");
+      sb.append(" -query /net/tgac-cfs3.tgaccluster/ifs/TGAC/browser/jobs/" + parameters.get(blastAccession) + ".fa ");
+      sb.append(" -out /net/tgac-cfs3.tgaccluster/ifs/TGAC/browser/jobs/" + parameters.get(blastAccession) + ".xml ");
       sb.append(" -outfmt "+parameters.get(format)+" -task blastn -max_target_seqs 10");
 //
 //            .append(" -f " + parameters.get(makefilePath))
