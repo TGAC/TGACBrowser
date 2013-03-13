@@ -87,7 +87,7 @@ public class SQLSequenceDAO implements SequenceStore {
   public static final String GET_GO_Genes = "select * from gene_attrib where value like ?";
   public static final String GET_GO_Transcripts = "select * from transcript_attrib where value like ?";
   public static final String GET_SEQS_LIST_API = "SELECT *  FROM assembly a, seq_region s, coord_system cs  where a.asm_seq_region_id = ? AND s.seq_region_id = a.cmp_seq_region_id AND cs.coord_system_id = s.coord_system_id AND cs.attrib like '%sequence%' AND   ((a.asm_start >= ? AND a.asm_end <= ?) OR (a.asm_start <= ? AND a.asm_end >= ?) OR (a.asm_end >= ? AND a.asm_end <= ?) OR (a.asm_start >= ? AND a.asm_start <= ?))";
-  public static final String GET_coord_attrib = "SELECT * FROM coord_system where coord_system_id =?";
+  public static final String GET_coord_attrib = "SELECT attrib FROM coord_system where coord_system_id =?";
   public static final String GET_coord_sys_id = "SELECT coord_system_id FROM seq_region where seq_region_id =?";
   public static final String GET_coord_sys_name = "SELECT name FROM coord_system where coord_system_id =?";
   public static final String GET_SEQ_REGION_ID_SEARCH_For_One = "SELECT seq_region_id FROM seq_region WHERE name = ?";
@@ -1049,29 +1049,141 @@ public class SQLSequenceDAO implements SequenceStore {
     }
   }
 
+
+  public String getSeqLevel(String query, int from, int to) throws IOException {
+     System.out.println("get seq level" + query + ":" + from + ":" + to);
+
+     String seq = "";
+     try {
+
+       seq = template.queryForObject(GET_Seq_API, new Object[]{query}, String.class);
+       System.out.println("get seq level" + query + ":" + from + ":" + to);
+       System.out.println("\n\nget seq level length " + seq.substring(from, to).length());
+
+       return seq.substring(from, to);
+     }
+     catch (EmptyResultDataAccessException e) {
+       return "";
+     }
+   }
+
+
+  public String getSeqRecursive(String query, int from, int to, int asm_from, int asm_to) throws IOException {
+
+      System.out.println("get seq recursive " + query + ":" + from + ":" + to);
+
+      try {
+        String seq = "";
+
+        List<Map<String, Object>> maps = template.queryForList(GET_SEQS_LIST_API, new Object[]{query, from, to, from, to, from, to, from, to});
+        for (Map map : maps) {
+          String query_coord_temp = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{map.get("cmp_seq_region_id")}, String.class);
+          String attrib_temp = template.queryForObject(GET_coord_attrib, new Object[]{query_coord_temp}, String.class);
+          if (attrib_temp.indexOf("sequence") >= 0) {
+            int asm_start = Integer.parseInt(map.get("asm_start").toString());
+            int asm_end = Integer.parseInt(map.get("asm_end").toString());
+            int start_cmp = Integer.parseInt(map.get("cmp_start").toString());
+            int end_cmp = Integer.parseInt(map.get("cmp_end").toString());
+            int start_temp;
+            int end_temp;
+            if (from <= asm_start) {
+              start_temp = start_cmp;
+            }
+            else {
+              start_temp = end_cmp - (asm_end - from) + 1;
+            }
+            if (to >= asm_end) {
+              end_temp = end_cmp;
+            }
+            else {
+              end_temp = to - asm_start + 1;
+            }
+            seq += getSeqLevel(map.get("cmp_seq_region_id").toString(), start_temp, end_temp);
+          }
+          else {
+
+            maps = template.queryForList(GET_SEQS_LIST_API, new Object[]{map.get("cmp_seq_region_id"), from, to, from, to, from, to, from, to});
+            int asm_start = Integer.parseInt(map.get("asm_start").toString());
+            int asm_end = Integer.parseInt(map.get("asm_end").toString());
+            int start_cmp = Integer.parseInt(map.get("cmp_start").toString());
+            int end_cmp = Integer.parseInt(map.get("cmp_end").toString());
+
+            if (from <= asm_start) {
+              from = start_cmp;
+            }
+            else {
+              from = from - start_cmp + 1;
+            }
+            if (to >= asm_end) {
+              to = end_cmp;
+            }
+            else {
+              to = (to - from);
+
+            }
+            seq += getSeqRecursive(map.get("cmp_seq_region_id").toString(), from, to, asm_from, asm_to);
+          }
+        }
+
+
+        return seq;
+      }
+      catch (EmptyResultDataAccessException e) {
+        return "";
+  //      throw new IOException("Sequence not found");
+      }
+    }
+
+
   public String getSeq(String query, int from, int to) throws IOException {
     try {
       String seq = "";
-      String coord_id = template.queryForObject(GET_coord_sys_id, new Object[]{query}, String.class);
-      List<Map<String, Object>> maps = template.queryForList(GET_coord_attrib, new Object[]{coord_id});
-      String attrib = "";
-      for (Map map : maps) {
-        attrib = map.get("attrib").toString();
-      }
-      if (attrib.indexOf("sequence") >= 0) {
-        seq = template.queryForObject(GET_Seq_API, new Object[]{query}, String.class);
-      }
-      else {
-        maps = template.queryForList(GET_SEQS_LIST_API, new Object[]{query, from, to, from, to, from, to, from, to});
-        for (Map map : maps) {
-          int start = Integer.parseInt(map.get("cmp_start").toString());
-          int end = Integer.parseInt(map.get("cmp_end").toString());
+           String query_coord = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{query}, String.class);
+           String attrib = template.queryForObject(GET_coord_attrib, new Object[]{query_coord}, String.class);
+           System.out.println("get seq attrib " + attrib);
+           if (attrib.indexOf("sequence") >= 0) {
+             System.out.println("get seq if " + query + ":" + from + ":" + to);
+             seq = getSeqLevel(query, from, to);
+           }
+           else {
+             System.out.println("get seq else " + query + ":" + from + ":" + to);
+             List<Map<String, Object>> maps = template.queryForList(GET_SEQS_LIST_API, new Object[]{query, from, to, from, to, from, to, from, to});
+             for (Map map : maps) {
 
-          seq += (template.queryForObject(GET_Seq_API, new Object[]{map.get("cmp_seq_region_id")}, String.class)).substring(start, end);
-        }
-      }
-      seq = seq.substring(from-1, to-1);
-      return seq;
+               String query_coord_temp = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{map.get("cmp_seq_region_id")}, String.class);
+               String attrib_temp = template.queryForObject(GET_coord_attrib, new Object[]{query_coord_temp}, String.class);
+               System.out.println("get seq else size" + maps.size() + " - " + attrib_temp);
+
+               if (attrib_temp.indexOf("sequence") >= 0) {
+                 System.out.println("get seq if " + map.get("cmp_seq_region_id") + ":" + from + ":" + to);
+                 seq = getSeqLevel(map.get("cmp_seq_region_id").toString(), from, to);
+               }
+               else {
+                 maps = template.queryForList(GET_SEQS_LIST_API, new Object[]{map.get("cmp_seq_region_id"), from, to, from, to, from, to, from, to});
+                 int asm_start = Integer.parseInt(map.get("asm_start").toString());
+                 int asm_end = Integer.parseInt(map.get("asm_end").toString());
+                 int start_cmp = Integer.parseInt(map.get("cmp_start").toString());
+                 int end_cmp = Integer.parseInt(map.get("cmp_end").toString());
+
+                 if (from <= asm_start) {
+                   from = start_cmp;
+                 }
+                 else {
+                   from = from - start_cmp;
+                 }
+                 if (to >= asm_end) {
+                   to = end_cmp;
+                 }
+     //          else {
+     //            to = (to - from);
+     //          }
+                 seq += getSeqRecursive(map.get("cmp_seq_region_id").toString(), from, to, asm_start, asm_end);
+               }
+             }
+
+
+           }
+           return seq;
     }
     catch (EmptyResultDataAccessException e) {
       return "";
