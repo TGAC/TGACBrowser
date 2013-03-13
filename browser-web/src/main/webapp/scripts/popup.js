@@ -672,7 +672,7 @@ function convertPeptide(cdnaseq) {
 function fetchFasta(begin, end, track, i, j) {
   var reverseText = "";
 
-  if (window[track][i].transcript[j].start > window[track][i].transcript[j].end) {
+  if (i && window[track][i].transcript[j].start > window[track][i].transcript[j].end) {
 
     reverseText = "<br/><b>(Minus strand, you will need to reverse-complement)</b><br/><br/>";
   }

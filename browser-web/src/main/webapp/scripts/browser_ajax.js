@@ -197,7 +197,7 @@ function seqregionSearchPopup(query, from, to, blast) {
               dispSeqCoord();
               displayCursorPosition();
               setNavPanel();
-              getReferences();
+//              getReferences();
               loadDefaultTrack(track_list);
               jQuery("#controlsbutton").colorbox({width: "90%", inline: true, href: "#controlpanel"});
 

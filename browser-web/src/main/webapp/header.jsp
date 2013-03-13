@@ -18,7 +18,7 @@
 
     <script type="text/javascript" src="<c:url value='/scripts/scriptaculous/prototype.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/fluxion-ajax/fluxion-ajax-compiled.js'/>"></script>
-
+<%----%>
     <!-- jQuery -->
     <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery-1.4.2.min.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery-ui-1.8.custom.min.js'/>"></script>
@@ -79,9 +79,9 @@
 
     <c:set var="dateParts" value="${fn:split(databases, ',')}"/>
 
-    <c:set var="length">${fn:length(dateParts)}</c:set>
+    <c:set var="length">${fn:length(databases)}</c:set>
 
-    ${initParam.fasta == "true" && length > 0 ? "| <a href=\"blast.jsp\"><span>Blast Search</span></a>" : ""}
+    ${initParam.fasta == "true" && length > 1 ? "| <a href=\"blast.jsp\"><span>Blast Search</span></a>" : ""}
 
 
     | <a href="<c:url value="session.jsp"/>"><span>Load Session</span></a>

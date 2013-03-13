@@ -262,9 +262,9 @@
 
                 <c:set var="dateParts" value="${fn:split(databases, ',')}"/>
 
-                <c:set var="length">${fn:length(dateParts)}</c:set>
+                <c:set var="length">${fn:length(databases)}</c:set>
 
-                ${initParam.fasta == "true" && length > 0 ?  "<span title=\"Blast\" class=\"ui-button  ui-widget  ui-corner-all ui-blast\"  onclick=\"preBlast(getBegin(),getEnd(),'#menu');\"></span>" : ""}
+                ${initParam.fasta == "true" && length > 1 ?  "<span title=\"Blast\" class=\"ui-button  ui-widget  ui-corner-all ui-blast\"  onclick=\"preBlast(getBegin(),getEnd(),'#menu');\"></span>" : ""}
             </td>
             <td align="right">
                 <span class="ui-button ui-icon ui-icon-close" onclick="removeAllPopup();"></span>
@@ -315,9 +315,9 @@
 
                 <c:set var="dateParts" value="${fn:split(databases, ',')}"/>
 
-                <c:set var="length">${fn:length(dateParts)}</c:set>
+                <c:set var="length">${fn:length(databases)}</c:set>
 
-                ${initParam.fasta == "true" && length > 0 ? "<div class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" id=\"BLASTme\"> </div>" : ""}
+                ${initParam.fasta == "true" && length > 1 ? "<div class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" id=\"BLASTme\"> </div>" : ""}
 
                 <div class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" id="ZoomHere">
                 </div>
@@ -374,9 +374,9 @@
 
                 <c:set var="dateParts" value="${fn:split(databases, ',')}"/>
 
-                <c:set var="length">${fn:length(dateParts)}</c:set>
+                <c:set var="length">${fn:length(databases)}</c:set>
 
-                ${initParam.fasta == "true" && length > 0  ? "<div class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" id=\"fetchBLAST\"> </div>" : ""}
+                ${initParam.fasta == "true" && length > 1  ? "<div class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" id=\"fetchBLAST\"> </div>" : ""}
 
             </td>
         </tr>
