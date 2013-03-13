@@ -21,16 +21,17 @@
 
 
         <c:forEach var="i" begin="1" end='${fn:length(dateParts)}' step="1">
-           <%--splitting by /--%>
-                       <c:set var="text" value="${fn:split(datePartsloc[i-1],'/')}" />
-                       <%--considering last entry--%>
-                       <c:set var="text" value="${text[fn:length(text)-1]}"/>
-                       <%--index of . --%>
-                       <c:set var="to" value="${fn:indexOf(text,'.' )}"/>
-                       <%--substring to . --%>
-                       <c:set var="filename" value="${fn:substring(text,0,to) }" />
+            <%--splitting by /--%>
+            <c:set var="text" value="${fn:split(datePartsloc[i-1],'/')}"/>
+            <%--considering last entry--%>
+            <c:set var="text" value="${text[fn:length(text)-1]}"/>
+            <%--index of . --%>
+            <c:set var="to" value="${fn:indexOf(text,'.' )}"/>
+            <%--substring to . --%>
+            <c:set var="filename" value="${fn:substring(text,0,to) }"/>
 
-                       <option id=${dateParts[i-1]} value="${datePartsloc[i-1]}:${dateParts[i-1]}">${filename}</option>
+            <option id=${dateParts[i-1]} value=
+            "${datePartsloc[i-1]}:${dateParts[i-1]}">${filename}</option>
         </c:forEach>
 
 
@@ -52,14 +53,24 @@
 
 <script type="text/javascript">
     var seq;
-    jQuery(document).ready(function() {
+    jQuery(document).ready(function () {
         getUrlVars();
+
+        var testTextBox = jQuery('#search');
+        var code = null;
+        testTextBox.keypress(function (e) {
+            code = (e.keyCode ? e.keyCode : e.which);
+            if (code == 13) {
+                search(jQuery('#search').val());
+            }
+        });
+
         <%--jQuery(".blasttab").html('<a href="<c:url value="index.jsp"/>"><span>Browser</span></a>');--%>
         <%--jQuery("#seqnameh1").html('<a href="<c:url value="/blast.jsp"/>"> Blast Search</a>');--%>
     });
 
     function getUrlVars() {
-        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m, key, value) {
+        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
             jQuery("#blastsearch").val(value);
             blastSearch(value);
         });

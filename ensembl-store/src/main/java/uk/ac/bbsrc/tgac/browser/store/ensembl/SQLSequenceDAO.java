@@ -81,7 +81,8 @@ public class SQLSequenceDAO implements SequenceStore {
   public static final String Check_feature_available = "SELECT DISTINCT analysis_id from ";// + var1;
   public static final String Get_Database_information = "SELECT meta_key,meta_value from meta";// + var1;
   public static final String GET_Domain_per_Gene = "SELECT * FROM transcript_attrib where transcript_id =?";
-  public static final String GET_CDS_per_Gene = "SELECT * FROM translation where transcript_id =?";
+  public static final String GET_CDS_start_per_Gene = "SELECT seq_start FROM translation where transcript_id =?";
+  public static final String GET_CDS_end_per_Gene = "SELECT seq_end FROM translation where transcript_id =?";
   public static final String GET_Seq_API = "SELECT sequence FROM dna where seq_region_id = ?";
   public static final String GET_GO_Genes = "select * from gene_attrib where value like ?";
   public static final String GET_GO_Transcripts = "select * from transcript_attrib where value like ?";
@@ -97,7 +98,7 @@ public class SQLSequenceDAO implements SequenceStore {
   public static final String GET_Transcript_name_from_ID = "SELECT description FROM transcript where transcript_id =?";
   public static final String GET_Tracks_Name = "select analysis_id from analysis where logic_name = ?";
   public static final String GET_hit_name_from_ID = "SELECT hit_name FROM dna_align_feature where dna_align_feature_id =?";
-  public static final String GET_Gene_by_view = "select g.gene_id, g.seq_region_start as gene_start, g.seq_region_end as gene_end, g.seq_region_strand as gene_strand, g. description as gene_name, t.transcript_id, t.seq_region_start as transcript_start, t.seq_region_end as transcript_end, t.description as transcript_name, e.exon_id, e.seq_region_start as exon_start, e.seq_region_end as exon_end, tl.seq_start as translation_start, tl.seq_end as translation_end from gene g, transcript t, exon_transcript et, exon e, translation tl where t.gene_id = g.gene_id and t.transcript_id = et.transcript_id and et.exon_id = e.exon_id and tl.transcript_id = t.transcript_id and  g.seq_region_id = ? and g.analysis_id = ?;";
+  public static final String GET_Gene_by_view = "select g.gene_id, g.seq_region_start as gene_start, g.seq_region_end as gene_end, g.seq_region_strand as gene_strand, g. description as gene_name, t.transcript_id, t.seq_region_start as transcript_start, t.seq_region_end as transcript_end, t.description as transcript_name, e.exon_id, e.seq_region_start as exon_start, e.seq_region_end as exon_end from gene g, transcript t, exon_transcript et, exon e where t.gene_id = g.gene_id and t.transcript_id = et.transcript_id and et.exon_id = e.exon_id and  g.seq_region_id = ? and g.analysis_id = ?;";
   public static final String GET_Assembly = "SELECT a.asm_seq_region_id,a.cmp_seq_region_id,a.asm_start,a.asm_end FROM assembly a, seq_region s where a.asm_seq_region_id =? and a.cmp_seq_region_id = s.seq_region_id and s.coord_system_id = ? ORDER BY asm_start ASC";
   public static final String GET_REPEAT = "SELECT repeat_feature_id as id,seq_region_start as start, seq_region_end as end,seq_region_strand as strand, repeat_start as repeatstart,repeat_end as repeatend, score as score FROM repeat_feature where seq_region_id =? and analysis_id = ? AND ((seq_region_start > ? AND seq_region_end < ?) OR (seq_region_start < ? AND seq_region_end > ?) OR (seq_region_end > ? AND seq_region_end < ?) OR (seq_region_start > ? AND seq_region_start < ?)) ORDER BY start,(end-start) asc"; //seq_region_start ASC";//" AND ((hit_start >= ? AND hit_end <= ?) OR (hit_start <= ? AND hit_end >= ?) OR (hit_end >= ? AND hit_end <= ?) OR (hit_start >= ? AND hit_start <= ?))";
   public static final String GET_REPEAT_SIZE = "SELECT COUNT(*) FROM repeat_feature where seq_region_id =? and analysis_id = ?";
@@ -741,6 +742,9 @@ public class SQLSequenceDAO implements SequenceStore {
       int lastsize = 0;
       int thissize = 0;
       List<Map<String, Object>> domains;
+      List<Map<String, Object>> translation_start;
+      List<Map<String, Object>> translation_end;
+
 
       for (Map gene : genes) {
         int start_pos = Integer.parseInt(gene.get("gene_start").toString());
@@ -764,8 +768,18 @@ public class SQLSequenceDAO implements SequenceStore {
           eachTrack.put("id", filteredgenes.getJSONObject(i).get("transcript_id"));
           eachTrack.put("start", filteredgenes.getJSONObject(i).get("transcript_start"));
           eachTrack.put("end", filteredgenes.getJSONObject(i).get("transcript_end"));
-          eachTrack.put("transcript_start", filteredgenes.getJSONObject(i).get("translation_start"));
-          eachTrack.put("transcript_end", filteredgenes.getJSONObject(i).get("translation_end"));
+
+          translation_start =  template.queryForList(GET_CDS_start_per_Gene, new Object[]{filteredgenes.getJSONObject(i).get("transcript_id").toString()});
+          translation_end =   template.queryForList(GET_CDS_end_per_Gene, new Object[]{filteredgenes.getJSONObject(i).get("transcript_id").toString()});
+          for (Map start_seq : translation_start) {
+             eachTrack.put("transcript_start", start_seq.get("seq_start"));
+
+          }
+
+          for (Map end_seq : translation_end) {
+            eachTrack.put("transcript_end",end_seq.get("seq_end"));
+
+                    }
           eachTrack.put("desc", filteredgenes.getJSONObject(i).get("transcript_name"));
 
           eachTrack.put("layer", layer);

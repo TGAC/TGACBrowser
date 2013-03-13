@@ -55,6 +55,7 @@ function submitBlastTask(query, db, format, start, end, hit) {
     blastdb = db;
 
   }
+  ajaxurl = '/' + jQuery('#title').text() + '/' + jQuery('#title').text() + '/fluxion.ajax';
 
   Fluxion.doAjax(
           'blastservice',

@@ -157,17 +157,20 @@ public class DnaSequenceService {
       else if (trackId.indexOf("cs") >= 0) {
         response.put(trackName, sequenceStore.getAssembly(queryid, trackId, delta));
       }
-      else if (trackName.indexOf("repeat") >= 0) {
+      else if (sequenceStore.getLogicNameByAnalysisId(Integer.parseInt(trackId)).matches("(?i).*repeat.*")) {
+        log.info("repeat"+trackName);
         if (sequenceStore.countRepeat(queryid, trackId, start, end) < 5000) {
-                 response.put(trackName, sequenceStore.processRepeat(sequenceStore.getRepeat(queryid, trackId, start, end), start, end, delta, queryid, trackId));
-               }
-               else {
-                 response.put("type", "graph");
-                 response.put(trackName, sequenceStore.getRepeatGraph(queryid, trackId, start, end));
-               }
-            }
+          response.put(trackName, sequenceStore.processRepeat(sequenceStore.getRepeat(queryid, trackId, start, end), start, end, delta, queryid, trackId));
+        }
+        else {
+          response.put("type", "graph");
+          response.put(trackName, sequenceStore.getRepeatGraph(queryid, trackId, start, end));
+        }
+      }
       else if (sequenceStore.getLogicNameByAnalysisId(Integer.parseInt(trackId)).matches("(?i).*gene.*")) {
+        log.info("gene"+trackName);
         if (sequenceStore.countGene(queryid, trackId, start, end) < 5000) {
+          log.info("gene"+sequenceStore.countGene(queryid, trackId, start, end));
           response.put(trackName, sequenceStore.processGenes(sequenceStore.getGenes(queryid, trackId), start, end));
         }
         else {
@@ -176,6 +179,7 @@ public class DnaSequenceService {
         }
       }
       else {
+        log.info("hit"+trackName);
         if (sequenceStore.countHit(queryid, trackId, start, end) < 5000) {
           response.put(trackName, sequenceStore.processHit(sequenceStore.getHit(queryid, trackId, start, end), start, end, delta, queryid, trackId));
         }

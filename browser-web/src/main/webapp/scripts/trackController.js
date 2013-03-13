@@ -105,7 +105,8 @@ function indelClick(query, hit) {
 
 function removeTrack(div, track) {
   jQuery('#' + track + 'Checkbox').attr('checked', false);
-  jQuery("#" + track + "span").remove();
+//  jQuery("#" + track + "span").remove();
+   jQuery("#" + track + "mergedCheckbox").attr("disabled", true);
   jQuery(div).html();
   jQuery(div).fadeOut();
   jQuery("#" + track + "_wrapper").fadeOut();
@@ -373,7 +374,7 @@ function dispGenes(div, track, expand) {
 //    console.log(now.getMinutes() + ":" + now.getSeconds() + ":" + now.getMilliseconds());
     if (genes[0] == null) {
       track_html = [];
-      track_html.push("<span class='handle' style='left: 0%; width:100%'><center>No data available for selected region</center></span>");
+      track_html.push("<font size=4><center>No data available for selected region</center></font>");
 
       jQuery(div).html(track_html.join(""));
 //      jQuery(div).css('height', 50)
@@ -465,8 +466,7 @@ function dispGenes(div, track, expand) {
           var stopposition = (gene_stop - gene_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
           track_html.push("<div class='" + trackClass + "' STYLE=\"height: 10px; TOP:" + top + "px; " +
                           "LEFT:" + startposition + "px; width :" + stopposition + "px; \" " +
-                          " > " +
-                          "<div style='" + labeltoogle + "' class = \"" + labelclass + "\"> <p>" + label + "</p></div></div>");
+                          " > <div style='" + labeltoogle + "' class = \"" + labelclass + "\"> <p>" + label + "</p></div></div>");
 
           if (stopposition > 10) {
             track_html.push(dispGeneExon(genes[len].transcript[transcript_len], genes[len].strand));
@@ -787,7 +787,9 @@ function dispTrack(div, trackName) {
 //    }
     if (track[0] == null) {
       track_html = [];
-      track_html.push("<span class='handle' style='left: 0%; width:100%'><center>No data available for selected region</center></span>");
+//      track_html.push("<span class='handle' style='left: 0%; width:100%'><center>No data available for selected region</center></span>");
+      track_html.push("<font size=4><center>No data available for selected region</center></font>");
+
 
       jQuery(div).html(track_html.join(""));
 //      jQuery(div).css('height', 50)

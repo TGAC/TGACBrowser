@@ -59,7 +59,7 @@
 
             jQuery("#search").val(vars[0]);
 
-            seqregionSearchPopup(jQuery("#search").val(), vars[1])
+            seqregionSearchPopup(jQuery("#search").val(), vars[1], vars[2], vars[3])
 
         }
         else if (jQuery('#search').val().length > 1) {

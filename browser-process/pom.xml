@@ -3,8 +3,8 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>vietnamese_rice</artifactId>
-        <groupId>uk.ac.bbsrc.tgac.vietnamese_rice</groupId>
+        <artifactId>tgac-browser</artifactId>
+        <groupId>uk.ac.bbsrc.tgac.tgac-browser</groupId>
         <version>0.0.1</version>
     </parent>
     <groupId>${parent.groupId}</groupId>

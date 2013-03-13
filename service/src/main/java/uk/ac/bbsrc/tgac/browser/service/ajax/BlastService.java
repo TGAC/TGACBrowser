@@ -409,7 +409,7 @@ public class BlastService {
 
       String fasta = json.getString("querystring");
       String accession = json.getString("BlastAccession");
-
+      log.info("submitted"+accession);
       File file = new File("/net/tgac-cfs3/ifs/TGAC/browser/jobs/" + accession + ".fa");
       FileWriter writer = new FileWriter(file, true);
       PrintWriter output = new PrintWriter(writer);

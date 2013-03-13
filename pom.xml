@@ -319,6 +319,7 @@
         <module>ensembl-store</module>
         <module>service</module>
         <module>browser-web</module>
+        <module>browser-process</module>
     </modules>
 
 

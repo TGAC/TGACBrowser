@@ -4,8 +4,7 @@
 <%@ page import="java.util.ArrayList" language="java" %>
 <div id="main1" style="top : 10px ; height: 800px; ">
     <div class="fakediv">
-        <div id="filetrack" style="visibility: hidden; position: fixed;">${initParam.trackfiles}</div>
-        <div id="title" style="visibility: hidden; position: fixed;">${initParam.urlpath}</div>
+
         <div id=sessionid></div>
         <div id=alertDiv><img src="images/browser/alert.gif" alt="">Internet Explorer detected. Please use Google Chrome
             or
