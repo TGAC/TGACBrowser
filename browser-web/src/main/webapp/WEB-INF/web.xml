@@ -16,12 +16,12 @@
     </listener>
 
     <!-- JNDI database config -->
-    <resource-ref>
-        <description>vietnamese_rice DB Connection</description>
-        <res-ref-name>jdbc/${browser.urlpath}DB</res-ref-name>
-        <res-type>javax.sql.DataSource</res-type>
-        <res-auth>Container</res-auth>
-    </resource-ref>
+    <!--<resource-ref>-->
+        <!--<description>vietnamese_rice DB Connection</description>-->
+        <!--<res-ref-name>jdbc/${browser.urlpath}DB</res-ref-name>-->
+        <!--<res-type>javax.sql.DataSource</res-type>-->
+        <!--<res-auth>Container</res-auth>-->
+    <!--</resource-ref>-->
 
     <context-param>
         <param-name>contextConfigLocation</param-name>

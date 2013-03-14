@@ -71,7 +71,7 @@
 <div class="blasttab">
 
 
-    <input type="text" id="search" class="seachbox" value=${initParam.defaultRef}/>
+    <input type="text" id="search" class="seachbox" value=${initParam.defaultRef} />
     <%--<button id="searchbutton" class="ui-state-default ui-corner-all"--%>
     <%--onclick="search(jQuery('#search').val(), oldTracklist);">Search--%>
     <%--</button>--%>
