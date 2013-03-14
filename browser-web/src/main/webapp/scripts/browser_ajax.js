@@ -36,7 +36,6 @@ function blastTrackSearch(query, start, end, hit, blastdb) {
   }
 
 
-
   submitBlastTask(query, blastdb, 5, start, end, hit);
   start_global = start;
   end_global = end;
@@ -55,12 +54,20 @@ function submitBlastTask(query, db, format, start, end, hit) {
     blastdb = db;
 
   }
+
+  blastsdata.push(
+          {
+            id: id,
+            start: start,
+            end: end
+          });
+
   ajaxurl = '/' + jQuery('#title').text() + '/' + jQuery('#title').text() + '/fluxion.ajax';
 
   Fluxion.doAjax(
           'blastservice',
           'submitBlastTask',
-          {'url': ajaxurl, 'querystring': query, 'blastdb': db, 'location':link, 'BlastAccession': id, 'format': format},
+          {'url': ajaxurl, 'querystring': query, 'blastdb': db, 'location': link, 'BlastAccession': id, 'format': format},
           {'doOnSuccess': processTaskSubmission,
             'doOnError': function (json) {
               alert(json.error);
@@ -89,7 +96,7 @@ function checkTask(task, db, format, start, end, hit, link) {
                 Fluxion.doAjax(
                         'blastservice',
                         'blastSearchSequence',
-                        {'accession': task, 'db': db,'location':link, 'url': ajaxurl},
+                        {'accession': task, 'db': db, 'location': link, 'url': ajaxurl},
                         {'doOnSuccess': function (json) {
                           jQuery('#blastresult').html(json.html);
                           jQuery("#blasttable").tablesorter();
@@ -100,7 +107,7 @@ function checkTask(task, db, format, start, end, hit, link) {
                 Fluxion.doAjax(
                         'blastservice',
                         'blastSearchTrack',
-                        {'start': start, 'end': end, 'hit': hit, 'accession': task, 'location':link,'db': db, 'url': ajaxurl},
+                        {'start': start, 'end': end, 'hit': hit, 'accession': task, 'location': link, 'db': db, 'url': ajaxurl},
                         {'doOnSuccess': function (json) {
 
                           if (window['blasttrack'] == "running") {

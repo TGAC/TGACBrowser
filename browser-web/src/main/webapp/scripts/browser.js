@@ -235,6 +235,7 @@ function updateJSON() {
   to = Math.ceil(parseInt(getEnd()) + partial);
 
   for (var j = 0; j < track_list.length; j++) {
+  console.log(track_list[j].name)
     if (track_list[j].graph == "true") {
 //      if (parseInt(lastStart) < parseInt(getBegin()) && parseInt(lastEnd) > parseInt(getEnd())) {
         from = Math.ceil(parseInt(getBegin()) - partial );
@@ -345,7 +346,10 @@ function addJSON(from, to, trackName, trackId) {
       var Tracklist = track_list;
       var query = jQuery('#search').val();
       for (var i = 0; i < Tracklist.length; i++) {
-        if (jQuery("#" + Tracklist[i].name + "Checkbox").is(':checked')) {
+      if(Tracklist[i].name == "blasttrack"){
+      trackToggle(Tracklist[i].name);
+      }
+        else if (jQuery("#" + Tracklist[i].name + "Checkbox").is(':checked')) {
           var trackname = Tracklist[i].name;
           var trackid = Tracklist[i].id;
           if (trackid && Tracklist[i].graph == "false") { //because graph == true is already loaded
@@ -372,6 +376,7 @@ function addJSON(from, to, trackName, trackId) {
                         }
                       }
                       trackToggle(json.name)
+                     console.log(json.name)
                     }
                     });
           }
