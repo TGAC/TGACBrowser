@@ -50,7 +50,7 @@ public interface Store<T> {
   public String getTrackDesc(String query) throws IOException;
   public List<Map> getTrackInfo() throws IOException;
   public List<Map<String, Object>> getGenes(int query, String trackId) throws IOException;
-  public JSONArray processGenes(List<Map<String, Object>> maps, long start, long end) throws IOException;
+  public JSONArray processGenes(List<Map<String, Object>> maps, long start, long end, int delta, int id, String trackId) throws IOException;
   public JSONArray getGeneGraph(int id, String trackId, long start, long end) throws IOException;
   public JSONArray getTableswithanalysis_id() throws IOException;
   public JSONArray getdbinfo() throws IOException;

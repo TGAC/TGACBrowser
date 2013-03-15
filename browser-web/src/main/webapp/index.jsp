@@ -13,7 +13,6 @@
 <%--</button>--%>
 <%--</div>--%>
 
-<span id="ruler"></span>
 
 <center>
 

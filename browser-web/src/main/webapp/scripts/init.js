@@ -22,6 +22,7 @@ function onLoad() {
 
   jQuery(document).ready(function () {
     if (jQuery.browser.msie) {
+      jQuery("#alertDiv").html("<img src=\"images/browser/alert.gif\" alt=\"\">Internet Explorer detected. Please use Google Chrome, Safari or Mozilla Firefox");
       jQuery("#alertDiv").show();
     }
     else {

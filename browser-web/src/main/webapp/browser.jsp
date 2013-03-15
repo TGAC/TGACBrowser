@@ -6,10 +6,9 @@
     <div class="fakediv">
 
         <div id=sessionid></div>
-        <div id=alertDiv><img src="images/browser/alert.gif" alt="">Internet Explorer detected. Please use Google Chrome
-            or
-            Mozilla Firefox
+        <div id=alertDiv>
         </div>
+        <div id="notifier" class="rightAlertdiv"></div>
     </div>
     <div id="seqname"></div>
     <div id="currentposition"></div>
@@ -546,6 +545,8 @@
 
 
 </div>
+
+<span id="ruler"></span>
 
 <script>
     jQuery(document).ready(function () {

@@ -155,6 +155,7 @@ public class DnaSequenceService {
         response.put(trackName, SamBamService.getSamBam(start, end, delta, trackId, seqName));
       }
       else if (trackId.indexOf("cs") >= 0) {
+//        graph code
         response.put(trackName, sequenceStore.getAssembly(queryid, trackId, delta));
       }
       else if (sequenceStore.getLogicNameByAnalysisId(Integer.parseInt(trackId)).matches("(?i).*repeat.*")) {
@@ -171,7 +172,7 @@ public class DnaSequenceService {
         log.info("gene"+trackName);
         if (sequenceStore.countGene(queryid, trackId, start, end) < 5000) {
           log.info("gene"+sequenceStore.countGene(queryid, trackId, start, end));
-          response.put(trackName, sequenceStore.processGenes(sequenceStore.getGenes(queryid, trackId), start, end));
+          response.put(trackName, sequenceStore.processGenes(sequenceStore.getGenes(queryid, trackId), start, end, delta, queryid, trackId));
         }
         else {
           response.put("type", "graph");

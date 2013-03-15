@@ -98,9 +98,11 @@ body {
 #alertDiv {
     float: left;
     width: 40%;
-    color: red;
+    /*color: ;*/
     /*margin: -25px 5px 0 0;*/
 }
+
+
 
 
 h1 {

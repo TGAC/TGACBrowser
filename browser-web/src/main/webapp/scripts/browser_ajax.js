@@ -83,6 +83,8 @@ var processTaskSubmission = function (json) {
 };
 
 function checkTask(task, db, format, start, end, hit, link) {
+  jQuery("#alertDiv").html("BLAST running");
+  jQuery("#alertDiv").show();
   Fluxion.doAjax(
           'blastservice',
           'checkTask',
@@ -100,6 +102,8 @@ function checkTask(task, db, format, start, end, hit, link) {
                         {'doOnSuccess': function (json) {
                           jQuery('#blastresult').html(json.html);
                           jQuery("#blasttable").tablesorter();
+                          jQuery("#alertDiv").hide()
+
                         }
                         });
               }
@@ -109,7 +113,7 @@ function checkTask(task, db, format, start, end, hit, link) {
                         'blastSearchTrack',
                         {'start': start, 'end': end, 'hit': hit, 'accession': task, 'location': link, 'db': db, 'url': ajaxurl},
                         {'doOnSuccess': function (json) {
-
+                          jQuery("#alertDiv").hide()
                           if (window['blasttrack'] == "running") {
                             window['blasttrack'] = json.blast;//(decodeURIComponent(json.blast.replace(/\s+/g, ""))).replace(/>/g, "");
                           }
@@ -190,8 +194,14 @@ function seqregionSearchPopup(query, from, to, blast) {
 
               minWidth = findminwidth();
               if (from && to) {
-                setBegin(from);
-                setEnd(parseInt(to));
+                if (from < to) {
+                  setBegin(from);
+                  setEnd(parseInt(to));
+                }
+                else {
+                  setBegin(to);
+                  setEnd(parseInt(from));
+                }
               }
               else {
                 setBegin((sequencelength - minWidth) / 2);

@@ -279,7 +279,7 @@ public class BlastService {
 
 
               if (location.length() > 0) {
-                eachBlast.put("desc", " <a target='_blank' href='../" + location + "/index.jsp?query=" + hit_id + "&blast='>"
+                eachBlast.put("desc", " <a target='_blank' href='../" + location + "/index.jsp?query=" + hit_id + "&from=" + hsp_from + "&to=" + hsp_to + "'>"
                                       + hit_id + "</a>");
               }
               else {

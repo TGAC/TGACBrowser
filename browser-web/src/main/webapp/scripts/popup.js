@@ -54,7 +54,7 @@ function newpopup(track, i, j) {
     jQuery("#flagTrack").html('<span title="Flag" class="ui-button ui-icon ui-icon-flag" onclick=flagTrack(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
     jQuery("#Ensemblme").html("");
     jQuery("#revertme").html('<span title="Revert_Name" class="ui-button ui-icon ui-icon-arrowreturnthick-1-w" onclick=revertTrack(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
-    jQuery("#Detail").html(stringTrim(window[track][i].trasncript[j].desc+"("+window[track][i].desc+")", width));
+    jQuery("#Detail").html(stringTrim(window[track][i].transcript[j].desc+"("+window[track][i].desc+")", width));
 
   }
   else {

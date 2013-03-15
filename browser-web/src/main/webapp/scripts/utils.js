@@ -33,6 +33,10 @@ function visualLength(temp) {
   var ruler = $("ruler");
   var inLength = 0;
   var tempStr = "";
+  ruler.innerHTML = "N";
+  inLength = ruler.offsetWidth * temp;
+  return inLength;
+/*
   if ((temp / 10000) >= 1) {
     for (var i = 0; i < 10000; i++) {
       tempStr += "N";
@@ -52,15 +56,15 @@ function visualLength(temp) {
   ruler.innerHTML = tempStr;
   inLength += ruler.offsetWidth;
   ruler.innerHTML = "";
-  return inLength;
+  return inLength;*/
 }
 
 function findminwidth() {
   maxLen = jQuery("#canvas").css("width");
   var len = visualLength(sequencelength);
-  var seqWidth = Math.ceil((parseFloat(maxLen)) * sequencelength / parseFloat(len));
+  var seqWidth = parseFloat(maxLen) * sequencelength / parseFloat(len);
   deltaWidth = parseInt(sequencelength) * 2 / parseInt(maxLen);
-  return seqWidth;
+  return parseInt(seqWidth);
 }
 function browser_coordinates() {
 

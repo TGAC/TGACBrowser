@@ -53,7 +53,7 @@ public class SQLSequenceDAO implements SequenceStore {
   public static final String GET_DISPLAYLABLE_FROM_ANALYSIS_ID = "SELECT display_label FROM analysis_description where analysis_id =?";
   public static final String GET_SEQ_FROM_SEQ_REGION_ID = "SELECT sequence FROM dna WHERE seq_region_id = ?";
   public static final String GET_SEQ_REGION_ID_FROM_NAME = "SELECT seq_region_id FROM seq_region WHERE name like ? limit 1";
-  public static final String GET_SEQ_REGION_ID_SEARCH = "SELECT * FROM seq_region WHERE name like ?";
+  public static final String GET_SEQ_REGION_ID_SEARCH = "SELECT * FROM seq_region WHERE name like ? limit 100";
   public static final String GET_GENE_SEARCH = "SELECT * FROM gene WHERE description like ?";
   public static final String GET_TRANSCRIPT_SEARCH = "SELECT * FROM transcript WHERE description like ?";
   public static final String GET_SEQ_REGION_NAME_FROM_ID = "SELECT name FROM seq_region WHERE seq_region_id = ?";
@@ -106,8 +106,7 @@ public class SQLSequenceDAO implements SequenceStore {
   public static final String GET_GO_for_Transcripts = "select value from transcript_attrib where transcript_id =  ?";
   public static final String GET_GO_for_Genes = "select value from gene_attrib where gene_id = ?";
   public static final String GET_Assembly_for_reference = "SELECT * FROM assembly where asm_seq_region_id =?";
-
-
+  public static final String GET_GENE_SIZE = "SELECT COUNT(*) FROM gene where seq_region_id =? and analysis_id = ?";
 
 
   private JdbcTemplate template;
@@ -519,31 +518,32 @@ public class SQLSequenceDAO implements SequenceStore {
   }
 
   public JSONArray getRepeatGraph(int id, String trackId, long start, long end) throws IOException {
-      try {
-        JSONArray trackList = new JSONArray();
-        long from = start;
-        long to = 0;
-        for (int i = 1; i <= 200; i++) {
-          JSONObject eachTrack = new JSONObject();
-          to = start + (i * (end - start) / 200);
-          int no_of_tracks = template.queryForObject(GET_REPEAT_SIZE_SLICE, new Object[]{id, trackId, from, to}, Integer.class);
-          eachTrack.put("start", from);
-          eachTrack.put("end", to);
-          eachTrack.put("graph", no_of_tracks);
-          trackList.add(eachTrack);
-          from = to;
-        }
-        return trackList;
+    try {
+      JSONArray trackList = new JSONArray();
+      long from = start;
+      long to = 0;
+      for (int i = 1; i <= 200; i++) {
+        JSONObject eachTrack = new JSONObject();
+        to = start + (i * (end - start) / 200);
+        int no_of_tracks = template.queryForObject(GET_REPEAT_SIZE_SLICE, new Object[]{id, trackId, from, to}, Integer.class);
+        eachTrack.put("start", from);
+        eachTrack.put("end", to);
+        eachTrack.put("graph", no_of_tracks);
+        trackList.add(eachTrack);
+        from = to;
       }
-      catch (EmptyResultDataAccessException e) {
-        throw new IOException("getHit no result found");
-      }
+      return trackList;
     }
-  public int countRepeat(int id, String trackId, long start, long end) {
-      return template.queryForObject(GET_REPEAT_SIZE_SLICE, new Object[]{id, trackId, start, end}, Integer.class);
+    catch (EmptyResultDataAccessException e) {
+      throw new IOException("getHit no result found");
     }
+  }
 
-    //  @Cacheable(cacheName = "hitCache",
+  public int countRepeat(int id, String trackId, long start, long end) {
+    return template.queryForObject(GET_REPEAT_SIZE_SLICE, new Object[]{id, trackId, start, end}, Integer.class);
+  }
+
+  //  @Cacheable(cacheName = "hitCache",
   //             keyGenerator = @KeyGenerator(
   //                     name = "HashCodeCacheKeyGenerator",
   //                     properties = {
@@ -552,64 +552,64 @@ public class SQLSequenceDAO implements SequenceStore {
   //                     }
   //             )
   //  )
-    public List<Map<String, Object>> getRepeat(int id, String trackId, long start, long end) throws IOException {
-      return template.queryForList(GET_REPEAT, new Object[]{id, trackId, start, end, start, end, end, end, start, start});
-    }
+  public List<Map<String, Object>> getRepeat(int id, String trackId, long start, long end) throws IOException {
+    return template.queryForList(GET_REPEAT, new Object[]{id, trackId, start, end, start, end, end, end, start, start});
+  }
 
-    public JSONArray processRepeat(List<Map<String, Object>> maps, long start, long end, int delta, int id, String trackId) throws IOException {
-      try {
-        JSONArray trackList = new JSONArray();
+  public JSONArray processRepeat(List<Map<String, Object>> maps, long start, long end, int delta, int id, String trackId) throws IOException {
+    try {
+      JSONArray trackList = new JSONArray();
 
-        List<Integer> ends = new ArrayList<Integer>();
-        ends.add(0, 0);
+      List<Integer> ends = new ArrayList<Integer>();
+      ends.add(0, 0);
 
-        if (template.queryForObject(GET_REPEAT_SIZE, new Object[]{id, trackId}, Integer.class) > 0) {
-          if (maps.size() > 0) {
-            if (Integer.parseInt(maps.get(0).get("end").toString()) - Integer.parseInt(maps.get(0).get("start").toString()) > 1) {
-              for (Map<String, Object> map : maps) {
-                int start_pos = Integer.parseInt(map.get("start").toString());
-                int end_pos = Integer.parseInt(map.get("end").toString());
-                if (start_pos >= start && end_pos <= end || start_pos <= start && end_pos >= end || end_pos >= start && end_pos <= end || start_pos >= start && start_pos <= end) {
-                  for (int i = 0; i < ends.size(); i++) {
-                              if (start_pos - ends.get(i) > delta) {
-                                ends.remove(i);
-                                ends.add(i, end_pos);
-                                map.put("layer", i + 1);
+      if (template.queryForObject(GET_REPEAT_SIZE, new Object[]{id, trackId}, Integer.class) > 0) {
+        if (maps.size() > 0) {
+          if (Integer.parseInt(maps.get(0).get("end").toString()) - Integer.parseInt(maps.get(0).get("start").toString()) > 1) {
+            for (Map<String, Object> map : maps) {
+              int start_pos = Integer.parseInt(map.get("start").toString());
+              int end_pos = Integer.parseInt(map.get("end").toString());
+              if (start_pos >= start && end_pos <= end || start_pos <= start && end_pos >= end || end_pos >= start && end_pos <= end || start_pos >= start && start_pos <= end) {
+                for (int i = 0; i < ends.size(); i++) {
+                  if (start_pos - ends.get(i) > delta) {
+                    ends.remove(i);
+                    ends.add(i, end_pos);
+                    map.put("layer", i + 1);
 
-                                break;
-                              }
-                              else if ((start_pos - ends.get(i) < delta) && (i + 1) == ends.size()) {
-                                if (i == 0) {
+                    break;
+                  }
+                  else if ((start_pos - ends.get(i) < delta) && (i + 1) == ends.size()) {
+                    if (i == 0) {
 //                                  read.put("layer", ends.size());
-                                  ends.add(i, end_pos);
-                                }
-                                else {
-                                  map.put("layer", ends.size());
-                                  ends.add(ends.size(), end_pos);
-                                }
-                                break;
-                              }
-                              else {
-                                continue;
-                              }
-                            }
-                  log.info(map.get("strand")+"");
-
-                  trackList.add(map);
+                      ends.add(i, end_pos);
+                    }
+                    else {
+                      map.put("layer", ends.size());
+                      ends.add(ends.size(), end_pos);
+                    }
+                    break;
+                  }
+                  else {
+                    continue;
+                  }
                 }
+                log.info(map.get("strand") + "");
+
+                trackList.add(map);
               }
             }
           }
         }
-        else {
-          trackList.add("getHit no result found");
-        }
-        return trackList;
       }
-      catch (EmptyResultDataAccessException e) {
-        throw new IOException("getHit no result found");
+      else {
+        trackList.add("getHit no result found");
       }
+      return trackList;
     }
+    catch (EmptyResultDataAccessException e) {
+      throw new IOException("getHit no result found");
+    }
+  }
 
   public JSONArray getAssembly(int id, String trackId, int delta) throws IOException {
     try {
@@ -795,8 +795,8 @@ public class SQLSequenceDAO implements SequenceStore {
 
   public List<Map<String, Object>> getTranscriptsGO(String transcriptId) throws IOException {
 
-       return template.queryForList(GET_GO_for_Transcripts, new Object[]{transcriptId});//template.queryForList(GET_Gene_by_view, new Object[]{id, trackId});
-     }
+    return template.queryForList(GET_GO_for_Transcripts, new Object[]{transcriptId});//template.queryForList(GET_Gene_by_view, new Object[]{id, trackId});
+  }
 
 
 //  @Cacheable(cacheName = "geneGoCache",
@@ -811,124 +811,130 @@ public class SQLSequenceDAO implements SequenceStore {
 
   public List<Map<String, Object>> getGenesGO(String geneId) throws IOException {
 
-      return template.queryForList(GET_GO_for_Genes, new Object[]{geneId});//template.queryForList(GET_Gene_by_view, new Object[]{id, trackId});
-    }
+    return template.queryForList(GET_GO_for_Genes, new Object[]{geneId});//template.queryForList(GET_Gene_by_view, new Object[]{id, trackId});
+  }
 
-  public JSONArray processGenes(List<Map<String, Object>> genes, long start, long end) throws IOException {
+  public JSONArray processGenes(List<Map<String, Object>> genes, long start, long end, int delta, int id, String trackId) throws IOException {
 
     try {
-      JSONArray filteredgenes = new JSONArray();
       JSONArray GeneList = new JSONArray();
-      JSONObject eachGene = new JSONObject();
-      JSONObject eachTrack = new JSONObject();
-      JSONArray exonList = new JSONArray();
-      JSONArray transcriptList = new JSONArray();
-      String gene_id = "";
-      String transcript_id = "";
-      int layer = 1;
-      int lastsize = 0;
-      int thissize = 0;
-      List<Map<String, Object>> domains;
-      List<Map<String, Object>> translation_start;
-      List<Map<String, Object>> translation_end;
+
+      if (template.queryForObject(GET_GENE_SIZE, new Object[]{id, trackId}, Integer.class) > 0) {
+        JSONArray filteredgenes = new JSONArray();
+        JSONObject eachGene = new JSONObject();
+        JSONObject eachTrack = new JSONObject();
+        JSONArray exonList = new JSONArray();
+        JSONArray transcriptList = new JSONArray();
+        String gene_id = "";
+        String transcript_id = "";
+        int layer = 1;
+        int lastsize = 0;
+        int thissize = 0;
+        List<Map<String, Object>> domains;
+        List<Map<String, Object>> translation_start;
+        List<Map<String, Object>> translation_end;
 
 
-      for (Map gene : genes) {
-        int start_pos = Integer.parseInt(gene.get("gene_start").toString());
-        int end_pos = Integer.parseInt(gene.get("gene_end").toString());
-        if (start_pos >= start && end_pos <= end || start_pos <= start && end_pos >= end || end_pos >= start && end_pos <= end || start_pos >= start && start_pos <= end) {
-          filteredgenes.add(filteredgenes.size(), gene);
+        for (Map gene : genes) {
+          int start_pos = Integer.parseInt(gene.get("gene_start").toString());
+          int end_pos = Integer.parseInt(gene.get("gene_end").toString());
+          if (start_pos >= start && end_pos <= end || start_pos <= start && end_pos >= end || end_pos >= start && end_pos <= end || start_pos >= start && start_pos <= end) {
+            filteredgenes.add(filteredgenes.size(), gene);
+          }
         }
-      }
-      for (int i = 0; i < filteredgenes.size(); i++) {
+        for (int i = 0; i < filteredgenes.size(); i++) {
 
-        if (!transcript_id.equalsIgnoreCase(filteredgenes.getJSONObject(i).get("transcript_id").toString())) {
-          if (!transcript_id.equalsIgnoreCase("")) {
-            eachTrack.put("Exons", exonList);
-            transcriptList.add(eachTrack);
-          }
-          transcript_id = filteredgenes.getJSONObject(i).get("transcript_id").toString();
-          exonList = new JSONArray();
+          if (!transcript_id.equalsIgnoreCase(filteredgenes.getJSONObject(i).get("transcript_id").toString())) {
+            if (!transcript_id.equalsIgnoreCase("")) {
+              eachTrack.put("Exons", exonList);
+              transcriptList.add(eachTrack);
+            }
+            transcript_id = filteredgenes.getJSONObject(i).get("transcript_id").toString();
+            exonList = new JSONArray();
 
-          eachTrack = new JSONObject();
+            eachTrack = new JSONObject();
 
-          eachTrack.put("id", filteredgenes.getJSONObject(i).get("transcript_id"));
-          eachTrack.put("start", filteredgenes.getJSONObject(i).get("transcript_start"));
-          eachTrack.put("end", filteredgenes.getJSONObject(i).get("transcript_end"));
+            eachTrack.put("id", filteredgenes.getJSONObject(i).get("transcript_id"));
+            eachTrack.put("start", filteredgenes.getJSONObject(i).get("transcript_start"));
+            eachTrack.put("end", filteredgenes.getJSONObject(i).get("transcript_end"));
 
-          translation_start =  template.queryForList(GET_CDS_start_per_Gene, new Object[]{filteredgenes.getJSONObject(i).get("transcript_id").toString()});
-          translation_end =   template.queryForList(GET_CDS_end_per_Gene, new Object[]{filteredgenes.getJSONObject(i).get("transcript_id").toString()});
-          for (Map start_seq : translation_start) {
-             eachTrack.put("transcript_start", start_seq.get("seq_start"));
+            translation_start = template.queryForList(GET_CDS_start_per_Gene, new Object[]{filteredgenes.getJSONObject(i).get("transcript_id").toString()});
+            translation_end = template.queryForList(GET_CDS_end_per_Gene, new Object[]{filteredgenes.getJSONObject(i).get("transcript_id").toString()});
+            for (Map start_seq : translation_start) {
+              eachTrack.put("transcript_start", start_seq.get("seq_start"));
 
-          }
+            }
 
-          for (Map end_seq : translation_end) {
-            eachTrack.put("transcript_end",end_seq.get("seq_end"));
+            for (Map end_seq : translation_end) {
+              eachTrack.put("transcript_end", end_seq.get("seq_end"));
 
-                    }
-          eachTrack.put("desc", filteredgenes.getJSONObject(i).get("transcript_name"));
+            }
+            eachTrack.put("desc", filteredgenes.getJSONObject(i).get("transcript_name"));
 
-          eachTrack.put("layer", layer);
-          eachTrack.put("domain", 0);
-          domains = getTranscriptsGO(filteredgenes.getJSONObject(i).get("transcript_id").toString());
-          for (Map domain : domains) {
-            eachTrack.put("domain", domain.get("value"));
-          }
+            eachTrack.put("layer", layer);
+            eachTrack.put("domain", 0);
+            domains = getTranscriptsGO(filteredgenes.getJSONObject(i).get("transcript_id").toString());
+            for (Map domain : domains) {
+              eachTrack.put("domain", domain.get("value"));
+            }
 //          log.info("transcript "+filteredgenes.getJSONObject(i).get("transcript_id"));
-          eachTrack.put("flag", false);
+            eachTrack.put("flag", false);
+          }
+          if (!gene_id.equalsIgnoreCase(filteredgenes.getJSONObject(i).get("gene_id").toString())) {
+            if (!gene_id.equalsIgnoreCase("")) {
+              eachGene.put("transcript", transcriptList);
+              GeneList.add(eachGene);
+            }
+            gene_id = filteredgenes.getJSONObject(i).get("gene_id").toString();
+            transcriptList = new JSONArray();
+            eachGene.put("id", filteredgenes.getJSONObject(i).get("gene_id"));
+            eachGene.put("start", filteredgenes.getJSONObject(i).get("gene_start"));
+            eachGene.put("end", filteredgenes.getJSONObject(i).get("gene_end"));
+            eachGene.put("desc", filteredgenes.getJSONObject(i).get("gene_name"));
+            eachGene.put("strand", filteredgenes.getJSONObject(i).get("gene_strand"));
+            eachGene.put("layer", i % 2 + 1);
+            eachGene.put("domain", 0);
+            domains = getGenesGO(filteredgenes.getJSONObject(i).get("gene_id").toString());
+            for (Map domain : domains) {
+              eachGene.put("domain", domain.get("value"));
+            }
+            if (lastsize < 2 && layer > 2) {
+              layer = 1;
+            }
+            else {
+              layer = layer;
+            }
+
+            if (thissize > 1) {
+              layer = 1;
+            }
+            layer++;
+            log.info("gene " + filteredgenes.getJSONObject(i).get("gene_id"));
+
+          }
+
+
+          JSONObject eachExon = new JSONObject();
+          eachExon.put("id", filteredgenes.getJSONObject(i).get("exon_id"));
+          eachExon.put("start", filteredgenes.getJSONObject(i).get("exon_start"));
+          eachExon.put("end", filteredgenes.getJSONObject(i).get("exon_end"));
+          exonList.add(eachExon);
+
+          lastsize = thissize;
         }
-        if (!gene_id.equalsIgnoreCase(filteredgenes.getJSONObject(i).get("gene_id").toString())) {
-          if (!gene_id.equalsIgnoreCase("")) {
-            eachGene.put("transcript", transcriptList);
-            GeneList.add(eachGene);
-          }
-          gene_id = filteredgenes.getJSONObject(i).get("gene_id").toString();
-          transcriptList = new JSONArray();
-          eachGene.put("id", filteredgenes.getJSONObject(i).get("gene_id"));
-          eachGene.put("start", filteredgenes.getJSONObject(i).get("gene_start"));
-          eachGene.put("end", filteredgenes.getJSONObject(i).get("gene_end"));
-          eachGene.put("desc", filteredgenes.getJSONObject(i).get("gene_name"));
-          eachGene.put("strand", filteredgenes.getJSONObject(i).get("gene_strand"));
-          eachGene.put("layer", i % 2 + 1);
-          eachGene.put("domain", 0);
-          domains = getGenesGO(filteredgenes.getJSONObject(i).get("gene_id").toString());
-          for (Map domain : domains) {
-            eachGene.put("domain", domain.get("value"));
-          }
-          if (lastsize < 2 && layer > 2) {
-            layer = 1;
-          }
-          else {
-            layer = layer;
-          }
 
-          if (thissize > 1) {
-            layer = 1;
-          }
-          layer++;
-          log.info("gene "+filteredgenes.getJSONObject(i).get("gene_id"));
-
+        if (filteredgenes.size() > 0) {
+          eachTrack.put("Exons", exonList);
+          transcriptList.add(eachTrack);
+          eachGene.put("transcript", transcriptList);
+          GeneList.add(eachGene);
         }
 
 
-        JSONObject eachExon = new JSONObject();
-        eachExon.put("id", filteredgenes.getJSONObject(i).get("exon_id"));
-        eachExon.put("start", filteredgenes.getJSONObject(i).get("exon_start"));
-        eachExon.put("end", filteredgenes.getJSONObject(i).get("exon_end"));
-        exonList.add(eachExon);
-
-        lastsize = thissize;
       }
-
-      if (filteredgenes.size() > 0) {
-        eachTrack.put("Exons", exonList);
-        transcriptList.add(eachTrack);
-        eachGene.put("transcript", transcriptList);
-        GeneList.add(eachGene);
+      else {
+        GeneList.add("getGene no result found");
       }
-
-
       return GeneList;
     }
     catch (EmptyResultDataAccessException e) {
@@ -1045,7 +1051,7 @@ public class SQLSequenceDAO implements SequenceStore {
   public String getDisplayableByAnalysisId(String id) throws IOException {
     try {
       String str = template.queryForObject(GET_DISPLAYABLE_FROM_ANALYSIS_ID, new Object[]{id}, String.class);
-      log.info(id+"\t"+str);
+      log.info(id + "\t" + str);
 
       return str;
     }
@@ -1138,57 +1144,114 @@ public class SQLSequenceDAO implements SequenceStore {
 
 
   public String getSeqLevel(String query, int from, int to) throws IOException {
-     System.out.println("get seq level" + query + ":" + from + ":" + to);
+    System.out.println("get seq level" + query + ":" + from + ":" + to);
 
-     String seq = "";
-     try {
+    String seq = "";
+    try {
 
-       seq = template.queryForObject(GET_Seq_API, new Object[]{query}, String.class);
-       System.out.println("get seq level" + query + ":" + from + ":" + to);
-       System.out.println("\n\nget seq level length " + seq.substring(from, to).length());
+      seq = template.queryForObject(GET_Seq_API, new Object[]{query}, String.class);
+      System.out.println("get seq level" + query + ":" + from + ":" + to);
+      System.out.println("\n\nget seq level length " + seq.substring(from, to).length());
 
-       return seq.substring(from, to);
-     }
-     catch (EmptyResultDataAccessException e) {
-       return "";
-     }
-   }
+      return seq.substring(from, to);
+    }
+    catch (EmptyResultDataAccessException e) {
+      return "";
+    }
+  }
 
 
   public String getSeqRecursive(String query, int from, int to, int asm_from, int asm_to) throws IOException {
 
-      System.out.println("get seq recursive " + query + ":" + from + ":" + to);
+    System.out.println("get seq recursive " + query + ":" + from + ":" + to);
 
-      try {
-        String seq = "";
+    try {
+      String seq = "";
 
-        List<Map<String, Object>> maps = template.queryForList(GET_SEQS_LIST_API, new Object[]{query, from, to, from, to, from, to, from, to});
-        for (Map map : maps) {
-          String query_coord_temp = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{map.get("cmp_seq_region_id")}, String.class);
-          String attrib_temp = template.queryForObject(GET_coord_attrib, new Object[]{query_coord_temp}, String.class);
-          if (attrib_temp.indexOf("sequence") >= 0) {
-            int asm_start = Integer.parseInt(map.get("asm_start").toString());
-            int asm_end = Integer.parseInt(map.get("asm_end").toString());
-            int start_cmp = Integer.parseInt(map.get("cmp_start").toString());
-            int end_cmp = Integer.parseInt(map.get("cmp_end").toString());
-            int start_temp;
-            int end_temp;
-            if (from <= asm_start) {
-              start_temp = start_cmp;
-            }
-            else {
-              start_temp = end_cmp - (asm_end - from) + 1;
-            }
-            if (to >= asm_end) {
-              end_temp = end_cmp;
-            }
-            else {
-              end_temp = to - asm_start + 1;
-            }
-            seq += getSeqLevel(map.get("cmp_seq_region_id").toString(), start_temp, end_temp);
+      List<Map<String, Object>> maps = template.queryForList(GET_SEQS_LIST_API, new Object[]{query, from, to, from, to, from, to, from, to});
+      for (Map map : maps) {
+        String query_coord_temp = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{map.get("cmp_seq_region_id")}, String.class);
+        String attrib_temp = template.queryForObject(GET_coord_attrib, new Object[]{query_coord_temp}, String.class);
+        if (attrib_temp.indexOf("sequence") >= 0) {
+          int asm_start = Integer.parseInt(map.get("asm_start").toString());
+          int asm_end = Integer.parseInt(map.get("asm_end").toString());
+          int start_cmp = Integer.parseInt(map.get("cmp_start").toString());
+          int end_cmp = Integer.parseInt(map.get("cmp_end").toString());
+          int start_temp;
+          int end_temp;
+          if (from <= asm_start) {
+            start_temp = start_cmp;
           }
           else {
+            start_temp = end_cmp - (asm_end - from) + 1;
+          }
+          if (to >= asm_end) {
+            end_temp = end_cmp;
+          }
+          else {
+            end_temp = to - asm_start + 1;
+          }
+          seq += getSeqLevel(map.get("cmp_seq_region_id").toString(), start_temp, end_temp);
+        }
+        else {
 
+          maps = template.queryForList(GET_SEQS_LIST_API, new Object[]{map.get("cmp_seq_region_id"), from, to, from, to, from, to, from, to});
+          int asm_start = Integer.parseInt(map.get("asm_start").toString());
+          int asm_end = Integer.parseInt(map.get("asm_end").toString());
+          int start_cmp = Integer.parseInt(map.get("cmp_start").toString());
+          int end_cmp = Integer.parseInt(map.get("cmp_end").toString());
+
+          if (from <= asm_start) {
+            from = start_cmp;
+          }
+          else {
+            from = from - start_cmp + 1;
+          }
+          if (to >= asm_end) {
+            to = end_cmp;
+          }
+          else {
+            to = (to - from);
+
+          }
+          seq += getSeqRecursive(map.get("cmp_seq_region_id").toString(), from, to, asm_from, asm_to);
+        }
+      }
+
+
+      return seq;
+    }
+    catch (EmptyResultDataAccessException e) {
+      return "";
+      //      throw new IOException("Sequence not found");
+    }
+  }
+
+
+  public String getSeq(String query, int from, int to) throws IOException {
+    try {
+      String seq = "";
+      String query_coord = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{query}, String.class);
+      String attrib = template.queryForObject(GET_coord_attrib, new Object[]{query_coord}, String.class);
+      System.out.println("get seq attrib " + attrib);
+      if (attrib.indexOf("sequence") >= 0) {
+        System.out.println("get seq if " + query + ":" + from + ":" + to);
+        seq = getSeqLevel(query, from, to);
+      }
+      else {
+        System.out.println("get seq else " + query + ":" + from + ":" + to);
+        List<Map<String, Object>> maps = template.queryForList(GET_SEQS_LIST_API, new Object[]{query, from, to, from, to, from, to, from, to});
+        for (Map map : maps) {
+
+          String query_coord_temp = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{map.get("cmp_seq_region_id")}, String.class);
+          String attrib_temp = template.queryForObject(GET_coord_attrib, new Object[]{query_coord_temp}, String.class);
+          System.out.println("get seq else size" + maps.size() + " - " + attrib_temp);
+
+          if (attrib_temp.indexOf("sequence") >= 0) {
+            System.out.println("get seq if " + map.get("cmp_seq_region_id") + ":" + from + ":" + to);
+            seq = getSeqLevel(map.get("cmp_seq_region_id").toString(), from, to);
+          }
+          else {
             maps = template.queryForList(GET_SEQS_LIST_API, new Object[]{map.get("cmp_seq_region_id"), from, to, from, to, from, to, from, to});
             int asm_start = Integer.parseInt(map.get("asm_start").toString());
             int asm_end = Integer.parseInt(map.get("asm_end").toString());
@@ -1199,78 +1262,21 @@ public class SQLSequenceDAO implements SequenceStore {
               from = start_cmp;
             }
             else {
-              from = from - start_cmp + 1;
+              from = from - start_cmp;
             }
             if (to >= asm_end) {
               to = end_cmp;
             }
-            else {
-              to = (to - from);
-
-            }
-            seq += getSeqRecursive(map.get("cmp_seq_region_id").toString(), from, to, asm_from, asm_to);
+            //          else {
+            //            to = (to - from);
+            //          }
+            seq += getSeqRecursive(map.get("cmp_seq_region_id").toString(), from, to, asm_start, asm_end);
           }
         }
 
 
-        return seq;
       }
-      catch (EmptyResultDataAccessException e) {
-        return "";
-  //      throw new IOException("Sequence not found");
-      }
-    }
-
-
-  public String getSeq(String query, int from, int to) throws IOException {
-    try {
-      String seq = "";
-           String query_coord = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{query}, String.class);
-           String attrib = template.queryForObject(GET_coord_attrib, new Object[]{query_coord}, String.class);
-           System.out.println("get seq attrib " + attrib);
-           if (attrib.indexOf("sequence") >= 0) {
-             System.out.println("get seq if " + query + ":" + from + ":" + to);
-             seq = getSeqLevel(query, from, to);
-           }
-           else {
-             System.out.println("get seq else " + query + ":" + from + ":" + to);
-             List<Map<String, Object>> maps = template.queryForList(GET_SEQS_LIST_API, new Object[]{query, from, to, from, to, from, to, from, to});
-             for (Map map : maps) {
-
-               String query_coord_temp = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{map.get("cmp_seq_region_id")}, String.class);
-               String attrib_temp = template.queryForObject(GET_coord_attrib, new Object[]{query_coord_temp}, String.class);
-               System.out.println("get seq else size" + maps.size() + " - " + attrib_temp);
-
-               if (attrib_temp.indexOf("sequence") >= 0) {
-                 System.out.println("get seq if " + map.get("cmp_seq_region_id") + ":" + from + ":" + to);
-                 seq = getSeqLevel(map.get("cmp_seq_region_id").toString(), from, to);
-               }
-               else {
-                 maps = template.queryForList(GET_SEQS_LIST_API, new Object[]{map.get("cmp_seq_region_id"), from, to, from, to, from, to, from, to});
-                 int asm_start = Integer.parseInt(map.get("asm_start").toString());
-                 int asm_end = Integer.parseInt(map.get("asm_end").toString());
-                 int start_cmp = Integer.parseInt(map.get("cmp_start").toString());
-                 int end_cmp = Integer.parseInt(map.get("cmp_end").toString());
-
-                 if (from <= asm_start) {
-                   from = start_cmp;
-                 }
-                 else {
-                   from = from - start_cmp;
-                 }
-                 if (to >= asm_end) {
-                   to = end_cmp;
-                 }
-     //          else {
-     //            to = (to - from);
-     //          }
-                 seq += getSeqRecursive(map.get("cmp_seq_region_id").toString(), from, to, asm_start, asm_end);
-               }
-             }
-
-
-           }
-           return seq;
+      return seq;
     }
     catch (EmptyResultDataAccessException e) {
       return "";

@@ -338,7 +338,7 @@ function dispGenes(div, track, expand) {
     jQuery("#" + track + "_wrapper").fadeIn();
 
   }
-  else if (genes[0] == "getGene no result found.") {
+  else if (genes[0] == "getGene no result found") {
     jQuery('#' + track + 'Checkbox').attr('checked', false);
     jQuery(div).html();
     jQuery(div).fadeOut();
