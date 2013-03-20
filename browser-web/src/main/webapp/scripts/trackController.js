@@ -151,12 +151,13 @@ function toogleLabelMerged() {
 
 
 function dispBLAST(div, track) {
+   console.log("blaaaaaaaaaast")
   jQuery(div).html("<img src=\"./images/browser/dna_helix_md_wm.gif\" alt=\"loading\">");
 
   var blasts = window[track];
 
   if (!window[track] || window[track] == "running") {
-    jQuery(div).html("<div align='left' class='handle'><b> Blasttrack </b> <div title='Close' class='closehandle ui-icon ui-icon-close' onclick=removeTrack(\"" + div + "\",\"" + track + "\");></div></div> <img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
+    jQuery(div).html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
     jQuery(div).fadeIn();
   }
   else if (blasts[0] == "No hits found.") {
@@ -242,6 +243,7 @@ function dispBLAST(div, track) {
       else {
         jQuery(div).css('height', (parseInt(layers * 15) + parseInt(50)));
         jQuery(div).fadeIn();
+        jQuery("#blasttrack_wrapper").fadeIn();
         if (layers == 1) {
           track_html = track_html.replace(/tracks_image/g, 'merged_tracks_image')
         }
@@ -1058,4 +1060,67 @@ function dispGraph(div, trackName, trackId) {
   jQuery("#" + trackName + "_wrapper").fadeIn();
 
   jQuery(div).html(track_html);
+}
+
+function dispGraphWig(div, trackName, trackId) {
+  var track_html = "";
+
+  jQuery(div).html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
+  jQuery(div).fadeIn();
+  jQuery("#" + trackName + "_wrapper").fadeIn();
+
+
+//  var track = window[trackName];
+var   track = sortResults('start', 'true', window[trackName])
+  var partial = (parseInt(getEnd()) - parseInt(getBegin())) / 2;
+  var start = parseInt(getBegin()) - parseInt(partial)
+  var end = parseInt(getEnd()) + parseInt(partial);
+
+  var newStart_temp = getBegin();
+  var newEnd_temp = getEnd();
+
+  if (track[0]) {
+    track = jQuery.grep(track, function (element, index) {
+      return element.start >= start && element.start <= end; // retain appropriate elements
+    });
+  }
+
+
+  var total = 0;
+  var max = Math.max.apply(Math, track.map(function (o) {
+    return o.value;
+  }));
+
+  var track_len = track.length;
+
+  while (track_len--) {
+    var track_start = track[track_len].start;
+    var track_stop = track[track_len].start;
+	if(track[track_len-1]){
+		track_stop = track[track_len-1].start;
+	}else {
+	track_stop = start;}
+//console.log(track_start+":"+track_stop)
+
+    var startposition = (track_start - newStart_temp) * parseFloat(maxLen) / (newEnd_temp - newStart_temp) + parseFloat(maxLen) / 2;
+    var stopposition = (track_stop - track_start ) * parseFloat(maxLen) / (newEnd_temp - newStart_temp);
+
+    track_html += "<div class= \"graph\" onclick=\"setBegin(" + track[track_len].start + ");setEnd(" + track[track_len].end + ");jumpToSeq();\"STYLE=\"bottom:0px; height: " + (track[track_len].value * 45 / max) + "px;" +
+                  "LEFT:" + startposition + "px;" +
+                  "width:" + (stopposition - 1) + "px \" title=\"" + track[track_len].value + "\" ></div>";
+
+  }
+//  jQuery(div).css('height', '70px');
+  jQuery(div).fadeIn();
+  jQuery("#" + trackName + "_wrapper").fadeIn();
+
+  jQuery(div).html(track_html);
+}
+
+function sortResults(prop, asc, array) {
+    array = array.sort(function(a, b) {
+        if (asc) return (a[prop] > b[prop]);
+        else return (b[prop] > a[prop]);
+    });
+   return array;
 }

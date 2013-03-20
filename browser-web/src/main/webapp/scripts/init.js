@@ -592,11 +592,11 @@ function getTracks() {
       tracks.push(eachTrack);
     }
   }
-  if (window['blasttrack'] == 'running') {
-    eachTrack = { "trackId": "running", "child": blastid, "blastdb": blastdb, 'start': start_global, 'end': end_global, 'hit': hit_global}
+  if (jQuery("#alertDiv").text().contains("BLAST")) {
+    eachTrack = { "trackId": "running", "child": blastsdata}
     tracks.push(eachTrack);
   }
-  else if ((window['blasttrack']) && !jQuery("#blasttrackCheckbox").is(':checked')) {
+  if ((window['blasttrack']) && !jQuery("#blasttrackCheckbox").is(':checked')) {
     var track = window['blasttrack'];
     eachTrack = { "trackId": 0, "child": track}
     tracks.push(eachTrack);

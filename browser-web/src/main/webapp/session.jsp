@@ -19,7 +19,6 @@
     <input type='button' value='upload' onclick="fileupload();">
     </p>
 </div>
-<span id="ruler"></span>
 
 
 <center>

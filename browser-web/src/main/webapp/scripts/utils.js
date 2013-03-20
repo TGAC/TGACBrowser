@@ -36,27 +36,27 @@ function visualLength(temp) {
   ruler.innerHTML = "N";
   inLength = ruler.offsetWidth * temp;
   return inLength;
-/*
-  if ((temp / 10000) >= 1) {
-    for (var i = 0; i < 10000; i++) {
-      tempStr += "N";
-    }
-    ruler.innerHTML = tempStr;
-    inLength += ruler.offsetWidth;
-    inLength = inLength * (temp / 10000)
-  }
+  /*
+   if ((temp / 10000) >= 1) {
+   for (var i = 0; i < 10000; i++) {
+   tempStr += "N";
+   }
+   ruler.innerHTML = tempStr;
+   inLength += ruler.offsetWidth;
+   inLength = inLength * (temp / 10000)
+   }
 
-  ruler.innerHTML = "";
-  tempStr = "";
+   ruler.innerHTML = "";
+   tempStr = "";
 
-  for (var i = 0; i < temp % 10000; i++) {
-    tempStr += "N";
-  }
+   for (var i = 0; i < temp % 10000; i++) {
+   tempStr += "N";
+   }
 
-  ruler.innerHTML = tempStr;
-  inLength += ruler.offsetWidth;
-  ruler.innerHTML = "";
-  return inLength;*/
+   ruler.innerHTML = tempStr;
+   inLength += ruler.offsetWidth;
+   ruler.innerHTML = "";
+   return inLength;*/
 }
 
 function findminwidth() {
@@ -83,12 +83,15 @@ function browser_coordinates() {
 }
 
 function trackToggle(trackname) {
+console.log(trackname)
   var index = 0;
   var graph = "false";
+var trackid = "";
   layers = jQuery("#rowoftracks").val();
   for (var i = 0; i < track_list.length; i++) {
     if (track_list[i].name == trackname) {
       index = i;
+      trackid = track_list[i].id;
     }
     if (track_list[i].name == trackname && track_list[i].graph == "true") {
       graph = "true";
@@ -107,6 +110,9 @@ function trackToggle(trackname) {
         else if (track_list[i].name.toLowerCase().indexOf("gene") >= 0) {
           dispGenes("#" + track_list[i].name + "_div", track_list[i].name, track_list[i].expand);
         }
+        else if (track_list[i].name.toLowerCase().indexOf("wig") >= 0) {
+          dispGraphWig("#" + track_list[i].name + "_div", track_list[i].name, trackid);
+        }
         else {
           dispTrack("#" + track_list[i].name + "_div", track_list[i].name);
         }
@@ -124,6 +130,9 @@ function trackToggle(trackname) {
       }
       else if (trackname.toLowerCase().indexOf("gene") >= 0) {
         dispGenes("#" + trackname + "_div", trackname, track_list[index].expand);
+      }
+      else if (trackname.toLowerCase().indexOf("wig") >= 0) { 
+        dispGraphWig("#" + trackname + "_div", trackname, trackid);
       }
       else {
         dispTrack("#" + trackname + "_div", trackname);
@@ -252,4 +261,13 @@ function stringTrim(string, width) {
   else {
     return "<span title=" + string + ">" + string.substring(0, width - 6) + "... </span>";
   }
+}
+
+function findAndRemove(array, property, value) {
+  jQuery.each(array, function (index, result) {
+    if (result[property] == value) {
+      //Remove from array
+      array.splice(index, 1);
+    }
+  });
 }

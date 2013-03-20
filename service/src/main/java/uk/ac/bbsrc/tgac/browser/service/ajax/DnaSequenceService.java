@@ -154,12 +154,15 @@ public class DnaSequenceService {
       if (trackId.contains("sam") || trackId.contains("bam")) {
         response.put(trackName, SamBamService.getSamBam(start, end, delta, trackId, seqName));
       }
+      else if (trackId.contains("wig")) {
+        response.put(trackName, SamBamService.getWig(start, end, delta, trackId, seqName));
+      }
       else if (trackId.indexOf("cs") >= 0) {
 //        graph code
         response.put(trackName, sequenceStore.getAssembly(queryid, trackId, delta));
       }
       else if (sequenceStore.getLogicNameByAnalysisId(Integer.parseInt(trackId)).matches("(?i).*repeat.*")) {
-        log.info("repeat"+trackName);
+        log.info("repeat" + trackName);
         if (sequenceStore.countRepeat(queryid, trackId, start, end) < 5000) {
           response.put(trackName, sequenceStore.processRepeat(sequenceStore.getRepeat(queryid, trackId, start, end), start, end, delta, queryid, trackId));
         }
@@ -169,9 +172,9 @@ public class DnaSequenceService {
         }
       }
       else if (sequenceStore.getLogicNameByAnalysisId(Integer.parseInt(trackId)).matches("(?i).*gene.*")) {
-        log.info("gene"+trackName);
+        log.info("gene" + trackName);
         if (sequenceStore.countGene(queryid, trackId, start, end) < 5000) {
-          log.info("gene"+sequenceStore.countGene(queryid, trackId, start, end));
+          log.info("gene" + sequenceStore.countGene(queryid, trackId, start, end));
           response.put(trackName, sequenceStore.processGenes(sequenceStore.getGenes(queryid, trackId), start, end, delta, queryid, trackId));
         }
         else {
@@ -180,7 +183,7 @@ public class DnaSequenceService {
         }
       }
       else {
-        log.info("hit"+trackName);
+        log.info("hit" + trackName);
         if (sequenceStore.countHit(queryid, trackId, start, end) < 5000) {
           response.put(trackName, sequenceStore.processHit(sequenceStore.getHit(queryid, trackId, start, end), start, end, delta, queryid, trackId));
         }
@@ -189,12 +192,17 @@ public class DnaSequenceService {
           response.put(trackName, sequenceStore.getHitGraph(queryid, trackId, start, end));
         }
       }
-      return response;
+
     }
     catch (IOException e) {
       e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
       return JSONUtils.SimpleJSONError(e.getMessage());
     }
+    catch (Exception e) {
+      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+    }
+
+    return response;
   }
 
   public JSONObject metaInfo(HttpSession session, JSONObject json) {

@@ -6,9 +6,12 @@ import net.sf.samtools.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -25,21 +28,20 @@ public class SamBamService {
     JSONArray sam = new JSONArray();
     JSONObject response = new JSONObject();
     try {
-       File inputfile = new File(trackId);
-       SAMFileReader inputSam = new SAMFileReader(inputfile);
+      File inputfile = new File(trackId);
+      SAMFileReader inputSam = new SAMFileReader(inputfile);
 
       if (trackId.indexOf("sam") >= 0) {
         inputSam = new SAMFileReader(inputfile);
       }
       else if (trackId.indexOf("bam") >= 0) {
         log.info("bam");
-        final File index = new File(trackId+".bai");
+        final File index = new File(trackId + ".bai");
         inputSam = new SAMFileReader(inputfile, index, false);
       }
 
       List<Integer> ends = new ArrayList<Integer>();
       ends.add(0, 0);
-
 
 
       for (final SAMRecord samRecord : inputSam) {
@@ -48,7 +50,7 @@ public class SamBamService {
         int start_pos = samRecord.getAlignmentStart();
         int end_pos = samRecord.getAlignmentEnd();
         String ref = samRecord.getReferenceName();
-            if (ref.equalsIgnoreCase(referece) && (start_pos >= start && end_pos <= end || start_pos <= start && end_pos >= end || end_pos >= start && end_pos <= end || start_pos >= start && start_pos <= end)) {
+        if (ref.equalsIgnoreCase(referece) && (start_pos >= start && end_pos <= end || start_pos <= start && end_pos >= end || end_pos >= start && end_pos <= end || start_pos >= start && start_pos <= end)) {
 //        if ((start_pos >= start && end_pos <= end || start_pos <= start && end_pos >= end || end_pos >= start && end_pos <= end || start_pos >= start && start_pos <= end)) {
           JSONObject read = new JSONObject();
           JSONObject cigars = new JSONObject();
@@ -101,7 +103,7 @@ public class SamBamService {
           sam.add(read);
         }
       }
-      log.info("size "+sam.size());
+      log.info("size " + sam.size());
       return sam;
     }
     catch (Exception e) {
@@ -109,6 +111,63 @@ public class SamBamService {
       response.put("error", e.toString());
       sam.add(response);
       return sam;
+    }
+  }
+
+  public static JSONArray getWig(long start, long end, int delta, String trackId, String referece) throws Exception {
+    JSONArray bed = new JSONArray();
+    boolean found = false;
+    log.info("wig");
+    try {
+      File inputfile = new File(trackId);
+
+      BufferedReader br = null;
+
+
+      String sCurrentLine;
+
+      br = new BufferedReader(new FileReader(inputfile));
+
+      while ((sCurrentLine = br.readLine()) != null) {
+        String[] line = sCurrentLine.split("\t");
+        JSONObject response = new JSONObject();
+        if ((sCurrentLine.contains("chr"))) {
+          if (sCurrentLine.contains("MAL11")) {
+            log.info(sCurrentLine+": found");
+            found = true;
+          }
+          else {
+            log.info(sCurrentLine);
+            found = false;
+          }
+        }
+        else if (found == true && line.length == 2 && (Integer.parseInt(line[0].toString()) >= start && Integer.parseInt(line[0].toString()) <= end)) {
+          response.put("start", line[0]);
+          response.put("value", line[1]);
+          bed.add(response);
+
+        }
+        else if (found == true){
+//          log.info(line.length + ":" + sCurrentLine);
+        }
+        else {
+
+        }
+      }
+      Object[] myArray = bed.toArray();
+
+      JSONArray sortedJArray = new JSONArray();
+      for (Object obj : myArray) {
+        sortedJArray.add(obj);
+      }
+      return bed;
+    }
+    catch (Exception e) {
+      JSONObject response = new JSONObject();
+      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+      response.put("error", e.toString());
+      bed.add(response);
+      return bed;
     }
   }
 

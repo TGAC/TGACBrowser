@@ -4,7 +4,7 @@ var start_global, end_global, hit_global, blastid = 0, blastdb = "", oldTracklis
 
 function blastSearch(query, blastdb) {
   var link = blastdb.split(":");
-  jQuery('#blastresult').html("<span style=\"position:relative; left:50%;\"> Blasting &nbsp; <img alt=\"Loading\" src=\"./images/browser/loading_big.gif\" style=\"position: relative;\"> </span> </div>");
+  jQuery('#blastresult').html("<span style=\"position:relative; left:50%;\"> Submitting &nbsp; <img alt=\"Loading\" src=\"./images/browser/loading_big.gif\" style=\"position: relative;\"> </span> </div>");
 
   submitBlastTask(query, blastdb, 6);
   jQuery('#main').animate({"height": "0px"}, { duration: 300, queue: false});
@@ -21,11 +21,11 @@ function blastTrackSearch(query, start, end, hit, blastdb) {
 
     jQuery("#tracks").append("<div id='blasttrack_div' class='feature_tracks'> Blast Track </div>");
 
-    jQuery("#blasttrack_div").html("<div align='left' class='handle'><b> Blasttrack </b> <div title='Close' class='closehandle ui-icon ui-icon-close' onclick=removeTrack(\"blasttrack_div\",\"blasttrack\");></div></div> <img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
+    jQuery("#blasttrack_div").html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
     jQuery("#blasttrack_div").fadeIn();
 
     track_list.push(
-            {name: "blasttrack", id: 0, desc: "blast from browser", disp: 1, merge: 0}
+            {name: "blasttrack", display_label: "blasttrack", id: 0, desc: "blast from browser", disp: 1, merge: 0}
     );
     window['blasttrack'] = "running";
     //delete window['blasttrack'];
@@ -59,7 +59,11 @@ function submitBlastTask(query, db, format, start, end, hit) {
           {
             id: id,
             start: start,
-            end: end
+            end: end,
+            db: blastdb,
+            hit: hit,
+            link: link,
+            format: format
           });
 
   ajaxurl = '/' + jQuery('#title').text() + '/' + jQuery('#title').text() + '/fluxion.ajax';
@@ -83,7 +87,8 @@ var processTaskSubmission = function (json) {
 };
 
 function checkTask(task, db, format, start, end, hit, link) {
-  jQuery("#alertDiv").html("BLAST running");
+  console.log(task + "," + db + "," + format + "," + start + "," + end + "," + hit + "," + link)
+  jQuery("#alertDiv").html("<img src='images/browser/loading2.gif' height='10px'> BLAST running ");
   jQuery("#alertDiv").show();
   Fluxion.doAjax(
           'blastservice',
@@ -92,8 +97,15 @@ function checkTask(task, db, format, start, end, hit, link) {
           {'ajaxType': 'periodical', 'updateFrequency': 5, 'doOnSuccess': function (json) {
             if (json.result == 'FAILED') {
               alert('Blast search: ' + json.result);
+              jQuery("#alertDiv").hide();
+              jQuery("#alertDiv").html("");
+
+            }
+            else if (json.result == 'RUNNING') {
+              jQuery('#blastresult').html("<span style=\"position:relative; left:50%;\"> BLASTing &nbsp; <img alt=\"Loading\" src=\"./images/browser/loading_big.gif\" style=\"position: relative;\"> </span> </div>");
             }
             else if (json.result == 'COMPLETED') {
+              jQuery('#blastresult').html("<span style=\"position:relative; left:50%;\"> Completed Processing &nbsp; <img alt=\"Loading\" src=\"./images/browser/loading_big.gif\" style=\"position: relative;\"> </span> </div>");
               if (format == 6) {
                 Fluxion.doAjax(
                         'blastservice',
@@ -103,7 +115,7 @@ function checkTask(task, db, format, start, end, hit, link) {
                           jQuery('#blastresult').html(json.html);
                           jQuery("#blasttable").tablesorter();
                           jQuery("#alertDiv").hide()
-
+                          jQuery("#alertDiv").html("");
                         }
                         });
               }
@@ -114,6 +126,12 @@ function checkTask(task, db, format, start, end, hit, link) {
                         {'start': start, 'end': end, 'hit': hit, 'accession': task, 'location': link, 'db': db, 'url': ajaxurl},
                         {'doOnSuccess': function (json) {
                           jQuery("#alertDiv").hide()
+                          jQuery("#alertDiv").html("");
+                          findAndRemove(blastsdata, 'id', task);
+                          if (!window['blasttrack']) {
+                            console.log("not defined")
+                            window['blasttrack'] = "running";
+                          }
                           if (window['blasttrack'] == "running") {
                             window['blasttrack'] = json.blast;//(decodeURIComponent(json.blast.replace(/\s+/g, ""))).replace(/>/g, "");
                           }
@@ -185,8 +203,9 @@ function seqregionSearchPopup(query, from, to, blast) {
               if (tracks[0].length) {
                 for (var i = 0; i < tracks.length; i++) {
                   var filename = tracks[i].substring(tracks[i].lastIndexOf("/") + 1, tracks[i].lastIndexOf("."));
+                  var type = tracks[i].substring(tracks[i].lastIndexOf(".") + 1, tracks[i].length);
                   track_list.push(
-                          {name: filename, id: tracks[i], desc: "loaded Sam", disp: 1, merge: 0, graph: "false", display_lable: tracks[i], label: 0}
+                          {name: filename + "_" + type, id: tracks[i], desc: "loaded Sam", disp: 1, merge: 0, graph: "false", display_lable: tracks[i], label: 0}
                   );
                 }
               }
@@ -425,10 +444,11 @@ function metaData() {
 
 function saveSession() {
   var tracks = getTracks();
+  var blast = jQuery("#alertDiv").text().contains("BLAST");
   Fluxion.doAjax(
           'fileService',
           'saveFile',
-          {'location': path, 'reference': seqregname, 'session': randomnumber, 'from': getBegin(), 'to': getEnd(), 'seq': seq, 'seqlen': sequencelength, 'track': track_list, 'tracks': tracks, 'filename': (randomnumber), 'url': ajaxurl},
+          {'location': path, 'reference': seqregname, 'session': randomnumber, 'from': getBegin(), 'to': getEnd(), 'seq': seq, 'seqlen': sequencelength, 'track': track_list, 'tracks': tracks, 'filename': (randomnumber), 'blast': blast, 'url': ajaxurl},
           {'doOnSuccess': function (json) {
             jQuery("#export").html("<a href=" + json.link + " target = '_blank'>Export</a>");
             jQuery("#export").css('background', "");
@@ -463,7 +483,7 @@ function loadSession(query) {
             displayCursorPosition();
             setNavPanel();
             checkSession();
-            reloadTracks(json.tracks, track_list);
+            reloadTracks(json.tracks, track_list, json.blast);
             jQuery("#controlsbutton").colorbox({width: "90%", inline: true, href: "#controlpanel"});
           }
           });
@@ -481,12 +501,13 @@ function loadSeq(query, from, to) {
           });
 }
 
-function reloadTracks(tracks, tracklist) {
+function reloadTracks(tracks, tracklist, blast) {
   for (var i = 0; i < tracklist.length; i++) {
     if (tracklist[i].disp == "1") {
       for (var j = 0; j < tracks.length; j++) {
         if (tracklist[i].id == tracks[j].trackId) {
           window[tracklist[i].name] = tracks[j].child;
+          console.log(tracklist[i].name + ":" + tracklist[i].id + "==" + tracks[j].trackId)
           jQuery('#' + tracklist[i].name + 'Checkbox').attr('checked', true);
           mergeTrackList(tracklist[i].name);
           if (tracklist[i].merge == "1") {
@@ -494,19 +515,38 @@ function reloadTracks(tracks, tracklist) {
           }
           trackToggle(tracklist[i].name);
         }
-        else if (tracks[j].trackId == "running") {
-          start_global = tracks[j].start;
-          end_global = tracks[j].end;
-          hit_global = tracks[j].hit;
-          checkTask(tracks[j].child, tracks[j].blastdb, 5);
-          window['blasttrack'] = null;
-          jQuery('input[name=blasttrackCheckbox]').attr('checked', true);
-          trackToggle('blasttrack');
-        }
+
       }
     }
+  }
+  if (blast == "true") {
+    console.log("trrrr")
+    console.log(window['blasttrack'])
 
 
+    for (var j = 0; j < tracks.length; j++) {
+      console.log(tracks[j].trackId)
+      if (tracks[j].trackId == "running") {
+        if (!window['blasttrack']) {
+          console.log("not defined")
+          window['blasttrack'] = "running";
+          jQuery("#blasttrack_div").html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
+          jQuery("#blasttrack_wrapper").fadeIn();
+          jQuery('input[name=blasttrack-0]').attr('checked', true);
+        }
+        var blasts = tracks[j].child;
+        console.log(blasts.length)
+        jQuery.each(blasts, function (index) {
+
+          checkTask(blasts[index].id, blasts[index].db, blasts[index].format, blasts[index].start, blasts[index].end, blasts[index].hit, blasts[index].link);
+        });
+
+
+        jQuery('input[name=blasttrackCheckbox]').attr('checked', true);
+        trackToggle('blasttrack');
+
+      }
+    }
   }
 }
 
@@ -550,7 +590,7 @@ function loadPreBlast(jsonid, refid) {
   }
   jQuery("#tracklist").append("<p title='blast' id=blastcheck><input type=\"checkbox\" checked id='blasttrackCheckbox' name='blasttrackCheckbox' onClick=loadTrackAjax(\"blasttrack\",\"blasttrack\");\> Blasttrack\ </p>");
   jQuery("#tracks").append("<div id='blasttrack_div' class='feature_tracks'> Blast Track </div>");
-  jQuery("#blasttrack_div").html("<div align='left' class='handle'><b> Blasttrack </b> </div> <img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
+  jQuery("#blasttrack_div").html(" <img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
   jQuery("#blasttrack_div").fadeIn();
   Fluxion.doAjax(
           'blastservice',

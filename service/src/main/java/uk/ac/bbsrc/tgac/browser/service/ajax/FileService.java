@@ -60,6 +60,9 @@ public class FileService {
     String tracks = json.getString("tracks");
     String filename = json.getString("filename");
     String location = json.getString("location");
+    String blast = json.getString("blast");
+    log.info(json.toString());
+    log.info(tracks);
 
     JSONObject response = new JSONObject();
     try {
@@ -72,6 +75,7 @@ public class FileService {
       response.put("seq", seq);
       response.put("tracklist", track);
       response.put("tracks", tracks);
+      response.put("blast", blast);
       out.write(response.toString());
       out.close();
       response.put("link", "temp/" + filename + ".json");
