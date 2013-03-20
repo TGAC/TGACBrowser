@@ -74,9 +74,6 @@ public class BlastToLSF extends AbstractTgacLsfProcess {
   protected String getCommand(Map<ConanParameter, String> parameters) {
     try {
       String blastBinary = "/data/workarea/bianx/blast+/blastn ";
-   //   String blastDB = "/usr/users/ga002/thankia/choblastdb/TGAC_CHO_v2.0_COMPLETE.fa";
-//      String fasta = "/usr/users/tgac/bianx/temp.fasta";
-      //String execBlast = blastBinary + " -db " + blastDB + " -query " + fasta + "  -outfmt 5 -task blastn -max_target_seqs 10";
       getLog().debug("Executing " + getName() + " with the following parameters: " + parameters.toString());
 
       StringBuilder sb = new StringBuilder();
