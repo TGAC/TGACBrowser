@@ -173,7 +173,7 @@ public class DnaSequenceService {
       }
       else if (sequenceStore.getLogicNameByAnalysisId(Integer.parseInt(trackId)).matches("(?i).*gene.*")) {
         log.info("gene" + trackName);
-        if (sequenceStore.countGene(queryid, trackId, start, end) < 5000) {
+        if (sequenceStore.countGene(queryid, trackId, start, end) < 1000) {
           log.info("gene" + sequenceStore.countGene(queryid, trackId, start, end));
           response.put(trackName, sequenceStore.processGenes(sequenceStore.getGenes(queryid, trackId), start, end, delta, queryid, trackId));
         }

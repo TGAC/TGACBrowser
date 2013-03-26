@@ -33,114 +33,114 @@
     <div id="canvas" style="display: none">
 
         <div id="controller">
-            <div id="coord" align="left">
+                   <div id="coord" align="left">
 
-                <input type="text" id="begin" size="5" class="jump">
-                <input type="text" id="end" size="5" class="jump">
-                <button onclick="jumpToSeq()" class="jump ui-state-default ui-corner-all"> Go</button>
-                <br>
+                       <input type="text" id="begin" size="5" class="jump">
+                       <input type="text" id="end" size="5" class="jump">
+                       <button onclick="jumpToSeq()" class="jump ui-state-default ui-corner-all"> Go</button>
+                       <br>
 
-                <div style="padding: 5px;"
-                     class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
-                    <a href="mailto:tgac.browser@tgac.ac.uk?Subject=TGAC Browser - Feedback">
-                        Feedback</a>
-                </div>
-                <%--<input id="dragRadio" type="radio" name="selectiontogle" checked="checked" onchange="dragToogle()"/>Drag--%>
-                <%--<input id="selectRadio" type="radio" name="selectiontogle" onchange="dragToogle()"/>Select--%>
+                       <div style="padding: 5px;"
+                            class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
+                           <a href="mailto:tgac.browser@tgac.ac.uk?Subject=TGAC Browser - Feedback">
+                               Feedback</a>
+                       </div>
+                       <%--<input id="dragRadio" type="radio" name="selectiontogle" checked="checked" onchange="dragToogle()"/>Drag--%>
+                       <%--<input id="selectRadio" type="radio" name="selectiontogle" onchange="dragToogle()"/>Select--%>
 
-                </p>
+                       </p>
 
-                <%--<input class="deletable" type="text" name="searchText" id="searchText" size="14" value="Search DNA"--%>
-                <%--onkeypress="return isACGT(event)" onkeyup="searchSeq();" onclick="jQuery('#searchText').val('')">--%>
+                       <%--<input class="deletable" type="text" name="searchText" id="searchText" size="14" value="Search DNA"--%>
+                       <%--onkeypress="return isACGT(event)" onkeyup="searchSeq();" onclick="jQuery('#searchText').val('')">--%>
 
-                <%--<span class="ui-button ui-widget ui-state-default ui- corner-all ui-icon ui-icon-refresh"--%>
-                <%--onclick="jQuery('#searchText').val('Search'); jQuery('#searchDiv').html(''); "> </span>--%>
-
-
-            </div>
-
-            <img src='images/browser/reset.png' onclick="reset();" class="browserimage" height=50%
-                 alt="Reset" title="Reset"> &nbsp;&nbsp;
-            <img src='images/browser/backward.png' onclick="dragLeft();" id="leftbig" class="browserimage" height=70%
-                 alt="Backward" title="Move Left">
-            <img src='images/browser/backward.png' onclick="seqLeft();" class="browserimage"
-                 height=40% alt="Left" title="Move Left (1bp)">&nbsp;
-            <img src='images/browser/forward.png' onclick="seqRight();" class="browserimage"
-                 height=40% alt="Right" title="Move Right (1bp)">
-            <img src='images/browser/forward.png' onclick="dragRight();" id="rightbig" class="browserimage"
-                 height=70% alt="Forward" title="Move Right">&nbsp;&nbsp;
-            <img src='images/browser/zoomin.png' id="zoominbig" onclick="zoomIn(parseInt(sequencelength/20));"
-                 class="browserimage"
-                 height=70% alt="ZoomIn" title="Zoom In">
-            <img src='images/browser/zoomin.png' id="zoominsmall" onclick="zoomIn(parseInt(sequencelength/40));"
-                 class="browserimage"
-                 height=40% alt="Zoomin" title="Zoom In">&nbsp;
-            <img src='images/browser/zoomout.png' id="zoomoutsmall" onclick="zoomOut(parseInt(sequencelength/40));"
-                 class="browserimage"
-                 height=40% alt="Zoomout" title='Zoom Out'>
-            <img src='images/browser/zoomout.png' id="zoomoutbig" onclick="zoomOut(parseInt(sequencelength/20));"
-                 class="browserimage"
-                 height=70% alt="Zoomout" title="Zoom Out">&nbsp;&nbsp;
-            <img src='images/browser/selectall.png' onclick="expand();" class="browserimage"
-                 height=60% alt="selectall" title="Select All">
-
-            <div class="fg-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
-                <span id="controlsbutton" style="font-size: .8em !important;"
-                      class="ui-button-text">Tracks / Settings</span>
-            </div>
+                       <%--<span class="ui-button ui-widget ui-state-default ui- corner-all ui-icon ui-icon-refresh"--%>
+                       <%--onclick="jQuery('#searchText').val('Search'); jQuery('#searchDiv').html(''); "> </span>--%>
 
 
-            <br>
+                   </div>
 
-            <div id=export style="background: #CCCCCC; margin-top:-12px; padding: 5px;"
-                 class="fg-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
-            </div>
-            <div style="margin-top:-12px;"
-                 class="fg-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
-                <span onclick="checkSession();" style="font-size: .8em !important;"
-                      class="ui-button-text"> Save Session </span>
-            </div>
+                   <img src='images/browser/reset.png' onclick="reset();" class="browserimage" height=50%
+                        alt="Reset" title="Reset"> &nbsp;&nbsp;
+                   <img src='images/browser/backward.png' onclick="dragLeft();" id="leftbig" class="browserimage" height=70%
+                        alt="Backward" title="Move Left">
+                   <img src='images/browser/backward.png' onclick="seqLeft();" class="browserimage"
+                        height=40% alt="Left" title="Move Left (1bp)">&nbsp;
+                   <img src='images/browser/forward.png' onclick="seqRight();" class="browserimage"
+                        height=40% alt="Right" title="Move Right (1bp)">
+                   <img src='images/browser/forward.png' onclick="dragRight();" id="rightbig" class="browserimage"
+                        height=70% alt="Forward" title="Move Right">&nbsp;&nbsp;
+                   <img src='images/browser/zoomin.png' id="zoominbig" onclick="zoomIn(parseInt(sequencelength/20));"
+                        class="browserimage"
+                        height=70% alt="ZoomIn" title="Zoom In">
+                   <img src='images/browser/zoomin.png' id="zoominsmall" onclick="zoomIn(parseInt(sequencelength/40));"
+                        class="browserimage"
+                        height=40% alt="Zoomin" title="Zoom In">&nbsp;
+                   <img src='images/browser/zoomout.png' id="zoomoutsmall" onclick="zoomOut(parseInt(sequencelength/40));"
+                        class="browserimage"
+                        height=40% alt="Zoomout" title='Zoom Out'>
+                   <img src='images/browser/zoomout.png' id="zoomoutbig" onclick="zoomOut(parseInt(sequencelength/20));"
+                        class="browserimage"
+                        height=70% alt="Zoomout" title="Zoom Out">&nbsp;&nbsp;
+                   <img src='images/browser/selectall.png' onclick="expand();" class="browserimage"
+                        height=60% alt="selectall" title="Select All">
 
-
-        </div>
-
-        <div id="bar_image">
-            <div id="searchDiv"></div>
-            <div id="SeqLenStart">&nbsp;</div>
-            <div id="SeqLen25">&nbsp;</div>
-            <div id="SeqLenMid">&nbsp;</div>
-            <div id="SeqLen75">&nbsp;</div>
-            <div id="SeqLenEnd">&nbsp;</div>
-        </div>
-        <div id="nav_panel"> &nbsp;</div>
-        <div id="vertical0" style="left: 0%" class="vertical-line"></div>
-        <div id="vertical1" style="left: 10%" class="vertical-line"></div>
-        <div id="vertical2" style="left: 20%" class="vertical-line"></div>
-        <div id="vertical3" style="left: 30%" class="vertical-line"></div>
-        <div id="vertical4" style="left: 40%" class="vertical-line"></div>
-        <div id="vertical5" style="left: 50%" class="vertical-line"></div>
-        <div id="vertical6" style="left: 60%" class="vertical-line"></div>
-        <div id="vertical7" style="left: 70%" class="vertical-line"></div>
-        <div id="vertical8" style="left: 80%" class="vertical-line"></div>
-        <div id="vertical9" style="left: 90%" class="vertical-line"></div>
-        <div id="vertical10" style="right: 0%; margin-left: -20px; border-left: 0" class="vertical-line"></div>
-        <div id="bg_layer"></div>
-        <div id="draggable" onmouseup="auto_drag()" onmouseout="auto_drag()"></div>
+                   <div class="fg-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
+                       <span id="controlsbutton" style="font-size: .8em !important;"
+                             class="ui-button-text">Tracks / Settings</span>
+                   </div>
 
 
-        <div id="sequence">
+                   <br>
 
-            <div id="sequenceString"></div>
-            <div id="translation_div"></div>
+                   <div id=export style="background: #CCCCCC; margin-top:-12px; padding: 5px;"
+                        class="fg-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
+                   </div>
+                   <div style="margin-top:-12px;"
+                        class="fg-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
+                       <span onclick="checkSession();" style="font-size: .8em !important;"
+                             class="ui-button-text"> Save Session </span>
+                   </div>
 
-        </div>
 
+               </div>
+
+               <div id="bar_image">
+                   <div id="searchDiv"></div>
+                   <div id="SeqLenStart">&nbsp;</div>
+                   <div id="SeqLen25">&nbsp;</div>
+                   <div id="SeqLenMid">&nbsp;</div>
+                   <div id="SeqLen75">&nbsp;</div>
+                   <div id="SeqLenEnd">&nbsp;</div>
+               </div>
+               <div id="nav_panel"> &nbsp;</div>
+               <div id="vertical0" style="left: 0%" class="vertical-line"></div>
+               <div id="vertical1" style="left: 10%" class="vertical-line"></div>
+               <div id="vertical2" style="left: 20%" class="vertical-line"></div>
+               <div id="vertical3" style="left: 30%" class="vertical-line"></div>
+               <div id="vertical4" style="left: 40%" class="vertical-line"></div>
+               <div id="vertical5" style="left: 50%" class="vertical-line"></div>
+               <div id="vertical6" style="left: 60%" class="vertical-line"></div>
+               <div id="vertical7" style="left: 70%" class="vertical-line"></div>
+               <div id="vertical8" style="left: 80%" class="vertical-line"></div>
+               <div id="vertical9" style="left: 90%" class="vertical-line"></div>
+               <div id="vertical10" style="right: 0%; margin-left: -20px; border-left: 0" class="vertical-line"></div>
+               <div id="bg_layer"></div>
+               <div id="draggable" onmouseup="auto_drag()" onmouseout="auto_drag()"></div>
+
+
+               <div id="sequence">
+
+                   <div id="sequenceString"></div>
+                   <div id="translation_div"></div>
+
+               </div>
 
         <div id="wrapper">
             <div id=tracks>
             </div>
         </div>
     </div>
+
 </div>
 
 <%--<div id="openCloseIdentifier"></div>--%>

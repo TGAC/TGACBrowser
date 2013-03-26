@@ -7,7 +7,7 @@
  */
 
 /* http://keith-wood.name/svg.html
- SVG for jQuery v1.0.0.
+ SVG for $ v1.0.0.
  Written by Keith Wood (kbwood@iprimus.com.au) August 2007.
  Under the Creative Commons Licence http://creativecommons.org/licenses/by/3.0/
  Share or Remix it but please Attribute the author. */
@@ -76,11 +76,11 @@ var svgManager = null;
     /* Return the SVG root created for a given container.
      @param  container  string - selector for the container or
      element - the container for the SVG object or
-     jQuery collection - first entry is the container
+     $ collection - first entry is the container
      @return  the corresponding SVG root element, or null if not attached */
     getSVGFor: function(container) {
       container = (typeof container == 'string' ? $(container)[0] :
-                   (container.jquery ? container[0] : container));
+                   (container.$ ? container[0] : container));
       return this._svgs[container._svgId];
     },
 
@@ -645,11 +645,11 @@ var svgManager = null;
     /* Add an existing SVG node to the diagram.
      @param  parent  element - the parent node for the new node
      @param  node    element - the new node to add or
-     jQuery collection - set of nodes to add */
+     $ collection - set of nodes to add */
     add: function(parent, node) {
       var svg = this;
       parent = parent || this._svg;
-      node = (node.jquery ? node : $(node));
+      node = (node.$ ? node : $(node));
       node.each(function() {
         var child = svg._cloneAsSVG(this);
         if (child) {
@@ -1045,11 +1045,11 @@ var svgManager = null;
     }
   });
 
-  /* Attach the SVG functionality to a jQuery selection.
+  /* Attach the SVG functionality to a $ selection.
    @param  loadURL   string - the URL of the initial document to load (optional)
    @param  onLoad    function - a callback functional invoked following loading (optional)
    @param  settings  object - the new settings to use for this SVG instance (optional)
-   @return jQuery object - for chaining further calls */
+   @return $ object - for chaining further calls */
   $.fn.svg = function(loadURL, onLoad, settings) {
     if (typeof loadURL == 'function') {
       settings = onLoad;
@@ -1077,4 +1077,4 @@ var svgManager = null;
 // Singleton primary SVG interface
   svgManager = new SVGManager();
 
-})(jQuery);
+})($);

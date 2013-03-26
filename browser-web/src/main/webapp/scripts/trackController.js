@@ -151,7 +151,7 @@ function toogleLabelMerged() {
 
 
 function dispBLAST(div, track) {
-   console.log("blaaaaaaaaaast")
+  console.log("blaaaaaaaaaast")
   jQuery(div).html("<img src=\"./images/browser/dna_helix_md_wm.gif\" alt=\"loading\">");
 
   var blasts = window[track];
@@ -191,7 +191,7 @@ function dispBLAST(div, track) {
         var start = getBegin() - partial;
 
         var end = parseInt(getEnd()) + parseInt(partial);
-        console.log(start + ":"+ end)
+        console.log(start + ":" + end)
         var show = showObject(start, end, blast_start, blast_stop);
         var border = 0;
         if (blasts[i].flag) {
@@ -1063,6 +1063,97 @@ function dispGraph(div, trackName, trackId) {
 }
 
 function dispGraphWig(div, trackName, trackId) {
+
+//var chart;
+//var chartData = [];
+  var track = window[trackName];
+//// generate some random data, quite different range
+//function generateChartData() {
+//    // current date
+//    var date = new Date();
+//    // now set 1000 minutes back
+//    date.setMinutes(date.getDate() - 1000);
+//
+//    // and generate 1000 data items
+//    for (var i = 0; i < 1000; i++) {
+//        var newDate = new Date(date);
+//        // each time we add one minute
+//        newDate.setMinutes(newDate.getMinutes() + i);
+//        // some random number
+//        var visits = Math.round(Math.random() * 40) + 10;
+//        // add data item to the array
+//        chartData.push({
+//            date: newDate,
+//            visits: visits
+//        });
+//    }
+//}
+//
+//
+//    // generate some random data
+//    generateChartData();
+//
+//    // SERIAL CHART
+//    chart = new AmCharts.AmSerialChart();
+//    chart.autoMarginOffset = 3;
+//    chart.marginRight = 15;
+//    chart.zoomOutButton = {
+//        backgroundColor: '#000000',
+//        backgroundAlpha: 0.15
+//    };
+//    chart.dataProvider = track;
+//    chart.categoryField = "start";
+//
+//    // data updated event will be fired when chart is displayed,
+//    // also when data will be updated. We'll use it to set some
+//    // initial zoom
+//
+//
+//    // AXES
+//    // Category
+//    var categoryAxis = chart.categoryAxis;
+//    categoryAxis.gridAlpha = 0.07;
+//    categoryAxis.showLastLabel = false;
+//    categoryAxis.axisColor = "#DADADA";
+//
+//    // Value
+//    var valueAxis = new AmCharts.ValueAxis();
+//    valueAxis.gridAlpha = 0.07;
+//    valueAxis.title = "Unique visitors";
+//    chart.addValueAxis(valueAxis);
+//
+//    // GRAPH
+//    var graph = new AmCharts.AmGraph();
+//    graph.type = "line"; // try to change it to "column"
+//    graph.title = "red line";
+//    graph.valueField = "value";
+//    graph.lineAlpha = 1;
+//    graph.lineColor = "blue";
+//    graph.fillAlphas = 0.3; // setting fillAlphas to > 0 value makes it area graph
+//
+//    chart.addGraph(graph);
+//
+//    // CURSOR
+//// CURSOR
+//    var chartCursor = new AmCharts.ChartCursor();
+//    chartCursor.cursorPosition = "mouse";
+//
+//    chart.addChartCursor(chartCursor);
+//
+//    chart.write("pst0821-bowtie-sorted_wig_div");
+
+
+// this method is called when chart is inited as we listen for "dataUpdated" event
+
+
+  // jQuery(div).svg();
+  //var svg = jQuery(div).svg('get');
+//
+  // var x = 0
+  //var y = 400;
+
+//    svg.line(1000, 400, 1500, y, {strokeWidth: 1, stroke: "black"});
+  // svg.line(2000, y, 2500, 0, {strokeWidth: 1, stroke: "black"});
   var track_html = "";
 
   jQuery(div).html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
@@ -1070,8 +1161,8 @@ function dispGraphWig(div, trackName, trackId) {
   jQuery("#" + trackName + "_wrapper").fadeIn();
 
 
-//  var track = window[trackName];
-var   track = sortResults('start', 'true', window[trackName])
+  var track = window[trackName];
+//var   track = sortResults('start', 'true', window[trackName])
   var partial = (parseInt(getEnd()) - parseInt(getBegin())) / 2;
   var start = parseInt(getBegin()) - parseInt(partial)
   var end = parseInt(getEnd()) + parseInt(partial);
@@ -1079,48 +1170,53 @@ var   track = sortResults('start', 'true', window[trackName])
   var newStart_temp = getBegin();
   var newEnd_temp = getEnd();
 
-  if (track[0]) {
-    track = jQuery.grep(track, function (element, index) {
-      return element.start >= start && element.start <= end; // retain appropriate elements
-    });
+  if (track) {
+    if (track[0] == null) {
+      track_html = [];
+      track_html.push("<font size=4><center>No data available for selected region</center></font>");
+    }
+    else if (track[0]) {
+      track = jQuery.grep(track, function (element, index) {
+        return element.start >= start && element.start <= end; // retain appropriate elements
+      });
+    }
+
+
+    var total = 0;
+    var max = Math.max.apply(Math, track.map(function (o) {
+      return o.value;
+    }));
+
+    var track_len = track.length;
+
+    while (track_len--) {
+      var track_start = track[track_len].start;
+      var track_stop = track[track_len].start;
+
+      var startposition = (track_start - newStart_temp) * parseFloat(maxLen) / (newEnd_temp - newStart_temp) + parseFloat(maxLen) / 2;
+      var stopposition = 2;//(track_stop - track_start ) * parseFloat(maxLen) / (newEnd_temp - newStart_temp);
+
+      track_html += "<div class= \"graph\" onclick=\"setBegin(" + track[track_len].start + ");setEnd(" + track[track_len].end + ");jumpToSeq();\"STYLE=\"bottom:0px; height: " + (track[track_len].value * 45 / max) + "px;" +
+                    "LEFT:" + startposition + "px;" +
+                    "width:" + (stopposition - 1) + "px \" title=\"" + track[track_len].value + "\" ></div>";
+
+    }
+  }
+  else{
+    jQuery(div).html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
   }
 
-
-  var total = 0;
-  var max = Math.max.apply(Math, track.map(function (o) {
-    return o.value;
-  }));
-
-  var track_len = track.length;
-
-  while (track_len--) {
-    var track_start = track[track_len].start;
-    var track_stop = track[track_len].start;
-	if(track[track_len-1]){
-		track_stop = track[track_len-1].start;
-	}else {
-	track_stop = start;}
-//console.log(track_start+":"+track_stop)
-
-    var startposition = (track_start - newStart_temp) * parseFloat(maxLen) / (newEnd_temp - newStart_temp) + parseFloat(maxLen) / 2;
-    var stopposition = (track_stop - track_start ) * parseFloat(maxLen) / (newEnd_temp - newStart_temp);
-
-    track_html += "<div class= \"graph\" onclick=\"setBegin(" + track[track_len].start + ");setEnd(" + track[track_len].end + ");jumpToSeq();\"STYLE=\"bottom:0px; height: " + (track[track_len].value * 45 / max) + "px;" +
-                  "LEFT:" + startposition + "px;" +
-                  "width:" + (stopposition - 1) + "px \" title=\"" + track[track_len].value + "\" ></div>";
-
-  }
-//  jQuery(div).css('height', '70px');
+  jQuery(div).css('height', '70px');
   jQuery(div).fadeIn();
   jQuery("#" + trackName + "_wrapper").fadeIn();
-
+//
   jQuery(div).html(track_html);
 }
 
 function sortResults(prop, asc, array) {
-    array = array.sort(function(a, b) {
-        if (asc) return (a[prop] > b[prop]);
-        else return (b[prop] > a[prop]);
-    });
-   return array;
+  array = array.sort(function (a, b) {
+    if (asc) return (a[prop] > b[prop]);
+    else return (b[prop] > a[prop]);
+  });
+  return array;
 }

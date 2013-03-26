@@ -18,7 +18,7 @@
 
     <script type="text/javascript" src="<c:url value='/scripts/scriptaculous/prototype.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/fluxion-ajax/fluxion-ajax-compiled.js'/>"></script>
-<%----%>
+    <%----%>
     <!-- jQuery -->
     <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery-1.4.2.min.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery-ui-1.8.custom.min.js'/>"></script>
@@ -26,6 +26,20 @@
     <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery.drawinglibrary.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery.cookie.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jcanvas.min.js'/>"></script>
+
+    <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery.drawinglibrary.js'/>"></script>
+    <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery.svg.min.js'/>"></script>
+    <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery.svgdom.min.js'/>"></script>
+    <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery.svg.pack.js'/>"></script>
+    <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery-ui.js'/>"></script>
+    <%--<script type="text/javascript"  src="<c:url value='/scripts/jquery/js/jquery.jqplot.js'/>"></script>--%>
+    <%--<script type="text/javascript"  src="<c:url value='/scripts/jquery/js/jqplot.canvasAxisLabelRenderer.js'/>"></script>--%>
+    <%--<script type="text/javascript"  src="<c:url value='/scripts/jquery/js/jqplot.canvasTextRenderer.js'/>"></script>--%>
+    <script src="http://www.amcharts.com/lib/amcharts.js" type="text/javascript"></script>
+
+
+    <script type="text/javascript" src="http://canvg.googlecode.com/svn/trunk/rgbcolor.js"></script>
+    <script type="text/javascript" src="http://canvg.googlecode.com/svn/trunk/canvg.js"></script>
 
 
     <link rel="stylesheet" href="<c:url value='/scripts/jquery/css/smoothness/jquery-ui-1.8.custom.css'/>"
@@ -89,18 +103,16 @@
 
 <div class="headerbar">
     <center>
-        <table>
-            <tr>
-                <td>
-                    <a class="headerlink" href="<c:url value="/"/>"> <font color=white> <b>TGAC Browser
-                        - ${initParam.header} </font></a>
-                </td>
-                <td>
-                    <font color=white>
-                        <div id="seqnameh1"></div>
-                    </font> </b>
-                </td>
-            </tr>
+
+        <a class="headerlink" href="<c:url value="/"/>"> <font color=white> <b>TGAC Browser
+            - ${initParam.header} </font></a>
+        </td>
+        <td>
+            <font color=white>
+                <div id="seqnameh1"></div>
+            </font> </b>
+        </td>
+        </tr>
         </table>
     </center>
 </div>
@@ -126,5 +138,7 @@
 <%--</ul>--%>
 <%--</div>--%>
 <div id="filetrack" style="visibility: hidden; position: fixed;">${initParam.trackfiles}</div>
-      <div id="title" style="visibility: hidden; position: fixed;">${initParam.urlpath}</div>
+<div id="title" style="visibility: hidden; position: fixed;">${initParam.urlpath}</div>
+
+
 <div id="content">

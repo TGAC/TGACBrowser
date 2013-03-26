@@ -134,7 +134,7 @@ function onLoad() {
     if (randomnumber) {
       saveSession();
     }
-    jQuery.cookie('trackslist', track_list.toJSON(), { path: '/' + path, expires: 10});
+//    jQuery.cookie('trackslist', track_list.toJSON(), { path: '/' + path, expires: 10});
   });
 
   jQuery("#draggable").mouseover(function () {
@@ -493,10 +493,10 @@ function trackList(tracklist) {
 function loadDefaultTrack(tracklist) {
 
   var Tracklist = tracklist;
-  var cookietest = []
-  if (jQuery.cookie('trackslist')) {
-    cookietest = JSON.parse(jQuery.cookie('trackslist'));
-  }
+//  var cookietest = []
+//  if (jQuery.cookie('trackslist')) {
+//    cookietest = JSON.parse(jQuery.cookie('trackslist'));
+//  }
 
   for (var i = 0; i < Tracklist.length; i++) {
     if (Tracklist[i].disp == "1") {
@@ -541,18 +541,18 @@ function loadDefaultTrack(tracklist) {
               }
               });
     }
-    else {
-      jQuery.each(cookietest, function (j, v) {
-        if (v.name == Tracklist[i].name && v.disp == 1) {
-          jQuery('#' + Tracklist[i].name + 'Checkbox').attr('checked', true);
-          loadTrackAjax(Tracklist[i].id, Tracklist[i].name);
-          return false; // stops the loop
-        }
-      });
-
-      continue;
-
-    }
+//    else {
+//      jQuery.each(cookietest, function (j, v) {
+//        if (v.name == Tracklist[i].name && v.disp == 1) {
+//          jQuery('#' + Tracklist[i].name + 'Checkbox').attr('checked', true);
+//          loadTrackAjax(Tracklist[i].id, Tracklist[i].name);
+//          return false; // stops the loop
+//        }
+//      });
+//
+//      continue;
+//
+//    }
   }
 
 }

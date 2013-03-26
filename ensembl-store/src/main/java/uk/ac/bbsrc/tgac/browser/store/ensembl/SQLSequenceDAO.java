@@ -1009,6 +1009,7 @@ public class SQLSequenceDAO implements SequenceStore {
         annotationid.put("id", "cs" + map.get("coord_system_id"));
         annotationid.put("desc", "Coordinate System Rank:" + map.get("rank"));
         annotationid.put("disp", "0");
+        annotationid.put("display_label",map.get("name"));
         annotationid.put("merge", "0");
         annotationid.put("label", "0");
         annotationid.put("graph", "false");
@@ -1150,8 +1151,8 @@ public class SQLSequenceDAO implements SequenceStore {
     try {
 
       seq = template.queryForObject(GET_Seq_API, new Object[]{query}, String.class);
-      System.out.println("get seq level" + query + ":" + from + ":" + to);
-      System.out.println("\n\nget seq level length " + seq.substring(from, to).length());
+      log.info("get seq level" + query + ":" + from + ":" + to);
+      log.info("\n\nget seq level length " + seq.substring(from, to).length());
 
       return seq.substring(from, to);
     }
@@ -1163,7 +1164,7 @@ public class SQLSequenceDAO implements SequenceStore {
 
   public String getSeqRecursive(String query, int from, int to, int asm_from, int asm_to) throws IOException {
 
-    System.out.println("get seq recursive " + query + ":" + from + ":" + to);
+    log.info("get seq recursive " + query + ":" + from + ":" + to);
 
     try {
       String seq = "";
@@ -1233,25 +1234,47 @@ public class SQLSequenceDAO implements SequenceStore {
       String seq = "";
       String query_coord = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{query}, String.class);
       String attrib = template.queryForObject(GET_coord_attrib, new Object[]{query_coord}, String.class);
-      System.out.println("get seq attrib " + attrib);
+      log.info("get seq attrib " + attrib);
       if (attrib.indexOf("sequence") >= 0) {
-        System.out.println("get seq if " + query + ":" + from + ":" + to);
+        log.info("get seq if " + query + ":" + from + ":" + to);
         seq = getSeqLevel(query, from, to);
       }
       else {
-        System.out.println("get seq else " + query + ":" + from + ":" + to);
+        log.info("get seq else " + query + ":" + from + ":" + to);
         List<Map<String, Object>> maps = template.queryForList(GET_SEQS_LIST_API, new Object[]{query, from, to, from, to, from, to, from, to});
         for (Map map : maps) {
 
           String query_coord_temp = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{map.get("cmp_seq_region_id")}, String.class);
           String attrib_temp = template.queryForObject(GET_coord_attrib, new Object[]{query_coord_temp}, String.class);
-          System.out.println("get seq else size" + maps.size() + " - " + attrib_temp);
+          log.info("get seq else size" + maps.size() + " - " + attrib_temp);
 
           if (attrib_temp.indexOf("sequence") >= 0) {
-            System.out.println("get seq if " + map.get("cmp_seq_region_id") + ":" + from + ":" + to);
-            seq = getSeqLevel(map.get("cmp_seq_region_id").toString(), from, to);
+            log.info("get seq if " + map.get("cmp_seq_region_id") + ":" + from + ":" + to);
+            log.info("map "+map.toString());
+            int asm_start = Integer.parseInt(map.get("asm_start").toString());
+          int asm_end = Integer.parseInt(map.get("asm_end").toString());
+          int start_cmp = Integer.parseInt(map.get("cmp_start").toString());
+          int end_cmp = Integer.parseInt(map.get("cmp_end").toString());
+          int start_temp;
+          int end_temp;
+          if (from <= asm_start) {
+            start_temp = start_cmp;
           }
           else {
+            start_temp = end_cmp - (asm_end - from) + 1;
+          }
+          if (to >= asm_end) {
+            end_temp = end_cmp;
+          }
+          else {
+            end_temp = to - asm_start + 1;
+          }
+
+            seq = getSeqLevel(map.get("cmp_seq_region_id").toString(), start_temp, end_temp);
+          }
+          else {
+            log.info("get seq else");
+
             maps = template.queryForList(GET_SEQS_LIST_API, new Object[]{map.get("cmp_seq_region_id"), from, to, from, to, from, to, from, to});
             int asm_start = Integer.parseInt(map.get("asm_start").toString());
             int asm_end = Integer.parseInt(map.get("asm_end").toString());

@@ -229,13 +229,14 @@ function trackDrag() {
 }
 
 function updateJSON() {
+console.log("json update "+lastStart+":"+lastEnd)
   var from, to;
   var partial = (getEnd() - getBegin()) / 2;
   from = Math.ceil(parseInt(getEnd()) - partial);
   to = Math.ceil(parseInt(getEnd()) + partial);
 
   for (var j = 0; j < track_list.length; j++) {
-  console.log(track_list[j].name)
+
     if (track_list[j].graph == "true") {
 //      if (parseInt(lastStart) < parseInt(getBegin()) && parseInt(lastEnd) > parseInt(getEnd())) {
         from = Math.ceil(parseInt(getBegin()) - partial );
@@ -246,7 +247,7 @@ function updateJSON() {
   }
 
 
-  if (lastStart >= 0 || lastStart >= 0) {
+  if (lastStart >= 0 || lastEnd >= 0) {
 
 //      console.log("right");
     if (parseInt(lastStart) < parseInt(getBegin()) || parseInt(lastEnd) < parseInt(newEnd)) {
@@ -301,6 +302,8 @@ function updateJSON() {
 }
 
 function addJSON(from, to, trackName, trackId) {
+console.log(from+":"+to)
+console.log(trackName+":"+trackId)
   if (from < 0) {
     from = 0;
   }
@@ -343,6 +346,7 @@ function addJSON(from, to, trackName, trackId) {
               });
     }
     else {
+console.log("else")
       var Tracklist = track_list;
       var query = jQuery('#search').val();
       for (var i = 0; i < Tracklist.length; i++) {
@@ -350,9 +354,11 @@ function addJSON(from, to, trackName, trackId) {
       trackToggle(Tracklist[i].name);
       }
         else if (jQuery("#" + Tracklist[i].name + "Checkbox").is(':checked')) {
+console.log(Tracklist[i].name)
           var trackname = Tracklist[i].name;
           var trackid = Tracklist[i].id;
           if (trackid && Tracklist[i].graph == "false") { //because graph == true is already loaded
+console.log("graph false")
             Fluxion.doAjax(
                     'dnaSequenceService',
                     'loadTrack',

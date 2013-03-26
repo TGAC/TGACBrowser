@@ -199,13 +199,15 @@ function seqregionSearchPopup(query, from, to, blast) {
               jQuery('#openCloseWrap').show();
               jQuery('#displayoptions').show();
               seqregname = json.seqregname;
+              console.log(tracks.length)
               tracks = jQuery("#filetrack").html().split(',');
               if (tracks[0].length) {
                 for (var i = 0; i < tracks.length; i++) {
                   var filename = tracks[i].substring(tracks[i].lastIndexOf("/") + 1, tracks[i].lastIndexOf("."));
                   var type = tracks[i].substring(tracks[i].lastIndexOf(".") + 1, tracks[i].length);
+                  console.log(filename+"###"+type)
                   track_list.push(
-                          {name: filename + "_" + type, id: tracks[i], desc: "loaded Sam", disp: 1, merge: 0, graph: "false", display_lable: tracks[i], label: 0}
+                          {name: filename + "_" + type, id: tracks[i], display_label: filename, desc: "loaded Sam", disp: 1, merge: 0, graph: "false", display_lable: tracks[i], label: 0}
                   );
                 }
               }
@@ -213,7 +215,7 @@ function seqregionSearchPopup(query, from, to, blast) {
 
               minWidth = findminwidth();
               if (from && to) {
-                if (from < to) {
+                if (parseInt(from) < parseInt(to)) {
                   setBegin(from);
                   setEnd(parseInt(to));
                 }
@@ -245,10 +247,10 @@ function seqregionSearchPopup(query, from, to, blast) {
 }
 
 function search(query, from, to, jsonid, oldtracks) {
-  if (track_list) {
-    jQuery.cookie('trackslist', track_list.toJSON(), {  expires: 10});
-    removeTrackslist(track_list);
-  }
+//  if (track_list) {
+//    jQuery.cookie('trackslist', track_list.toJSON(), {  expires: 10});
+//    removeTrackslist(track_list);
+//  }
 
   jQuery('#sessioninput').fadeOut();
   jQuery("#sessionid").html("");
@@ -368,7 +370,7 @@ function generateFileLink(data) {
 }
 
 function loadTrackAjax(trackId, trackname) {
-  jQuery.cookie('trackslist', track_list.toJSON());
+//  jQuery.cookie('trackslist', track_list.toJSON());
   mergeTrackList(trackname);
   var query = jQuery('#search').val();
   jQuery(track_list).each(function (index) {

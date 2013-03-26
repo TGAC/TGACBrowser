@@ -12,6 +12,8 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created with IntelliJ IDEA.
@@ -114,60 +116,66 @@ public class SamBamService {
     }
   }
 
-  public static JSONArray getWig(long start, long end, int delta, String trackId, String referece) throws Exception {
-    JSONArray bed = new JSONArray();
+  public static JSONArray getWig(long start, long end, int delta, String trackId, String reference) throws Exception {
+    JSONArray wig = new JSONArray();
     boolean found = false;
-    log.info("wig");
+//    log.info("wig");
     try {
       File inputfile = new File(trackId);
 
       BufferedReader br = null;
-
-
       String sCurrentLine;
 
       br = new BufferedReader(new FileReader(inputfile));
+      Pattern p = Pattern.compile(".*" + reference + "$");
 
       while ((sCurrentLine = br.readLine()) != null) {
         String[] line = sCurrentLine.split("\t");
         JSONObject response = new JSONObject();
-        if ((sCurrentLine.contains("chr"))) {
-          if (sCurrentLine.contains("MAL11")) {
-            log.info(sCurrentLine+": found");
+        if ((sCurrentLine.contains("variableStep"))) {
+          Matcher matcher_comment = p.matcher(sCurrentLine);
+          if (matcher_comment.find()) {
+
+//            log.info(sCurrentLine + ": found");
             found = true;
           }
           else {
-            log.info(sCurrentLine);
+//            log.info(sCurrentLine);
             found = false;
           }
         }
         else if (found == true && line.length == 2 && (Integer.parseInt(line[0].toString()) >= start && Integer.parseInt(line[0].toString()) <= end)) {
           response.put("start", line[0]);
           response.put("value", line[1]);
-          bed.add(response);
+          wig.add(response);
 
         }
-        else if (found == true){
+        else if (found == true) {
 //          log.info(line.length + ":" + sCurrentLine);
         }
         else {
 
         }
       }
-      Object[] myArray = bed.toArray();
+      Object[] myArray = wig.toArray();
 
       JSONArray sortedJArray = new JSONArray();
       for (Object obj : myArray) {
         sortedJArray.add(obj);
       }
-      return bed;
+
+      if(wig.size() == 0)
+      {
+        wig.add("");
+      }
+      return wig;
     }
     catch (Exception e) {
       JSONObject response = new JSONObject();
       e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
       response.put("error", e.toString());
-      bed.add(response);
-      return bed;
+      wig.add(response);
+      return wig;
     }
   }
 
