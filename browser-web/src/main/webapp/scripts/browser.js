@@ -229,7 +229,6 @@ function trackDrag() {
 }
 
 function updateJSON() {
-console.log("json update "+lastStart+":"+lastEnd)
   var from, to;
   var partial = (getEnd() - getBegin()) / 2;
   from = Math.ceil(parseInt(getEnd()) - partial);
@@ -239,9 +238,9 @@ console.log("json update "+lastStart+":"+lastEnd)
 
     if (track_list[j].graph == "true") {
 //      if (parseInt(lastStart) < parseInt(getBegin()) && parseInt(lastEnd) > parseInt(getEnd())) {
-        from = Math.ceil(parseInt(getBegin()) - partial );
-        to = Math.ceil(parseInt(getEnd()) + partial );
-        addJSON(from, to, track_list[j].name, track_list[j].id);
+      from = Math.ceil(parseInt(getBegin()) - partial);
+      to = Math.ceil(parseInt(getEnd()) + partial);
+      addJSON(from, to, track_list[j].name, track_list[j].id);
 //      }
     }
   }
@@ -302,8 +301,6 @@ console.log("json update "+lastStart+":"+lastEnd)
 }
 
 function addJSON(from, to, trackName, trackId) {
-console.log(from+":"+to)
-console.log(trackName+":"+trackId)
   if (from < 0) {
     from = 0;
   }
@@ -340,25 +337,24 @@ console.log(trackName+":"+trackId)
                       track_list[j].graph = "false";
                     }
                   }
+                  //  console.log("merging "+JSON.parse(window[trackname + "_edited"]))
+                  window[trackname] = jQuery.extend(json[trackname], window[trackname + "_edited"].toJSON)
                 }
                 trackToggle(json.name)
               }
               });
     }
     else {
-console.log("else")
       var Tracklist = track_list;
       var query = jQuery('#search').val();
       for (var i = 0; i < Tracklist.length; i++) {
-      if(Tracklist[i].name == "blasttrack"){
-      trackToggle(Tracklist[i].name);
-      }
+        if (Tracklist[i].name == "blasttrack") {
+          trackToggle(Tracklist[i].name);
+        }
         else if (jQuery("#" + Tracklist[i].name + "Checkbox").is(':checked')) {
-console.log(Tracklist[i].name)
           var trackname = Tracklist[i].name;
           var trackid = Tracklist[i].id;
           if (trackid && Tracklist[i].graph == "false") { //because graph == true is already loaded
-console.log("graph false")
             Fluxion.doAjax(
                     'dnaSequenceService',
                     'loadTrack',
@@ -366,6 +362,7 @@ console.log("graph false")
                     {'doOnSuccess': function (json) {
                       var trackname = json.name;
                       window[trackname] = json[trackname];
+
                       if (json.type == "graph") {
                         for (var j = 0; j < track_list.length; j++) {
                           if (track_list[j].name == trackname) {
@@ -374,15 +371,25 @@ console.log("graph false")
                         }
                       }
                       else {
-
                         for (var j = 0; j < track_list.length; j++) {
                           if (track_list[j].name == trackname) {
                             track_list[j].graph = "false";
                           }
                         }
+
+                        if (window[trackname + "_edited"]) {
+                          jQuery.each(window[trackname], function (i, v) {
+                            jQuery.each(window[trackname + "_edited"], function (j, w) {
+                              if (w.id == v.id) {
+                                window[trackname].splice(i, 1, window[trackname + "_edited"][j])
+                                return;
+                              }
+                            });
+                            return;
+                          });
+                        }
                       }
                       trackToggle(json.name)
-                     console.log(json.name)
                     }
                     });
           }

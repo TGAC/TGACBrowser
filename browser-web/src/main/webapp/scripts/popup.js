@@ -29,11 +29,11 @@ function newpopup(track, i, j) {
   var width = jQuery("#popup").width();
   jQuery('#blastselector').hide();
   jQuery("#popuptrack").html(track);
-  var position = window[track][i].start + position_func();
+  var position = window[track][i].start +"-"+ position_func();
 
   function position_func() {
     if (window[track][i].end) {
-      return window[track][i].start
+      return window[track][i].end
     }
     else {
       return "";
@@ -54,7 +54,7 @@ function newpopup(track, i, j) {
     jQuery("#flagTrack").html('<span title="Flag" class="ui-button ui-icon ui-icon-flag" onclick=flagTrack(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
     jQuery("#Ensemblme").html("");
     jQuery("#revertme").html('<span title="Revert_Name" class="ui-button ui-icon ui-icon-arrowreturnthick-1-w" onclick=revertTrack(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
-    jQuery("#Detail").html(stringTrim(window[track][i].transcript[j].desc+"("+window[track][i].desc+")", width));
+    jQuery("#Detail").html(stringTrim(window[track][i].transcript[j].desc + "(" + window[track][i].desc + ")", width));
 
   }
   else {
@@ -63,7 +63,7 @@ function newpopup(track, i, j) {
     jQuery("#peptides").html('');
     jQuery("#position").html(position);
     jQuery("#exdetails").html('');
-    if (window[track][i].end - window[track][i].start > 1) {
+    if (window[track][i].end - window[track][i].start > 1 || window[track][i].start - window[track][i].end > 1) {
       jQuery("#FASTAme").html('<span title="Fasta" class="ui-button ui-fasta" onclick=fetchFasta(' + window[track][i].start + ',' + window[track][i].end + ');></span>');
       jQuery("#BLASTme").html('<span title="Blast" class="ui-button ui-blast" onclick=preBlast(' + window[track][i].start + ',' + window[track][i].end + ',' + '\"#popup\");></span>');
       jQuery("#revertme").html('<span title="Revert_Name" class="ui-button ui-icon ui-icon-arrowreturnthick-1-w" onclick=revertTrack(\"' + track + "\",\"" + i + '\");></span>');
@@ -256,6 +256,7 @@ function preBlast(begin, end, popup) {
 
 // edit desc div
 function showEditDesc(track, i, j) {
+
   jQuery('#blastselector').hide();
   var edit_desc = "<input type=\"text\" name=\"editTrackValue\" id=\"editTrackValue\"><span class=\"fg-button ui-icon ui-widget ui-state-default ui-corner-all ui-icon-close\" id=\"editTrackRemove\"></span><span class=\"fg-button ui-icon ui-widget ui-state-default ui-corner-all ui-icon-check\" id=\"editTrackAdd\"></span>";
   jQuery('#EditTrack').html(edit_desc);
@@ -288,6 +289,7 @@ function showEditDesc(track, i, j) {
     jQuery('#editTrackValue').val('');
   });
 
+
 }
 
 //make top
@@ -301,6 +303,7 @@ function makeMeTop(track, i, j) {
   window[track][i].transcript[j].layer = 1;
   removePopup();
   trackToggle(track);
+  backup_tracks(track, i)
 }
 
 // edit desc main function
@@ -316,6 +319,7 @@ function editDesc(track, i, j) {
   }
   trackToggle(track);
   removePopup();
+  backup_tracks(track, i);
 }
 
 // removes data from variables and display again
@@ -337,35 +341,27 @@ function deleteTrack(track, i, j) {
 function flagTrack(track, i, j) {
   if (j) {
     if (window[track][i].transcript[j].flag == true) {
-//      jQuery.each(window[track], function(index, result) {
-//      if(result.desc == 'flag' && result.id == window[track][i].id) {
-//          //Remove from array
-//          window[track].splice(index, 1);
-//      }
-//   });
       window[track][i].transcript[j].flag = false;
+      backup_tracks_minus(track, i);
     }
     else {
-//      window[track].push({id: window[track][i].id, start: window[track][i].start, end: window[track][i].end, desc: 'flag', transcript:[{transcript_start:window[track][i].transcript[j].transcript_start,transcript_end:window[track][i].transcript[j].transcript_end}]});
       window[track][i].transcript[j].flag = true;
+      backup_tracks(track, i);
     }
   }
   else {
     if (window[track][i].flag == true) {
-      //      jQuery.each(window[track], function(index, result) {
-//      if(result.desc == 'flag' && result.id == window[track][i].id) {
-//          //Remove from array
-//          window[track].splice(index, 1);
-//      }
-//   });
       window[track][i].flag = false;
+      backup_tracks_minus(track, i);
     }
     else {
-//      window[track].push({id: window[track][i].id, start: window[track][i].start, end: window[track][i].end, desc: 'flag'});
       window[track][i].flag = true;
+      backup_tracks(track, i);
     }
   }
 
+
+  
 
   trackToggle(track);
   removePopup();
@@ -379,10 +375,8 @@ function revertTrack(track, i, j) {
             'loadTranscriptName',
             {'id': id, 'url': ajaxurl, 'track': track},
             {'doOnSuccess': function (json) {
-
               window[track][i].transcript[j].desc = json.name;
               trackToggle(track);
-
             }
             });
 
@@ -400,9 +394,8 @@ function revertTrack(track, i, j) {
             }
             });
   }
-
-
   removePopup();
+backup_tracks_minus(track, i)
 }
 
 
@@ -497,17 +490,17 @@ function showPeptides(track, i, k) {
                 var track_end = window[track][i].transcript[k].end;
 
                 if (exon_start <= transcript_start && exon_end >= transcript_end) {
-                  cdnaseq = seq.substring(parseInt(transcript_start) - parseInt(track_start) , parseInt(transcript_end) - parseInt(track_start));
+                  cdnaseq = seq.substring(parseInt(transcript_start) - parseInt(track_start), parseInt(transcript_end) - parseInt(track_start));
                 }
                 else if (exon_start <= transcript_start) {
                   cdnaseq = seq.substring(parseInt(transcript_start) - parseInt(track_start), parseInt(exon_end) - parseInt(track_start));
                 }
                 else if (exon_end >= transcript_end) {
-                  cdnaseq += seq.substring(parseInt(exon_start) - parseInt(track_start) , parseInt(transcript_end) - parseInt(track_start));
+                  cdnaseq += seq.substring(parseInt(exon_start) - parseInt(track_start), parseInt(transcript_end) - parseInt(track_start));
                   break;
                 }
                 else if (exon_start > transcript_start) {
-                  cdnaseq += seq.substring(parseInt(exon_start) - parseInt(track_start) , parseInt(exon_end) - parseInt(track_start));
+                  cdnaseq += seq.substring(parseInt(exon_start) - parseInt(track_start), parseInt(exon_end) - parseInt(track_start));
                 }
                 else {
                 }
@@ -715,8 +708,8 @@ function fetchFasta(begin, end, track, i, j) {
                   substart = window[track][i].transcript[j].Exons[k].start - start;
                   subend = window[track][i].transcript[j].Exons[k].end - start;
                 }
-                var exonSeq = seq.substring(substart,subend);
-                seq = seq.substring(0,substart)+exonSeq.toUpperCase()+seq.substring(subend+1,seq.length);
+                var exonSeq = seq.substring(substart, subend);
+                seq = seq.substring(0, substart) + exonSeq.toUpperCase() + seq.substring(subend + 1, seq.length);
               }
               jQuery('#fastaoutput').html(">" + seqregname + ": " + begin + " - " + end + " <font color='green'> " + convertFasta(seq) + "</font>");
               jQuery('#fastaoutput').each(function () {

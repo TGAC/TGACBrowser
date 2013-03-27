@@ -83,10 +83,10 @@ function browser_coordinates() {
 }
 
 function trackToggle(trackname) {
-console.log(trackname)
+  console.log(trackname)
   var index = 0;
   var graph = "false";
-var trackid = "";
+  var trackid = "";
   layers = jQuery("#rowoftracks").val();
   for (var i = 0; i < track_list.length; i++) {
     if (track_list[i].name == trackname) {
@@ -131,7 +131,7 @@ var trackid = "";
       else if (trackname.toLowerCase().indexOf("gene") >= 0) {
         dispGenes("#" + trackname + "_div", trackname, track_list[index].expand);
       }
-      else if (trackname.toLowerCase().indexOf("wig") >= 0) { 
+      else if (trackname.toLowerCase().indexOf("wig") >= 0) {
         dispGraphWig("#" + trackname + "_div", trackname, trackid);
       }
       else {
@@ -228,11 +228,11 @@ function groupTogether() {
   window[grouptrack][trackid].transcript.sort(SortByLayer);
   trackToggle(grouptrack);
   jQuery("#makegroup").hide();
+  backup_tracks(grouptrack, trackid)
   ctrldown = false;
   grouplist = [];
   grouplastid = null;
   grouptrack = null;
-
 
 }
 
@@ -268,6 +268,51 @@ function findAndRemove(array, property, value) {
     if (result[property] == value) {
       //Remove from array
       array.splice(index, 1);
+    }
+  });
+}
+
+function backup_tracks(track, i) {
+  var add = window[track][i];
+  var index = -1;
+  if (!window[track + "_edited"]) {
+    add.edited = 1;
+    window[track + "_edited"] = [];
+    window[track + "_edited"].push(add);
+
+  }
+  else {
+    jQuery.each(window[track + "_edited"], function (b, w) {
+      if (w.id == add.id) {
+        index = b;
+        add.edited = parseInt(add.edited) + 1;
+        console.log("if");
+        window[track + "_edited"].splice(b, 1, add)
+        return;
+      }
+    });
+    
+    if(index == -1){
+      add.edited = 1;
+             console.log("else");
+             window[track + "_edited"].push(add);
+    }
+  }
+  console.log(window[track + "_edited"])
+}
+
+function backup_tracks_minus(track, i) {
+  console.log("here minus")
+  var add = window[track][i];
+  jQuery.each(window[track + "_edited"], function (b, w) {
+    if (w.id == window[track][i].id) {
+      console.log("if");
+      window[track + "_edited"][b].edited = window[track + "_edited"][b].edited - 1;
+      if (window[track + "_edited"][b].edited == 0) {
+        window[track + "_edited"].splice(b, 1);
+        console.log(window[track + "_edited"])
+      }
+      console.log(window[track + "_edited"]);
     }
   });
 }
