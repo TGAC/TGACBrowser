@@ -286,33 +286,55 @@ function backup_tracks(track, i) {
       if (w.id == add.id) {
         index = b;
         add.edited = parseInt(add.edited) + 1;
-        console.log("if");
         window[track + "_edited"].splice(b, 1, add)
         return;
       }
     });
-    
-    if(index == -1){
+
+    if (index == -1) {
       add.edited = 1;
-             console.log("else");
-             window[track + "_edited"].push(add);
+      window[track + "_edited"].push(add);
     }
   }
-  console.log(window[track + "_edited"])
 }
 
 function backup_tracks_minus(track, i) {
-  console.log("here minus")
   var add = window[track][i];
   jQuery.each(window[track + "_edited"], function (b, w) {
     if (w.id == window[track][i].id) {
-      console.log("if");
       window[track + "_edited"][b].edited = window[track + "_edited"][b].edited - 1;
       if (window[track + "_edited"][b].edited == 0) {
         window[track + "_edited"].splice(b, 1);
-        console.log(window[track + "_edited"])
       }
-      console.log(window[track + "_edited"]);
     }
   });
+}
+
+function backup_tracks_removed(track, i) {
+  var add = window[track][i];
+   if (!window[track + "_removed"]) {
+    window[track + "_removed"] = [];
+  }
+  window[track + "_removed"].push(add);
+
+//
+//  can be used if removed tracks need to be add again new feature
+//
+// else {
+//    jQuery.each(window[track + "_removed"], function (b, w) {
+//      if (w.id == add.id) {
+//        index = b;
+//        add.edited = parseInt(add.edited) + 1;
+//        console.log("if");
+//        window[track + "_removed"].splice(b, 1, add)
+//        return;
+//      }
+//    });
+//
+//    if (index == -1) {
+//      add.edited = 1;
+//      console.log("else");
+//      window[track + "_removed"].push(add);
+//    }
+//  }
 }

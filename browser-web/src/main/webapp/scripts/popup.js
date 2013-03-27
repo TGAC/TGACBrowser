@@ -29,7 +29,7 @@ function newpopup(track, i, j) {
   var width = jQuery("#popup").width();
   jQuery('#blastselector').hide();
   jQuery("#popuptrack").html(track);
-  var position = window[track][i].start +"-"+ position_func();
+  var position = window[track][i].start + "-" + position_func();
 
   function position_func() {
     if (window[track][i].end) {
@@ -328,9 +328,11 @@ function deleteTrack(track, i, j) {
   if (response == true) {
     if (j) {
       delete window[track][i].transcript.splice(j, 1);
+      backup_tracks(track, i);
     }
     else {
       delete window[track].splice(i, 1);
+      backup_tracks_removed(track, i)
     }
     trackToggle(track);
     removePopup();
@@ -360,8 +362,6 @@ function flagTrack(track, i, j) {
     }
   }
 
-
-  
 
   trackToggle(track);
   removePopup();
@@ -395,7 +395,7 @@ function revertTrack(track, i, j) {
             });
   }
   removePopup();
-backup_tracks_minus(track, i)
+  backup_tracks_minus(track, i)
 }
 
 
@@ -659,7 +659,6 @@ function convertPeptide(cdnaseq) {
   }
 
   return ptn_seq;
-  alert("here");
 }
 
 function fetchFasta(begin, end, track, i, j) {

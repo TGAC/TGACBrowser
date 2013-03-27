@@ -378,6 +378,7 @@ function addJSON(from, to, trackName, trackId) {
                         }
 
                         if (window[trackname + "_edited"]) {
+
                           jQuery.each(window[trackname], function (i, v) {
                             jQuery.each(window[trackname + "_edited"], function (j, w) {
                               if (w.id == v.id) {
@@ -387,6 +388,16 @@ function addJSON(from, to, trackName, trackId) {
                             });
                             return;
                           });
+                        }
+                        if (window[trackname + "_removed"]) {
+                          for (var i = 0; i < window[trackname].length; i++) {
+                            jQuery.each(window[trackname + "_removed"], function (j, w) {
+                              if (w.id == window[trackname][i].id) {
+                                window[trackname].splice(i - 1, 1)
+                                return;
+                              }
+                            });
+                          }
                         }
                       }
                       trackToggle(json.name)

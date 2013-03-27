@@ -87,7 +87,6 @@ var processTaskSubmission = function (json) {
 };
 
 function checkTask(task, db, format, start, end, hit, link) {
-  console.log(task + "," + db + "," + format + "," + start + "," + end + "," + hit + "," + link)
   jQuery("#alertDiv").html("<img src='images/browser/loading2.gif' height='10px'> BLAST running ");
   jQuery("#alertDiv").show();
   Fluxion.doAjax(
@@ -129,7 +128,6 @@ function checkTask(task, db, format, start, end, hit, link) {
                           jQuery("#alertDiv").html("");
                           findAndRemove(blastsdata, 'id', task);
                           if (!window['blasttrack']) {
-                            console.log("not defined")
                             window['blasttrack'] = "running";
                           }
                           if (window['blasttrack'] == "running") {
@@ -199,13 +197,11 @@ function seqregionSearchPopup(query, from, to, blast) {
               jQuery('#openCloseWrap').show();
               jQuery('#displayoptions').show();
               seqregname = json.seqregname;
-              console.log(tracks.length)
               tracks = jQuery("#filetrack").html().split(',');
               if (tracks[0].length) {
                 for (var i = 0; i < tracks.length; i++) {
                   var filename = tracks[i].substring(tracks[i].lastIndexOf("/") + 1, tracks[i].lastIndexOf("."));
                   var type = tracks[i].substring(tracks[i].lastIndexOf(".") + 1, tracks[i].length);
-                  console.log(filename+"###"+type)
                   track_list.push(
                           {name: filename + "_" + type, id: tracks[i], display_label: filename, desc: "loaded Sam", disp: 1, merge: 0, graph: "false", display_lable: tracks[i], label: 0}
                   );
@@ -509,7 +505,6 @@ function reloadTracks(tracks, tracklist, blast) {
       for (var j = 0; j < tracks.length; j++) {
         if (tracklist[i].id == tracks[j].trackId) {
           window[tracklist[i].name] = tracks[j].child;
-          console.log(tracklist[i].name + ":" + tracklist[i].id + "==" + tracks[j].trackId)
           jQuery('#' + tracklist[i].name + 'Checkbox').attr('checked', true);
           mergeTrackList(tracklist[i].name);
           if (tracklist[i].merge == "1") {
@@ -522,31 +517,20 @@ function reloadTracks(tracks, tracklist, blast) {
     }
   }
   if (blast == "true") {
-    console.log("trrrr")
-    console.log(window['blasttrack'])
-
-
     for (var j = 0; j < tracks.length; j++) {
-      console.log(tracks[j].trackId)
       if (tracks[j].trackId == "running") {
         if (!window['blasttrack']) {
-          console.log("not defined")
           window['blasttrack'] = "running";
           jQuery("#blasttrack_div").html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
           jQuery("#blasttrack_wrapper").fadeIn();
           jQuery('input[name=blasttrack-0]').attr('checked', true);
         }
         var blasts = tracks[j].child;
-        console.log(blasts.length)
         jQuery.each(blasts, function (index) {
-
           checkTask(blasts[index].id, blasts[index].db, blasts[index].format, blasts[index].start, blasts[index].end, blasts[index].hit, blasts[index].link);
         });
-
-
         jQuery('input[name=blasttrackCheckbox]').attr('checked', true);
         trackToggle('blasttrack');
-
       }
     }
   }

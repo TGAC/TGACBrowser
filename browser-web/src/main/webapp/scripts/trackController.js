@@ -151,11 +151,8 @@ function toogleLabelMerged() {
 
 
 function dispBLAST(div, track) {
-  console.log("blaaaaaaaaaast")
   jQuery(div).html("<img src=\"./images/browser/dna_helix_md_wm.gif\" alt=\"loading\">");
-
   var blasts = window[track];
-
   if (!window[track] || window[track] == "running") {
     jQuery(div).html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
     jQuery(div).fadeIn();
@@ -191,7 +188,6 @@ function dispBLAST(div, track) {
         var start = getBegin() - partial;
 
         var end = parseInt(getEnd()) + parseInt(partial);
-        console.log(start + ":" + end)
         var show = showObject(start, end, blast_start, blast_stop);
         var border = 0;
         if (blasts[i].flag) {
