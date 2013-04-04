@@ -28,12 +28,17 @@ function removePopup() {
 function newpopup(track, i, j) {
   var width = jQuery("#popup").width();
   jQuery('#blastselector').hide();
-  jQuery("#popuptrack").html(track);
-  var position = window[track][i].start + "-" + position_func();
+   for (var i = 0; i < track_list.length; i++) {
+      if (track_list[i].name  == track) {
+        jQuery("#popuptrack").html(track_list[i].display_label);
+      }
+   }
+
+  var position = window[track][i].start + position_func();
 
   function position_func() {
     if (window[track][i].end) {
-      return window[track][i].end
+      return "-" + window[track][i].end
     }
     else {
       return "";
@@ -52,7 +57,7 @@ function newpopup(track, i, j) {
     jQuery("#EditDescription").html('<span title="Edit" class="ui-button ui-icon ui-icon-pencil" onclick=showEditDesc(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
     jQuery("#deleteTrack").html('<span title="Remove" class="ui-button ui-icon ui-icon-trash" onclick=deleteTrack(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
     jQuery("#flagTrack").html('<span title="Flag" class="ui-button ui-icon ui-icon-flag" onclick=flagTrack(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
-    jQuery("#Ensemblme").html("");
+    jQuery("#Ensemblme").html("<a href = 'http://plants.ensembl.org/Oryza_sativa/Gene/Summary?g="+window[track][i].transcript[j].desc+"'><span title='Ensembl' class='ui-button ui-ensembl'></span></a>");
     jQuery("#revertme").html('<span title="Revert_Name" class="ui-button ui-icon ui-icon-arrowreturnthick-1-w" onclick=revertTrack(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
     jQuery("#Detail").html(stringTrim(window[track][i].transcript[j].desc + "(" + window[track][i].desc + ")", width));
 

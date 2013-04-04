@@ -231,7 +231,7 @@ function seqregionSearchPopup(query, from, to, blast) {
               dispSeqCoord();
               displayCursorPosition();
               setNavPanel();
-//              getReferences();
+              getReferences();
               loadDefaultTrack(track_list);
               jQuery("#controlsbutton").colorbox({width: "90%", inline: true, href: "#controlpanel"});
 
@@ -481,6 +481,7 @@ function loadSession(query) {
             displayCursorPosition();
             setNavPanel();
             checkSession();
+            getReferences();
             reloadTracks(json.tracks, track_list, json.blast);
             jQuery("#controlsbutton").colorbox({width: "90%", inline: true, href: "#controlpanel"});
           }
