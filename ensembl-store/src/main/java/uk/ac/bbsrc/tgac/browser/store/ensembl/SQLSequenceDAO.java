@@ -107,7 +107,7 @@ public class SQLSequenceDAO implements SequenceStore {
   public static final String GET_GO_for_Genes = "select value from gene_attrib where gene_id = ?";
   public static final String GET_Assembly_for_reference = "SELECT * FROM assembly where asm_seq_region_id =?";
   public static final String GET_GENE_SIZE = "SELECT COUNT(*) FROM gene where seq_region_id =? and analysis_id = ?";
-
+  public static final String GET_GENOME_MARKER = "SELECT * from marker_feature";
 
   private JdbcTemplate template;
 
@@ -1305,5 +1305,25 @@ public class SQLSequenceDAO implements SequenceStore {
       return "";
 //      throw new IOException("Sequence not found");
     }
+  }
+  public JSONArray getMarker() throws IOException {
+    try {
+          JSONArray markerList = new JSONArray();
+          List<Map<String, Object>> maps = template.queryForList(GET_GENOME_MARKER);
+          for (Map map : maps) {
+            JSONObject eachTrack = new JSONObject();
+            eachTrack.put("start", map.get("seq_region_start"));
+            eachTrack.put("end", map.get("seq_region_end"));
+            eachTrack.put("reference",template.queryForObject(GET_SEQ_REGION_NAME_FROM_ID, new Object[]{map.get("seq_region_id")}, String.class));
+            eachTrack.put("marker_id", map.get("marker_id"));
+            eachTrack.put("id", map.get("marker_feature_id"));
+            markerList.add(eachTrack);
+          }
+          return markerList;
+        }
+        catch (EmptyResultDataAccessException e) {
+          throw new IOException("getMarker no result found");
+
+        }
   }
 }

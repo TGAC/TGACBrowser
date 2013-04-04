@@ -117,6 +117,9 @@ function trackToggle(trackname) {
           dispTrack("#" + track_list[i].name + "_div", track_list[i].name);
         }
       }
+      else {
+        jQuery("#" + track_list[i].name + "_wrapper").fadeOut();
+      }
     }
   }
   else {
@@ -312,7 +315,7 @@ function backup_tracks_minus(track, i) {
 
 function backup_tracks_removed(track, i) {
   var add = window[track][i];
-   if (!window[track + "_removed"]) {
+  if (!window[track + "_removed"]) {
     window[track + "_removed"] = [];
   }
   window[track + "_removed"].push(add);

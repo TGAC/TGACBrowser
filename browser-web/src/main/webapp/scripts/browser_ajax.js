@@ -658,6 +658,30 @@ function getReferences(show) {
             setMapMarkerTop(getBegin());
             setMapMarkerHeight(getEnd() - getBegin())
 
+            getMarkers();
+
+          }
+          });
+}
+
+function getMarkers() {
+  Fluxion.doAjax(
+          'dnaSequenceService',
+          'loadMarker',
+          {'url': ajaxurl},
+          {'doOnSuccess': function (json) {
+            var markers = json.marker;
+            var height = jQuery("#" + seqregname).css('height');
+            var width = 25;
+            for (var i = 0; i < markers.length; i++) {
+              var length = sequencelength * parseFloat(jQuery("#" + markers[i].reference).css('height')) / parseFloat(jQuery("#" + seqregname).css('height'));
+              console.log(markers[i].reference + ":" + length)
+              var maptop = parseFloat(jQuery("#" + markers[i].reference).css('top')) + parseInt(markers[i].start) * parseFloat(jQuery("#" + markers[i].reference).css('height')) / length;
+              var left = jQuery("#" + markers[i].reference).position().left;
+              var mapheight = parseFloat(jQuery("#" + markers[i].reference).css('height')) / length;
+              console.log(markers[i].start + ":" + maptop + ":" + length + ":" + jQuery("#" + markers[i].reference).css('height'))
+              jQuery("#refmap").append("<div  class='refmapmarker'  style='top:" + maptop + "px; left: " + left + "px; width:" + width + "px; height:" + mapheight + "px;'></div>");
+            }
           }
           });
 }

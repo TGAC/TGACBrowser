@@ -188,7 +188,7 @@
 
                         <span title='unSelectAll'><input type="checkbox" id='unSelectAllCheckbox'
                                                          name='unSelectAllCheckbox'
-                                                         onClick=unSelectAllCheckbox();>  Diselect All</span>
+                                                         onClick=unSelectAllCheckbox();>  Deselect All</span>
 
                     </th>
 

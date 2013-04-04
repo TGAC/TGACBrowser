@@ -6,7 +6,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
-var seq = null, seqLen, sequencelength, randomnumber, merged_track_list, deltaWidth = 0;
+var seq = null, seqLen, sequencelength, randomnumber, merged_track_list, deltaWidth = 0, refheight;
 var maxLen, showCDS = false, showSNP = false, ctrldown = false;
 var rightclick = false, path;
 //var cds, SNPs, Exon, minWidth;
@@ -425,6 +425,7 @@ function dispCoord(seqStart, seqEnd) {
 
   setBegin(begin);
   setEnd(end);
+  setMapMarkerTop(getBegin());
 }
 
 
@@ -765,6 +766,7 @@ function selectAllCheckbox() {
         eval(jQuery(this).attr('onClick'));
       }
     })
+//    trackToggle("all")
   }
   else {
 //     jQuery("#tracklist input").each(function () {
@@ -785,12 +787,13 @@ function unSelectAllCheckbox() {
     jQuery("#tracklist input").each(function () {
       if (jQuery(this).is(':checked')) {
         jQuery(this).attr('checked', false);
-        eval(jQuery(this).attr('onClick'));
+//        eval(jQuery(this).attr('onClick'));
       }
       else {
         //    do nothing
       }
     })
   }
+  trackToggle("all")
 
 }

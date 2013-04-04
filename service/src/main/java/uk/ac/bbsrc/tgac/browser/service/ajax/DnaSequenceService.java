@@ -137,6 +137,19 @@ public class DnaSequenceService {
 //
 //  }
 
+  public JSONObject searchSeqRegionforMap(HttpSession session, JSONObject json) {
+     log.info("here");
+     String seqName = "";
+     JSONObject response = new JSONObject();
+     try {
+       response.put("seqregion", sequenceStore.getSeqRegionearch(seqName));
+       return response;
+     }
+     catch (IOException e) {
+       e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+       return JSONUtils.SimpleJSONError(e.getMessage());
+     }
+   }
 
   public JSONObject loadTrack(HttpSession session, JSONObject json) {
     String seqName = json.getString("query");
@@ -288,6 +301,19 @@ public class DnaSequenceService {
     }
   }
 
+
+  public JSONObject loadMarker(HttpSession session, JSONObject json) {
+    JSONObject response = new JSONObject();
+    try {
+        response.put("marker", sequenceStore.getMarker());
+
+      return response;
+    }
+    catch (IOException e) {
+      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+      return JSONUtils.SimpleJSONError(e.getMessage());
+    }
+  }
 //  public JSONArray getSamBam(long start, long end, int delta) {
 //      JSONArray sam = new JSONArray();
 //      JSONObject response = new JSONObject();

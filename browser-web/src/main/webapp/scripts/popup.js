@@ -28,17 +28,17 @@ function removePopup() {
 function newpopup(track, i, j) {
   var width = jQuery("#popup").width();
   jQuery('#blastselector').hide();
-   for (var i = 0; i < track_list.length; i++) {
-      if (track_list[i].name  == track) {
-        jQuery("#popuptrack").html(track_list[i].display_label);
+   for (var a = 0; a < track_list.length; a++) {
+      if (track_list[a].name  == track) {
+        jQuery("#popuptrack").html(track_list[a].display_label);
       }
    }
 
-  var position = window[track][i].start + position_func();
+  var position = window[track][i].start + position_func(window[track][i]);
 
-  function position_func() {
-    if (window[track][i].end) {
-      return "-" + window[track][i].end
+  function position_func(test) {
+    if (test.end) {
+      return "-" + test.end
     }
     else {
       return "";
@@ -46,10 +46,10 @@ function newpopup(track, i, j) {
   }
 
   if (j) {
-
+    position = window[track][i].transcript[j].start + position_func(window[track][i].transcript[j]);
     jQuery("#makemetop").html('<span title="Make Me Top" class="ui-button ui-icon ui-icon-arrowthick-1-n" onclick=makeMeTop(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
     jQuery("#peptides").html('<span title="peptides" class="ui-button ui-icon ui-icon-comment" onclick=showPeptides(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
-    jQuery("#position").html(stringTrim(window[track][i].transcript[j].start + "-" + window[track][i].transcript[j].end, width));
+    jQuery("#position").html(stringTrim(position, width));
     jQuery("#exdetails").html('<span title="Attributes" class="ui-button ui-icon ui-icon-note" onclick=showDetails(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
     jQuery("#FASTAme").html('<span title="Fasta" class="ui-button ui-fasta" onclick=fetchFasta(' + window[track][i].transcript[j].start + ',' + window[track][i].transcript[j].end + ",\"" + track + "\",\"" + i + "\",\"" + j + '\");></span>');
     jQuery("#BLASTme").html('<span title="Blast" class="ui-button ui-blast" onclick=preBlast(' + window[track][i].transcript[j].start + ',' + window[track][i].transcript[j].end + ',' + '\"#popup\");></span>');
@@ -57,7 +57,7 @@ function newpopup(track, i, j) {
     jQuery("#EditDescription").html('<span title="Edit" class="ui-button ui-icon ui-icon-pencil" onclick=showEditDesc(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
     jQuery("#deleteTrack").html('<span title="Remove" class="ui-button ui-icon ui-icon-trash" onclick=deleteTrack(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
     jQuery("#flagTrack").html('<span title="Flag" class="ui-button ui-icon ui-icon-flag" onclick=flagTrack(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
-    jQuery("#Ensemblme").html("<a href = 'http://plants.ensembl.org/Oryza_sativa/Gene/Summary?g="+window[track][i].transcript[j].desc+"'><span title='Ensembl' class='ui-button ui-ensembl'></span></a>");
+    jQuery("#Ensemblme").html("<a target='_blank' href='http://rice.plantbiology.msu.edu/cgi-bin/ORF_infopage.cgi?orf=" + window[track][i].desc + "'> <span title=\"Ensembl\" class=\"ui-button ui-ensembl\"></span></a>");
     jQuery("#revertme").html('<span title="Revert_Name" class="ui-button ui-icon ui-icon-arrowreturnthick-1-w" onclick=revertTrack(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
     jQuery("#Detail").html(stringTrim(window[track][i].transcript[j].desc + "(" + window[track][i].desc + ")", width));
 

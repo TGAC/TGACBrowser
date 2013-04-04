@@ -2331,3 +2331,47 @@ span.deleteicon input {
     position: absolute;
     background-color: blue;
 }
+
+#map {
+    height: 200px;
+    position: absolute;
+    top: 60px;
+    width: 100%;
+}
+
+#mapmarker{
+   border: 2px solid red;
+    position: absolute;
+    border-radius: 5px;
+}
+
+#searchresultMap {
+    position: absolute;
+    background: #d3d3d3;
+    float: left;
+    z-index: 999;
+    padding: 10px;
+    margin-top: 10px;
+    text-align: left;
+    height: 200px;
+    width: 100%;
+    /*border: 1px solid #000000;*/
+}
+
+.refmap {
+    opacity: 1;
+    cursor: pointer;
+    position: absolute;
+    border: 2px solid black;
+    background: gray;
+    border-radius: 15px;
+}
+
+.refmapmarker {
+    opacity: 1;
+    cursor: pointer;
+    position: absolute;
+    border: 0.5px solid black;
+    background: blue;
+    border-radius: 1px;
+}

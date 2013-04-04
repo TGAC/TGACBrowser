@@ -14,6 +14,8 @@ function getDragableLeft() {
 function setDragableLeft(left) {
   jQuery("#draggable").animate({"left": left}, 100, function () {
     setNavPanel()
+    setMapMarkerTop(getBegin());
+
   });
 }
 
@@ -42,6 +44,8 @@ function setDragableWidth(width) {
 
   jQuery("#leftbig").attr('title', "Move Left(" + diff + "" + bp + ")");
   jQuery("#rightbig").attr('title', "Move Right(" + diff + "" + bp + ")");
+  setMapMarkerHeight(getEnd() - getBegin())
+
 }
 
 function getbglayerWidth() {
@@ -120,4 +124,37 @@ function setEnd(end) {
   }
   jQuery("#end").size(end.length);
 
+}
+
+function setMapMarkerTop(top) {
+  var height = jQuery("#" + seqregname).css('height');
+  var maptop = parseFloat(jQuery("#" + seqregname).css('top')) + top * parseFloat(height) / sequencelength;
+
+  console.log(seqregname + ":" + height + ":" + maptop + ":" + jQuery("#" + seqregname).css('top'));
+  jQuery("#mapmarker").animate({"top": maptop}, 100);
+}
+
+function setMapMarkerHeight(height) {
+  console.log("height")
+  var mapheight = height * parseFloat(refheight) / sequencelength;
+  console.log(mapheight)
+  jQuery("#mapmarker").animate({"height": mapheight}, 100);
+}
+
+function setMapMarkerLeft() {
+  var left = jQuery("#" + seqregname).position().left;
+  console.log("left" + left+":"+seqregname)
+  jQuery("#mapmarker").animate({"left": left}, 100);
+}
+
+function getMapMarkerTop() {
+  return jQuery("#mapmarker").position().top;
+}
+
+function getMapMarkerHeight() {
+  return jQuery("#mapmarker").css('height');
+}
+
+function getMapMarkerLeft() {
+  return jQuery("#mapmarker").position().left;
 }

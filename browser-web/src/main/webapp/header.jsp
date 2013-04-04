@@ -112,7 +112,7 @@
         </td>
         <td>
             <font color=white>
-                <div id="seqnameh1"></div>
+                <span id="seqnameh1"></span>
             </font> </b>
         </td>
         </tr>

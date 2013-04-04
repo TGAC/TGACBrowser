@@ -54,6 +54,52 @@ function zoomIn(zoom_len) {
   jumpToSeq();
 }
 
+function jumpToHere(e) {
+  var top = parseFloat(e.pageY - jQuery('#' + seqregname).offset().top);
+  if (top > parseFloat(getMapMarkerTop())) {
+    top = top - parseFloat(getMapMarkerHeight());
+  }
+  var begin = (top * sequencelength / parseFloat(jQuery("#" + seqregname).css('height')) );
+  var end = parseInt(begin) + parseInt(getEnd() - getBegin());
+  setBegin(begin);
+  setEnd(end)
+  setMapMarkerTop(getBegin());
+  jumpToSeq();
+}
+
+function jumpToOther(e, length, name) {
+  var top = parseFloat(e.pageY - jQuery('#' + name).offset().top);
+  if (top > parseFloat(getMapMarkerTop())) {
+    top = top - parseFloat(getMapMarkerHeight());
+  }
+  var diff = parseInt(getEnd() - getBegin());
+  var begin, end;
+  if (diff) {
+    begin = parseInt(top * length / parseFloat(jQuery("#" + name).css('height')));
+    end = parseInt(begin) + diff;
+    if(begin < 1){
+      end = end - begin;
+      begin = 1;
+    }
+    if(end > length){
+      begin = begin - (end - length);
+      end = length;
+    }
+
+    if(begin < 1){
+      begin = 1;
+    }
+    if(end > length){
+      end = length;
+    }
+  }
+  else {
+    begin = 1;
+    end = length;
+  }
+  window.location.replace("index.jsp?query=" + name + "&from=" + begin + "&to=" + end);
+}
+
 function zoomOut(zoom_len) {
   var newbegin = parseInt(getBegin()) - parseInt(zoom_len);
   var newend = parseInt(getEnd()) + parseInt(zoom_len)
