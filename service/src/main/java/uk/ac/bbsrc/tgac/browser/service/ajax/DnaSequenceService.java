@@ -51,7 +51,7 @@ public class DnaSequenceService {
       Integer queryid = sequenceStore.getSeqRegionearchsize(seqName);
       if (queryid > 1) {
         response.put("html", "seqregion");
-        response.put("seqregion", sequenceStore.getSeqRegionearch(seqName));
+        response.put("seqregion", sequenceStore.getSeqRegionSearch(seqName));
       }
       else if (queryid == 0) {
         response.put("html", "gene");
@@ -142,7 +142,7 @@ public class DnaSequenceService {
      String seqName = "";
      JSONObject response = new JSONObject();
      try {
-       response.put("seqregion", sequenceStore.getSeqRegionearch(seqName));
+       response.put("seqregion", sequenceStore.getSeqRegionSearchMap(seqName));
        return response;
      }
      catch (IOException e) {

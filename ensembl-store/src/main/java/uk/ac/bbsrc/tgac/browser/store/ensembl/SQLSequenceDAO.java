@@ -25,6 +25,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by IntelliJ IDEA.
@@ -230,7 +232,7 @@ public class SQLSequenceDAO implements SequenceStore {
     }
   }
 
-  public JSONArray getSeqRegionearch(String searchQuery) throws IOException {
+  public JSONArray getSeqRegionSearch(String searchQuery) throws IOException {
     try {
       JSONArray names = new JSONArray();
       List<Map<String, Object>> maps = template.queryForList(GET_SEQ_REGION_ID_SEARCH, new Object[]{'%' + searchQuery + '%'});
@@ -249,6 +251,29 @@ public class SQLSequenceDAO implements SequenceStore {
       throw new IOException("result not found");
     }
   }
+
+  public JSONArray getSeqRegionSearchMap(String searchQuery) throws IOException {
+     try {
+       JSONArray names = new JSONArray();
+       List<Map<String, Object>> maps = template.queryForList(GET_SEQ_REGION_ID_SEARCH, new Object[]{'%' + searchQuery + '%'});
+       for (Map map : maps) {
+         JSONObject eachName = new JSONObject();
+         Pattern p = Pattern.compile(".*chr", Pattern.CASE_INSENSITIVE);
+
+         Matcher matcher_comment = p.matcher(template.queryForObject(GET_coord_sys_name, new Object[]{map.get("coord_system_id").toString()}, String.class));
+         if (matcher_comment.find()) {
+         eachName.put("name", map.get("name"));
+         eachName.put("seq_region_id", map.get("seq_region_id"));
+         eachName.put("length", map.get("length"));
+         names.add(eachName);  }
+       }
+       return names;
+     }
+     catch (EmptyResultDataAccessException e) {
+ //     return getGOSearch(searchQuery);
+       throw new IOException("result not found");
+     }
+   }
 
   public JSONArray getSeqRegionIdSearch(String searchQuery) throws IOException {
     try {

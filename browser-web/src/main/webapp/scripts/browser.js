@@ -77,19 +77,19 @@ function jumpToOther(e, length, name) {
   if (diff) {
     begin = parseInt(top * length / parseFloat(jQuery("#" + name).css('height')));
     end = parseInt(begin) + diff;
-    if(begin < 1){
+    if (begin < 1) {
       end = end - begin;
       begin = 1;
     }
-    if(end > length){
+    if (end > length) {
       begin = begin - (end - length);
       end = length;
     }
 
-    if(begin < 1){
+    if (begin < 1) {
       begin = 1;
     }
-    if(end > length){
+    if (end > length) {
       end = length;
     }
   }
@@ -384,7 +384,28 @@ function addJSON(from, to, trackName, trackId) {
                     }
                   }
                   //  console.log("merging "+JSON.parse(window[trackname + "_edited"]))
-                  window[trackname] = jQuery.extend(json[trackname], window[trackname + "_edited"].toJSON)
+                  if (window[trackname + "_edited"]) {
+
+                    jQuery.each(window[trackname], function (i, v) {
+                      jQuery.each(window[trackname + "_edited"], function (j, w) {
+                        if (w.id == v.id) {
+                          window[trackname].splice(i, 1, window[trackname + "_edited"][j])
+                          return;
+                        }
+                      });
+                      return;
+                    });
+                  }
+                  if (window[trackname + "_removed"]) {
+                    for (var i = 0; i < window[trackname].length; i++) {
+                      jQuery.each(window[trackname + "_removed"], function (j, w) {
+                        if (w.id == window[trackname][i].id) {
+                          window[trackname].splice(i - 1, 1)
+                          return;
+                        }
+                      });
+                    }
+                  }
                 }
                 trackToggle(json.name)
               }

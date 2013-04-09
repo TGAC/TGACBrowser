@@ -57,7 +57,9 @@ public interface Store<T> {
   public T getDomains(T geneid) throws IOException;
   public T getSeq(String query, int from, int to) throws IOException;
   public JSONArray getAssembly(int query, String trackId, int delta) throws IOException;
-  public JSONArray getSeqRegionearch(T query) throws IOException;
+  public JSONArray getSeqRegionSearch(T query) throws IOException;
+  public JSONArray getSeqRegionSearchMap(T query) throws IOException;
+
   public JSONArray getSeqRegionIdSearch(T query) throws IOException;
   public int getSeqRegionearchsize(T query) throws IOException;
   public Integer getSeqRegionforone(String searchQuery) throws IOException;

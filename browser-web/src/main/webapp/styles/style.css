@@ -30,7 +30,7 @@ body {
 
 }
 
-.headerbar a:link{
+.headerbar a:link {
     color: white;
     text-decoration: none;
     -moz-user-select: -moz-none;
@@ -38,15 +38,15 @@ body {
 
 }
 
-.headerbar a:visited{
-    color:#ffffff;
+.headerbar a:visited {
+    color: #ffffff;
     text-decoration: none;
     -moz-user-select: -moz-none;
     -webkit-user-select: none;
 
 }
 
-.headerbar a:hover{
+.headerbar a:hover {
     color: yellow;
     text-decoration: none;
     -moz-user-select: -moz-none;
@@ -54,10 +54,11 @@ body {
 
 }
 
-.headerlink{
+.headerlink {
     color: white;
 }
-.headerlink a:link{
+
+.headerlink a:link {
     color: #ffffff;
 }
 
@@ -68,14 +69,15 @@ body {
     color: white;
     margin-right: 5px;
 }
+
 .blasttab a:link {
     color: white;
     text-decoration: none;;
 }
 
-.seachbox{
+.seachbox {
     height: 8pt;
-   margin: 5px;;
+    margin: 5px;;
 }
 
 #dbinfo {
@@ -95,15 +97,13 @@ body {
     width: 40%;
     /*margin: -25px 5px 0 0;*/
 }
+
 #alertDiv {
     float: left;
     width: 40%;
     /*color: ;*/
     /*margin: -25px 5px 0 0;*/
 }
-
-
-
 
 h1 {
     font-size: 1.8em;
@@ -1282,7 +1282,7 @@ span.counter {
 
     box-shadow: 10px 10px 25px #888888;
     /*border-left: 0;*/
-    overflow: hidden;
+    /*overflow: hidden;*/
 }
 
 #draggable {
@@ -1764,7 +1764,7 @@ span.counter {
 #currentposition {
     position: absolute;
     z-index: 99999;
-     -moz-user-select: -moz-none;
+    -moz-user-select: -moz-none;
     -webkit-user-select: none;
 }
 
@@ -1942,14 +1942,13 @@ span.counter {
 
 }
 
-
 .feature_tracks:hover {
     /*border: 1px solid #000000;*/
     background: #F8F8F8;
 }
 
 /*#ruler {*/
-    /*font-family: "Courier New", Courier, monospace;*/
+/*font-family: "Courier New", Courier, monospace;*/
 /*}*/
 
 /*tracks class for style*/
@@ -1964,7 +1963,7 @@ span.counter {
     cursor: pointer;
 }
 
-.track_label{
+.track_label {
     margin-top: 5px;
     white-space: nowrap;
 
@@ -2018,7 +2017,6 @@ span.counter {
     border: 1px solid transparent;
     height: 5px;
 }
-
 
 .mergedexon {
     position: absolute;
@@ -2114,21 +2112,21 @@ span.counter {
     height: 5px;
 }
 
-.repeat{
+.repeat {
     position: absolute;
-       /*background: url("../images/browser/tempexon.png") repeat-x left top;*/
-       background-position: center center;
-       background: gray;
-       /*border: 1px solid #000000;*/
-       height: 5px;
+    /*background: url("../images/browser/tempexon.png") repeat-x left top;*/
+    background-position: center center;
+    background: gray;
+    /*border: 1px solid #000000;*/
+    height: 5px;
 }
 
 .graph {
     opacity: 1;
     cursor: pointer;
     position: absolute;
-    border:1px solid black;
-    background:steelblue;
+    border: 1px solid black;
+    background: steelblue;
 }
 
 .unknown {
@@ -2160,6 +2158,7 @@ span.counter {
     width: 16px;
     height: 16px;
 }
+
 .ui-fasta {
     background-image: url("../images/browser/fasta.png");
     width: 16px;
@@ -2185,8 +2184,8 @@ span.counter {
     width: 200px;
 }
 
-#popup_hanging{
-  position: absolute;
+#popup_hanging {
+    position: absolute;
     background-color: white;
     border-radius: 5px;
     box-shadow: 10px 10px 35px #888888;
@@ -2275,7 +2274,7 @@ span.counter {
     opacity: 0.7;
 }
 
-#trackmouseover{
+#trackmouseover {
     padding: 5px;
     border: 1px solid #000000;
 }
@@ -2303,31 +2302,32 @@ span.deleteicon input {
     padding-right: 16px;
 }
 
-.ui-resizable{
+.ui-resizable {
     border-bottom: 1px solid black;
 
 }
 
-.match{
+.match {
     position: absolute;
     background-color: green;
 }
 
-.mismatch{
+.mismatch {
     position: absolute;
     background-color: red;
 }
-.delete{
+
+.delete {
     position: absolute;
     background-color: #000000;
 }
 
-.skip{
+.skip {
     position: absolute;
     background-color: #ffffff;
 }
 
-.insert{
+.insert {
     position: absolute;
     background-color: blue;
 }
@@ -2339,8 +2339,8 @@ span.deleteicon input {
     width: 100%;
 }
 
-#mapmarker{
-   border: 2px solid red;
+#mapmarker {
+    border: 2px solid red;
     position: absolute;
     border-radius: 5px;
 }
@@ -2365,13 +2365,24 @@ span.deleteicon input {
     border: 2px solid black;
     background: gray;
     border-radius: 15px;
+    overflow: hidden;
 }
 
 .refmapmarker {
     opacity: 1;
     cursor: pointer;
     position: absolute;
-    border: 0.5px solid black;
+    /*border: 0.5px solid black;*/
     background: blue;
     border-radius: 1px;
+}
+
+.est {
+    position: absolute;
+    /*background: url("../images/browser/tempexon.png") repeat-x left top;*/
+    background-position: center center;
+    background: #556b2f;
+    border: 1px solid transparent;
+    height: 5px;
+    cursor: pointer;
 }

@@ -2,7 +2,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib uri='http://java.sun.com/jsp/jstl/core' prefix='c' %>
 <%@ page import="java.util.ArrayList" language="java" %>
-<div id="main1" style="top : 10px ; height: 800px; ">
+<div id="main1" style="top : 10px ; height: 1050px; ">
     <div class="fakediv">
 
         <div id=sessionid></div>

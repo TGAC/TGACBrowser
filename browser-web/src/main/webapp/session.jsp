@@ -23,7 +23,7 @@
 
 <center>
 
-    <div id="mainsearch" style="top : 10px ; height: 800px; "></div>
+    <div id="mainsearch" style="top : 10px ; "></div>
 
 </center>
 
