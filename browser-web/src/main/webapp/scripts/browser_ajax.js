@@ -442,11 +442,13 @@ function metaData() {
 
 function saveSession() {
   var tracks = getTracks();
+  var edited_tracks = getEditedTracks();
+  var removed_tracks = getRemovedTracks();
   var blast = jQuery("#alertDiv").text().contains("BLAST");
   Fluxion.doAjax(
           'fileService',
           'saveFile',
-          {'location': path, 'reference': seqregname, 'session': randomnumber, 'from': getBegin(), 'to': getEnd(), 'seq': seq, 'seqlen': sequencelength, 'track': track_list, 'tracks': tracks, 'filename': (randomnumber), 'blast': blast, 'url': ajaxurl},
+          {'location': path, 'reference': seqregname, 'session': randomnumber, 'from': getBegin(), 'to': getEnd(), 'seq': seq, 'seqlen': sequencelength, 'track': track_list, 'tracks': tracks, 'filename': (randomnumber), 'blast': blast, 'edited_tracks':edited_tracks, 'removed_tracks':removed_tracks, 'url': ajaxurl},
           {'doOnSuccess': function (json) {
             jQuery("#export").html("<a href=" + json.link + " target = '_blank'>Export</a>");
             jQuery("#export").css('background', "");
@@ -480,10 +482,13 @@ function loadSession(query) {
             dispSeqCoord();
             displayCursorPosition();
             setNavPanel();
-            checkSession();
+
             getReferences();
             reloadTracks(json.tracks, track_list, json.blast);
+            loadEditedTracks(json.edited_tracks);
+            loadRemovedTracks(json.removed_tracks);
             jQuery("#controlsbutton").colorbox({width: "90%", inline: true, href: "#controlpanel"});
+            checkSession();
           }
           });
 }

@@ -606,6 +606,44 @@ function getTracks() {
   return tracks;
 }
 
+function getEditedTracks() {
+  var tracks = [];
+  var eachTrack = {};
+  for (var i = 0; i < track_list.length; i++) {
+    if (window[track_list[i].name+ "_edited"]) {
+      eachTrack = { "trackName": track_list[i].name + "_edited", "child": window[track_list[i].name+"_edited"]};
+      tracks.push(eachTrack);
+    }
+  }
+  return tracks;
+}
+
+function getRemovedTracks() {
+  var tracks = [];
+  var eachTrack = {};
+  for (var i = 0; i < track_list.length; i++) {
+    if (window[track_list[i].name+ "_removed"]) {
+      eachTrack = { "trackName": track_list[i].name + "_removed", "child": window[track_list[i].name+"_removed"]};
+      tracks.push(eachTrack);
+    }
+  }
+  return tracks;
+}
+
+function loadEditedTracks(tracks) {
+  for (var i = 0; i < tracks.length; i++) {
+window[tracks[i].trackName] = tracks[i].child;
+console.log(window[tracks[i].trackName])
+  }
+}
+
+function loadRemovedTracks(tracks) {
+  for (var i = 0; i < tracks.length; i++) {
+window[tracks[i].trackName] = tracks[i].child;
+console.log(window[tracks[i].trackName])
+  }
+}
+
 function dragToogle() {
   if (jQuery("#dragRadio").is(':checked')) {
     jQuery('#wrapper').css('cursor', 'default');

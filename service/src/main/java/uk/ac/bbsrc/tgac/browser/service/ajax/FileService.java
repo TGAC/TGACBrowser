@@ -58,6 +58,9 @@ public class FileService {
     String to = json.getString("to");
     String seq = json.getString("seq");
     String tracks = json.getString("tracks");
+    String edited_tracks = json.getString("edited_tracks");
+    String removed_tracks = json.getString("removed_tracks");
+
     String filename = json.getString("filename");
     String location = json.getString("location");
     String blast = json.getString("blast");
@@ -75,6 +78,8 @@ public class FileService {
       response.put("seq", seq);
       response.put("tracklist", track);
       response.put("tracks", tracks);
+      response.put("edited_tracks",edited_tracks);
+      response.put("removed_tracks",removed_tracks);
       response.put("blast", blast);
       out.write(response.toString());
       out.close();
