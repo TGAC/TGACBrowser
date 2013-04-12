@@ -135,8 +135,9 @@
 
         </div>
 
-        <div id="wrapper">
-
+        <div id="wrapper">            <div id=tracks>
+            </div>
+                  <%--<iframe src="browser.html"></iframe>--%>
         </div>
     </div>
 
@@ -556,12 +557,12 @@
             jQuery('#searchDiv').html('');
         }));
 
-        jQuery("#wrapper").load("browser.html", function (response, status, xhr) {
-            if (status == "error") {
-                var msg = "Sorry but there was an error: ";
-                alert(msg + xhr.status + " " + xhr.statusText);
-            }
-        });
+//        jQuery("#wrapper").load("browser.html", function (response, status, xhr) {
+//            if (status == "error") {
+//                var msg = "Sorry but there was an error: ";
+//                alert(msg + xhr.status + " " + xhr.statusText);
+//            }
+//        });
 
     });
 </script>

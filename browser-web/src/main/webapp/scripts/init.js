@@ -583,21 +583,22 @@ function getTracks() {
 
   var tracks = [];
   var eachTrack = {};
-  for (var i = 0; i < track_list.length; i++) {
-    if (jQuery("#" + track_list[i].name + "Checkbox").is(':checked')) {
-      var track = window[track_list[i].name];
-      var trackId = track_list[i].id;
-      if (window[track_list[i].name] && window[track_list[i].name] != 'running') {
-        eachTrack = { "trackId": trackId, "child": track}
-      }
-      tracks.push(eachTrack);
-    }
-  }
-  if (jQuery("#alertDiv").text().contains("BLAST")) {
+//  for (var i = 0; i < track_list.length; i++) {
+//    if (jQuery("#" + track_list[i].name + "Checkbox").is(':checked')) {
+//      var track = window[track_list[i].name];
+//      var trackId = track_list[i].id;
+//      if (window[track_list[i].name] && window[track_list[i].name] != 'running') {
+//        eachTrack = { "trackId": trackId, "child": track}
+//      }
+//      tracks.push(eachTrack);
+//    }
+//  }
+  if (jQuery("#alertDiv").text().indexOf("BLAST")) {
     eachTrack = { "trackId": "running", "child": blastsdata}
     tracks.push(eachTrack);
   }
-  if ((window['blasttrack']) && !jQuery("#blasttrackCheckbox").is(':checked')) {
+  if ((window['blasttrack']))// && !jQuery("#blasttrackCheckbox").is(':checked'))
+  {
     var track = window['blasttrack'];
     eachTrack = { "trackId": 0, "child": track}
     tracks.push(eachTrack);

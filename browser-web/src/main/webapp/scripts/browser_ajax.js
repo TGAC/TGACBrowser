@@ -367,6 +367,7 @@ function generateFileLink(data) {
 
 function loadTrackAjax(trackId, trackname) {
 //  jQuery.cookie('trackslist', track_list.toJSON());
+  console.log(trackId + ":" + trackname)
   mergeTrackList(trackname);
   var query = jQuery('#search').val();
   jQuery(track_list).each(function (index) {
@@ -381,10 +382,14 @@ function loadTrackAjax(trackId, trackname) {
     }
   });
 
+  console.log(trackId + ":" + trackname)
+
+
   if (window[trackname] || window[trackname] == "running" || window[trackname] == "loading") {
     trackToggle(trackname);
 //    need to think abt it
   }
+  console.log(trackId + ":" + trackname)
 
   if (jQuery("#" + trackname + "Checkbox").attr('checked')) {
     var partial = (getEnd() - getBegin()) + ((getEnd() - getBegin()) / 2);
@@ -444,11 +449,11 @@ function saveSession() {
   var tracks = getTracks();
   var edited_tracks = getEditedTracks();
   var removed_tracks = getRemovedTracks();
-  var blast = jQuery("#alertDiv").text().contains("BLAST");
+  var blast = jQuery("#alertDiv").text().indexOf("BLAST");
   Fluxion.doAjax(
           'fileService',
           'saveFile',
-          {'location': path, 'reference': seqregname, 'session': randomnumber, 'from': getBegin(), 'to': getEnd(), 'seq': seq, 'seqlen': sequencelength, 'track': track_list, 'tracks': tracks, 'filename': (randomnumber), 'blast': blast, 'edited_tracks':edited_tracks, 'removed_tracks':removed_tracks, 'url': ajaxurl},
+          {'location': path, 'reference': seqregname, 'session': randomnumber, 'from': getBegin(), 'to': getEnd(), 'seq': seq, 'seqlen': sequencelength, 'track': track_list, 'tracks': tracks, 'filename': (randomnumber), 'blast': blast, 'edited_tracks': edited_tracks, 'removed_tracks': removed_tracks, 'url': ajaxurl},
           {'doOnSuccess': function (json) {
             jQuery("#export").html("<a href=" + json.link + " target = '_blank'>Export</a>");
             jQuery("#export").css('background', "");
@@ -473,6 +478,7 @@ function loadSession(query) {
             jQuery('#canvas').show();
             jQuery('#displayoptions').show();
             jQuery('#sessioninput').fadeOut();
+            jQuery('#searchresultMap').fadeOut();
             seqregname = json.reference;
             trackList(track_list);
             minWidth = findminwidth();
@@ -482,11 +488,10 @@ function loadSession(query) {
             dispSeqCoord();
             displayCursorPosition();
             setNavPanel();
-
             getReferences();
-            reloadTracks(json.tracks, track_list, json.blast);
             loadEditedTracks(json.edited_tracks);
             loadRemovedTracks(json.removed_tracks);
+            reloadTracks(json.tracks, track_list, json.blast);
             jQuery("#controlsbutton").colorbox({width: "90%", inline: true, href: "#controlpanel"});
             checkSession();
           }
@@ -508,18 +513,54 @@ function loadSeq(query, from, to) {
 function reloadTracks(tracks, tracklist, blast) {
   for (var i = 0; i < tracklist.length; i++) {
     if (tracklist[i].disp == "1") {
-      for (var j = 0; j < tracks.length; j++) {
-        if (tracklist[i].id == tracks[j].trackId) {
-          window[tracklist[i].name] = tracks[j].child;
-          jQuery('#' + tracklist[i].name + 'Checkbox').attr('checked', true);
-          mergeTrackList(tracklist[i].name);
-          if (tracklist[i].merge == "1") {
-            jQuery('input[name=' + tracklist[i].name + 'mergedCheckbox]').attr('checked', true);
-          }
-          trackToggle(tracklist[i].name);
-        }
-
+//      for (var j = 0; j < tracks.length; j++) {
+//        if (tracklist[i].id == tracks[j].trackId) {
+//          window[tracklist[i].name] = tracks[j].child;
+      jQuery('#' + tracklist[i].name + 'Checkbox').attr('checked', true);
+      if (tracklist[i].merge == "1") {
+        mergeTrackList(tracklist[i].name);
+        jQuery('input[name=' + tracklist[i].name + 'mergedCheckbox]').attr('checked', true);
       }
+      var partial = (getEnd() - getBegin()) + ((getEnd() - getBegin()) / 2);
+      var start = (getBegin() - partial);
+      var end = parseInt(getEnd()) + parseFloat(partial);
+      if (start < 0) {
+        start = 0;
+      }
+      if (end > sequencelength) {
+        end = sequencelength;
+      }
+      deltaWidth = parseInt(end - start) * 2 / parseInt(maxLen);
+      window[tracklist[i].name] == "loading";
+      trackToggle(tracklist[i].name);
+      Fluxion.doAjax(
+              'dnaSequenceService',
+              'loadTrack',
+              {'query': seqregname, 'name': tracklist[i].name, 'trackid': tracklist[i].id, 'start': start, 'end': end, 'delta': deltaWidth, 'url': ajaxurl},
+              {'doOnSuccess': function (json) {
+                var trackname = json.name;
+
+                if (json.type == "graph") {
+                  for (var j = 0; j < track_list.length; j++) {
+                    if (track_list[j].name == trackname) {
+                      track_list[j].graph = "true";
+                    }
+                  }
+                }
+                else {
+                  for (var j = 0; j < track_list.length; j++) {
+                    if (track_list[j].name == trackname) {
+                      track_list[j].graph = "false";
+                    }
+                  }
+                }
+                window[trackname] = json[trackname];
+                trackToggle(trackname);
+              }
+              });
+//        trackToggle(tracklist[i].name);
+//        }
+//      }
     }
   }
   if (blast == "true") {
@@ -680,12 +721,12 @@ function getMarkers() {
             var width = 25;
             for (var i = 0; i < markers.length; i++) {
               var length = sequencelength * parseFloat(jQuery("#" + markers[i].reference).css('height')) / parseFloat(jQuery("#" + seqregname).css('height'));
-             
+
               var maptop = parseInt(markers[i].start) * parseFloat(jQuery("#" + markers[i].reference).css('height')) / length;
               var left = jQuery("#" + markers[i].reference).position().left;
               var mapheight = parseFloat(jQuery("#" + markers[i].reference).css('height')) / length;
-            
-              jQuery("#"+markers[i].reference).append("<div  class='refmapmarker'  style='top:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;'></div>");
+
+              jQuery("#" + markers[i].reference).append("<div  class='refmapmarker'  style='top:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;'></div>");
             }
           }
           });

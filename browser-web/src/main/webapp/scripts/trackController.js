@@ -1037,7 +1037,7 @@ function dispGraph(div, trackName, trackId) {
   var newStart_temp = getBegin();
   var newEnd_temp = getEnd();
 
-  if (track[0]) {
+  if (track) {
     track = jQuery.grep(track, function (element, index) {
       return element.start >= start && element.start <= end; // retain appropriate elements
     });

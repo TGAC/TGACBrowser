@@ -526,11 +526,11 @@ public class SQLSequenceDAO implements SequenceStore {
                     else if ((start_pos - ends.get(i) < delta) && (i + 1) == ends.size()) {
                       if (i == 0) {
                         map.put("layer", ends.size());
-                        ends.add(i, Integer.parseInt(map.get("asm_end").toString()));
+                        ends.add(i, Integer.parseInt(map.get("end").toString()));
                       }
                       else {
                         map.put("layer", ends.size());
-                        ends.add(ends.size(), Integer.parseInt(map.get("asm_end").toString()));
+                        ends.add(ends.size(), Integer.parseInt(map.get("end").toString()));
                       }
                       break;
                     }
@@ -635,11 +635,11 @@ public class SQLSequenceDAO implements SequenceStore {
 
                   if (i == 0) {
                     map.put("layer", ends.size());
-                    ends.add(i, Integer.parseInt(map.get("asm_end").toString()));
+                    ends.add(i, Integer.parseInt(map.get("end").toString()));
                   }
                   else {
                     map.put("layer", ends.size());
-                    ends.add(ends.size(), Integer.parseInt(map.get("asm_end").toString()));
+                    ends.add(ends.size(), Integer.parseInt(map.get("end").toString()));
                   }
 
 
