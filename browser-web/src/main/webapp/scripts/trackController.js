@@ -842,7 +842,7 @@ function dispTrack(div, trackName) {
       else if (trackName.toLowerCase().indexOf("align") >= 0) {
         trackClass = "align track";
       }
-      else if (trackName.toLowerCase().indexOf("sam") >= 0) {
+      else if (trackName.toLowerCase().indexOf("sam") >= 0 || trackName.toLowerCase().indexOf("bam") >= 0) {
         trackClass = "sam track";
       }
       else if (trackName.toLowerCase().indexOf("repeat") >= 0) {
@@ -912,9 +912,18 @@ function dispTrack(div, trackName) {
         if (stopposition > 10) {
           track_html.push("<span style=\"cursor:pointer; position:absolute; TOP:" + (top - 5) + "px; left:" + (parseInt(startposition) + parseInt(stopposition / 2) ) + "px; \" class= \"" + spanclass + "\"></span>");
         }
+        console.log(track[track_len].cigarline)
 
+        console.log(track[track_len].cigars)
 
-        track_html.push(dispCigar(track[track_len].cigars, track[track_len].start, top));
+        if (track[track_len].cigars) {
+          console.log("if")
+          track_html.push(dispCigar(track[track_len].cigars, track[track_len].start, top));
+        }
+        else if (track[track_len].cigarline) {
+          console.log("else")
+          track_html.push(dispCigarLine(track[track_len].cigarline, track[track_len].start, top));
+        }
       }
 
       if (jQuery('input[name=' + trackName + 'mergedCheckbox]').is(':checked')) {
@@ -956,8 +965,11 @@ function dispTrack(div, trackName) {
   }
   var now = new Date();
 }
-
+function dispCigarLine(cigars, start, top) {
+  console.log("cigarline")
+}
 function dispCigar(cigars, start, top) {
+  console.log("cigars")
   var track_html = "";
   var trackClass = "";
   var newStart_temp = getBegin();
@@ -1048,7 +1060,7 @@ function dispGraph(div, trackName, trackId) {
 
     track_html += "<div class= \"graph\" onclick=\"setBegin(" + track[track_len].start + ");setEnd(" + track[track_len].end + ");jumpToSeq();\"STYLE=\"bottom:0px; height: " + (track[track_len].graph * 45 / max) + "px;" +
                   "LEFT:" + startposition + "px;" +
-                  "width:" + (stopposition - 1) + "px \" title=\"" + start+":"+end+"->"+track[track_len].graph + "\" ></div>";
+                  "width:" + (stopposition - 1) + "px \" title=\"" + track_start + ":" + track_stop + "->" + track[track_len].graph + "\" ></div>";
 
   }
 //  jQuery(div).css('height', '70px');
@@ -1095,7 +1107,7 @@ function dispGraphWig(div, trackName, trackId) {
     var left = 0;
     if (start < 0) {
       left = (1 - start) * parseInt(width) / end * 3 / 4;
-      
+
     }
 
     var top = 0;
@@ -1137,7 +1149,7 @@ function dispGraphWig(div, trackName, trackId) {
               .attr('stroke', function () {
                       return "blue";
                     })
-	.attr("fill",function () {
+              .attr("fill", function () {
                       return "lightblue";
                     })
               .attr("d", d3line2(pathinfo));

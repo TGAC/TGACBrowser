@@ -35,12 +35,14 @@ function newpopup(track, i, j) {
    }
 
   var position = window[track][i].start + position_func(window[track][i]);
-
+  var endposition;
   function position_func(test) {
     if (test.end) {
+      endposition = test.end;
       return "-" + test.end
     }
     else {
+      endposition = parseInt(test.start)+1;
       return "";
     }
   }
@@ -80,7 +82,8 @@ function newpopup(track, i, j) {
       jQuery("#revertme").html('');
 
     }
-    jQuery("#ZoomHere").html('<span title="Zoom Here" class="ui-button ui-icon ui-icon-zoomin" onclick=zoomHere(' + window[track][i].start + ',' + window[track][i].end + ');></span>');
+
+    jQuery("#ZoomHere").html('<span title="Zoom Here" class="ui-button ui-icon ui-icon-zoomin" onclick=zoomHere(' + window[track][i].start + ',' +endposition + ');></span>');
     jQuery("#EditDescription").html('<span title="Edit" class="ui-button ui-icon ui-icon-pencil" onclick=showEditDesc(\"' + track + '\",\'' + i + '\');></span>');
     jQuery("#deleteTrack").html('<span title="Remove" class="ui-button ui-icon ui-icon-trash" onclick=deleteTrack(\"' + track + '\",\'' + i + '\');></span>');
     jQuery("#flagTrack").html('<span title="Flag" class="ui-button ui-icon ui-icon-flag" onclick=flagTrack(\"' + track + '\",\'' + i + '\');></span>');

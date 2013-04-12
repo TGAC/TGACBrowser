@@ -28,11 +28,6 @@
         jQuery("#mainsearch").load("browser.jsp", function() {
             onLoad();
             getUrlVariables();
-//            var first = getUrlVars()["query"];
-//var second = getUrlVars()["blast"];
-            <%----%>
-//alert(first);
-//alert(second);
         });
     });
 
