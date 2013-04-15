@@ -912,10 +912,10 @@ function dispTrack(div, trackName) {
         if (stopposition > 10) {
           track_html.push("<span style=\"cursor:pointer; position:absolute; TOP:" + (top - 5) + "px; left:" + (parseInt(startposition) + parseInt(stopposition / 2) ) + "px; \" class= \"" + spanclass + "\"></span>");
         }
-        if (track[track_len].cigars) {
+        if (track[track_len].cigars && stopposition > 50) {
           track_html.push(dispCigar(track[track_len].cigars, track[track_len].start, top));
         }
-        else if (track[track_len].cigarline) {
+        else if (track[track_len].cigarline && stopposition > 50) {
           track_html.push(dispCigarLine(track[track_len].cigarline, track[track_len].start, top));
         }
       }
@@ -960,7 +960,83 @@ function dispTrack(div, trackName) {
   var now = new Date();
 }
 function dispCigarLine(cigars, start, top) {
-//  console.log("cigarline")
+  console.log(cigars)
+  var track_html = "";
+  var trackClass = "";
+  var newStart_temp = getBegin();
+  var newEnd_temp = getEnd();
+  var maxLentemp = maxLen;
+  var cigar_pos = start;
+  var startposition;
+  var stopposition;
+  if (cigars != '*') {
+    cigars = cigars.replace(/([SIXMND])/g, ":$1,");
+    var cigars_array = cigars.split(',');
+    for (var i = 0; i < cigars_array.length - 1; i++) {
+      var cigar = cigars_array[i].split(":");
+
+      var key = cigar[1];
+      var length = cigar[0];
+      if (key == "M") {
+
+//        trackClass = "match";
+//        startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen) / 2;
+//        stopposition = (length) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+//        track_html += trackHTML(startposition, stopposition, top, trackClass);
+//        console.log(cigar_pos + "," + length)
+        cigar_pos = parseInt(cigar_pos) + parseInt(length);
+
+//        console.log(startposition + "," + stopposition + "," + top + "," + trackClass)
+      }
+      else if (key == "I") {
+        trackClass = "insert";
+        startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen) / 2;
+        stopposition = (length) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+        track_html += trackHTML(startposition, stopposition, top, trackClass);
+        console.log(cigar_pos + "," + length)
+        cigar_pos = parseInt(cigar_pos) + parseInt(length)
+        console.log(startposition + "," + stopposition + "," + top + "," + trackClass)
+      }
+      else if (key == "D") {
+        trackClass = "delete";
+        startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen) / 2;
+        stopposition = 1
+        track_html += trackHTML(startposition, stopposition, top, trackClass);
+        console.log(startposition + "," + stopposition + "," + top + "," + trackClass)
+      }
+
+      else if (key == "X") {
+        trackClass = "mismatch";
+        startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen) / 2;
+        stopposition = (length) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+        track_html += trackHTML(startposition, stopposition, top, trackClass);
+        console.log(cigar_pos + "," + length)
+        cigar_pos = parseInt(cigar_pos) + parseInt(length)
+        console.log(startposition + "," + stopposition + "," + top + "," + trackClass)
+      }
+      else if (key == "=") {
+//        trackClass = "match";
+//        startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen) / 2;
+//        stopposition = (length) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+//        track_html += trackHTML(startposition, stopposition, top, trackClass);
+//        console.log(cigar_pos + "," + length)
+        cigar_pos = parseInt(cigar_pos) + parseInt(length)
+//        console.log(startposition + "," + stopposition + "," + top + "," + trackClass)
+      }
+    }
+  }
+
+  function trackHTML(startposition, stopposition, top, trackClass) {
+    var track_html_local;
+
+    track_html_local = "<div class='" + trackClass + "'  " +
+                       "STYLE=\"height: 5px; z-index: 100; TOP:" + top + "px; LEFT:" + startposition + "px; " +
+                       "width:" + (stopposition) + "px \" > </div>";
+
+    return track_html_local;
+  }
+
+  return track_html;
 }
 function dispCigar(cigars, start, top) {
 //  console.log("cigars")

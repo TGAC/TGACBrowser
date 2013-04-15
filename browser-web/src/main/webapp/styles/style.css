@@ -2320,6 +2320,7 @@ span.deleteicon input {
 .delete {
     position: absolute;
     background-color: #000000;
+    z-index: 999;
 }
 
 .skip {
