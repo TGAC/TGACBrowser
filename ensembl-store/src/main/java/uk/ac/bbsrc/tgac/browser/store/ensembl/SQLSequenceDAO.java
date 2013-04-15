@@ -486,7 +486,7 @@ public class SQLSequenceDAO implements SequenceStore {
     return template.queryForObject(GET_HIT_SIZE_SLICE, new Object[]{id, trackId, start, end}, Integer.class);
   }
 
-//  @Cacheable(cacheName = "hitCache",
+  //  @Cacheable(cacheName = "hitCache",
 //             keyGenerator = @KeyGenerator(
 //                     name = "HashCodeCacheKeyGenerator",
 //                     properties = {
@@ -515,31 +515,38 @@ public class SQLSequenceDAO implements SequenceStore {
               int start_pos = Integer.parseInt(map.get("start").toString());
               int end_pos = Integer.parseInt(map.get("end").toString());
               if (start_pos >= start && end_pos <= end || start_pos <= start && end_pos >= end || end_pos >= start && end_pos <= end || start_pos >= start && start_pos <= end) {
-                if (ends.size() > 0) {
-                  for (int i = 0; i < ends.size(); i++) {
-                    if ((start_pos - ends.get(i)) > delta) {
+
+                for (int i = 0; i < ends.size(); i++) {
+                  if ((start_pos - ends.get(i)) > delta) {
+                    ends.remove(i);
+                    ends.add(i, end_pos);
+                    map.put("layer", i + 1);
+                    log.info("if" + start_pos + ":" + end_pos + ":" + (i + 1));
+                    break;
+                  }
+                  else if ((start_pos - ends.get(i) < delta && (i + 1) == ends.size()) || start_pos == ends.get(i)) {
+                    if (ends.get(i) == 0) {
                       ends.remove(i);
-                      ends.add(i, end_pos);
+                      ends.add(i, Integer.parseInt(map.get("end").toString()));
                       map.put("layer", i + 1);
-                      break;
+                      log.info("else if" + start_pos + ":" + end_pos + ":" + (i + 1));
+
                     }
-                    else if ((start_pos - ends.get(i) < delta) && (i + 1) == ends.size()) {
-                      if (i == 0) {
-                        map.put("layer", ends.size());
-                        ends.add(i, Integer.parseInt(map.get("end").toString()));
-                      }
-                      else {
-                        map.put("layer", ends.size());
-                        ends.add(ends.size(), Integer.parseInt(map.get("end").toString()));
-                      }
-                      break;
+                    else {
+                      ends.add(ends.size(), Integer.parseInt(map.get("end").toString()));
+                      map.put("layer", ends.size());
+                      log.info("else else" + start_pos + ":" + end_pos + ":" + ends.size());
+
                     }
+                    break;
+                  }
+                  else {
+                    log.info("else " + start_pos + ":" + end_pos + ":" + (i + 1) + " == " + ends.size() + ":" + (start_pos - ends.get(i)));
+//                      errorrrrrrrrrrrrrrrrrrrrrrrrrrr
+                    continue;
                   }
                 }
-                else {
-                  ends.add(0, end_pos);
-                  map.put("layer", 1);
-                }
+
 
                 trackList.add(map);
               }
@@ -631,7 +638,7 @@ public class SQLSequenceDAO implements SequenceStore {
                   map.put("layer", i + 1);
                   break;
                 }
-                else if ((start_pos - ends.get(i) < delta) && (i + 1) == ends.size()) {
+                else if ((start_pos - ends.get(i) < delta && (i + 1) == ends.size()) || start_pos == ends.get(i)) {
 
                   if (i == 0) {
                     map.put("layer", ends.size());
@@ -739,7 +746,8 @@ public class SQLSequenceDAO implements SequenceStore {
           break;
 
         }
-        else if ((Integer.parseInt(map_temp.get("asm_start").toString()) - ends.get(i) < delta) && (i + 1) == ends.size()) {
+//        else if ((start_pos - ends.get(i) < delta && (i + 1) == ends.size()) || start_pos == ends.get(i) ) {
+        else if ((Integer.parseInt(map_temp.get("asm_start").toString()) - ends.get(i) < delta && (i + 1) == ends.size()) || Integer.parseInt(map_temp.get("asm_start").toString()) == ends.get(i)) {
           if (i == 0) {
             eachTrack_temp.put("layer", ends.size());
             ends.add(i, Integer.parseInt(map_temp.get("asm_end").toString()));

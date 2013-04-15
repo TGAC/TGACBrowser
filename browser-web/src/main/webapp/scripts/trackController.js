@@ -912,16 +912,10 @@ function dispTrack(div, trackName) {
         if (stopposition > 10) {
           track_html.push("<span style=\"cursor:pointer; position:absolute; TOP:" + (top - 5) + "px; left:" + (parseInt(startposition) + parseInt(stopposition / 2) ) + "px; \" class= \"" + spanclass + "\"></span>");
         }
-        console.log(track[track_len].cigarline)
-
-        console.log(track[track_len].cigars)
-
         if (track[track_len].cigars) {
-          console.log("if")
           track_html.push(dispCigar(track[track_len].cigars, track[track_len].start, top));
         }
         else if (track[track_len].cigarline) {
-          console.log("else")
           track_html.push(dispCigarLine(track[track_len].cigarline, track[track_len].start, top));
         }
       }
@@ -966,10 +960,10 @@ function dispTrack(div, trackName) {
   var now = new Date();
 }
 function dispCigarLine(cigars, start, top) {
-  console.log("cigarline")
+//  console.log("cigarline")
 }
 function dispCigar(cigars, start, top) {
-  console.log("cigars")
+//  console.log("cigars")
   var track_html = "";
   var trackClass = "";
   var newStart_temp = getBegin();
@@ -1037,7 +1031,7 @@ function dispGraph(div, trackName, trackId) {
   var newStart_temp = getBegin();
   var newEnd_temp = getEnd();
 
-  if (track) {
+  if (track[0]) {
     track = jQuery.grep(track, function (element, index) {
       return element.start >= start && element.start <= end; // retain appropriate elements
     });
