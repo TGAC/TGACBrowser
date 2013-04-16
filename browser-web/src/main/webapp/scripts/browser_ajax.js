@@ -382,14 +382,10 @@ function loadTrackAjax(trackId, trackname) {
     }
   });
 
-  console.log(trackId + ":" + trackname)
-
-
   if (window[trackname] || window[trackname] == "running" || window[trackname] == "loading") {
     trackToggle(trackname);
 //    need to think abt it
   }
-  console.log(trackId + ":" + trackname)
 
   if (jQuery("#" + trackname + "Checkbox").attr('checked')) {
     var partial = (getEnd() - getBegin()) + ((getEnd() - getBegin()) / 2);
@@ -478,7 +474,6 @@ function loadSession(query) {
             jQuery('#canvas').show();
             jQuery('#displayoptions').show();
             jQuery('#sessioninput').fadeOut();
-            jQuery('#searchresultMap').fadeOut();
             seqregname = json.reference;
             trackList(track_list);
             minWidth = findminwidth();
@@ -488,12 +483,10 @@ function loadSession(query) {
             dispSeqCoord();
             displayCursorPosition();
             setNavPanel();
+            checkSession();
             getReferences();
-            loadEditedTracks(json.edited_tracks);
-            loadRemovedTracks(json.removed_tracks);
             reloadTracks(json.tracks, track_list, json.blast);
             jQuery("#controlsbutton").colorbox({width: "90%", inline: true, href: "#controlpanel"});
-            checkSession();
           }
           });
 }
@@ -725,13 +718,18 @@ function getMarkers() {
             for (var i = 0; i < markers.length; i++) {
               var length = sequencelength * parseFloat(jQuery("#" + markers[i].reference).css('height')) / parseFloat(jQuery("#" + seqregname).css('height'));
 
-              var maptop = parseInt(markers[i].start) * parseFloat(jQuery("#" + markers[i].reference).css('height')) / length;
-              var left = jQuery("#" + markers[i].reference).position().left;
+              var maptop = parseFloat(jQuery("#" + markers[i].reference).css('top')) + parseInt(markers[i].start) * parseFloat(jQuery("#" + markers[i].reference).css('height')) / length;
+              var left = parseInt(jQuery("#" + markers[i].reference).position().left) + parseInt(20);
               var mapheight = parseFloat(jQuery("#" + markers[i].reference).css('height')) / length;
-              if(mapheight < 1){
+              if (mapheight < 1) {
                 mapheight = 1;
               }
-              jQuery("#" + markers[i].reference).append("<div  class='refmapmarker'  style='top:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;'></div>");
+              if (seqregname == markers[i].reference) {
+                jQuery("#refmap").append("<div title='" + markers[i].reference + ":" + markers[i].start + "' class='refmapmarker'  style='left:" + left + "px; top:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick='setBegin(" + markers[i].start + "); setEnd(" + parseInt(parseInt(markers[i].start) + parseInt(1)) + "); jumpToSeq();'></div>");
+              }
+              else {
+                jQuery("#refmap").append("<div  title='" + markers[i].reference + ":" + markers[i].start + "' class='refmapmarker'  style='left:" + left + "px; top:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick='window.location.replace(\"index.jsp?query=" + markers[i].reference + "&from=" + markers[i].start + "&to=" + parseInt(parseInt(markers[i].start) + parseInt(1)) + "\");' ></div>");
+              }
             }
           }
           });

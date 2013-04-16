@@ -56,9 +56,9 @@ function zoomIn(zoom_len) {
 
 function jumpToHere(e) {
   var top = parseFloat(e.pageY - jQuery('#' + seqregname).offset().top);
-  if (top > parseFloat(getMapMarkerTop())) {
-    top = top - parseFloat(getMapMarkerHeight());
-  }
+  //if (top > parseFloat(getMapMarkerTop())) {
+    top = top - parseFloat(getMapMarkerHeight())/2;
+  //}
   var begin = (top * sequencelength / parseFloat(jQuery("#" + seqregname).css('height')) );
   var end = parseInt(begin) + parseInt(getEnd() - getBegin());
   setBegin(begin);
@@ -69,9 +69,9 @@ function jumpToHere(e) {
 
 function jumpToOther(e, length, name) {
   var top = parseFloat(e.pageY - jQuery('#' + name).offset().top);
-  if (top > parseFloat(getMapMarkerTop())) {
-    top = top - parseFloat(getMapMarkerHeight());
-  }
+  //if (top > parseFloat(getMapMarkerTop())) {
+    top = top - parseFloat(getMapMarkerHeight())/2;
+  //}
   var diff = parseInt(getEnd() - getBegin());
   var begin, end;
   if (diff) {
