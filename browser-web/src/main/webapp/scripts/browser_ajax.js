@@ -512,7 +512,10 @@ function loadSeq(query, from, to) {
 
 function reloadTracks(tracks, tracklist, blast) {
   for (var i = 0; i < tracklist.length; i++) {
-    if (tracklist[i].disp == "1") {
+    if (tracklist[i].name.indexOf('blasttrack')) {
+      window['blasttrack'] = tracks[0].child;
+    }
+    else if (tracklist[i].disp == "1") {
 //      for (var j = 0; j < tracks.length; j++) {
 //        if (tracklist[i].id == tracks[j].trackId) {
 //          window[tracklist[i].name] = tracks[j].child;
@@ -677,7 +680,7 @@ function getReferences(show) {
             if (!maxLen) {
               maxLen = jQuery(window).width();
             }
-            var width = 25;
+            var width = 15;
             var distance = (parseInt(maxLen) - (width * referenceLength)) / (referenceLength + 1);
             jQuery("#mapmarker").animate({"width": width}, 100);
             while (referenceLength--) {
@@ -718,14 +721,16 @@ function getMarkers() {
           {'doOnSuccess': function (json) {
             var markers = json.marker;
             var height = jQuery("#" + seqregname).css('height');
-            var width = 25;
+            var width = 15;
             for (var i = 0; i < markers.length; i++) {
               var length = sequencelength * parseFloat(jQuery("#" + markers[i].reference).css('height')) / parseFloat(jQuery("#" + seqregname).css('height'));
 
               var maptop = parseInt(markers[i].start) * parseFloat(jQuery("#" + markers[i].reference).css('height')) / length;
               var left = jQuery("#" + markers[i].reference).position().left;
               var mapheight = parseFloat(jQuery("#" + markers[i].reference).css('height')) / length;
-
+              if(mapheight < 1){
+                mapheight = 1;
+              }
               jQuery("#" + markers[i].reference).append("<div  class='refmapmarker'  style='top:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;'></div>");
             }
           }

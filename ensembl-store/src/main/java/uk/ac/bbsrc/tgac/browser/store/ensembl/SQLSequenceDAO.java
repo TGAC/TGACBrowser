@@ -485,8 +485,8 @@ public class SQLSequenceDAO implements SequenceStore {
   public int countHit(int id, String trackId, long start, long end) {
     return template.queryForObject(GET_HIT_SIZE_SLICE, new Object[]{id, trackId, start, end}, Integer.class);
   }
-
-  //  @Cacheable(cacheName = "hitCache",
+//
+//    @Cacheable(cacheName = "hitCache",
 //             keyGenerator = @KeyGenerator(
 //                     name = "HashCodeCacheKeyGenerator",
 //                     properties = {
@@ -521,7 +521,6 @@ public class SQLSequenceDAO implements SequenceStore {
                     ends.remove(i);
                     ends.add(i, end_pos);
                     map.put("layer", i + 1);
-                    log.info("if" + start_pos + ":" + end_pos + ":" + (i + 1));
                     break;
                   }
                   else if ((start_pos - ends.get(i) < delta && (i + 1) == ends.size()) || start_pos == ends.get(i)) {
@@ -529,20 +528,14 @@ public class SQLSequenceDAO implements SequenceStore {
                       ends.remove(i);
                       ends.add(i, Integer.parseInt(map.get("end").toString()));
                       map.put("layer", i + 1);
-                      log.info("else if" + start_pos + ":" + end_pos + ":" + (i + 1));
-
                     }
                     else {
                       ends.add(ends.size(), Integer.parseInt(map.get("end").toString()));
                       map.put("layer", ends.size());
-                      log.info("else else" + start_pos + ":" + end_pos + ":" + ends.size());
-
                     }
                     break;
                   }
                   else {
-                    log.info("else " + start_pos + ":" + end_pos + ":" + (i + 1) + " == " + ends.size() + ":" + (start_pos - ends.get(i)));
-//                      errorrrrrrrrrrrrrrrrrrrrrrrrrrr
                     continue;
                   }
                 }

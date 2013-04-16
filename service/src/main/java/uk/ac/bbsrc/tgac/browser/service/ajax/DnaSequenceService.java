@@ -164,10 +164,10 @@ public class DnaSequenceService {
     log.info(trackId);
     try {
       Integer queryid = sequenceStore.getSeqRegion(seqName);
-      if (trackId.contains("sam") || trackId.contains("bam")) {
+      if (trackId.contains(".sam") || trackId.contains(".bam")) {
         response.put(trackName, SamBamService.getSamBam(start, end, delta, trackId, seqName));
       }
-      else if (trackId.contains("wig")) {
+      else if (trackId.contains(".wig")) {
         response.put(trackName, SamBamService.getWig(start, end, delta, trackId, seqName));
       }
       else if (trackId.indexOf("cs") >= 0) {

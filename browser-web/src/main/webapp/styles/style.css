@@ -2363,9 +2363,9 @@ span.deleteicon input {
     opacity: 1;
     cursor: pointer;
     position: absolute;
-    border: 2px solid black;
-    background: gray;
-    border-radius: 15px;
+    border: 1px solid black;
+    background: darkgray;
+    border-radius: 7px;
     overflow: hidden;
 }
 

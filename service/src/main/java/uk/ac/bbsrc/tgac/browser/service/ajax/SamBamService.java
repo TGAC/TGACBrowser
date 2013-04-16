@@ -119,7 +119,7 @@ public class SamBamService {
   public static JSONArray getWig(long start, long end, int delta, String trackId, String reference) throws Exception {
     JSONArray wig = new JSONArray();
     boolean found = false;
-//    log.info("wig");
+    log.info("wig");
     try {
       File inputfile = new File(trackId);
 

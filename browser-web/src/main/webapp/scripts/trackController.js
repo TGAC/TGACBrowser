@@ -960,7 +960,6 @@ function dispTrack(div, trackName) {
   var now = new Date();
 }
 function dispCigarLine(cigars, start, top) {
-  console.log(cigars)
   var track_html = "";
   var trackClass = "";
   var newStart_temp = getBegin();
@@ -993,16 +992,13 @@ function dispCigarLine(cigars, start, top) {
         startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen) / 2;
         stopposition = (length) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
         track_html += trackHTML(startposition, stopposition, top, trackClass);
-        console.log(cigar_pos + "," + length)
         cigar_pos = parseInt(cigar_pos) + parseInt(length)
-        console.log(startposition + "," + stopposition + "," + top + "," + trackClass)
       }
       else if (key == "D") {
         trackClass = "delete";
         startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen) / 2;
         stopposition = 1
         track_html += trackHTML(startposition, stopposition, top, trackClass);
-        console.log(startposition + "," + stopposition + "," + top + "," + trackClass)
       }
 
       else if (key == "X") {
@@ -1010,9 +1006,7 @@ function dispCigarLine(cigars, start, top) {
         startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen) / 2;
         stopposition = (length) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
         track_html += trackHTML(startposition, stopposition, top, trackClass);
-        console.log(cigar_pos + "," + length)
         cigar_pos = parseInt(cigar_pos) + parseInt(length)
-        console.log(startposition + "," + stopposition + "," + top + "," + trackClass)
       }
       else if (key == "=") {
 //        trackClass = "match";
@@ -1171,7 +1165,7 @@ function dispGraphWig(div, trackName, trackId) {
     }));
 
     var width = jQuery("#wrapper").width(),
-            height = 70;
+            height = 100;
 
 
     var left = 0;
@@ -1200,15 +1194,40 @@ function dispGraphWig(div, trackName, trackId) {
     d3.json(track, function () {
       data = track;
 
+      data.splice(0, 0, {start: "1", value: '0'});
+      var length = data.length - 1;
+      var end_val = parseInt(data[length].start) + parseInt(1);
+      console.log(data[length].start + ":" + end_val)
+      data.splice(data.length, 0, {start: end_val, value: '0'});
+      console.log(data[length])
       var space = parseInt(width) / (end - start);
 
       var pathinfo = [];
-      for (var i = 0; i < data.length; i++) {
-        var tempx = data[i].start * space;
+      for (var i = 0; i < data.length - 1;) {
+        var tempx;
+        if (start > 0) {
+          tempx = (data[i].start - start) * space;
+        }
+        else {
+          tempx = (data[i].start) * space;
+        }
         var tempy = height - (data[i].value * height / max); //(parseInt(max)*(41-parseInt(patharray[i]))/41);
         pathinfo.push({ x: tempx, y: tempy});
+        if (data.length < 400) {
+          i++;
+        }
+        else {
+          i = parseInt(i + (data.length / 400));
+        }
       }
-
+      if (start > 0) {
+        tempx = (data[data.length - 1].start - start) * space;
+      }
+      else {
+        tempx = (data[data.length - 1].start) * space;
+      }
+      var tempy = height - (data[data.length - 1].value * height / max); //(parseInt(max)*(41-parseInt(patharray[i]))/41);
+      pathinfo.push({ x: tempx, y: tempy});
       var path = svg.selectAll("path")
               .data([1]);
 
@@ -1232,7 +1251,7 @@ function dispGraphWig(div, trackName, trackId) {
 
   jQuery(div).css('height', '70px');
   jQuery(div).fadeIn();
-  jQuery(trackName + "_wrapper").fadeIn();
+  jQuery("#" + trackName + "_wrapper").fadeIn();
 //
   // jQuery(div).html(track_html);
 }
