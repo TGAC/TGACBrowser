@@ -75,6 +75,11 @@
         <param-value>${browser.urlpath}</param-value>
     </context-param>
 
+    <context-param>
+        <param-name>linkLocation</param-name>
+        <param-value>${browser.linkLocation}</param-value>
+    </context-param>
+
     <!--<context-param>-->
     <!--<param-name>-->
     <!--javax.servlet.jsp.jstl.sql.dataSource-->
@@ -92,10 +97,10 @@
     <listener>
         <listener-class>uk.ac.bbsrc.tgac.browser.web.BrowserAppListener</listener-class>
     </listener>
-    <!--<context-param>-->
-        <!--<param-name>webAppRootKey</param-name>-->
-        <!--<param-value>vietnamese_rice</param-value>-->
-    <!--</context-param>-->
+    <context-param>
+        <param-name>webAppRootKey</param-name>
+        <param-value>tgacbrowser</param-value>
+    </context-param>
 
     <servlet>
         <servlet-name>tgacbrowser</servlet-name>

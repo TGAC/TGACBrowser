@@ -142,6 +142,8 @@
 <%--</div>--%>
 <div id="filetrack" style="visibility: hidden; position: fixed;">${initParam.trackfiles}</div>
 <div id="title" style="visibility: hidden; position: fixed;">${initParam.urlpath}</div>
+<div id="linkLocation" style="visibility: hidden; position: fixed;">${initParam.linkLocation}</div>
+
 
 
 <div id="content">

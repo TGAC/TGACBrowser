@@ -59,13 +59,13 @@ function newpopup(track, i, j) {
     jQuery("#EditDescription").html('<span title="Edit" class="ui-button ui-icon ui-icon-pencil" onclick=showEditDesc(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
     jQuery("#deleteTrack").html('<span title="Remove" class="ui-button ui-icon ui-icon-trash" onclick=deleteTrack(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
     jQuery("#flagTrack").html('<span title="Flag" class="ui-button ui-icon ui-icon-flag" onclick=flagTrack(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
-    jQuery("#Ensemblme").html("<a target='_blank' href='http://rice.plantbiology.msu.edu/cgi-bin/ORF_infopage.cgi?orf=" + window[track][i].desc + "'> <span title=\"Ensembl\" class=\"ui-button ui-ensembl\"></span></a>");
+    jQuery("#Linkme").html("<a target='_blank' href='"+jQuery("#linkLocation").html()+"" + window[track][i].desc + "'> <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\"></span></a>");
     jQuery("#revertme").html('<span title="Revert_Name" class="ui-button ui-icon ui-icon-arrowreturnthick-1-w" onclick=revertTrack(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
     jQuery("#Detail").html(stringTrim(window[track][i].transcript[j].desc + "(" + window[track][i].desc + ")", width));
 
   }
   else {
-    jQuery("#Ensemblme").html("");
+    jQuery("#Linkme").html("");
     jQuery("#makemetop").html('');
     jQuery("#peptides").html('');
     jQuery("#position").html(position);
