@@ -234,7 +234,7 @@ function auto_drag() {
 
 function setNavPanel() {
   var left = 0;
-  var height = parseFloat(jQuery("#sequence").position().top) - (parseFloat(jQuery("#draggable").position().top) + parseFloat(jQuery("#draggable").css("height"))) + "px solid #cccccc";
+  var height = parseFloat(jQuery("#wrapper").position().top) - (parseFloat(jQuery("#draggable").position().top) + parseFloat(jQuery("#draggable").css("height"))) + "px solid #cccccc";
   var border_left = parseFloat(jQuery("#draggable").css("left")) - left + "px solid transparent";
   var width = jQuery("#draggable").css("width");
   var border_right = parseFloat(maxLen) - parseFloat(left) - (parseFloat(jQuery("#draggable").css("width")) + parseFloat(jQuery("#draggable").css("left"))) + "px solid transparent";

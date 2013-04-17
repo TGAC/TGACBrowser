@@ -128,16 +128,16 @@
         <div id="draggable" onmouseup="auto_drag()" onmouseout="auto_drag()"></div>
 
 
-        <div id="sequence">
+        <div id="wrapper">
+            <div id="sequence">
 
-            <div id="sequenceString"></div>
-            <div id="translation_div"></div>
+                <div id="sequenceString"></div>
+                <div id="translation_div"></div>
 
-        </div>
-
-        <div id="wrapper">            <div id=tracks>
             </div>
-                  <%--<iframe src="browser.html"></iframe>--%>
+            <div id=tracks>
+            </div>
+            <%--<iframe src="browser.html"></iframe>--%>
         </div>
     </div>
 

@@ -1388,7 +1388,7 @@ span.counter {
 
 #sequence {
     position: ABSOLUTE;
-    top: 130px;
+    /*top: 130px;*/
     height: 20px;
     width: 100%;
     vertical-align: middle;
@@ -1702,7 +1702,7 @@ span.counter {
     position: relative;
     opacity: 0.7;
     float: left;
-    top: 150px;
+    top: 130px;
     /*height: 100%;*/
     width: 200%;
     margin-left: -50%;

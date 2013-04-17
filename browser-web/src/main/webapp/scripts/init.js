@@ -166,7 +166,6 @@ function onLoad() {
   var dragstart = 0;
   jQuery("#wrapper").draggable(
           {
-
             axis: "x",
             start: function () {
             },
@@ -174,7 +173,7 @@ function onLoad() {
 
               jQuery(".handle").each(function (i) {
                 jQuery(this).css("left", '1%');
-                jQuery(this).css("top", (jQuery(this).parent().position().top) - parseInt(jQuery(window).scrollTop()) + (parseInt(jQuery("#wrapper").position().top)) + (parseInt(jQuery("#canvas").position().top)));
+                jQuery(this).css("top", (jQuery(this).parent().position().top) - parseInt(jQuery(window).scrollTop()) + (parseInt(jQuery("#wrapper").position().top)+parseInt(jQuery("#sequence").css('height'))) + (parseInt(jQuery("#canvas").position().top)));
                 jQuery(this).css("position", 'fixed');
               });
             },
@@ -297,7 +296,6 @@ function tracklistopenclose() {
     jQuery("#slider").animate({
                                 marginLeft: "-141px"
                               }, 500);
-
     jQuery("#openCloseIdentifier").show();
   }
   else {

@@ -676,6 +676,9 @@ function getReferences(show) {
             var width = 15;
             var distance = (parseInt(maxLen) - (width * referenceLength)) / (referenceLength + 1);
             jQuery("#mapmarker").animate({"width": width}, 100);
+            if(referenceLength > 0){
+              changeCSS();
+            }
             while (referenceLength--) {
               var left = parseInt(referenceLength * (width)) + parseInt(distance * referenceLength) + parseInt(distance);
               var height = (json.seqregion[referenceLength].length * 150 / max);
@@ -733,4 +736,14 @@ function getMarkers() {
             }
           }
           });
+}
+
+function changeCSS(){
+  jQuery("#bar_image").css('top','260px');
+  jQuery("#nav_panel").css('top','292px');
+  jQuery(".verticle-line").css('top','310px');
+  jQuery("#bar_image").css('top','260px');
+  jQuery("#bg_layer").css('top','280px');
+  jQuery("#draggable").css('top','279px');
+  jQuery("#wrapper").css('top','350px');
 }

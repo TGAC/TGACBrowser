@@ -39,7 +39,6 @@ function seqBar(seqStart, seqEnd) {
   var temp = seqEnd - seqStart;
   seqLen = visualLength(temp);
   if (parseFloat(seqLen) <= (parseFloat(maxLen))) {
-// need to call ajax for loading sequence for the chunch
     selectionStart = seqStart;
     selectionEnd = seqEnd;
     var diff = (parseFloat(maxLen)) - parseFloat(seqLen);
@@ -55,27 +54,31 @@ function seqBar(seqStart, seqEnd) {
       newStart = newStart - (newEnd - sequencelength);
       newEnd = sequencelength;
     }
-       Fluxion.doAjax(
-          'dnaSequenceService',
-          'loadSequence',
-          {'query':seqregname, 'from':getBegin(),'to':getEnd(), 'url':ajaxurl},
-          {'doOnSuccess':function(json) {
-            var seq = json.seq;
-             temp = seq;
-      temp = "<font style='Courier New'>" + stringColour(temp);
-      jQuery('#sequenceString').html(temp);
-      translate(seq);
 
+    var partial = (parseInt(getEnd()) - parseInt(getBegin())) / 2;
+    var start = parseInt(getBegin()) - parseInt(partial)
+    var end = parseInt(getEnd()) + parseInt(partial);
 
-          }
-          });
-
-//    temp = seq.substring(seqStart, seqEnd);
-//    temp = "<font style='Courier New'>" + stringColour(temp);
-//    // change substring based on new ajax call
-//    temp = "<font color=gray>" + seq.substring(newStart, seqStart) + temp + "<font color=gray>" + seq.substring(seqEnd, newEnd);
-//    jQuery('#sequenceString').html(temp);
-//    translate(newStart, newEnd);
+    Fluxion.doAjax(
+            'dnaSequenceService',
+            'loadSequence',
+            {'query': seqregname, 'from': start, 'to': end, 'url': ajaxurl},
+            {'doOnSuccess': function (json) {
+              var seq = json.seq;
+              if (seq.length > 1) {
+                temp = seq;
+                temp = "<font style='Courier New'>" + stringColour(temp);
+                jQuery('#sequenceString').html(temp);
+                translate(seq);
+              }
+              else {
+                jQuery("#translation_div").hide();
+                jQuery("#sequence").css('height', '20px');
+                jQuery("#tracks").css('top', '20px');
+                jQuery('#sequenceString').html("<hr id = \"seqbar\" style='background-color: silver; z-index: 999'>");
+              }
+            }
+            });
   }
   else {
 
@@ -85,10 +88,10 @@ function seqBar(seqStart, seqEnd) {
     newStart = seqStart;
     newEnd = seqEnd;
 
-jQuery("#translation_div").hide();
+    jQuery("#translation_div").hide();
     jQuery("#sequence").css('height', '20px');
 //    jQuery("#wrapper").css('top', '190px');
-  jQuery("#wrapper").css('top', '150px');
+    jQuery("#tracks").css('top', '20px');
 
 
 //    }
@@ -169,128 +172,128 @@ function translate(sequence) {
 
     if (j == 1) {
       ptn_seq += "&nbsp;";
-    }else if (j == 2) {
+    }
+    else if (j == 2) {
       ptn_seq += "&nbsp;&nbsp;";
     }
     var i = 0;
-      for (i; i <= seq.length - 3; i = i + 3) {
-        var chunk = seq.substring(i, i + 3);
+    for (i; i <= seq.length - 3; i = i + 3) {
+      var chunk = seq.substring(i, i + 3);
 //        console.log(i+":"+j+":"+chunk);
-        ptn_seq += "&nbsp;";
-        if(chunk.indexOf("N") > -1)
-        {
-          ptn_seq += "X";
-        }
-        else if (chunk == "GCT" || chunk == "GCC" || chunk == "GCA" || chunk == "GCG") {
-            ptn_seq += "A";
-          }
+      ptn_seq += "&nbsp;";
+      if (chunk.indexOf("N") > -1) {
+        ptn_seq += "X";
+      }
+      else if (chunk == "GCT" || chunk == "GCC" || chunk == "GCA" || chunk == "GCG") {
+        ptn_seq += "A";
+      }
 //    CGU, CGC, CGA, CGG, AGA, AGG
-          else if (chunk == "CGT" || chunk == "CGC" || chunk == "CGA" || chunk == "CGG" || chunk == "AGA" || chunk == "AGG") {
-            ptn_seq += "R";
-          }
+      else if (chunk == "CGT" || chunk == "CGC" || chunk == "CGA" || chunk == "CGG" || chunk == "AGA" || chunk == "AGG") {
+        ptn_seq += "R";
+      }
 //    AAU, AAC
-          else if (chunk == "AAT" || chunk == "AAC") {
-            ptn_seq += "N";
-          }
+      else if (chunk == "AAT" || chunk == "AAC") {
+        ptn_seq += "N";
+      }
 //    GAU, GAC
-          else if (chunk == "GAT" || chunk == "GAC") {
-            ptn_seq += "D";
-          }
+      else if (chunk == "GAT" || chunk == "GAC") {
+        ptn_seq += "D";
+      }
 //    UGU, UGC
-          else if (chunk == "TGT" || chunk == "TGC") {
-            ptn_seq += "C";
-          }
+      else if (chunk == "TGT" || chunk == "TGC") {
+        ptn_seq += "C";
+      }
 //    CAA, CAG
-          else if (chunk == "CAA" || chunk == "CAG") {
-            ptn_seq += "Q";
-          }
+      else if (chunk == "CAA" || chunk == "CAG") {
+        ptn_seq += "Q";
+      }
 //    GAA, GAG
-          else if (chunk == "GAA" || chunk == "GAG") {
-            ptn_seq += "E";
-          }
+      else if (chunk == "GAA" || chunk == "GAG") {
+        ptn_seq += "E";
+      }
 //      GGU, GGC, GGA, GGG
-          else if (chunk == "GGT" || chunk == "GGC" || chunk == "GGA" || chunk == "GGG") {
-            ptn_seq += "G";
-          }
+      else if (chunk == "GGT" || chunk == "GGC" || chunk == "GGA" || chunk == "GGG") {
+        ptn_seq += "G";
+      }
 //    CAU, CAC
-          else if (chunk == "CAT" || chunk == "CAC") {
-            ptn_seq += "H";
-          }
+      else if (chunk == "CAT" || chunk == "CAC") {
+        ptn_seq += "H";
+      }
 //      AUU, AUC, AUA
-          else if (chunk == "ATT" || chunk == "ATC" || chunk == "ATA") {
-            ptn_seq += "I";
-          }
+      else if (chunk == "ATT" || chunk == "ATC" || chunk == "ATA") {
+        ptn_seq += "I";
+      }
 //     AUG
-          else if (chunk == "ATG") {
-            ptn_seq += "M";
-          }
+      else if (chunk == "ATG") {
+        ptn_seq += "M";
+      }
 //     UUA, UUG, CUU, CUC, CUA, CUG
-          else if (chunk == "TTA" || chunk == "TTG" || chunk == "CTT" || chunk == "CTC" || chunk == "CTA" || chunk == "CTG") {
-            ptn_seq += "L";
-          }
+      else if (chunk == "TTA" || chunk == "TTG" || chunk == "CTT" || chunk == "CTC" || chunk == "CTA" || chunk == "CTG") {
+        ptn_seq += "L";
+      }
 //         AAA, AAG
-          else if (chunk == "AAA" || chunk == "AAG") {
-            ptn_seq += "K";
-          }
+      else if (chunk == "AAA" || chunk == "AAG") {
+        ptn_seq += "K";
+      }
 //    UUU, UUC
-          else if (chunk == "TTT" || chunk == "TTC") {
-            ptn_seq += "F";
-          }
-          //    CCU, CCC, CCA, CCG
-          else if (chunk == "CCT" || chunk == "CCC" || chunk == "CCA" || chunk == "CCG") {
-            ptn_seq += "P";
-          }
-          //  UCU, UCC, UCA, UCG, AGU, AGC
-          else if (chunk == "TCT" || chunk == "TCC" || chunk == "TCA" || chunk == "TCG" || chunk == "AGT" || chunk == "AGC") {
-            ptn_seq += "S";
-          }
-          //      ACU, ACC, ACA, ACG
-          else if (chunk == "ACT" || chunk == "ACC" || chunk == "ACA" || chunk == "ACG") {
-            ptn_seq += "T";
-          }
-          //      UGG
-          else if (chunk == "TGG") {
-            ptn_seq += "W";
-          }
+      else if (chunk == "TTT" || chunk == "TTC") {
+        ptn_seq += "F";
+      }
+      //    CCU, CCC, CCA, CCG
+      else if (chunk == "CCT" || chunk == "CCC" || chunk == "CCA" || chunk == "CCG") {
+        ptn_seq += "P";
+      }
+      //  UCU, UCC, UCA, UCG, AGU, AGC
+      else if (chunk == "TCT" || chunk == "TCC" || chunk == "TCA" || chunk == "TCG" || chunk == "AGT" || chunk == "AGC") {
+        ptn_seq += "S";
+      }
+      //      ACU, ACC, ACA, ACG
+      else if (chunk == "ACT" || chunk == "ACC" || chunk == "ACA" || chunk == "ACG") {
+        ptn_seq += "T";
+      }
+      //      UGG
+      else if (chunk == "TGG") {
+        ptn_seq += "W";
+      }
 //    UAU, UAC
-          else if (chunk == "TAT" || chunk == "TAC") {
-            ptn_seq += "Y";
-          }
-          //   GUU, GUC, GUA, GUG
-          else if (chunk == "GTT" || chunk == "GTC" || chunk == "GTA" || chunk == "GTG") {
-            ptn_seq += "V";
-          }
-          //  	UAA, UGA, UAG
-          else if (chunk == "TAA" || chunk == "TGA" || chunk == "TAG") {
-            ptn_seq += "*";
-          }
+      else if (chunk == "TAT" || chunk == "TAC") {
+        ptn_seq += "Y";
+      }
+      //   GUU, GUC, GUA, GUG
+      else if (chunk == "GTT" || chunk == "GTC" || chunk == "GTA" || chunk == "GTG") {
+        ptn_seq += "V";
+      }
+      //  	UAA, UGA, UAG
+      else if (chunk == "TAA" || chunk == "TGA" || chunk == "TAG") {
+        ptn_seq += "*";
+      }
 
-          else {
-            ptn_seq += "-";
-          }
-        ptn_seq += "&nbsp;";
-        }
+      else {
+        ptn_seq += "-";
+      }
+      ptn_seq += "&nbsp;";
+    }
 
-      ptn_seq += "<br>";
+    ptn_seq += "<br>";
   }
-      maxLen - visualLength(ptn_seq.length)
+  maxLen - visualLength(ptn_seq.length)
 
 
-      if (space >= 0) {
-        jQuery("#translation_div").show();
+  if (space >= 0) {
+    jQuery("#translation_div").show();
 //        jQuery("#wrapper").css('top', '230px');
-        jQuery("#wrapper").css('top', '200px');
-      jQuery("#sequence").css('height', '70px');
+    jQuery("#tracks").css('top', '70px');
+    jQuery("#sequence").css('height', '70px');
 //      jQuery("#translation_div").css('letter-spacing', space);
-      jQuery("#translation_div").html("<br>" + ptn_seq);
-    }
-    else {
-      jQuery("#translation_div").html("");
-      jQuery("#translation_div").hide;
-      jQuery("#sequence").css('height', '20px');
-      jQuery("#wrapper").css('top', '150px');
+    jQuery("#translation_div").html("<br>" + ptn_seq);
+  }
+  else {
+    jQuery("#translation_div").html("");
+    jQuery("#translation_div").hide;
+    jQuery("#sequence").css('height', '20px');
+    jQuery("#tracks").css('top', '20px');
 //        jQuery("#wrapper").css('top', '190px');
-    }
+  }
 
 
 }
