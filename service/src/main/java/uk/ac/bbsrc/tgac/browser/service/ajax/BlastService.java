@@ -43,6 +43,216 @@ import org.xml.sax.SAXParseException;
 public class BlastService {
   private Logger log = LoggerFactory.getLogger(getClass());
 
+  public JSONObject ncbiBlastSearchSequence(HttpSession session, JSONObject json) throws IOException {
+    try {
+
+      String blastdb = json.getString("blastdb");
+      StringBuilder sb = new StringBuilder();
+      String query = json.getString("querystring");
+      query = query.replaceAll(">+", "#>");
+      String urlParameters = "QUERY=" + query +
+                             "&PROGRAM=" + "blastn" +
+                             "&DATABASE=nr" + blastdb +
+                             "&ALIGNMENT_VIEW=" + "Tabular" +
+                             "&ALIGNMENTS=" + "100";
+
+      URL url = new URL("http://www.ncbi.nlm.nih.gov/blast/Blast.cgi?CMD=Put&");
+
+      HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+      connection.setDoOutput(true);
+      connection.setDoInput(true);
+      connection.setInstanceFollowRedirects(false);
+      connection.setRequestMethod("POST");
+      connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+      connection.setRequestProperty("charset", "utf-8");
+      connection.setRequestProperty("Content-Length", "" + Integer.toString(urlParameters.getBytes().length));
+      connection.setUseCaches(false);
+
+      DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+      wr.writeBytes(urlParameters);
+      wr.flush();
+      wr.close();
+      DataInputStream input = new DataInputStream(connection.getInputStream());
+
+      String str;
+
+      while (null != (str = input.readLine())) {
+        Pattern p = Pattern.compile("<input name=\"RID\" size=\"50\" type=\"text\" value=\"(.*)\" id=\"rid\" />");
+        Matcher matcher_comment = p.matcher(str);
+        if (matcher_comment.find()) {
+          sb.append(matcher_comment.group(1));
+        }
+      }
+
+      input.close();
+      connection.disconnect();
+
+      String result = null;
+      result = sb.toString();
+
+      return JSONUtils.JSONObjectResponse("html", result);
+    }
+    catch (Exception e) {
+      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+      return JSONUtils.SimpleJSONError(e.getMessage());
+    }
+
+  }
+
+  public JSONObject ncbiBlastGetResult(HttpSession session, JSONObject json) throws IOException {
+    try {
+
+      String blastAccession = json.getString("BlastAccession");
+
+      JSONObject jsonObject = new JSONObject();
+      JSONArray jsonArray = new JSONArray();
+      String urlParameters = "RID=" + blastAccession +
+                             "&ALIGNMENT_VIEW=Tabular" +
+                             "&FORMAT_TYPE=Text";// + blastdb +
+
+      StringBuilder sb = new StringBuilder();
+      String str;
+      int i = 0;
+
+      sb.append("<table class='list' id='blasttable'> <thead><tr>  " +
+                "<th class=\"header\"> Query id </th>" +
+                "<th class=\"header\"> Subject id </th> " +
+                "<th class=\"header\"> % identity </th> " +
+                "<th class=\"header\"> alignment length </th> " +
+                "<th class=\"header\"> mismatches </th> " +
+                "<th class=\"header\"> gap openings </th> " +
+                "<th class=\"header\"> q.start </th> " +
+                "<th class=\"header\"> q.end </th> " +
+                "<th class=\"header\"> s.start </th> " +
+                "<th class=\"header\"> s.end </th> " +
+                "<th class=\"header\"> e-value </th> " +
+                "<th class=\"header\"> bit score </th></tr></thead><tbody>");
+
+      sb.append(connectNCBI(urlParameters));//;new DataInputStream(connection.getInputStream());
+      str = connectNCBI(urlParameters);
+      while(str == "running"){
+          str = connectNCBI(urlParameters);
+        if(str == "finished"){
+          sb.append(parseNCBI(urlParameters));
+          break;
+        }
+      }
+
+      sb.append("</tbody></table");
+
+
+      String result = null;
+//      if (i > 0) {
+      result = sb.toString();
+//      }
+//      else {
+//        result = "No hits found.";
+//      }
+
+      return JSONUtils.JSONObjectResponse("html", result);
+    }
+    catch (Exception e) {
+      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+      return JSONUtils.SimpleJSONError(e.getMessage());
+    }
+
+
+  }
+
+  private String connectNCBI(String urlParameters) {
+
+    try {
+      URL url = new URL("http://www.ncbi.nlm.nih.gov/blast/Blast.cgi?CMD=Get&");
+
+      HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+      connection.setDoOutput(true);
+      connection.setDoInput(true);
+      connection.setInstanceFollowRedirects(false);
+      connection.setRequestMethod("POST");
+      connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+      connection.setRequestProperty("charset", "utf-8");
+      connection.setRequestProperty("Content-Length", "" + Integer.toString(urlParameters.getBytes().length));
+      connection.setUseCaches(false);
+
+      DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+      wr.writeBytes(urlParameters);
+      wr.flush();
+      wr.close();
+      DataInputStream in = new DataInputStream(connection.getInputStream());
+      String str;
+      StringBuffer sb = new StringBuffer();
+      str = in.readLine();
+
+      Pattern p = Pattern.compile("<!DOCTYPE html.*");
+        Matcher matcher_comment = p.matcher(str);
+        if (matcher_comment.find()) {
+          str = "running";
+        }
+        else {
+          str = "finished";
+        }
+      return str;
+    }
+    catch (Exception e) {
+      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+      String sb = e.toString();
+      return sb;
+    }
+  }
+
+  private StringBuffer parseNCBI(String urlParameters) {
+    log.info("parse");
+
+    try {
+      StringBuffer sb = new StringBuffer();
+      String str, str1 = "";
+     URL url = new URL("http://www.ncbi.nlm.nih.gov/blast/Blast.cgi?CMD=Get&");
+
+      HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+      connection.setDoOutput(true);
+      connection.setDoInput(true);
+      connection.setInstanceFollowRedirects(false);
+      connection.setRequestMethod("POST");
+      connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+      connection.setRequestProperty("charset", "utf-8");
+      connection.setRequestProperty("Content-Length", "" + Integer.toString(urlParameters.getBytes().length));
+      connection.setUseCaches(false);
+
+      DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+      wr.writeBytes(urlParameters);
+      wr.flush();
+      wr.close();
+      DataInputStream in = new DataInputStream(connection.getInputStream());
+
+      while (null != (str = in.readLine())) {
+        Pattern p = Pattern.compile("<!DOCTYPE html.*");
+        Matcher matcher_comment = p.matcher(str);
+        if (matcher_comment.find()) {
+        }
+        else {
+          Pattern p1 = Pattern.compile("<.*>");
+          Matcher matcher_score = p1.matcher(str);
+          Pattern p2 = Pattern.compile("#.*");
+          Matcher matcher_hash = p2.matcher(str);
+          if (matcher_score.find() || matcher_hash.find()) {
+          }
+          else {
+                        str1 = str.replaceAll("\\s+", "<td>");
+          }
+          if(str1.split("<td>").length > 10){
+            sb.append("<tr> <td> " + str1 + "</td></tr>");
+          }
+        }
+      }
+      return sb;
+    }
+    catch (Exception e) {
+      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+      StringBuffer sb = new StringBuffer(e.toString());
+      return sb;
+    }
+  }
+
   public JSONObject blastSearchSequence(HttpSession session, JSONObject json) throws IOException {
     try {
       String blastDB = json.getString("db");
@@ -409,7 +619,7 @@ public class BlastService {
 
       String fasta = json.getString("querystring");
       String accession = json.getString("BlastAccession");
-      log.info("submitted"+accession);
+      log.info("submitted" + accession);
       File file = new File("/net/tgac-cfs3/ifs/TGAC/browser/jobs/" + accession + ".fa");
       FileWriter writer = new FileWriter(file, true);
       PrintWriter output = new PrintWriter(writer);

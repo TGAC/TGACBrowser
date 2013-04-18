@@ -2,6 +2,51 @@ var seqregname = null;
 var track_list, minWidth;
 var start_global, end_global, hit_global, blastid = 0, blastdb = "", oldTracklist;
 
+
+function ncbiBLAST(query, db) {
+  ajaxurl = '/' + jQuery('#title').text() + '/' + jQuery('#title').text() + '/fluxion.ajax';
+//  var query = "ACGACTAGCATCGACTAGCACTGACT";
+//  var db = "nr";
+  var link = "here";
+  var id = "id";
+  var format = "format";
+  Fluxion.doAjax(
+          'blastservice',
+          'ncbiBlastSearchSequence',
+          {'url': ajaxurl, 'querystring': query, 'blastdb': db, 'location': link, 'BlastAccession': id, 'format': format},
+          {'doOnSuccess': function (json) {
+            ncbiBLASTResult(json.html)
+          },
+            'doOnError': function (json) {
+              alert(json.error);
+            }
+          });
+}
+
+function ncbiBLASTResult(id) {
+  ajaxurl = '/' + jQuery('#title').text() + '/' + jQuery('#title').text() + '/fluxion.ajax';
+  var query = "ACGACTAGCATCGACTAGCACTGACT";
+  var db = "nr";
+  var link = "here";
+
+  var format = "format";
+  Fluxion.doAjax(
+          'blastservice',
+          'ncbiBlastGetResult',
+          {'url': ajaxurl, 'querystring': query, 'blastdb': db, 'location': link, 'BlastAccession': id, 'format': format},
+          {'doOnSuccess': function (json) {
+            jQuery('#blastresult').html(json.html);
+            jQuery("#blasttable").tablesorter();
+            jQuery("#alertDiv").hide()
+            jQuery("#alertDiv").html("");
+          },
+            'doOnError': function (json) {
+              alert(json.error);
+            }
+          });
+}
+
+
 function blastSearch(query, blastdb) {
   var link = blastdb.split(":");
   jQuery('#blastresult').html("<span style=\"position:relative; left:50%;\"> Submitting &nbsp; <img alt=\"Loading\" src=\"./images/browser/loading_big.gif\" style=\"position: relative;\"> </span> </div>");
@@ -676,7 +721,7 @@ function getReferences(show) {
             var width = 15;
             var distance = (parseInt(maxLen) - (width * referenceLength)) / (referenceLength + 1);
             jQuery("#mapmarker").animate({"width": width}, 100);
-            if(referenceLength > 0){
+            if (referenceLength > 0) {
               changeCSS();
             }
             while (referenceLength--) {
@@ -738,12 +783,12 @@ function getMarkers() {
           });
 }
 
-function changeCSS(){
-  jQuery("#bar_image").css('top','260px');
-  jQuery("#nav_panel").css('top','292px');
-  jQuery(".verticle-line").css('top','310px');
-  jQuery("#bar_image").css('top','260px');
-  jQuery("#bg_layer").css('top','280px');
-  jQuery("#draggable").css('top','279px');
-  jQuery("#wrapper").css('top','350px');
+function changeCSS() {
+  jQuery("#bar_image").css('top', '260px');
+  jQuery("#nav_panel").css('top', '292px');
+  jQuery(".vertical-line").css('top', '310px');
+  jQuery("#bar_image").css('top', '260px');
+  jQuery("#bg_layer").css('top', '280px');
+  jQuery("#draggable").css('top', '279px');
+  jQuery("#wrapper").css('top', '350px');
 }
