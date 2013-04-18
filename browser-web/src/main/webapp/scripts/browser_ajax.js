@@ -23,6 +23,51 @@ function ncbiBLAST(query, db) {
           });
 }
 
+function ncbiBLASTTrack(query, db) {
+  ajaxurl = '/' + jQuery('#title').text() + '/' + jQuery('#title').text() + '/fluxion.ajax';
+//  var query = "ACGACTAGCATCGACTAGCACTGACT";
+//  var db = "nr";
+  var link = "here";
+  var id = "id";
+  var format = "format";
+  Fluxion.doAjax(
+          'blastservice',
+          'ncbiBlastSearchTrack',
+          {'url': ajaxurl, 'querystring': query, 'blastdb': db, 'location': link, 'BlastAccession': id, 'format': format},
+          {'doOnSuccess': function (json) {
+            ncbiBLASTTrackResult(json.html)
+          },
+            'doOnError': function (json) {
+              alert(json.error);
+            }
+          });
+}
+function ncbiBLASTTrackResult(id) {
+  ajaxurl = '/' + jQuery('#title').text() + '/' + jQuery('#title').text() + '/fluxion.ajax';
+  var query = "ACGACTAGCATCGACTAGCACTGACT";
+  var db = "nr";
+  var link = "tgac-browser";
+  var start = 1;
+  var end = 100;
+  var hit = 10
+//  id = "PXD1WGPV015";
+
+  var format = "format";
+  Fluxion.doAjax(
+          'blastservice',
+          'ncbiBlastGetResultTrack',
+          {'start': start, 'end': end, 'hit': hit, 'url': ajaxurl, 'querystring': query, 'db': db, 'location': link, 'BlastAccession': id, 'format': format},
+          {'doOnSuccess': function (json) {
+            jQuery('#blastresult').html(json.html);
+            jQuery("#blasttable").tablesorter();
+            jQuery("#alertDiv").hide()
+            jQuery("#alertDiv").html("");
+          },
+            'doOnError': function (json) {
+              alert(json.error);
+            }
+          });
+}
 function ncbiBLASTResult(id) {
   ajaxurl = '/' + jQuery('#title').text() + '/' + jQuery('#title').text() + '/fluxion.ajax';
   var query = "ACGACTAGCATCGACTAGCACTGACT";
