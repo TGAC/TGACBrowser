@@ -39,6 +39,27 @@
     <button class="ui-state-default ui-corner-all"
             onclick="blastSearch(jQuery('#blastsearch').val(), jQuery('#blastdb').val());">BLAST
     </button>
+    <br>
+    NCBI BLAST
+    <select name="blastdb" id="ncbiblastdb">
+        <option  value=nr>nr</option>
+        <option  value=est_human>est_human</option>
+        <option  value=est_mouse>nr</option>
+        <option  value=est_others>est_others</option>
+        <option  value=htg>htg</option>
+        <option  value=gss>gss</option>
+        <option  value=pataa>pataa</option>
+        <option  value=patnt>patnt</option>
+    </select>
+
+    <button class="ui-state-default ui-corner-all"
+            onclick="ncbiBLAST(jQuery('#blastsearch').val(), jQuery('#ncbiblastdb').val());">NCBI BLAST
+    </button>
+
+    <button class="ui-state-default ui-corner-all"
+               onclick="ncbiBLASTTrack(jQuery('#blastsearch').val(), jQuery('#ncbiblastdb').val());">NCBI BLAST Track test
+       </button>
+
 </div>
 <div id="seqresult">
 
