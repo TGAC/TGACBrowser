@@ -56,6 +56,10 @@
             onclick="ncbiBLAST(jQuery('#blastsearch').val(), jQuery('#ncbiblastdb').val());">NCBI BLAST
     </button>
 
+    <button class="ui-state-default ui-corner-all"
+               onclick="ncbiBLASTTrack(jQuery('#blastsearch').val(), jQuery('#ncbiblastdb').val());">NCBI BLAST Track test
+       </button>
+
 </div>
 <div id="seqresult">
 
