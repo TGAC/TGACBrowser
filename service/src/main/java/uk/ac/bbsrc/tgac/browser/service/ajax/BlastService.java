@@ -56,7 +56,7 @@ public class BlastService {
                              "&DATABASE=" + blastdb +
                              "&ALIGNMENT_VIEW=" + "XML" +
                              "&ALIGNMENTS=" + "100";
-      log.info("urlparam\t\t"+urlParameters);
+      log.info("urlparam\t\t" + urlParameters);
       URL url = new URL("http://www.ncbi.nlm.nih.gov/blast/Blast.cgi?CMD=Put&");
 
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -117,19 +117,20 @@ public class BlastService {
       StringBuilder sb = new StringBuilder();
       String str;
       int i = 0;
-
+      JSONArray blasts = new JSONArray();
       sb.append(connectNCBI(urlParameters));//;new DataInputStream(connection.getInputStream());
       str = connectNCBI(urlParameters);
       while (str == "running") {
         str = connectNCBI(urlParameters);
         if (str == "finished") {
-          sb.append(parseNCBIXML(urlParameters, query_start, query_end, noofhits, location));
+          log.info(parseNCBIXML(urlParameters, query_start, query_end, noofhits, location).toString());
+          blasts = parseNCBIXML(urlParameters, query_start, query_end, noofhits, location);
           break;
         }
       }
 
       JSONObject blast_response = new JSONObject();
-      blast_response.put("blast", sb);
+      blast_response.put("blast", blasts);
       return blast_response; //JSONUtils.JSONObjectResponse("blast", result);
 
     }
@@ -139,7 +140,7 @@ public class BlastService {
     }
   }
 
-  private StringBuffer parseNCBIXML(String urlParameters, int query_start, int query_end, int noofhits, String location) {
+  private JSONArray parseNCBIXML(String urlParameters, int query_start, int query_end, int noofhits, String location) {
     log.info("parse XML");
     log.info(urlParameters);
 
@@ -163,36 +164,25 @@ public class BlastService {
       wr.flush();
       wr.close();
       DataInputStream input = new DataInputStream(connection.getInputStream());
-      log.info(input.readLine());
-//      BufferedWriter out = new BufferedWriter(new FileWriter("../webapps/" + location + "/temp/here.xml"));
-//      while (null != (str = input.readLine())) {
-//        out.write(str);
-//      }
-//      out.close();
-//      FileInputStream fstream = new FileInputStream("../webapps/" + location + "/temp/here.xml");
-//
-//      input = new DataInputStream(fstream);
+//      log.info(input.readLine());
+      BufferedWriter out = new BufferedWriter(new FileWriter("../webapps/" + location + "/temp/here.xml"));
+      while (null != (str = input.readLine())) {
+        out.write(str + "\n");
+      }
+      out.close();
+      FileInputStream fstream = new FileInputStream("../webapps/" + location + "/temp/here.xml");
 
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-      Document dom;
+
+      DocumentBuilder db = dbf.newDocumentBuilder();
+      Document dom = db.parse(new File("../webapps/" + location + "/temp/here.xml"));
       int in = 0;
       int findHits = 1;
       JSONArray blasts = new JSONArray();
-      DocumentBuilder db = dbf.newDocumentBuilder();
-
-      dom = db.parse(input);
-      log.info("dom");
-
-      log.info(dom.toString());
 
       Element docEle = dom.getDocumentElement();
-      log.info("docEl");
-
-      log.info(docEle.toString());
 
       NodeList nl = docEle.getElementsByTagName("Hit");
-      log.info("nl");
-      log.info(nl.toString());
 
       if (nl != null && nl.getLength() > 0) {
         HIT:
@@ -216,6 +206,7 @@ public class BlastService {
 
               String hsp_to = getTextValue(ell, "Hsp_query-to");
 
+              log.info(hsp_from+":"+hsp_to+":"+hsp_score);
               JSONObject eachBlast = new JSONObject();
               JSONArray indels = new JSONArray();
               JSONObject eachIndel = new JSONObject();
@@ -270,15 +261,16 @@ public class BlastService {
       else {
         blasts.add("No hits found.");
       }
-      return sb;
+      return blasts;
     }
     catch (SAXParseException sax) {
       throw new RuntimeException(sax);
     }
     catch (Exception e) {
-      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-      StringBuffer sb = new StringBuffer(e.toString());
-      return sb;
+      JSONArray er = new JSONArray();
+      e.printStackTrace();
+      er.add(JSONUtils.SimpleJSONError(e.getMessage()));
+      return er;
     }
   }
 

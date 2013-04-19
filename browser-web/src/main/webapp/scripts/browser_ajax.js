@@ -58,7 +58,8 @@ function ncbiBLASTTrackResult(id) {
           'ncbiBlastGetResultTrack',
           {'start': start, 'end': end, 'hit': hit, 'url': ajaxurl, 'querystring': query, 'db': db, 'location': link, 'BlastAccession': id, 'format': format},
           {'doOnSuccess': function (json) {
-            jQuery('#blastresult').html(json.html);
+            console.log(json.blast)
+            jQuery('#blastresult').html(json.blast);
             jQuery("#blasttable").tablesorter();
             jQuery("#alertDiv").hide()
             jQuery("#alertDiv").html("");
