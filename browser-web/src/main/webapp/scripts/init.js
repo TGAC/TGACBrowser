@@ -166,6 +166,7 @@ function onLoad() {
   var dragstart = 0;
   jQuery("#wrapper").draggable(
           {
+            handle: "#tracks",
             axis: "x",
             start: function () {
             },

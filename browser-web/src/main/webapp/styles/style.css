@@ -1278,9 +1278,9 @@ span.counter {
     background-color: white;
     width: 100%;
     min-height: 100%;
-    border: 1px solid black;
-
-    box-shadow: 10px 10px 25px #888888;
+    /*border: 1px solid black;*/
+    /**/
+    /*box-shadow: 10px 10px 25px #888888;*/
     /*border-left: 0;*/
     /*overflow: hidden;*/
 }
@@ -1325,6 +1325,9 @@ span.counter {
     vertical-align: middle;
     -moz-user-select: -moz-none;
     -webkit-user-select: none;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    border-top: 1px solid black;
 
 }
 
@@ -1350,6 +1353,8 @@ span.counter {
     background-size: 100% 100%;
     -moz-user-select: -moz-none;
     -webkit-user-select: none;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
 }
 
 #barbox {
@@ -1401,17 +1406,13 @@ span.counter {
 }
 
 #translation_div {
-    /*position: relative;*/
-    /*background-color: yellow;*/
-    /*top: 27%;*/
-    /*right: 25%;*/
-    /*height: 15%;*/
-    /*width: 100%;*/
-    vertical-align: middle;
-    text-align: left;
-    /*font: "Courier New";*/
+    color: black;
     font-family: "Courier New", Courier, monospace;
-    /*letter-spacing: 18.5px;*/
+    /*left: 25%;*/
+    position: absolute;
+    text-align: left;
+    vertical-align: middle;
+    /*width: 50%;*/
 }
 
 #seqbox {
@@ -2338,6 +2339,8 @@ span.deleteicon input {
     position: absolute;
     top: 60px;
     width: 100%;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
 }
 
 #mapmarker {
