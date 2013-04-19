@@ -57,7 +57,7 @@ function zoomIn(zoom_len) {
 function jumpToHere(e) {
   var top = parseFloat(e.pageY - jQuery('#' + seqregname).offset().top);
   //if (top > parseFloat(getMapMarkerTop())) {
-    top = top - parseFloat(getMapMarkerHeight())/2;
+  top = top - parseFloat(getMapMarkerHeight()) / 2;
   //}
   var begin = (top * sequencelength / parseFloat(jQuery("#" + seqregname).css('height')) );
   var end = parseInt(begin) + parseInt(getEnd() - getBegin());
@@ -70,7 +70,7 @@ function jumpToHere(e) {
 function jumpToOther(e, length, name) {
   var top = parseFloat(e.pageY - jQuery('#' + name).offset().top);
   //if (top > parseFloat(getMapMarkerTop())) {
-    top = top - parseFloat(getMapMarkerHeight())/2;
+  top = top - parseFloat(getMapMarkerHeight()) / 2;
   //}
   var diff = parseInt(getEnd() - getBegin());
   var begin, end;
@@ -237,7 +237,12 @@ function setNavPanel() {
   var height = parseFloat(jQuery("#wrapper").position().top) - (parseFloat(jQuery("#draggable").position().top) + parseFloat(jQuery("#draggable").css("height"))) + "px solid #cccccc";
   var border_left = parseFloat(jQuery("#draggable").css("left")) - left + "px solid transparent";
   var width = jQuery("#draggable").css("width");
-  var border_right = parseFloat(maxLen) - parseFloat(left) - (parseFloat(jQuery("#draggable").css("width")) + parseFloat(jQuery("#draggable").css("left"))) + "px solid transparent";
+//  var border_right = parseFloat(maxLen)/2 - parseFloat(left) - (parseFloat(jQuery("#draggable").css("width")) + parseFloat(jQuery("#draggable").css("left"))) + "px solid transparent";
+  var diff = (parseFloat(maxLen) - (parseFloat(jQuery("#draggable").css("width")) + parseFloat(jQuery("#draggable").css("left"))))
+  if (diff < 0) {
+    diff = 0;
+  }
+  var border_right = (diff) + "px solid transparent";
   jQuery("#nav_panel").animate({left: left}, { duration: 300, queue: false});
   jQuery("#nav_panel").animate({width: width}, { duration: 300, queue: false});
   jQuery("#nav_panel").animate({borderBottom: height}, { duration: 300, queue: false});
@@ -273,7 +278,6 @@ function trackDrag() {
     jQuery("#wrapper").css({'left': '0px'});
   }
 }
-
 function updateJSON() {
   var from, to;
   var partial = (getEnd() - getBegin()) / 2;
