@@ -1165,7 +1165,7 @@ function dispGraphWig(div, trackName, trackId) {
     }));
 
     var width = jQuery("#wrapper").width(),
-            height = 100;
+            height = 80;
 
 
     var left = 0;
@@ -1174,11 +1174,11 @@ function dispGraphWig(div, trackName, trackId) {
 
     }
 
-    var top = 0;
+    var top = 20;
 
     var svg = d3.select(div).append("svg")
             .attr("width", width)
-            .attr("height", height + 10)
+            .attr("height", height + 20)
             .append("g")
             .attr("transform", "translate(" + left + "," + top + ")");
 
@@ -1193,16 +1193,20 @@ function dispGraphWig(div, trackName, trackId) {
 
     d3.json(track, function () {
       data = track;
-
-      data.splice(0, 0, {start: "1", value: '0'});
       var length = data.length - 1;
-      var end_val = parseInt(data[length].start) + parseInt(1);
-      console.log(data[length].start + ":" + end_val)
+      var end_val = parseInt(data[length].start) + parseInt(data[1].start - data[0].start);
+      var start_val = parseInt(data[0].start) - (parseInt(data[1].start - data[0].start));
+
+      data.splice(0, 0, {start: start_val, value: '0'});
+
       data.splice(data.length, 0, {start: end_val, value: '0'});
-      console.log(data[length])
       var space = parseInt(width) / (end - start);
 
       var pathinfo = [];
+
+      var last_start = 0;
+      var diff = parseInt(data[1].start - data[0].start);
+
       for (var i = 0; i < data.length - 1;) {
         var tempx;
         if (start > 0) {
@@ -1213,13 +1217,40 @@ function dispGraphWig(div, trackName, trackId) {
         }
         var tempy = height - (data[i].value * height / max); //(parseInt(max)*(41-parseInt(patharray[i]))/41);
         pathinfo.push({ x: tempx, y: tempy});
-        if (data.length < 400) {
-          i++;
+
+
+//        if (data.length < 400) {
+        i++;
+//        }
+//        else {
+//          i = parseInt(i + (data.length / 400));
+//        }
+
+        if (last_start < data[i].start - diff) {
+          if (start > 0) {
+            tempx = ((parseInt(last_start) + parseInt(diff)) - start) * space;
+          }
+          else {
+            tempx = ((parseInt(last_start) + parseInt(diff))) * space;
+          }
+          var tempy = height; //(parseInt(max)*(41-parseInt(patharray[i]))/41);
+          pathinfo.push({ x: tempx, y: tempy});
+
+          if (start > 0) {
+            tempx = ((parseInt(data[i].start) - parseInt(diff)) - start) * space;
+          }
+          else {
+            tempx = ((parseInt(data[i].start) - parseInt(diff))) * space;
+          }
+          var tempy = height; //(parseInt(max)*(41-parseInt(patharray[i]))/41);
+          pathinfo.push({ x: tempx, y: tempy});
+
         }
-        else {
-          i = parseInt(i + (data.length / 400));
-        }
+
+        last_start = data[i].start;
       }
+
+
       if (start > 0) {
         tempx = (data[data.length - 1].start - start) * space;
       }
@@ -1235,8 +1266,12 @@ function dispGraphWig(div, trackName, trackId) {
               .attr("width", 200)
               .attr("height", 200)
               .attr("class", "path")
+
               .attr('stroke', function () {
                       return "blue";
+                    })
+              .attr('stroke-width', function () {
+                      return "2px";
                     })
               .attr("fill", function () {
                       return "lightblue";
