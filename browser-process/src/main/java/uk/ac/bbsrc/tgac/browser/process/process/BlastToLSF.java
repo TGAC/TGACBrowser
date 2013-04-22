@@ -30,6 +30,8 @@ public class BlastToLSF extends AbstractTgacLsfProcess {
  // private final FlagParameter blastQuery;
   private final FlagParameter blastDB;
   private final FlagParameter format;
+  private final FlagParameter type;
+
 
   /*
     bsub -q ngs_processing
@@ -47,6 +49,7 @@ public class BlastToLSF extends AbstractTgacLsfProcess {
    // blastQuery = new FlagParameter("querystring");
     blastDB = new FlagParameter("blastdb");
     format = new FlagParameter("format");
+    type =  new FlagParameter("type");
 
     parameters = new ArrayList<ConanParameter>();
 
@@ -54,6 +57,8 @@ public class BlastToLSF extends AbstractTgacLsfProcess {
    // parameters.add(blastQuery);
     parameters.add(blastDB);
     parameters.add(format);
+    parameters.add(type);
+
   }
 
   protected Logger getLog() {
@@ -73,7 +78,8 @@ public class BlastToLSF extends AbstractTgacLsfProcess {
   @Override
   protected String getCommand(Map<ConanParameter, String> parameters) {
     try {
-      String blastBinary = "/data/workarea/bianx/blast+/blastn ";
+      String blast_type = parameters.get(type);
+      String blastBinary = "/data/workarea/bianx/blast+/"+blast_type+" ";
       getLog().debug("Executing " + getName() + " with the following parameters: " + parameters.toString());
 
       StringBuilder sb = new StringBuilder();
@@ -84,7 +90,7 @@ public class BlastToLSF extends AbstractTgacLsfProcess {
       sb.append(" -db " +  parameters.get(blastDB));
       sb.append(" -query /net/tgac-cfs3.tgaccluster/ifs/TGAC/browser/jobs/" + parameters.get(blastAccession) + ".fa ");
       sb.append(" -out /net/tgac-cfs3.tgaccluster/ifs/TGAC/browser/jobs/" + parameters.get(blastAccession) + ".xml ");
-      sb.append(" -outfmt "+parameters.get(format)+" -task blastn -max_target_seqs 10");
+      sb.append(" -outfmt "+parameters.get(format)+" -task "+blast_type+" -max_target_seqs 10");
 //
 //            .append(" -f " + parameters.get(makefilePath))
 //            .append(" -C " + parameters.get(fastqPath));

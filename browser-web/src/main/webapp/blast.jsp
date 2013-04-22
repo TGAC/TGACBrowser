@@ -36,8 +36,12 @@
 
 
     </select>
+    <select name="blast_type" id="blast_type">
+          <option id="blastn"> blastn </option>
+        <option id="tblastn">tblastn</option>
+    </select>
     <button class="ui-state-default ui-corner-all"
-            onclick="blastSearch(jQuery('#blastsearch').val(), jQuery('#blastdb').val());">BLAST
+            onclick="blastSearch(jQuery('#blastsearch').val(), jQuery('#blastdb').val(),jQuery('#blast_type').val());">BLAST
     </button>
     <br>
     NCBI BLAST
