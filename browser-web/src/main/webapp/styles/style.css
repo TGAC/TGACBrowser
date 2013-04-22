@@ -1410,9 +1410,9 @@ span.counter {
     font-family: "Courier New", Courier, monospace;
     /*left: 25%;*/
     position: absolute;
-    text-align: left;
+    text-align: center;
     vertical-align: middle;
-    /*width: 50%;*/
+    width: 100%;
 }
 
 #seqbox {
@@ -1441,6 +1441,7 @@ span.counter {
     -moz-user-select: -moz-none;
     -webkit-user-select: none;
     cursor: crosshair;
+    width: 100%;
 }
 
 #seqLeft {
@@ -1708,7 +1709,7 @@ span.counter {
     width: 200%;
     margin-left: -50%;
     /*border: 1px solid black;*/
-    /*background-color: white;*/
+    background-color: white;
     /*border-right: 0;*/
     overflow: hidden;
     color: white;
@@ -1892,17 +1893,18 @@ span.counter {
 }
 
 .handle {
-    position: absolute;
-    left: 25%;
-    margin-top: 0;
-    z-index: 999;
-    display: inline-block;
-    /*background: #4682b4;*/
-    /*border: 1px solid blue;*/
-    cursor: move;
-    font-size: 18px;
-    font-family: sans-serif;
-    opacity: 0.7;
+    background: none repeat scroll 0 0 #4682b4;
+     border: 1px solid black;
+     border-radius: 5px 5px 5px 5px;
+     cursor: move;
+     display: inline-block;
+     font-family: arial;
+     /*font-size: 15px;*/
+     left: 25.2%;
+     opacity: 0.9;
+     position: absolute;
+     top: 5px;
+     z-index: 999;
 }
 
 .closehandle {

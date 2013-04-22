@@ -334,10 +334,10 @@ function seqregionSearchPopup(query, from, to, blast) {
 }
 
 function search(query, from, to, jsonid, oldtracks) {
-//  if (track_list) {
-//    jQuery.cookie('trackslist', track_list.toJSON(), {  expires: 10});
-//    removeTrackslist(track_list);
-//  }
+  if (track_list) {
+    jQuery.cookie('trackslist', track_list.toJSON(), {  path: '/', expires: 10});
+    removeTrackslist(track_list);
+  }
 
   jQuery('#sessioninput').fadeOut();
   jQuery("#sessionid").html("");
@@ -374,7 +374,6 @@ function search(query, from, to, jsonid, oldtracks) {
 
                 jQuery("#search_hit").tablesorter();
               }
-
 
             }
             else if (json.html == "gene" || json.html == "GO" || json.html == "transcript") {
