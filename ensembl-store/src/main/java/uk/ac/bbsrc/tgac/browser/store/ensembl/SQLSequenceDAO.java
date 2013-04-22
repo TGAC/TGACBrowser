@@ -1205,6 +1205,12 @@ public class SQLSequenceDAO implements SequenceStore {
     try {
 
       seq = template.queryForObject(GET_Seq_API, new Object[]{query}, String.class);
+      if(from < 0){
+        from = 0;
+      }
+      if(to > seq.length()){
+        to = seq.length();
+      }
       log.info("get seq level" + query + ":" + from + ":" + to);
       log.info("\n\nget seq level length " + seq.substring(from, to).length());
 

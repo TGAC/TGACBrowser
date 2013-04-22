@@ -131,8 +131,11 @@
         <div id="wrapper">
             <div id="sequence">
 
-                <div id="sequenceString"></div>
-                <div id="translation_div"></div>
+                <center>
+                    <div id="sequenceString"></div>
+                    <div id="translation_div"></div>
+                </center>
+
 
             </div>
             <div id=tracks>

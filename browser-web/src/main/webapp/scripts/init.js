@@ -134,7 +134,7 @@ function onLoad() {
     if (randomnumber) {
       saveSession();
     }
-//    jQuery.cookie('trackslist', track_list.toJSON(), { path: '/' + path, expires: 10});
+    jQuery.cookie('trackslist', track_list.toJSON(), { path: '/', expires: 10});
   });
 
   jQuery("#draggable").mouseover(function () {
@@ -174,14 +174,14 @@ function onLoad() {
 
               jQuery(".handle").each(function (i) {
                 jQuery(this).css("left", '1%');
-                jQuery(this).css("top", (jQuery(this).parent().position().top) - parseInt(jQuery(window).scrollTop()) + (parseInt(jQuery("#wrapper").position().top)+parseInt(jQuery("#sequence").css('height'))) + (parseInt(jQuery("#canvas").position().top)));
+                jQuery(this).css("top", parseInt(jQuery(this).parent().position().top) - parseInt(jQuery(window).scrollTop()) + (parseInt(jQuery("#wrapper").position().top) + parseInt(jQuery("#sequence").css('height'))) + (parseInt(jQuery("#canvas").position().top)) + 5);
                 jQuery(this).css("position", 'fixed');
               });
             },
             stop: function () {
               jQuery(".handle").css("position", 'absolute');
-              jQuery(".handle").css("left", '25%');
-              jQuery(".handle").css("top", '0px');
+              jQuery(".handle").css("left", '25.2%');
+              jQuery(".handle").css("top", '5px');
               trackDrag();
             }
           });
@@ -470,7 +470,9 @@ function trackList(tracklist) {
   for (i = 0; i < Tracklist.length; i++) {
     jQuery("#tracks").append("<div id='" + Tracklist[i].name + "_wrapper' class='feature_tracks' style=\"display:none\">" +
                              "<div align='left' class='handle'><table><tr><td><b>" + Tracklist[i].display_label + "</b></td><td><div class=\"ui-icon ui-icon-comment\" onclick=toogleLabel(\"" + Tracklist[i].name + "\");> </div></td>" + checkGene(Tracklist[i].name) +
-                             "<td><div class='closehandle ui-icon ui-icon-close' onclick=removeTrack(\"" + Tracklist[i].name + "_div\",\"" + Tracklist[i].name + "\");></div></td></tr></table></div> <div id='" + Tracklist[i].name + "_div' class='feature_tracks' style=\"display:none\" > " + Tracklist[i].name + "</div></div>");
+                             "<td><div class='closehandle ui-icon ui-icon-close' onclick=removeTrack(\"" + Tracklist[i].name + "_div\",\"" + Tracklist[i].name + "\");></div></td></tr></table></div>" +
+//                             "<div class=\"sectionDivider\"   onclick=\"Utils.ui.toggleLeftInfo(jQuery('" + Tracklist[i].display_label + "'), '" + Tracklist[i].display_label + "_div');\"> Test  <div id='" + Tracklist[i].display_label + "arrowclick' class=\"toggleLeft\"></div> </div>" +
+                             "<div id='" + Tracklist[i].name + "_div' class='feature_tracks' style=\"display:none\" > " + Tracklist[i].name + "</div></div>");
     jQuery(function () {
       jQuery("#" + Tracklist[i].name + "_wrapper").resizable({
                                                                handles: "s",
@@ -490,69 +492,199 @@ function trackList(tracklist) {
     }
   }
 }
+
+Utils.ui = {
+  checkUser: function (username) {
+    Fluxion.doAjax(
+            'dashboard',
+            'checkUser',
+            {'username': username, 'url': ajaxurl},
+            {'': ''}
+    );
+  },
+
+  checkAll: function (field) {
+    var self = this;
+    for (i = 0; i < self._N(field).length; i++) self._N(field)[i].checked = true;
+  },
+
+  uncheckAll: function (field) {
+    var self = this;
+    for (i = 0; i < self._N(field).length; i++) self._N(field)[i].checked = false;
+  },
+
+  uncheckOthers: function (field, item) {
+    var self = this;
+    for (i = 0; i < self._N(field).length; i++) {
+      if (self._N(field)[i] != item) {
+        self._N(field)[i].checked = false;
+      }
+    }
+  },
+
+  _N: function (element) {
+    if (typeof element == 'string') element = document.getElementsByName(element);
+    return Element.extend(element);
+  },
+
+  toggleRightInfo: function (div, id) {
+    if (jQuery(div).hasClass("toggleRight")) {
+      jQuery(div).removeClass("toggleRight").addClass("toggleRightDown");
+    }
+    else {
+      jQuery(div).removeClass("toggleRightDown").addClass("toggleRight");
+    }
+    jQuery("#" + id).toggle("blind", {}, 500);
+  },
+
+  toggleLeftInfo: function (div, id) {
+    if (jQuery(div).hasClass("toggleLeft")) {
+      jQuery(div).removeClass("toggleLeft").addClass("toggleLeftDown");
+    }
+    else {
+      jQuery(div).removeClass("toggleLeftDown").addClass("toggleLeft");
+    }
+    jQuery("#" + id + "arrowclick").toggle("blind", {}, 500);
+    jQuery("#" + id + "_wrapper").style("")
+  },
+
+  addDatePicker: function (id) {
+    jQuery("#" + id).datepicker({dateFormat: 'dd/mm/yy', showButtonPanel: true});
+  },
+
+  addMaxDatePicker: function (id, maxDateOffset) {
+    jQuery("#" + id).datepicker({dateFormat: 'dd/mm/yy', showButtonPanel: true, maxDate: maxDateOffset});
+  },
+
+  disableButton: function (buttonDiv) {
+    jQuery('#' + buttonDiv).attr('disabled', 'disabled');
+    jQuery('#' + buttonDiv).html("Processing...");
+  },
+
+  reenableButton: function (buttonDiv, text) {
+    jQuery('#' + buttonDiv).removeAttr('disabled');
+    jQuery('#' + buttonDiv).html(text);
+  },
+
+  confirmRemove: function (obj) {
+    if (confirm("Are you sure you wish to remove this item?")) {
+      obj.remove();
+    }
+  }
+};
+
 function loadDefaultTrack(tracklist) {
 
   var Tracklist = tracklist;
-//  var cookietest = []
-//  if (jQuery.cookie('trackslist')) {
-//    cookietest = JSON.parse(jQuery.cookie('trackslist'));
-//  }
+  var cookietest = []
+  if (jQuery.cookie('trackslist')) {
+    cookietest = JSON.parse(jQuery.cookie('trackslist'));
+  }
+  else {
+    for (var i = 0; i < Tracklist.length; i++) {
+      if (Tracklist[i].disp == "1") {
+        jQuery('#' + Tracklist[i].name + 'Checkbox').attr('checked', true);
+        mergeTrackList(Tracklist[i].name);
 
-  for (var i = 0; i < Tracklist.length; i++) {
-    if (Tracklist[i].disp == "1") {
-      jQuery('#' + Tracklist[i].name + 'Checkbox').attr('checked', true);
-      mergeTrackList(Tracklist[i].name);
+        var partial = (getEnd() - getBegin()) + ((getEnd() - getBegin()) / 2);
+        var start = (getBegin() - partial);
+        var end = parseInt(getEnd()) + parseFloat(partial);
+        if (start < 0) {
+          start = 0;
+        }
+        if (end > sequencelength) {
+          end = sequencelength;
+        }
+        deltaWidth = parseInt(end - start) * 2 / parseInt(maxLen);
+        window[Tracklist[i].name] == "loading";
+        trackToggle(Tracklist[i].name);
+        Fluxion.doAjax(
+                'dnaSequenceService',
+                'loadTrack',
+                {'query': seqregname, 'name': Tracklist[i].name, 'trackid': Tracklist[i].id, 'start': start, 'end': end, 'delta': deltaWidth, 'url': ajaxurl},
+                {'doOnSuccess': function (json) {
+                  var trackname = json.name;
 
-      var partial = (getEnd() - getBegin()) + ((getEnd() - getBegin()) / 2);
-      var start = (getBegin() - partial);
-      var end = parseInt(getEnd()) + parseFloat(partial);
-      if (start < 0) {
-        start = 0;
-      }
-      if (end > sequencelength) {
-        end = sequencelength;
-      }
-      deltaWidth = parseInt(end - start) * 2 / parseInt(maxLen);
-      window[Tracklist[i].name] == "loading";
-      trackToggle(Tracklist[i].name);
-      Fluxion.doAjax(
-              'dnaSequenceService',
-              'loadTrack',
-              {'query': seqregname, 'name': Tracklist[i].name, 'trackid': Tracklist[i].id, 'start': start, 'end': end, 'delta': deltaWidth, 'url': ajaxurl},
-              {'doOnSuccess': function (json) {
-                var trackname = json.name;
-
-                if (json.type == "graph") {
-                  for (var j = 0; j < track_list.length; j++) {
-                    if (track_list[j].name == trackname) {
-                      track_list[j].graph = "true";
+                  if (json.type == "graph") {
+                    for (var j = 0; j < track_list.length; j++) {
+                      if (track_list[j].name == trackname) {
+                        track_list[j].graph = "true";
+                      }
                     }
                   }
-                }
-                else {
-                  for (var j = 0; j < track_list.length; j++) {
-                    if (track_list[j].name == trackname) {
-                      track_list[j].graph = "false";
+                  else {
+                    for (var j = 0; j < track_list.length; j++) {
+                      if (track_list[j].name == trackname) {
+                        track_list[j].graph = "false";
+                      }
                     }
                   }
+                  window[trackname] = json[trackname];
+                  trackToggle(trackname);
                 }
-                window[trackname] = json[trackname];
-                trackToggle(trackname);
-              }
-              });
+                });
+      }
     }
-//    else {
-//      jQuery.each(cookietest, function (j, v) {
-//        if (v.name == Tracklist[i].name && v.disp == 1) {
-//          jQuery('#' + Tracklist[i].name + 'Checkbox').attr('checked', true);
-//          loadTrackAjax(Tracklist[i].id, Tracklist[i].name);
-//          return false; // stops the loop
-//        }
-//      });
-//
-//      continue;
-//
-//    }
+  }
+  console.log(cookietest)
+  for (var i = 0; i < Tracklist.length; i++) {
+    console.log(Tracklist[i].name)
+
+    jQuery.each(cookietest, function (j, v) {
+      console.log(v.name)
+      if (v.name == Tracklist[i].name && v.disp == 1) {
+
+        jQuery('#' + Tracklist[i].name + 'Checkbox').attr('checked', true);
+        mergeTrackList(Tracklist[i].name);
+
+        var partial = (getEnd() - getBegin()) + ((getEnd() - getBegin()) / 2);
+        var start = (getBegin() - partial);
+        var end = parseInt(getEnd()) + parseFloat(partial);
+        if (start < 0) {
+          start = 0;
+        }
+        if (end > sequencelength) {
+          end = sequencelength;
+        }
+        deltaWidth = parseInt(end - start) * 2 / parseInt(maxLen);
+        window[Tracklist[i].name] == "loading";
+        trackToggle(Tracklist[i].name);
+        Fluxion.doAjax(
+                'dnaSequenceService',
+                'loadTrack',
+                {'query': seqregname, 'name': Tracklist[i].name, 'trackid': Tracklist[i].id, 'start': start, 'end': end, 'delta': deltaWidth, 'url': ajaxurl},
+                {'doOnSuccess': function (json) {
+                  var trackname = json.name;
+
+                  if (json.type == "graph") {
+                    for (var j = 0; j < track_list.length; j++) {
+                      if (track_list[j].name == trackname) {
+                        track_list[j].graph = "true";
+                      }
+                    }
+                  }
+                  else {
+                    for (var j = 0; j < track_list.length; j++) {
+                      if (track_list[j].name == trackname) {
+                        track_list[j].graph = "false";
+                      }
+                    }
+                  }
+                  window[trackname] = json[trackname];
+                  trackToggle(trackname);
+                }
+                });
+
+
+        jQuery('#' + Tracklist[i].name + 'Checkbox').attr('checked', true);
+        loadTrackAjax(Tracklist[i].id, Tracklist[i].name);
+        return false; // stops the loop
+      }
+    });
+
+    continue;
+
+
   }
 
 }
@@ -610,8 +742,8 @@ function getEditedTracks() {
   var tracks = [];
   var eachTrack = {};
   for (var i = 0; i < track_list.length; i++) {
-    if (window[track_list[i].name+ "_edited"]) {
-      eachTrack = { "trackName": track_list[i].name + "_edited", "child": window[track_list[i].name+"_edited"]};
+    if (window[track_list[i].name + "_edited"]) {
+      eachTrack = { "trackName": track_list[i].name + "_edited", "child": window[track_list[i].name + "_edited"]};
       tracks.push(eachTrack);
     }
   }
@@ -622,8 +754,8 @@ function getRemovedTracks() {
   var tracks = [];
   var eachTrack = {};
   for (var i = 0; i < track_list.length; i++) {
-    if (window[track_list[i].name+ "_removed"]) {
-      eachTrack = { "trackName": track_list[i].name + "_removed", "child": window[track_list[i].name+"_removed"]};
+    if (window[track_list[i].name + "_removed"]) {
+      eachTrack = { "trackName": track_list[i].name + "_removed", "child": window[track_list[i].name + "_removed"]};
       tracks.push(eachTrack);
     }
   }
@@ -632,15 +764,15 @@ function getRemovedTracks() {
 
 function loadEditedTracks(tracks) {
   for (var i = 0; i < tracks.length; i++) {
-window[tracks[i].trackName] = tracks[i].child;
-console.log(window[tracks[i].trackName])
+    window[tracks[i].trackName] = tracks[i].child;
+    console.log(window[tracks[i].trackName])
   }
 }
 
 function loadRemovedTracks(tracks) {
   for (var i = 0; i < tracks.length; i++) {
-window[tracks[i].trackName] = tracks[i].child;
-console.log(window[tracks[i].trackName])
+    window[tracks[i].trackName] = tracks[i].child;
+    console.log(window[tracks[i].trackName])
   }
 }
 
