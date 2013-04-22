@@ -234,9 +234,11 @@ public class SQLSequenceDAO implements SequenceStore {
 
   public JSONArray getSeqRegionSearch(String searchQuery) throws IOException {
     try {
+      log.info("getSeqRegionSearch "+searchQuery);
       JSONArray names = new JSONArray();
       List<Map<String, Object>> maps = template.queryForList(GET_SEQ_REGION_ID_SEARCH, new Object[]{'%' + searchQuery + '%'});
       for (Map map : maps) {
+        log.info(map.toString());
         JSONObject eachName = new JSONObject();
         eachName.put("name", map.get("name"));
         eachName.put("seq_region_id", map.get("seq_region_id"));
@@ -1035,6 +1037,7 @@ public class SQLSequenceDAO implements SequenceStore {
   }
 
   public JSONArray getAnnotationId(int query) throws IOException {
+    log.info("anootaion "+query);
     try {
       int coord = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{query}, Integer.class);
       int rank = template.queryForObject(GET_RANK_for_COORD_SYSTEM_ID, new Object[]{coord}, Integer.class);
@@ -1079,6 +1082,7 @@ public class SQLSequenceDAO implements SequenceStore {
 
   public JSONArray getAnnotationIdList(int query) throws IOException {
     try {
+      log.info("get annottation "+query);
       int coord = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{query}, Integer.class);
       int rank = template.queryForObject(GET_RANK_for_COORD_SYSTEM_ID, new Object[]{coord}, Integer.class);
 

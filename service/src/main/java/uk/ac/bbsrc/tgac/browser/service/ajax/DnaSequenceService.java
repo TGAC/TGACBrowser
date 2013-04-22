@@ -48,26 +48,35 @@ public class DnaSequenceService {
     JSONObject response = new JSONObject();
     JSONArray tracks = new JSONArray();
     try {
+      log.info("seqname "+seqName);
+
       Integer queryid = sequenceStore.getSeqRegionearchsize(seqName);
+      log.info("queryid "+queryid);
+
       if (queryid > 1) {
+        log.info("queryid > 1");
         response.put("html", "seqregion");
         response.put("seqregion", sequenceStore.getSeqRegionSearch(seqName));
       }
       else if (queryid == 0) {
+        log.info("queryid == 0 ");
+
         response.put("html", "gene");
         response.put("gene", sequenceStore.getGenesSearch(seqName));
         response.put("transcript", sequenceStore.getTranscriptSearch(seqName));
         response.put("GO", sequenceStore.getGOSearch(seqName));
       }
       else {
+        log.info("queryid else "+ queryid);
+
         Integer query = sequenceStore.getSeqRegion(seqName);
         String seqRegName = sequenceStore.getSeqRegionName(query);
         String seqlength = sequenceStore.getSeqLengthbyId(query);
         response.put("seqlength", seqlength);
         response.put("html", "");
-        response.put("seqname", "<p> <b>Seq Region ID:</b> " + queryid + ",<b> Name: </b> " + seqRegName);//+", <b>cds:</b> "+cds+"</p>");
+        response.put("seqname", "<p> <b>Seq Region ID:</b> " + query + ",<b> Name: </b> " + seqRegName);//+", <b>cds:</b> "+cds+"</p>");
         response.put("seqregname", seqRegName);
-        response.put("tracklists", sequenceStore.getAnnotationId(queryid));
+        response.put("tracklists", sequenceStore.getAnnotationId(query));
       }
       return response;
     }
