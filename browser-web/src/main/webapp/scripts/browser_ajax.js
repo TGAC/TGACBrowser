@@ -93,17 +93,17 @@ function ncbiBLASTResult(id) {
 }
 
 
-function blastSearch(query, blastdb) {
+function blastSearch(query, blastdb, type) {
   var link = blastdb.split(":");
   jQuery('#blastresult').html("<span style=\"position:relative; left:50%;\"> Submitting &nbsp; <img alt=\"Loading\" src=\"./images/browser/loading_big.gif\" style=\"position: relative;\"> </span> </div>");
 
-  submitBlastTask(query, blastdb, 6);
+  submitBlastTask(query, blastdb, 6, type);
   jQuery('#main').animate({"height": "0px"}, { duration: 300, queue: false});
   jQuery('#main').fadeOut();
 }
 
 
-function blastTrackSearch(query, start, end, hit, blastdb) {
+function blastTrackSearch(query, start, end, hit, blastdb, type) {
   if (!window['blasttrack']) {
 
     jQuery("#tracklist").append("<p title='blast' id=blastcheck><input type=\"checkbox\" checked id='blasttrackCheckbox' name='blasttrackCheckbox' onClick=loadTrackAjax(\"blasttrack\",\"blasttrack\");\>  Blasttrack\  </p>");
@@ -127,13 +127,13 @@ function blastTrackSearch(query, start, end, hit, blastdb) {
   }
 
 
-  submitBlastTask(query, blastdb, 5, start, end, hit);
+  submitBlastTask(query, blastdb, 5, type, start, end, hit);
   start_global = start;
   end_global = end;
   hit_global = hit;
 }
 
-function submitBlastTask(query, db, format, start, end, hit) {
+function submitBlastTask(query, db, format, type, start, end, hit) {
   // format 5 for plain text, 6 for xml
   var id = randomString(8);
   var database = db.split(":");
@@ -154,7 +154,8 @@ function submitBlastTask(query, db, format, start, end, hit) {
             db: blastdb,
             hit: hit,
             link: link,
-            format: format
+            format: format,
+            type: type
           });
 
   ajaxurl = '/' + jQuery('#title').text() + '/' + jQuery('#title').text() + '/fluxion.ajax';
@@ -162,7 +163,7 @@ function submitBlastTask(query, db, format, start, end, hit) {
   Fluxion.doAjax(
           'blastservice',
           'submitBlastTask',
-          {'url': ajaxurl, 'querystring': query, 'blastdb': db, 'location': link, 'BlastAccession': id, 'format': format},
+          {'url': ajaxurl, 'querystring': query, 'blastdb': db, 'location': link, 'BlastAccession': id, 'format': format, "type": type},
           {'doOnSuccess': processTaskSubmission,
             'doOnError': function (json) {
               alert(json.error);

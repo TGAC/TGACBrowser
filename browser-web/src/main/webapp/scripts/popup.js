@@ -230,6 +230,21 @@ function preBlast(begin, end, popup) {
 //                       "<option selected value=\"/net/tgac-cfs3/ifs/TGAC/browser/jobs/choblastdb/TGAC_CHO_v2.0_COMPLETE.fa\">Version 2.0 Scaffolds</option> " +
 //                       "<option VALUE =\"/net/tgac-cfs3/ifs/TGAC/browser/jobs/choblastdb/unplaced.scaf.fa\">BGI CHO scaffolds </option>" +
 //                       "</select> </td>" +
+//                       "<tr>" +
+//                       "<td>" +
+//                       "Select BLAST Type<select name=\"blasttype\" id=\"blasttype\">  " +
+//                                              "<option value=\"blastn\">blastn</option>  " +
+//                                              "<option value=\"tblastn\">tblastn</option> " +
+//                                              "<option value=\"3\">3</option>  " +
+//                                              "<option value=\"4\">4</option>  " +
+//                                              "<option value=\"5\">5</option>            " +
+//                                              "<option value=\"6\">6</option>  " +
+//                                              "<option value=\"7\">7</option>  " +
+//                                              "<option value=\"8\">8</option> " +
+//                                              "<option value=\"9\">9</option>   " +
+//                                              "<option value=\"10\">10</option>  " +
+                                              "</select> " +
+                       "</td></tr>"
                        "<td><span class=\"fg-button ui-icon ui-widget ui-state-default ui-corner-all ui-icon-close\" id=\"dontblast\"></span>" +
                        "<span class=\"fg-button ui-icon ui-widget ui-state-default ui-corner-all ui-icon-check\" id=\"doblast\"></span> </td></tr></table>";
 
@@ -249,7 +264,7 @@ function preBlast(begin, end, popup) {
     var hit = jQuery('#blasthit').val();
     var blastdb = jQuery('#blastdb').val();
 
-    blast(begin, end, hit, blastdb);
+    blast(begin, end, hit, blastdb, 'blastn');
     removePopup();
 
     jQuery('#blastselector').hide();
@@ -738,7 +753,7 @@ function fetchFasta(begin, end, track, i, j) {
 }
 
 
-function blast(begin, end, hit, blastdb) {
+function blast(begin, end, hit, blastdb, type) {
 //  if (end - begin < 10000) {
   Fluxion.doAjax(
           'dnaSequenceService',
@@ -746,7 +761,7 @@ function blast(begin, end, hit, blastdb) {
           {'query': seqregname, 'from': begin, 'to': end, 'url': ajaxurl},
           {'doOnSuccess': function (json) {
             var seq = json.seq;
-            blastTrackSearch(seq, begin, end, hit, blastdb);
+            blastTrackSearch(seq, begin, end, hit, blastdb, type);
           }
           });
 
