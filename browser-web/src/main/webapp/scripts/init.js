@@ -15,6 +15,8 @@ var blastsdata = [];
 var grouplist = [];
 var tracks = [];
 var tracklocation = [];
+
+
 function onLoad() {
 
   path = jQuery('#title').text();
@@ -469,10 +471,20 @@ function trackList(tracklist) {
                                            });
   for (i = 0; i < Tracklist.length; i++) {
     jQuery("#tracks").append("<div id='" + Tracklist[i].name + "_wrapper' class='feature_tracks' style=\"display:none\">" +
-                             "<div align='left' class='handle'><table><tr><td><b>" + Tracklist[i].display_label + "</b></td><td><div class=\"ui-icon ui-icon-comment\" onclick=toogleLabel(\"" + Tracklist[i].name + "\");> </div></td>" + checkGene(Tracklist[i].name) +
-                             "<td><div class='closehandle ui-icon ui-icon-close' onclick=removeTrack(\"" + Tracklist[i].name + "_div\",\"" + Tracklist[i].name + "\");></div></td></tr></table></div>" +
-//                             "<div class=\"sectionDivider\"   onclick=\"Utils.ui.toggleLeftInfo(jQuery('" + Tracklist[i].display_label + "'), '" + Tracklist[i].display_label + "_div');\"> Test  <div id='" + Tracklist[i].display_label + "arrowclick' class=\"toggleLeft\"></div> </div>" +
-                             "<div id='" + Tracklist[i].name + "_div' class='feature_tracks' style=\"display:none\" > " + Tracklist[i].name + "</div></div>");
+                             "<div align='left' class='handle'>" +
+                             "<table>" +
+                             "<tr>" +
+//                             "<td><div onclick=\"toggleLeftInfo(jQuery('" + Tracklist[i].display_label + "_arrowclick'), '" + Tracklist[i].display_label + "_div');\"> " +
+//                             "<div id='" + Tracklist[i].display_label + "_arrowclick' class=\"toggleRight\"></div> " +
+//                             "</div></td>" +
+                             "<td><b>" + Tracklist[i].display_label + "</b></td>" +
+                             "<td><div class=\"ui-icon ui-icon-comment\" onclick=toogleLabel(\"" + Tracklist[i].name + "\");> </div></td>" + checkGene(Tracklist[i].name) +
+                             "<td><div class='closehandle ui-icon ui-icon-close' onclick=removeTrack(\"" + Tracklist[i].name + "_div\",\"" + Tracklist[i].name + "\");></div></td>" +
+                             "</tr>" +
+                             "</table>" +
+                             "</div>" +
+                             "<div id='" + Tracklist[i].name + "_div' class='feature_tracks' style=\"display:none\" > " + Tracklist[i].name + "</div>" +
+                             "</div>");
     jQuery(function () {
       jQuery("#" + Tracklist[i].name + "_wrapper").resizable({
                                                                handles: "s",
@@ -493,85 +505,17 @@ function trackList(tracklist) {
   }
 }
 
-Utils.ui = {
-  checkUser: function (username) {
-    Fluxion.doAjax(
-            'dashboard',
-            'checkUser',
-            {'username': username, 'url': ajaxurl},
-            {'': ''}
-    );
-  },
 
-  checkAll: function (field) {
-    var self = this;
-    for (i = 0; i < self._N(field).length; i++) self._N(field)[i].checked = true;
-  },
-
-  uncheckAll: function (field) {
-    var self = this;
-    for (i = 0; i < self._N(field).length; i++) self._N(field)[i].checked = false;
-  },
-
-  uncheckOthers: function (field, item) {
-    var self = this;
-    for (i = 0; i < self._N(field).length; i++) {
-      if (self._N(field)[i] != item) {
-        self._N(field)[i].checked = false;
-      }
-    }
-  },
-
-  _N: function (element) {
-    if (typeof element == 'string') element = document.getElementsByName(element);
-    return Element.extend(element);
-  },
-
-  toggleRightInfo: function (div, id) {
-    if (jQuery(div).hasClass("toggleRight")) {
-      jQuery(div).removeClass("toggleRight").addClass("toggleRightDown");
-    }
-    else {
-      jQuery(div).removeClass("toggleRightDown").addClass("toggleRight");
-    }
-    jQuery("#" + id).toggle("blind", {}, 500);
-  },
-
-  toggleLeftInfo: function (div, id) {
-    if (jQuery(div).hasClass("toggleLeft")) {
-      jQuery(div).removeClass("toggleLeft").addClass("toggleLeftDown");
-    }
-    else {
-      jQuery(div).removeClass("toggleLeftDown").addClass("toggleLeft");
-    }
-    jQuery("#" + id + "arrowclick").toggle("blind", {}, 500);
-    jQuery("#" + id + "_wrapper").style("")
-  },
-
-  addDatePicker: function (id) {
-    jQuery("#" + id).datepicker({dateFormat: 'dd/mm/yy', showButtonPanel: true});
-  },
-
-  addMaxDatePicker: function (id, maxDateOffset) {
-    jQuery("#" + id).datepicker({dateFormat: 'dd/mm/yy', showButtonPanel: true, maxDate: maxDateOffset});
-  },
-
-  disableButton: function (buttonDiv) {
-    jQuery('#' + buttonDiv).attr('disabled', 'disabled');
-    jQuery('#' + buttonDiv).html("Processing...");
-  },
-
-  reenableButton: function (buttonDiv, text) {
-    jQuery('#' + buttonDiv).removeAttr('disabled');
-    jQuery('#' + buttonDiv).html(text);
-  },
-
-  confirmRemove: function (obj) {
-    if (confirm("Are you sure you wish to remove this item?")) {
-      obj.remove();
-    }
+function toggleLeftInfo(div, id) {
+  if (jQuery(div).hasClass("toggleRight")) {
+    jQuery(div).removeClass("toggleRight").addClass("toggleRightDown");
   }
-};
+  else {
+    jQuery(div).removeClass("toggleRightDown").addClass("toggleRight");
+  }
+  jQuery("#" + id).toggle("blind", {}, 500);
+}
+
 
 function loadDefaultTrack(tracklist) {
 
@@ -626,12 +570,9 @@ function loadDefaultTrack(tracklist) {
       }
     }
   }
-  console.log(cookietest)
   for (var i = 0; i < Tracklist.length; i++) {
-    console.log(Tracklist[i].name)
 
     jQuery.each(cookietest, function (j, v) {
-      console.log(v.name)
       if (v.name == Tracklist[i].name && v.disp == 1) {
 
         jQuery('#' + Tracklist[i].name + 'Checkbox').attr('checked', true);
