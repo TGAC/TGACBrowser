@@ -899,14 +899,14 @@ public class BlastService {
     return new Socket(host, port);
   }
 
-  public static String sendMessage(Socket socket, String query) throws IOException {
+  public String sendMessage(Socket socket, String query) throws IOException {
     try {
       BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF8"));
 
       // Send data
       wr.write(query + "\r\n");
       wr.flush();
-
+      log.info("send Message "+query);
       // Get response
       BufferedReader rd = new BufferedReader(new InputStreamReader(socket.getInputStream()));
       String line;
