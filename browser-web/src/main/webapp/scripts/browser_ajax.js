@@ -576,6 +576,8 @@ function loadSession(query) {
             setNavPanel();
             checkSession();
             getReferences();
+            loadEditedTracks(json.edited_tracks)
+            loadRemovedTracks(json.removed_tracks)
             reloadTracks(json.tracks, track_list, json.blast);
             jQuery("#controlsbutton").colorbox({width: "90%", inline: true, href: "#controlpanel"});
           }

@@ -543,6 +543,9 @@ function dispGeneExon(track, genestrand) {
     var start = newStart_temp - partial;
     var end = newEnd_temp + partial;
     var exon_len = geneexons.length;
+    var last_exon = 0;
+     var startposition = 0;
+        var stopposition =0;
     while (exon_len--) {
 
 
@@ -574,8 +577,8 @@ function dispGeneExon(track, genestrand) {
 
       if (exon_len - 1 >= 0 && geneexons[exon_len - 1].end < newStart_temp && exon_len + 1 < geneexons.length && geneexons[exon_len + 1].start > newEnd_temp) {
 
-        var startposition = (newStart_temp - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-        var stopposition = (getEnd() - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+        startposition = (newStart_temp - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+        stopposition = (getEnd() - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
         track_html += "<div style=\"position:absolute; z-index; 999; TOP:" + (top - 3) + "px; left:" + (startposition + 20) + "px; \" class=\"" + spanclass + "\"></div>";
         track_html += "<div style=\"position:absolute; z-index; 999; TOP:" + (top - 3) + "px; left:" + (stopposition - 20) + "px; \" class=\"" + spanclass + "\"></div>";
       }
@@ -583,8 +586,8 @@ function dispGeneExon(track, genestrand) {
 
         if (transcript_start && transcript_end) {
           if (exon_start > transcript_end && exon_stop > transcript_end) {
-            var startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-            var stopposition = (exon_stop - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+            startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+            stopposition = (exon_stop - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
             if (last != null) {
               track_html += "<span style=\"cursor:pointer; position:absolute; z-index; 999; TOP:" + (top - 3) + "px; left:" + (startposition - 20) + "px; \" class= \"" + spanclass + "\"></span>";
             }
@@ -598,8 +601,8 @@ function dispGeneExon(track, genestrand) {
             last = current;
           }
           else if (exon_start < transcript_start && exon_stop < transcript_start) {
-            var startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-            var stopposition = (exon_stop - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+            startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+            stopposition = (exon_stop - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
             track_html += "<div class='" + utrtrackClass + "'  " +
                           "STYLE=\"position:absolute; cursor:pointer; height: 10px; z-index: 100; TOP:" + top + "px; LEFT:" + startposition + "px; " +
@@ -610,8 +613,8 @@ function dispGeneExon(track, genestrand) {
           }
           else if (exon_start < transcript_start && exon_stop > transcript_end) {
 
-            var startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-            var stopposition = (transcript_start - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+            startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+            stopposition = (transcript_start - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
             track_html += "<div class='" + utrtrackClass + "'  " +
@@ -619,8 +622,8 @@ function dispGeneExon(track, genestrand) {
                           "width:" + (stopposition) + "px \" > </div>";
             //trackStatement(utrtrackClass, track, startposition, stopposition, a, top, j);
 
-            var startposition = ( transcript_end - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-            var stopposition = (exon_stop - transcript_end + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+            startposition = ( transcript_end - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+            stopposition = (exon_stop - transcript_end + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
             track_html += "<div class='" + utrtrackClass + "'  " +
@@ -628,8 +631,8 @@ function dispGeneExon(track, genestrand) {
                           "width:" + (stopposition) + "px \" > </div>";
             //trackStatement(utrtrackClass, track, startposition, stopposition, a, top, j);
 
-            var startposition = (transcript_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-            var stopposition = (transcript_end - transcript_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+            startposition = (transcript_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+            stopposition = (transcript_end - transcript_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
             track_html += "<div class='" + trackClass + "'  " +
@@ -640,8 +643,8 @@ function dispGeneExon(track, genestrand) {
             last = current;
           }
           else if (exon_stop > transcript_start && exon_start < transcript_start) {
-            var startposition = ( exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-            var stopposition = (transcript_start - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+            startposition = ( exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+            stopposition = (transcript_start - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
             track_html += "<div class='" + utrtrackClass + "'  " +
@@ -650,8 +653,8 @@ function dispGeneExon(track, genestrand) {
             //trackStatement(utrtrackClass, track, startposition, stopposition, a, top, j);
 
 
-            var startposition = (transcript_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-            var stopposition = (exon_stop - transcript_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+            startposition = (transcript_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+            stopposition = (exon_stop - transcript_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
             track_html += "<div class='" + trackClass + "'  " +
@@ -665,8 +668,8 @@ function dispGeneExon(track, genestrand) {
           }
           else if (exon_stop > transcript_end && exon_start < transcript_end) {
 
-            var startposition = ( transcript_end - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-            var stopposition = (exon_stop - transcript_end + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+            startposition = ( transcript_end - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+            stopposition = (exon_stop - transcript_end + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
             track_html += "<div class='" + utrtrackClass + "'  " +
@@ -675,8 +678,8 @@ function dispGeneExon(track, genestrand) {
 
             //trackStatement(utrtrackClass, track, startposition, stopposition, a, top, j);
 
-            var startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-            var stopposition = (transcript_end - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+            startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+            stopposition = (transcript_end - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
             track_html += "<div class='" + trackClass + "'  " +
                           "STYLE=\"position:absolute; cursor:pointer; height: 10px; z-index: 100; TOP:" + top + "px; LEFT:" + startposition + "px; " +
@@ -687,8 +690,8 @@ function dispGeneExon(track, genestrand) {
           }
           else {
 
-            var startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-            var stopposition = (exon_stop - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+            startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+            stopposition = (exon_stop - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
             track_html += "<div class='" + trackClass + "'  " +
@@ -706,21 +709,27 @@ function dispGeneExon(track, genestrand) {
           }
         }
         else {
-          var startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-          var stopposition = (exon_stop - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+          startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+          stopposition = (exon_stop - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
           track_html += "<div class='" + trackClass + "'  " +
                         "STYLE=\"height: 10px; z-index: 100; TOP:" + top + "px; LEFT:" + startposition + "px; " +
                         "width:" + (stopposition) + "px \" > </div>";
-          last = current;
 
-          if (exon_len != geneexons.length && exon_len > 1) {
-            // if ((startposition - 20) > (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2) {
-            track_html += "<span style=\"cursor:pointer; position:absolute; TOP:" + (top - 3) + "px; left:" + (startposition - 20) + "px; \" class= \"" + spanclass + "\"></span>";
-            // }
+          if (last_exon > 0 && exon_len > 1) {
+            var marker_pos = (startposition - last_exon) / 2;
+            if (startposition < last_exon) {
+              marker_pos = (last_exon - startposition) / 2;
+              marker_pos = parseInt(startposition) - parseInt(marker_pos);
+            }
+            else {
+              marker_pos = parseInt(marker_pos) + parseInt(startposition);
+            }
+            track_html += "<span style=\"cursor:pointer; position:absolute; TOP:" + (top - 3) + "px; left:" + (marker_pos) + "px; \" class= \"" + spanclass + "\"></span>";
           }
         }
+        last_exon = parseInt(startposition) + parseInt(stopposition);
       }
 
 

@@ -256,12 +256,11 @@ function stringTrim(string, width) {
 
   jQuery("#ruler").html(string);
   inLength = jQuery("#ruler").width();
-
-
   if (inLength < width) {
     return string;
   }
   else {
+    width = string.length * width / inLength;
     return "<span title=" + string + ">" + string.substring(0, width - 6) + "... </span>";
   }
 }
@@ -289,7 +288,7 @@ function backup_tracks(track, i) {
       if (w.id == add.id) {
         index = b;
         add.edited = parseInt(add.edited) + 1;
-        window[track + "_edited"].splice(b, 1, add)
+        window[track + "_edited"].splice(b, 1, add);
         return;
       }
     });

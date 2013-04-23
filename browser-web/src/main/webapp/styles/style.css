@@ -2146,9 +2146,9 @@ span.counter {
     cursor: pointer;
 }
 
-.track:hover {
-    border: 1px solid #000000;
-}
+/*.track:hover {*/
+    /*border: 1px solid #000000;*/
+/*}*/
 
 .ui-blast {
     background-image: url("../images/browser/blast_icon.png");
