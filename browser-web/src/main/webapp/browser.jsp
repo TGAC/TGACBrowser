@@ -3,17 +3,13 @@
 <%@ taglib uri='http://java.sun.com/jsp/jstl/core' prefix='c' %>
 <%@ page import="java.util.ArrayList" language="java" %>
 <div id="main1" style="top : 10px ; height: 1050px; ">
-    <div class="fakediv">
 
-        <div id=sessionid></div>
-        <div id=alertDiv>
-        </div>
-        <div id="notifier" class="rightAlertdiv"></div>
-    </div>
     <div id="seqname"></div>
     <div id="currentposition"></div>
     <div id="guideline" style="display: none"></div>
     <div id="seqdrag"><p id="dragLabel"></div>
+    <div id="searchresultMap" style="display: none">
+    </div>
     <div id="searchresult">
         <div id="searchresultHead"></div>
         <div id="searchnavtabs">
@@ -37,14 +33,15 @@
 
                 <input type="text" id="begin" size="5" class="jump">
                 <input type="text" id="end" size="5" class="jump">
-                <button onclick="jumpToSeq()" class="jump ui-state-default ui-corner-all"> Go</button>
-                <br>
+                <button onclick="jumpToSeq()" class="jumpbutton"> Go</button>
 
-                <div style="padding: 5px;"
-                     class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
+                <button class="jumpbutton">
                     <a href="mailto:tgac.browser@tgac.ac.uk?Subject=TGAC Browser - Feedback">
                         Feedback</a>
-                </div>
+                </button>
+                <div id=alertDiv></div>
+                <div id="notifier" class="rightAlertdiv"></div>
+
                 <%--<input id="dragRadio" type="radio" name="selectiontogle" checked="checked" onchange="dragToogle()"/>Drag--%>
                 <%--<input id="selectRadio" type="radio" name="selectiontogle" onchange="dragToogle()"/>Select--%>
 
@@ -84,26 +81,29 @@
             <img src='images/browser/selectall.png' onclick="expand();" class="browserimage"
                  height=60% alt="selectall" title="Select All">
 
-            <div class="fg-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
-                       <span id="controlsbutton" style="font-size: .8em !important;"
-                             class="ui-button-text">Tracks / Settings</span>
+            <div id="controlsbutton" class="jumpbutton" style="right: 10px; position: absolute;">
+                Tracks / Settings
             </div>
 
 
-            <br>
+            <div id=sessionid></div>
 
-            <div id=export style="background: #CCCCCC; margin-top:-12px; padding: 5px;"
-                 class="fg-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
-            </div>
-            <div style="margin-top:-12px;"
-                 class="fg-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
-                       <span onclick="checkSession();" style="font-size: .8em !important;"
-                             class="ui-button-text"> Save Session </span>
-            </div>
+            <button id=export style="position: absolute; right: 220px; display: none;"
+                    class="jumpbutton">
+            </button>
+            <button onclick="checkSession();" style="right: 120px; position: absolute;" class="jumpbutton">
+                Save Session
+            </button>
 
 
         </div>
 
+        <div id='map'>
+            <div id="refmap"></div>
+            <div id="mapmarker">
+            </div>
+        </div>
+        
         <div id="bar_image">
             <div id="searchDiv"></div>
             <div id="SeqLenStart">&nbsp;</div>
@@ -129,6 +129,12 @@
 
 
         <div id="wrapper">
+
+            <div id=tracks>
+            </div>
+            <div class="fakediv">
+
+            </div>
             <div id="sequence">
 
                 <center>
@@ -137,8 +143,6 @@
                 </center>
 
 
-            </div>
-            <div id=tracks>
             </div>
             <%--<iframe src="browser.html"></iframe>--%>
         </div>

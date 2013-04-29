@@ -61,8 +61,8 @@ function ncbiBLASTTrackResult(id) {
             console.log(json.blast)
             jQuery('#blastresult').html(json.blast);
             jQuery("#blasttable").tablesorter();
-            jQuery("#alertDiv").hide()
-            jQuery("#alertDiv").html("");
+            jQuery("#notifier").hide()
+            jQuery("#notifier").html("");
           },
             'doOnError': function (json) {
               alert(json.error);
@@ -83,8 +83,8 @@ function ncbiBLASTResult(id) {
           {'doOnSuccess': function (json) {
             jQuery('#blastresult').html(json.html);
             jQuery("#blasttable").tablesorter();
-            jQuery("#alertDiv").hide()
-            jQuery("#alertDiv").html("");
+            jQuery("#notifier").hide()
+            jQuery("#notifier").html("");
           },
             'doOnError': function (json) {
               alert(json.error);
@@ -179,8 +179,8 @@ var processTaskSubmission = function (json) {
 };
 
 function checkTask(task, db, format, start, end, hit, link) {
-  jQuery("#alertDiv").html("<img src='images/browser/loading2.gif' height='10px'> BLAST running ");
-  jQuery("#alertDiv").show();
+  jQuery("#notifier").html("<img src='images/browser/loading2.gif' height='10px'> BLAST running ");
+  jQuery("#notifier").show();
   Fluxion.doAjax(
           'blastservice',
           'checkTask',
@@ -188,8 +188,8 @@ function checkTask(task, db, format, start, end, hit, link) {
           {'ajaxType': 'periodical', 'updateFrequency': 5, 'doOnSuccess': function (json) {
             if (json.result == 'FAILED') {
               alert('Blast search: ' + json.result);
-              jQuery("#alertDiv").hide();
-              jQuery("#alertDiv").html("");
+              jQuery("#notifier").hide();
+              jQuery("#notifier").html("");
 
             }
             else if (json.result == 'RUNNING') {
@@ -205,8 +205,8 @@ function checkTask(task, db, format, start, end, hit, link) {
                         {'doOnSuccess': function (json) {
                           jQuery('#blastresult').html(json.html);
                           jQuery("#blasttable").tablesorter();
-                          jQuery("#alertDiv").hide()
-                          jQuery("#alertDiv").html("");
+                          jQuery("#notifier").hide()
+                          jQuery("#notifier").html("");
                         }
                         });
               }
@@ -216,8 +216,8 @@ function checkTask(task, db, format, start, end, hit, link) {
                         'blastSearchTrack',
                         {'start': start, 'end': end, 'hit': hit, 'accession': task, 'location': link, 'db': db, 'url': ajaxurl},
                         {'doOnSuccess': function (json) {
-                          jQuery("#alertDiv").hide()
-                          jQuery("#alertDiv").html("");
+                          jQuery("#notifier").hide()
+                          jQuery("#notifier").html("");
                           findAndRemove(blastsdata, 'id', task);
                           if (!window['blasttrack']) {
                             window['blasttrack'] = "running";
@@ -522,28 +522,31 @@ function loadTrackAjax(trackId, trackname) {
 function metaData() {
   ajaxurl = '/' + jQuery('#title').text() + '/' + jQuery('#title').text() + '/fluxion.ajax';
 //  ajaxurl = "/" +  jQuery('#title').text()    + '/fluxion.ajax';
+  var chromosome = false;
   Fluxion.doAjax(
           'dnaSequenceService',
           'metaInfo',
           {'url': ajaxurl},
           {'doOnSuccess': function (json) {
             jQuery("#dbinfo").html("Species Name: <i>" + json.metainfo[0].name + "</i> Database Version: " + json.metainfo[0].version);
+            chromosome = json.chr;
           }
           });
+  return chromosome;
 }
 
 function saveSession() {
   var tracks = getTracks();
   var edited_tracks = getEditedTracks();
   var removed_tracks = getRemovedTracks();
-  var blast = jQuery("#alertDiv").text().indexOf("BLAST");
+  var blast = jQuery("#notifier").text().indexOf("BLAST");
   Fluxion.doAjax(
           'fileService',
           'saveFile',
           {'location': path, 'reference': seqregname, 'session': randomnumber, 'from': getBegin(), 'to': getEnd(), 'seq': seq, 'seqlen': sequencelength, 'track': track_list, 'tracks': tracks, 'filename': (randomnumber), 'blast': blast, 'edited_tracks': edited_tracks, 'removed_tracks': removed_tracks, 'url': ajaxurl},
           {'doOnSuccess': function (json) {
             jQuery("#export").html("<a href=" + json.link + " target = '_blank'>Export</a>");
-            jQuery("#export").css('background', "");
+            jQuery("#export").show();
           }
           });
 }
@@ -560,6 +563,8 @@ function loadSession(query) {
             track_list = json.tracklist;
             randomnumber = json.session;
             jQuery("#sessionid").html("<b>Session Id: </b><a  href='./session.jsp?query=" + randomnumber + "' target='_blank'>" + randomnumber + "</a> Saved at " + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds());
+            jQuery("#sessionid").show();
+
             jQuery('#seqnameh1').html('<a href="/"+path+"/">' + json.reference + '</a>');
             jQuery('#seqname').html("<br/>");
             jQuery('#canvas').show();
@@ -598,19 +603,16 @@ function loadSeq(query, from, to) {
 
 function reloadTracks(tracks, tracklist, blast) {
   for (var i = 0; i < tracklist.length; i++) {
-    if (tracklist[i].name.indexOf('blasttrack')) {
+    if (tracklist[i].name.indexOf('blasttrack') >= 0) {
       window['blasttrack'] = tracks[0].child;
     }
-    else if (tracklist[i].disp == "1") {
-//      for (var j = 0; j < tracks.length; j++) {
-//        if (tracklist[i].id == tracks[j].trackId) {
-//          window[tracklist[i].name] = tracks[j].child;
+    else if (tracklist[i].disp == 1) {
       jQuery('#' + tracklist[i].name + 'Checkbox').attr('checked', true);
       if (tracklist[i].merge == "1") {
         mergeTrackList(tracklist[i].name);
         jQuery('input[name=' + tracklist[i].name + 'mergedCheckbox]').attr('checked', true);
       }
-      var partial = (getEnd() - getBegin()) + ((getEnd() - getBegin()) / 2);
+      var partial = (getEnd() - getBegin()) / 2;
       var start = (getBegin() - partial);
       var end = parseInt(getEnd()) + parseFloat(partial);
       if (start < 0) {
@@ -619,7 +621,7 @@ function reloadTracks(tracks, tracklist, blast) {
       if (end > sequencelength) {
         end = sequencelength;
       }
-      deltaWidth = parseInt(end - start) * 2 / parseInt(maxLen);
+      var deltaWidth = parseInt(end - start) * 2 / parseInt(maxLen);
       window[tracklist[i].name] == "loading";
       trackToggle(tracklist[i].name);
       Fluxion.doAjax(
@@ -647,9 +649,8 @@ function reloadTracks(tracks, tracklist, blast) {
                 trackToggle(trackname);
               }
               });
-//        trackToggle(tracklist[i].name);
-//        }
-//      }
+    }
+    else {
     }
   }
   if (blast == "true") {
@@ -771,25 +772,26 @@ function getReferences(show) {
             jQuery("#mapmarker").animate({"width": width}, 100);
             if (referenceLength > 0) {
               changeCSS();
+
             }
             while (referenceLength--) {
               var left = parseInt(referenceLength * (width)) + parseInt(distance * referenceLength) + parseInt(distance);
-              var height = (json.seqregion[referenceLength].length * 150 / max);
+              var height = (json.seqregion[referenceLength].length * 125 / max);
               var length = json.seqregion[referenceLength].length;
               if (seqregname == json.seqregion[referenceLength].name) {
                 refheight = height;
               }
-              var top = parseInt(jQuery("#map").css('height')) - height - 25;
+              var top = parseInt(jQuery("#map").css('top')) + parseInt(jQuery("#map").css('height'))  - (height+20);
               if (seqregname == json.seqregion[referenceLength].name) {
-                jQuery("#refmap").append("<div onclick='jumpToHere(event);' class='refmap' id='" + json.seqregion[referenceLength].name + "' style='top:" + top + "px; left: " + left + "px; width:" + width + "px; height:" + height + "px;'></div>");
+                jQuery("#refmap").append("<div onclick='jumpToHere(event);' class='refmap' id='" + json.seqregion[referenceLength].name + "' style='left: " + left + "px; width:" + width + "px; height:" + height + "px;'></div>");
               }
               else {
-                jQuery("#refmap").append("<div onclick='jumpToOther(event, " + length + ",\"" + json.seqregion[referenceLength].name + "\");' class='refmap' id='" + json.seqregion[referenceLength].name + "' style='top:" + top + "px; left: " + left + "px; width:" + width + "px; height:" + height + "px;'></div>");
+                jQuery("#refmap").append("<div onclick='jumpToOther(event, " + length + ",\"" + json.seqregion[referenceLength].name + "\");' class='refmap' id='" + json.seqregion[referenceLength].name + "' style='left: " + left + "px; width:" + width + "px; height:" + height + "px;'></div>");
               }
-              jQuery("#refmap").append("<div style='position:absolute; bottom: 0px; left: " + (left - 5) + "px; '>" + stringTrim(json.seqregion[referenceLength].name, width) + "</div>");
+              jQuery("#refmap").append("<div style='position:absolute; bottom: 0px; left: " + (left) + "px; '>" + stringTrim(json.seqregion[referenceLength].name, width*2) + "</div>");
             }
             if (show) {
-
+              jQuery("#searchresultMap").show;
               jQuery("#searchresultMap").html("<center><h1>References</h1><br>Click to jump to reference</center>" + jQuery("#refmap").html());
             }
             setMapMarkerLeft();
@@ -832,11 +834,13 @@ function getMarkers() {
 }
 
 function changeCSS() {
-  jQuery("#bar_image").css('top', '260px');
-  jQuery("#nav_panel").css('top', '292px');
-  jQuery(".vertical-line").css('top', '310px');
-  jQuery("#bar_image").css('top', '260px');
-  jQuery("#bg_layer").css('top', '280px');
-  jQuery("#draggable").css('top', '279px');
-  jQuery("#wrapper").css('top', '350px');
+  jQuery("#bar_image").css('top', '210px');
+  jQuery("#nav_panel").css('top', '242px');
+  jQuery(".vertical-line").css('top', '260px');
+  jQuery("#bg_layer").css('top', '230px');
+  jQuery("#draggable").css('top', '229px');
+  jQuery("#wrapper").css('top', '255px');
+  jQuery("#sequence").css('top', '280px');
+  jQuery(".fakediv").css('top', '260px');
+
 }

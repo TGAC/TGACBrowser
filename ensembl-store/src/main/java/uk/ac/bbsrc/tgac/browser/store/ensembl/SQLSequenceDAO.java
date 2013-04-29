@@ -111,6 +111,8 @@ public class SQLSequenceDAO implements SequenceStore {
   public static final String GET_GENE_SIZE = "SELECT COUNT(*) FROM gene where seq_region_id =? and analysis_id = ?";
   public static final String GET_GENOME_MARKER = "SELECT * from marker_feature";
   public static final String GET_TRACKS_VIEW = "select a.logic_name as name, a.analysis_id as id, ad.description, ad.display_label, ad.displayable from analysis a, analysis_description ad where a.analysis_id = ad.analysis_id;";
+  public static final String GET_coord_attrib_chr = "SELECT coord_system_id FROM coord_system where name like ? || attrib like ?";
+
   private JdbcTemplate template;
 
   public void setJdbcTemplate(JdbcTemplate template) {
@@ -234,7 +236,7 @@ public class SQLSequenceDAO implements SequenceStore {
 
   public JSONArray getSeqRegionSearch(String searchQuery) throws IOException {
     try {
-      log.info("getSeqRegionSearch "+searchQuery);
+      log.info("getSeqRegionSearch " + searchQuery);
       JSONArray names = new JSONArray();
       List<Map<String, Object>> maps = template.queryForList(GET_SEQ_REGION_ID_SEARCH, new Object[]{'%' + searchQuery + '%'});
       for (Map map : maps) {
@@ -487,7 +489,8 @@ public class SQLSequenceDAO implements SequenceStore {
   public int countHit(int id, String trackId, long start, long end) {
     return template.queryForObject(GET_HIT_SIZE_SLICE, new Object[]{id, trackId, start, end}, Integer.class);
   }
-//
+
+  //
 //    @Cacheable(cacheName = "hitCache",
 //             keyGenerator = @KeyGenerator(
 //                     name = "HashCodeCacheKeyGenerator",
@@ -609,7 +612,7 @@ public class SQLSequenceDAO implements SequenceStore {
   //             )
   //  )
   public List<Map<String, Object>> getRepeat(int id, String trackId, long start, long end) throws IOException {
-    return template.queryForList(GET_REPEAT, new Object[]{id, trackId, start, end, start, end, end, end, start, start});
+    return template.queryForList(GET_REPEAT, new Object[]{id, trackId, start, end, start, end, start, end, start, end});
   }
 
   public JSONArray processRepeat(List<Map<String, Object>> maps, long start, long end, int delta, int id, String trackId) throws IOException {
@@ -1037,7 +1040,7 @@ public class SQLSequenceDAO implements SequenceStore {
   }
 
   public JSONArray getAnnotationId(int query) throws IOException {
-    log.info("anootaion "+query);
+    log.info("anootaion " + query);
     try {
       int coord = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{query}, Integer.class);
       int rank = template.queryForObject(GET_RANK_for_COORD_SYSTEM_ID, new Object[]{coord}, Integer.class);
@@ -1082,7 +1085,7 @@ public class SQLSequenceDAO implements SequenceStore {
 
   public JSONArray getAnnotationIdList(int query) throws IOException {
     try {
-      log.info("get annottation "+query);
+      log.info("get annottation " + query);
       int coord = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{query}, Integer.class);
       int rank = template.queryForObject(GET_RANK_for_COORD_SYSTEM_ID, new Object[]{coord}, Integer.class);
 
@@ -1209,10 +1212,10 @@ public class SQLSequenceDAO implements SequenceStore {
     try {
 
       seq = template.queryForObject(GET_Seq_API, new Object[]{query}, String.class);
-      if(from < 0){
+      if (from < 0) {
         from = 0;
       }
-      if(to > seq.length()){
+      if (to > seq.length()) {
         to = seq.length();
       }
       log.info("get seq level" + query + ":" + from + ":" + to);
@@ -1389,6 +1392,23 @@ public class SQLSequenceDAO implements SequenceStore {
     catch (EmptyResultDataAccessException e) {
       throw new IOException("getMarker no result found");
 
+    }
+  }
+
+  public boolean checkChromosome() throws Exception {
+    try {
+      Boolean check;
+      List<Map<String, Object>> attrib_temp = template.queryForList(GET_coord_attrib_chr, new Object[]{"%chr%", "%chr%"});
+      log.info(attrib_temp.toString());
+      if(attrib_temp.size() > 0){
+        check = true;
+      }else{
+        check = false;
+      }
+      return  check;
+    }
+    catch (EmptyStackException e) {
+      throw new Exception("Chromosome not found");
     }
   }
 }

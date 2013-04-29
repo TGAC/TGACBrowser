@@ -188,7 +188,7 @@ function dragRight() {
 }
 
 function dragtohere(e) {
-  var left = parseFloat(e.pageX - jQuery('#canvas').offset().left);
+  var left = parseFloat(e.pageX);// - jQuery('#canvas').offset().left);
 
   if (left > parseFloat(getDragableLeft())) {
     left = left - parseFloat(getDragableWidth());
@@ -234,6 +234,10 @@ function auto_drag() {
 
 function setNavPanel() {
   var left = 0;
+  console.log(jQuery("#wrapper").position().top)
+  console.log(jQuery("#draggable").position().top)
+  console.log(jQuery("#draggable").css("height"))
+
   var height = parseFloat(jQuery("#wrapper").position().top) - (parseFloat(jQuery("#draggable").position().top) + parseFloat(jQuery("#draggable").css("height"))) + "px solid #cccccc";
   var border_left = parseFloat(jQuery("#draggable").css("left")) - left + "px solid transparent";
   var width = jQuery("#draggable").css("width");
@@ -253,9 +257,8 @@ function setNavPanel() {
 
 // Tracks can be drag
 function trackDrag() {
-  var temp = parseFloat(jQuery('#canvas').css("left")) - parseFloat(jQuery('#wrapper').css("left"));
+  var temp = parseFloat(1) - parseFloat(jQuery('#wrapper').css("left"));
   if (temp > 10 || temp < -10) {
-    jQuery("#wrapper").css({'left': '0px'});
     var beginnew = parseFloat(getBegin()) + parseFloat((newEnd - getBegin()) * temp / parseFloat(maxLen));
     var endnew = parseFloat(getEnd()) + parseFloat((newEnd - getBegin()) * temp / parseFloat(maxLen));
 
@@ -272,6 +275,7 @@ function trackDrag() {
     setBegin(beginnew);
     setEnd(endnew);
     jumpToSeq();
+    jQuery("#wrapper").css({'left': '0px'});
 
   }
   else {

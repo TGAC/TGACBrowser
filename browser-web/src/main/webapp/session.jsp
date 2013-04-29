@@ -11,7 +11,7 @@
 <%--<h1 id="seqnameh1">TGAC Browser</h1>--%>
 
 
-<div id="sessioninput">
+<div id="sessioninput" style="position: absolute; top: 50px;">
     <input type="text" id="session" value=""/>
     <button class="ui-state-default ui-corner-all" onclick="loadSession(jQuery('#session').val());">Session ID
     </button>  <p>
