@@ -7,7 +7,7 @@
  */
 function dispSeq() {
   var len = sequencelength;
-  maxLen = jQuery("#canvas").css("width");
+  maxLen = jQuery(window).width();
   var width = getbglayerWidth();
   var left = getbglayerLeft();
 
@@ -38,6 +38,7 @@ function seqBar(seqStart, seqEnd) {
 
   var temp = seqEnd - seqStart;
   seqLen = visualLength(temp);
+console.log(seqLen+":"+maxLen)
   if (parseFloat(seqLen) <= (parseFloat(maxLen))) {
     selectionStart = seqStart;
     selectionEnd = seqEnd;
@@ -56,9 +57,9 @@ function seqBar(seqStart, seqEnd) {
     }
 
     var partial = (parseInt(getEnd()) - parseInt(getBegin())) / 2;
-    var start = parseInt(getBegin()) - parseInt(partial)
-    var end = parseInt(getEnd()) + parseInt(partial);
-
+    var start = parseInt(getBegin());// - parseInt(partial)
+    var end = parseInt(getEnd());// + parseInt(partial);
+    console.log(start+":"+end+"="+(end-start)+":"+maxLen)
     Fluxion.doAjax(
             'dnaSequenceService',
             'loadSequence',
@@ -68,6 +69,11 @@ function seqBar(seqStart, seqEnd) {
               if (seq.length > 1) {
                 temp = seq;
                 temp = "<font style='Courier New'>" + stringColour(temp);
+                if (start < 0) {
+                  var left = (1 - start) * parseInt(maxLen) / end * 3 / 4;
+                  console.log(left)
+                }
+
                 jQuery('#sequenceString').html(temp);
                 translate(seq);
               }
@@ -276,7 +282,7 @@ function translate(sequence) {
 
     ptn_seq += "<br>";
   }
-  maxLen - visualLength(ptn_seq.length)
+//  maxLen - visualLength(ptn_seq.length)
 
 
   if (space >= 0) {
@@ -297,4 +303,3 @@ function translate(sequence) {
 
 
 }
-

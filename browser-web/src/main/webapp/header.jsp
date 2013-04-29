@@ -84,27 +84,10 @@
 </head>
 <body>
 
-<div id="dbinfo"></div>
-<div class="blasttab">
-
-
-    <input type="text" id="search" class="seachbox" value='${initParam.defaultRef}' />
-    <%--<button id="searchbutton" class="ui-state-default ui-corner-all"--%>
-    <%--onclick="search(jQuery('#search').val(), oldTracklist);">Search--%>
-    <%--</button>--%>
-    <c:set var="databases">${initParam.blastdblink} </c:set>
-
-    <c:set var="dateParts" value="${fn:split(databases, ',')}"/>
-
-    <c:set var="length">${fn:length(databases)}</c:set>
-
-    ${initParam.fasta == "true" && length > 1 ? "| <a href=\"blast.jsp\"><span>Blast Search</span></a>" : ""}
-
-
-    | <a href="<c:url value="session.jsp"/>"><span>Load Session</span></a>
-</div>
 
 <div class="headerbar">
+    <div id="dbinfo"></div>
+
     <center>
 
         <a class="headerlink" href="<c:url value="/"/>"> <font color=white> <b>TGAC Browser
@@ -118,6 +101,24 @@
         </tr>
         </table>
     </center>
+    <div class="blasttab">
+
+
+        <input type="text" id="search" class="seachbox" value='${initParam.defaultRef}'/>
+        <%--<button id="searchbutton" class="ui-state-default ui-corner-all"--%>
+        <%--onclick="search(jQuery('#search').val(), oldTracklist);">Search--%>
+        <%--</button>--%>
+        <c:set var="databases">${initParam.blastdblink} </c:set>
+
+        <c:set var="dateParts" value="${fn:split(databases, ',')}"/>
+
+        <c:set var="length">${fn:length(databases)}</c:set>
+
+        ${initParam.fasta == "true" && length > 1 ? "| <a href=\"blast.jsp\"><span>Blast Search</span></a>" : ""}
+
+
+        | <a href="<c:url value="session.jsp"/>"><span>Load Session</span></a>
+    </div>
 </div>
 
 <%--<table border="0" width="100%">--%>
@@ -143,7 +144,6 @@
 <div id="filetrack" style="visibility: hidden; position: fixed;">${initParam.trackfiles}</div>
 <div id="title" style="visibility: hidden; position: fixed;">${initParam.urlpath}</div>
 <div id="linkLocation" style="visibility: hidden; position: fixed;">${initParam.linkLocation}</div>
-
 
 
 <div id="content">

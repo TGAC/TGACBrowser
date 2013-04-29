@@ -2,7 +2,7 @@
 
 <%--<h1 id="seqnameh1">Blast Search </h1>--%>
 
-<div id="blasttextsearch">
+<div style="position: absolute; top: 50px;" id="blasttextsearch">
     Enter sequence below in FASTA or RAW format
     <br>
     <textarea class="ui-corner-all" id="blastsearch" rows="6" cols="60"
@@ -38,7 +38,7 @@
     </select>
     <select name="blast_type" id="blast_type">
           <option id="blastn"> blastn </option>
-        <option id="tblastn">tblastn</option>
+        <%--<option id="tblastn">tblastn</option>--%>
     </select>
     <button class="ui-state-default ui-corner-all"
             onclick="blastSearch(jQuery('#blastsearch').val(), jQuery('#blastdb').val(),jQuery('#blast_type').val());">BLAST

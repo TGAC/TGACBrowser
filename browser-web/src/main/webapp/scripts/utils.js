@@ -34,7 +34,14 @@ function visualLength(temp) {
   var inLength = 0;
   var tempStr = "";
   ruler.innerHTML = "N";
-  inLength = ruler.offsetWidth * temp;
+  console.log(ruler.offsetWidth)
+  console.log(jQuery("#ruler").innerWidth())
+  if (jQuery.browser.webkit) {
+    inLength = (ruler.offsetWidth - 1) * temp;
+  }
+  else {
+    inLength = (ruler.offsetWidth) * temp;
+  }
   return inLength;
   /*
    if ((temp / 10000) >= 1) {
@@ -60,7 +67,7 @@ function visualLength(temp) {
 }
 
 function findminwidth() {
-  maxLen = jQuery("#canvas").css("width");
+  maxLen = jQuery(window).width();
   var len = visualLength(sequencelength);
   var seqWidth = parseFloat(maxLen) * sequencelength / parseFloat(len);
   deltaWidth = parseInt(sequencelength) * 2 / parseInt(maxLen);
@@ -250,18 +257,21 @@ function groupCancel() {
 }
 
 function stringTrim(string, width) {
+console.log(string+":"+width)
   var ruler = jQuery("#ruler");
   var inLength = 0;
   var tempStr = "";
 
   jQuery("#ruler").html(string);
   inLength = jQuery("#ruler").width();
+console.log(width+":"+inLength)
   if (inLength < width) {
     return string;
   }
   else {
-    width = string.length * width / inLength;
-    return "<span title=" + string + ">" + string.substring(0, width - 6) + "... </span>";
+    width = parseInt(string.length * width / inLength);
+console.log(width)
+    return "<span title=" + string + ">" + string.substring(0, width) + "... </span>";
   }
 }
 

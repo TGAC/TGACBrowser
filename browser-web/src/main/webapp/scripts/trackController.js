@@ -176,7 +176,7 @@ function dispBLAST(div, track) {
 
 
       var layers = blasts.length + 1;
-
+       var maxLen_temp = jQuery("#canvas").css("width");
       for (var i = 0; i < blasts.length; i++) {
         var blast_start = blasts[i].start;
         var blast_stop = blasts[i].end;
@@ -213,8 +213,8 @@ function dispBLAST(div, track) {
         if (show) {
           var top = ((i + 1) % layers) * 15 + 10;
           jQuery(div).fadeIn();
-          var startposition = (blast_start - getBegin()) * parseFloat(maxLen) / (getEnd() - getBegin()) + parseFloat(maxLen) / 2;
-          var stopposition = (blast_stop - blast_start) * parseFloat(maxLen) / (getEnd() - getBegin());
+          var startposition = (blast_start - getBegin()) * parseFloat(maxLen_temp) / (getEnd() - getBegin()) + parseFloat(maxLen_temp) / 2;
+          var stopposition = (blast_stop - blast_start) * parseFloat(maxLen_temp) / (getEnd() - getBegin());
           if (stopposition < 2) {
             stopposition = 2;
           }
@@ -261,6 +261,8 @@ function dispBLASTindel(j, blast_start) {
   if (blastindel.length > 0) {
     var track_html = "";
     var layers = window["blasttrack"].length + 1;
+    var maxLen_temp = jQuery("#canvas").css("width");
+
     for (var i = 0; i < blastindel.length; i++) {
       var indel_start = parseInt(blastindel[i].position) + parseInt(blast_start) - 1;
       var indel_stop = (parseInt(indel_start) + 1);
@@ -274,8 +276,8 @@ function dispBLASTindel(j, blast_start) {
 
       if (show) {
         var top = ((j + 1) % layers) * 15 + 10;
-        var startposition = (indel_start - getBegin()) * parseFloat(maxLen) / (getEnd() - getBegin()) + parseFloat(maxLen) / 2;
-        var stopposition = (indel_stop - indel_start) * parseFloat(maxLen) / (getEnd() - getBegin());
+        var startposition = (indel_start - getBegin()) * parseFloat(maxLen_temp) / (getEnd() - getBegin()) + parseFloat(maxLen_temp) / 2;
+        var stopposition = (indel_stop - indel_start) * parseFloat(maxLen_temp) / (getEnd() - getBegin());
         track_html += "<div class='tracks_image' onclick=indelClick(\"" + blastindel[i].query + "\",\"" + blastindel[i].hit + "\"); " +
                       "STYLE=\"position:absolute; z-index: 999; TOP:" + top + "px; LEFT:" + startposition + "px \"> " +
                       "<img class='tracks_image' \" STYLE=\"WIDTH:" + stopposition + "px; height: 10px; cursor: pointer \" " +
@@ -317,7 +319,8 @@ function dispGenes(div, track, expand) {
 
   var newStart_temp = getBegin();
   var newEnd_temp = getEnd();
-  var maxLentemp = maxLen;
+  var maxLentemp = jQuery("#canvas").css("width");
+
   var partial = (newEnd_temp - newStart_temp) / 2;
   var start = newStart_temp - partial;
   var label = "";
@@ -538,7 +541,8 @@ function dispGeneExon(track, genestrand) {
 
     var newStart_temp = getBegin();
     var newEnd_temp = getEnd();
-    var maxLentemp = maxLen;
+    var maxLentemp =  jQuery("#canvas").css("width");
+
     var partial = (newEnd_temp - newStart_temp) / 2;
     var start = newStart_temp - partial;
     var end = newEnd_temp + partial;
@@ -777,6 +781,7 @@ function dispTrack(div, trackName) {
     var diff = getEnd() - getBegin();
     var newStart_temp = getBegin();
     var newEnd_temp = getEnd();
+    var maxLen_temp = jQuery("#canvas").css("width");
 
 //    var track_old = window[trackName];
     var track = window[trackName];
@@ -892,8 +897,8 @@ function dispTrack(div, trackName) {
         else {
           top = ((track_len) % (layers) + 1) * 20 + 15;
         }
-        var startposition = (track_start - newStart_temp) * parseFloat(maxLen) / (newEnd_temp - newStart_temp) + parseFloat(maxLen) / 2;
-        var stopposition = (track_stop - track_start + 1) * parseFloat(maxLen) / (newEnd_temp - newStart_temp);
+        var startposition = (track_start - newStart_temp) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen_temp) / 2;
+        var stopposition = (track_stop - track_start + 1) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp);
         if (stopposition < 2) {
           stopposition = 2;
         }
@@ -973,7 +978,11 @@ function dispCigarLine(cigars, start, top) {
   var trackClass = "";
   var newStart_temp = getBegin();
   var newEnd_temp = getEnd();
-  var maxLentemp = maxLen;
+  var maxLentemp =  jQuery("#canvas").css("width");
+
+
+
+
   var cigar_pos = start;
   var startposition;
   var stopposition;
@@ -998,21 +1007,21 @@ function dispCigarLine(cigars, start, top) {
       }
       else if (key == "I") {
         trackClass = "insert";
-        startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen) / 2;
+        startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
         stopposition = (length) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
         track_html += trackHTML(startposition, stopposition, top, trackClass);
         cigar_pos = parseInt(cigar_pos) + parseInt(length)
       }
       else if (key == "D") {
         trackClass = "delete";
-        startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen) / 2;
+        startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
         stopposition = 1
         track_html += trackHTML(startposition, stopposition, top, trackClass);
       }
 
       else if (key == "X") {
         trackClass = "mismatch";
-        startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen) / 2;
+        startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
         stopposition = (length) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
         track_html += trackHTML(startposition, stopposition, top, trackClass);
         cigar_pos = parseInt(cigar_pos) + parseInt(length)
@@ -1047,7 +1056,8 @@ function dispCigar(cigars, start, top) {
   var trackClass = "";
   var newStart_temp = getBegin();
   var newEnd_temp = getEnd();
-  var maxLentemp = maxLen;
+  var maxLentemp = jQuery("#canvas").css("width");
+
   for (var key in cigars) {
     if (key == "M") {
       trackClass = "match";
@@ -1072,7 +1082,7 @@ function dispCigar(cigars, start, top) {
 //(track_start - newStart_temp) * parseFloat(maxLen) / (newEnd_temp - newStart_temp) + parseFloat(maxLen) / 2;
       var cigar_start = parseInt(cigar[i].split(":")[0]) + parseInt(start);
       var cigar_stop = cigar[i].split(":")[1];
-      var startposition = (cigar_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen) / 2;
+      var startposition = (cigar_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
 
 
       //  var startposition =parseInt( (parseInt(parseInt(start)+ parseInt(cigar[i].split(":")[0]) - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2));
@@ -1106,6 +1116,7 @@ function dispGraph(div, trackName, trackId) {
   var partial = (parseInt(getEnd()) - parseInt(getBegin())) / 2;
   var start = parseInt(getBegin()) - parseInt(partial)
   var end = parseInt(getEnd()) + parseInt(partial);
+  var maxLen_temp = jQuery("#canvas").css("width");
 
   var newStart_temp = getBegin();
   var newEnd_temp = getEnd();
@@ -1128,8 +1139,8 @@ function dispGraph(div, trackName, trackId) {
     var track_start = track[track_len].start;
     var track_stop = track[track_len].end;
 
-    var startposition = (track_start - newStart_temp) * parseFloat(maxLen) / (newEnd_temp - newStart_temp) + parseFloat(maxLen) / 2;
-    var stopposition = (track_stop - track_start ) * parseFloat(maxLen) / (newEnd_temp - newStart_temp);
+    var startposition = (track_start - newStart_temp) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen_temp) / 2;
+    var stopposition = (track_stop - track_start ) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp);
 
     track_html += "<div class= \"graph\" onclick=\"setBegin(" + track[track_len].start + ");setEnd(" + track[track_len].end + ");jumpToSeq();\"STYLE=\"bottom:0px; height: " + (track[track_len].graph * 45 / max) + "px;" +
                   "LEFT:" + startposition + "px;" +
@@ -1180,7 +1191,6 @@ function dispGraphWig(div, trackName, trackId) {
     var left = 0;
     if (start < 0) {
       left = (1 - start) * parseInt(width) / end * 3 / 4;
-
     }
 
     var top = 20;

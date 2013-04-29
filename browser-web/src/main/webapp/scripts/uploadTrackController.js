@@ -229,6 +229,7 @@ function readFile(uploadedFile) {
   randomnumber = json.session;
   var now = new Date();
   jQuery("#sessionid").html("<b>Session Id: </b><a  href='./session.jsp?query=" + randomnumber + "' target='_blank'>" + randomnumber + "</a> Saved at " + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds());
+  jQuery("#sessionid").show();
   jQuery('#seqnameh1').html(json.reference);
   jQuery('#seqname').html("<br/>");
   jQuery('#canvas').show();
@@ -285,6 +286,7 @@ function exportSession() {
   if (randomnumber == null) {
     randomnumber = seqregname + now.getDate() + "-" + now.getMonth() + 1 + "" + now.getFullYear() + "" + now.getHours() + "" + now.getMinutes() + "" + Math.ceil(Math.random() * 5);
     jQuery("#sessionid").html("<b>Session Id: </b><a  href='./session.jsp?query=" + randomnumber + "' target='_blank'>" + randomnumber + "</a> Saved at " + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds());
+    jQuery("#sessionid").show();
   }
   saveSession();
   /*var Tracklist = track_list;

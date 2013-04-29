@@ -20,6 +20,8 @@ var tracklocation = [];
 function onLoad() {
 
   path = jQuery('#title').text();
+   jQuery("#notifier").hide()
+  jQuery("#sessionid").hide()
 
 
   jQuery(document).ready(function () {
@@ -237,8 +239,8 @@ function onLoad() {
         jQuery("#seqdrag").css("left", mouseX);
       }
 
-      begin = parseInt(getBegin()) - 1 + Math.round((getEnd() - getBegin()) * (seqX - jQuery('#canvas').offset().left) / parseFloat(maxLen) + getBegin());
-      end = parseInt(getBegin()) + Math.round((getEnd() - getBegin()) * (mouseX - jQuery('#canvas').offset().left) / parseFloat(maxLen) + getBegin());
+      begin = parseInt(getBegin()) - 1 + Math.round((getEnd() - getBegin()) * (seqX ) / parseFloat(maxLen) + getBegin());
+      end = parseInt(getBegin()) + Math.round((getEnd() - getBegin()) * (mouseX) / parseFloat(maxLen) + getBegin());
 
       var diff;
       if (parseInt(begin) < parseInt(end)) {
@@ -345,14 +347,14 @@ function displayCursorPosition() {
     }
   });
 
-  jQuery("#wrapper").mouseleave(function () {
+  jQuery("#wrapper .vertical-line").mouseleave(function () {
     jQuery('#currentposition').hide();
   });
 
   jQuery(document).mousemove(function (e) {
     mouseX = e.pageX;
     mouseY = e.pageY;
-    var pos = parseInt(getBegin()) + Math.round((( (e.pageX - jQuery('#canvas').offset().left) * (getEnd() - getBegin())) / jQuery('#canvas').width()) + getBegin());
+    var pos = parseInt(getBegin()) + Math.round((( (e.pageX) * (getEnd() - getBegin())) / jQuery(window).width()) + getBegin());
     jQuery('#currentposition').html(pos);
 
     jQuery('#currentposition').css({
@@ -648,6 +650,7 @@ function checkSession() {
     randomnumber = seqregname + now.getDate() + "-" + now.getMonth() + 1 + "" + now.getFullYear() + "" + now.getHours() + "" + now.getMinutes() + "" + Math.ceil(Math.random() * 5);
   }
   jQuery("#sessionid").html("<b>Session Id: </b><a  href='./session.jsp?query=" + randomnumber + "' target='_blank'>" + randomnumber + "</a> Saved at " + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds());
+  jQuery("#sessionid").show("blind", {}, 500);
   saveSession();
 }
 
@@ -665,7 +668,7 @@ function getTracks() {
 //      tracks.push(eachTrack);
 //    }
 //  }
-  if (jQuery("#alertDiv").text().indexOf("BLAST")) {
+  if (jQuery("#notifier").text().indexOf("BLAST")) {
     eachTrack = { "trackId": "running", "child": blastsdata}
     tracks.push(eachTrack);
   }
@@ -805,8 +808,8 @@ function dragToogle() {
           jQuery("#seqdrag").css("left", mouseX);
         }
 
-        begin = parseInt(getBegin()) - 1 + Math.round((getEnd() - getBegin()) * (seqX - jQuery('#canvas').offset().left) / parseFloat(maxLen) + getBegin());
-        end = parseInt(getBegin()) + Math.round((getEnd() - getBegin()) * (mouseX - jQuery('#canvas').offset().left) / parseFloat(maxLen) + getBegin());
+        begin = parseInt(getBegin()) - 1 + Math.round((getEnd() - getBegin()) * (seqX) / parseFloat(maxLen) + getBegin());
+        end = parseInt(getBegin()) + Math.round((getEnd() - getBegin()) * (mouseX) / parseFloat(maxLen) + getBegin());
         var bp = "bp";
         var diff;
         if (parseInt(begin) < parseInt(end)) {

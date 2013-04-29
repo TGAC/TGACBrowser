@@ -24,10 +24,10 @@
 
 
     jQuery(document).ready(function() {
-        metaData();
+        var chr = metaData();
         jQuery("#mainsearch").load("browser.jsp", function() {
             onLoad();
-            getUrlVariables();
+            getUrlVariables(chr);
         });
     });
 
@@ -38,7 +38,7 @@
         });
         return vars;
     }
-    function getUrlVariables() {
+    function getUrlVariables(chr) {
         var showBlast = false;
         var vars = [];
         var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m, key, value) {
@@ -56,12 +56,18 @@
             seqregionSearchPopup(jQuery("#search").val(), vars[1], vars[2], vars[3])
 
         }
-        else if (jQuery('#search').val().length > 1) {
+        else if (jQuery('#search').val().length >= 1) {
             var now = new Date();
 
 
             search(jQuery('#search').val(), oldTracklist);
         <%--vars[1] for blast and so on --%>
+        }
+        else if(chr == true){
+             getReferences(true)
+        }
+        else {
+          console.log("else")
         }
 
 //        if(showBlast){
