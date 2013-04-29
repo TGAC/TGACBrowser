@@ -78,7 +78,7 @@ public class BlastToLSF extends AbstractTgacLsfProcess {
   @Override
   protected String getCommand(Map<ConanParameter, String> parameters) {
     try {
-      String blast_type = "blastn";
+      String blast_type = "";
        blast_type = parameters.get(type);
       String blastBinary = "/data/workarea/bianx/blast+/"+blast_type+" ";
       getLog().debug("Executing " + getName() + " with the following parameters: " + parameters.toString());
@@ -91,7 +91,7 @@ public class BlastToLSF extends AbstractTgacLsfProcess {
       sb.append(" -db " +  parameters.get(blastDB));
       sb.append(" -query /net/tgac-cfs3.tgaccluster/ifs/TGAC/browser/jobs/" + parameters.get(blastAccession) + ".fa ");
       sb.append(" -out /net/tgac-cfs3.tgaccluster/ifs/TGAC/browser/jobs/" + parameters.get(blastAccession) + ".xml ");
-      sb.append(" -outfmt "+parameters.get(format)+" -task "+blast_type+" -max_target_seqs 10");
+      sb.append(" -outfmt "+parameters.get(format)+" -max_target_seqs 10");
 //
 //            .append(" -f " + parameters.get(makefilePath))
 //            .append(" -C " + parameters.get(fastqPath));
