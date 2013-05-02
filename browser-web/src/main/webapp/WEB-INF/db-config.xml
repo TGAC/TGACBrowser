@@ -14,8 +14,7 @@
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
             <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-            <property name="url"
-                      value="jdbc:mysql://kathmandu.nbi.bbsrc.ac.uk:3306/thankia_tgac_browser_demo"/>
+         <property name="url" value="jdbc:mysql://kathmandu.nbi.bbsrc.ac.uk:3306/bianx_cho_ensembl61_browser"/>
             <property name="username" value="tgac"/>
             <property name="password" value="tgac_bioinf"/>
         </bean>

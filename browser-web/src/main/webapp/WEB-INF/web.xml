@@ -80,6 +80,11 @@
         <param-value>${browser.linkLocation}</param-value>
     </context-param>
 
+    <context-param>
+           <param-name>blastLocation</param-name>
+           <param-value>${browser.blastLocation}</param-value>
+       </context-param>
+
     <!--<context-param>-->
     <!--<param-name>-->
     <!--javax.servlet.jsp.jstl.sql.dataSource-->
