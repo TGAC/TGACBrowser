@@ -33,6 +33,7 @@ public class BlastToLSF extends AbstractTgacLsfProcess {
   private final FlagParameter type;
 
 
+
   /*
     bsub -q ngs_processing
          -J $run_updateDB
@@ -58,7 +59,6 @@ public class BlastToLSF extends AbstractTgacLsfProcess {
     parameters.add(blastDB);
     parameters.add(format);
     parameters.add(type);
-
   }
 
   protected Logger getLog() {

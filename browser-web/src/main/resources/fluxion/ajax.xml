@@ -23,5 +23,8 @@
     <bean id="blastservice"
           class="uk.ac.bbsrc.tgac.browser.service.ajax.BlastService">
     </bean>
+    <bean id="blastservicelocal"
+             class="uk.ac.bbsrc.tgac.browser.service.ajax.BlastServiceLocal">
+       </bean>
 </beans>
 
