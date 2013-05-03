@@ -551,6 +551,7 @@ function getReferences(show) {
                 jQuery("#refmap").append("<div onclick='jumpToOther(event, " + length + ",\"" + json.seqregion[referenceLength].name + "\");' class='refmap' id='" + json.seqregion[referenceLength].name + "' style='left: " + left + "px; width:" + width + "px; height:" + height + "px;'></div>");
               }
               jQuery("#refmap").append("<div style='position:absolute; bottom: 0px; left: " + (left) + "px; '>" + stringTrim(json.seqregion[referenceLength].name, width*2) + "</div>");
+              jQuery("#map").show;
             }
             if (show) {
               jQuery("#searchresultMap").show;

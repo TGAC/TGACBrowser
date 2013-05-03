@@ -22,6 +22,7 @@ function onLoad() {
   path = jQuery('#title').text();
    jQuery("#notifier").hide()
   jQuery("#sessionid").hide()
+  jQuery("#map").hide()
 
 
   jQuery(document).ready(function () {
