@@ -41,7 +41,7 @@
         <%--<option id="tblastn">tblastn</option>--%>
     </select>
     <button class="ui-state-default ui-corner-all"
-            onclick="blastTrackSearch(jQuery('#blastsearch').val(), 0,100,10,jQuery('#blastdb').val(),jQuery('#blast_type').val());">BLAST
+            onclick="blastSearch(jQuery('#blastsearch').val(),jQuery('#blastdb').val(),jQuery('#blast_type').val());">BLAST
     </button>
 
 

@@ -257,29 +257,29 @@ function groupCancel() {
 }
 
 function stringTrim(string, width) {
-console.log(string+":"+width)
+  console.log(string + ":" + width)
   var ruler = jQuery("#ruler");
   var inLength = 0;
   var tempStr = "";
 
   jQuery("#ruler").html(string);
   inLength = jQuery("#ruler").width();
-console.log(width+":"+inLength)
+  console.log(width + ":" + inLength)
   if (inLength < width) {
     return string;
   }
   else {
     width = parseInt(string.length * width / inLength);
-console.log(width)
+    console.log(width)
     return "<span title=" + string + ">" + string.substring(0, width) + "... </span>";
   }
 }
 
 function findAndRemove(array, property, value) {
-  jQuery.each(array, function (index, result) {
+  jQuery.each(blastsdata, function (index, result) {
     if (result[property] == value) {
-      //Remove from array
-      array.splice(index, 1);
+      blastsdata.splice(index, 1);
+      return false;
     }
   });
 }

@@ -25,10 +25,7 @@
 
     jQuery(document).ready(function() {
         var chr = metaData();
-        if (chr == false)
-        {
-          jQuery("#map").hide()
-        }
+
         jQuery("#mainsearch").load("browser.jsp", function() {
             onLoad();
             getUrlVariables(chr);
