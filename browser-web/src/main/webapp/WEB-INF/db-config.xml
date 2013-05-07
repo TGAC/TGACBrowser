@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
        xmlns:context="http://www.springframework.org/schema/context"
@@ -9,15 +10,22 @@
 
 
     <!--<jee:jndi-lookup id="dataSource"-->
-                     <!--jndi-name="/jdbc/tgac-browserDB"-->
-                     <!--resource-ref="true"/>-->
+    <!--jndi-name="/jdbc/tgac-browserDB"-->
+    <!--resource-ref="true"/>-->
 
-    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-            <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-         <property name="url" value="jdbc:mysql://kathmandu.nbi.bbsrc.ac.uk:3306/bianx_cho_ensembl61_browser"/>
-            <property name="username" value="tgac"/>
-            <property name="password" value="tgac_bioinf"/>
-        </bean>
+    <bean id="propertyConfigurer"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location">
+            <value>/WEB-INF/browser.properties</value>
+        </property>
+    </bean>
+
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="${db.driver}"/>
+        <property name="url" value="${db.url}"/>
+        <property name="username" value="${db.username}"/>
+        <property name="password" value="${db.password}"/>
+    </bean>
 
 
     <bean name="interfaceTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
@@ -37,13 +45,13 @@
     </bean>
 
     <bean name="sequenceStore" class="org.springframework.aop.framework.ProxyFactoryBean">
-      <property name="proxyInterfaces">
-        <value>uk.ac.bbsrc.tgac.browser.core.store.SequenceStore</value>
-      </property>
-      <property name="interceptorNames">
-        <list>
-          <value>sequenceDAO</value>
-        </list>
-      </property>
+        <property name="proxyInterfaces">
+            <value>uk.ac.bbsrc.tgac.browser.core.store.SequenceStore</value>
+        </property>
+        <property name="interceptorNames">
+            <list>
+                <value>sequenceDAO</value>
+            </list>
+        </property>
     </bean>
 </beans>
