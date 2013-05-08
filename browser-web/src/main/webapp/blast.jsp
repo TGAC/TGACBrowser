@@ -9,62 +9,80 @@
               style="margin: 2px 2px 2px 2px; height: 100px; width: 98%; "></textarea>
 
     </select> Blast DB
-    <select name="blastdb" id="blastdb">
+    <div id="blastdbs" position: style="position: absolute; display: none">
+        <select name="blastdb" id="blastdb">
 
-        <c:set var="databases">${initParam.blastdblink} </c:set>
+            <c:set var="databases">${initParam.blastdblink} </c:set>
 
-        <c:set var="dateParts" value="${fn:split(databases, ',')}"/>
+            <c:set var="dateParts" value="${fn:split(databases, ',')}"/>
 
-        <c:set var="databasesloc">${initParam.blastdblocation} </c:set>
+            <c:set var="databasesloc">${initParam.blastdblocation} </c:set>
 
-        <c:set var="datePartsloc" value="${fn:split(databasesloc, ',')}"/>
-
-
-        <c:forEach var="i" begin="1" end='${fn:length(dateParts)}' step="1">
-            <%--splitting by /--%>
-            <c:set var="text" value="${fn:split(datePartsloc[i-1],'/')}"/>
-            <%--considering last entry--%>
-            <c:set var="text" value="${text[fn:length(text)-1]}"/>
-            <%--index of . --%>
-            <c:set var="to" value="${fn:indexOf(text,'.' )}"/>
-            <%--substring to . --%>
-            <c:set var="filename" value="${fn:substring(text,0,to) }"/>
-
-            <option id=${dateParts[i-1]} value=
-            "${datePartsloc[i-1]}:${dateParts[i-1]}">${filename}</option>
-        </c:forEach>
+            <c:set var="datePartsloc" value="${fn:split(databasesloc, ',')}"/>
 
 
-    </select>
-    <select name="blast_type" id="blast_type">
-          <option id="blastn"> blastn </option>
-        <%--<option id="tblastn">tblastn</option>--%>
-    </select>
-    <button class="ui-state-default ui-corner-all"
-            onclick="blastSearch(jQuery('#blastsearch').val(),jQuery('#blastdb').val(),jQuery('#blast_type').val());">BLAST
-    </button>
+            <c:forEach var="i" begin="1" end='${fn:length(dateParts)}' step="1">
+                <%--splitting by /--%>
+                <c:set var="text" value="${fn:split(datePartsloc[i-1],'/')}"/>
+                <%--considering last entry--%>
+                <c:set var="text" value="${text[fn:length(text)-1]}"/>
+                <%--index of . --%>
+                <c:set var="to" value="${fn:indexOf(text,'.' )}"/>
+                <%--substring to . --%>
+                <c:set var="filename" value="${fn:substring(text,0,to) }"/>
+
+                <option id=${dateParts[i-1]} value=
+                "${datePartsloc[i-1]}:${dateParts[i-1]}">${filename}</option>
+            </c:forEach>
+
+
+        </select>
+        Type
+        <select name="blast_type" id="blast_type">
+            <option value="blastn"> blastn</option>
+            <option value="tblastn">tblastn</option>
+        </select>
+        <button class="ui-state-default ui-corner-all"
+                onclick="blastSearch(jQuery('#blastsearch').val(),jQuery('#blastdb').val(),jQuery('#blast_type').val());">
+            BLAST
+        </button>
+
+    </div>
 
 
     <br>
-    <%--NCBI BLAST--%>
-    <%--<select name="blastdb" id="ncbiblastdb">--%>
-        <%--<option  value=nr>nr</option>--%>
-        <%--<option  value=est_human>est_human</option>--%>
-        <%--<option  value=est_mouse>nr</option>--%>
-        <%--<option  value=est_others>est_others</option>--%>
-        <%--<option  value=htg>htg</option>--%>
-        <%--<option  value=gss>gss</option>--%>
-        <%--<option  value=pataa>pataa</option>--%>
-        <%--<option  value=patnt>patnt</option>--%>
-    <%--</select>--%>
 
-    <%--<button class="ui-state-default ui-corner-all"--%>
-            <%--onclick="ncbiBLAST(jQuery('#blastsearch').val(), jQuery('#ncbiblastdb').val());">NCBI BLAST--%>
-    <%--</button>--%>
+    <div id="ncbiblastdbs" style="position: absolute; display: none">
+        NCBI BLAST
+        <select name="blastdb" id="ncbiblastdb">
+            <option value=nr>nr</option>
+            <option value=est_human>est_human</option>
+            <option value=est_mouse>nr</option>
+            <option value=est_others>est_others</option>
+            <option value=htg>htg</option>
+            <option value=gss>gss</option>
+            <option value=pataa>pataa</option>
+            <option value=patnt>patnt</option>
+        </select>
 
-    <%--<button class="ui-state-default ui-corner-all"--%>
-               <%--onclick="ncbiBLASTTrack(jQuery('#blastsearch').val(), jQuery('#ncbiblastdb').val());">NCBI BLAST Track test--%>
-       <%--</button>--%>
+        Type
+        <select name="blast_type" id="ncbi_blast_type">
+            <option value="blastn"> blastn</option>
+            <option value="tblastn">tblastn</option>
+
+        </select>
+        <button class="ui-state-default ui-corner-all"
+                onclick="blastSearch(jQuery('#blastsearch').val(), jQuery('#ncbiblastdb').val(),jQuery('#ncbi_blast_type').val());">
+            NCBI BLAST
+        </button>
+
+        <button class="ui-state-default ui-corner-all"
+                onclick="blastTrackSearch(jQuery('#blastsearch').val(), 0, 100, 10, jQuery('#ncbiblastdb').val(),jQuery('#ncbi_blast_type').val());">
+            NCBI BLAST Track
+            test
+        </button>
+    </div>
+
 
 </div>
 <div id="seqresult">
@@ -82,7 +100,7 @@
     var seq;
     jQuery(document).ready(function () {
         getUrlVars();
-
+        setBlast();
         var testTextBox = jQuery('#search');
         var code = null;
         testTextBox.keypress(function (e) {

@@ -495,33 +495,50 @@
 </div>
 
 <div id=blastselector class="popupmenu" style="position: absolute; display: none">
-    Blast DB
-    <select name="blastdb" id="blastdb">
-        <c:set var="databases">${initParam.blastdblink} </c:set>
 
-        <c:set var="dateParts" value="${fn:split(databases, ',')}"/>
+   <div id=blastdbs style="position: absolute; display: none">
+       Blast DB <select name="blastdb" id="blastdb">
+               <c:set var="databases">${initParam.blastdblink} </c:set>
 
-        <c:set var="databasesloc">${initParam.blastdblocation} </c:set>
+               <c:set var="dateParts" value="${fn:split(databases, ',')}"/>
 
-        <c:set var="datePartsloc" value="${fn:split(databasesloc, ',')}"/>
+               <c:set var="databasesloc">${initParam.blastdblocation} </c:set>
+
+               <c:set var="datePartsloc" value="${fn:split(databasesloc, ',')}"/>
 
 
-        <c:forEach var="i" begin="1" end='${fn:length(dateParts)}' step="1">
-            <%--splitting by /--%>
-            <c:set var="text" value="${fn:split(datePartsloc[i-1],'/')}"/>
-            <%--considering last entry--%>
-            <c:set var="text" value="${text[fn:length(text)-1]}"/>
-            <%--index of . --%>
-            <c:set var="to" value="${fn:indexOf(text,'.' )}"/>
-            <%--substring to . --%>
-            <c:set var="filename" value="${fn:substring(text,0,to) }"/>
+               <c:forEach var="i" begin="1" end='${fn:length(dateParts)}' step="1">
+                   <%--splitting by /--%>
+                   <c:set var="text" value="${fn:split(datePartsloc[i-1],'/')}"/>
+                   <%--considering last entry--%>
+                   <c:set var="text" value="${text[fn:length(text)-1]}"/>
+                   <%--index of . --%>
+                   <c:set var="to" value="${fn:indexOf(text,'.' )}"/>
+                   <%--substring to . --%>
+                   <c:set var="filename" value="${fn:substring(text,0,to) }"/>
 
-            <option value="${datePartsloc[i-1]}:${dateParts[i-1]}">${filename}</option>
+                   <option value="${datePartsloc[i-1]}:${dateParts[i-1]}">${filename}</option>
 
-            <%--<option value=${datePartsloc[i-1]}>${dateParts[i-1]}</option>--%>
-        </c:forEach>
-    </select>
+                   <%--<option value=${datePartsloc[i-1]}>${dateParts[i-1]}</option>--%>
+               </c:forEach>
+           </select>
 
+   </div>
+    <div id="ncbiblastdbs" style="position: absolute; display: none">
+            NCBI BLAST
+            <select name="blastdb" id="ncbiblastdb">
+                <option value=nr>nr</option>
+                <option value=est_human>est_human</option>
+                <option value=est_mouse>nr</option>
+                <option value=est_others>est_others</option>
+                <option value=htg>htg</option>
+                <option value=gss>gss</option>
+                <option value=pataa>pataa</option>
+                <option value=patnt>patnt</option>
+            </select>
+
+        </div>
+    <br>
     <div id=blastselectorpanel></div>
 
 </div>

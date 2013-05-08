@@ -234,10 +234,6 @@ function auto_drag() {
 
 function setNavPanel() {
   var left = 0;
-  console.log(jQuery("#wrapper").position().top)
-  console.log(jQuery("#draggable").position().top)
-  console.log(jQuery("#draggable").css("height"))
-
   var height = parseFloat(jQuery("#wrapper").position().top) - (parseFloat(jQuery("#draggable").position().top) + parseFloat(jQuery("#draggable").css("height"))) + "px solid #cccccc";
   var border_left = parseFloat(jQuery("#draggable").css("left")) - left + "px solid transparent";
   var width = jQuery("#draggable").css("width");

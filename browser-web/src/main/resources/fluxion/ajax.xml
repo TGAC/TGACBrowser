@@ -26,5 +26,9 @@
     <bean id="blastservicelocal"
              class="uk.ac.bbsrc.tgac.browser.service.ajax.BlastServiceLocal">
        </bean>
+
+    <bean id="blastServiceNCBI"
+                 class="uk.ac.bbsrc.tgac.browser.service.ajax.BlastNCBI">
+    </bean>
 </beans>
 

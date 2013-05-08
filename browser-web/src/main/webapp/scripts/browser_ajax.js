@@ -220,7 +220,6 @@ function generateFileLink(data) {
 
 function loadTrackAjax(trackId, trackname) {
 //  jQuery.cookie('trackslist', track_list.toJSON());
-  console.log(trackId + ":" + trackname)
   mergeTrackList(trackname);
   var query = jQuery('#search').val();
   jQuery(track_list).each(function (index) {

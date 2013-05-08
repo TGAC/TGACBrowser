@@ -246,7 +246,13 @@ function preBlast(begin, end, popup) {
 
   jQuery("#doblast").click(function () {
     var hit = jQuery('#blasthit').val();
-    var blastdb = jQuery('#blastdb').val();
+    var blastdb = ""
+    if (jQuery("#blastType").text().indexOf('local') >= 0 || jQuery("#blastType").text().indexOf('server') >= 0) {
+    blastdb = jQuery('#blastdb').val();
+    }       else {
+      blastdb = jQuery('#ncbiblastdb').val();
+
+    }
 
     blast(begin, end, hit, blastdb, 'blastn');
     removePopup();

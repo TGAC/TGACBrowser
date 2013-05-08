@@ -130,20 +130,16 @@ function setMapMarkerTop(top) {
   var height = jQuery("#" + seqregname).css('height');
   var maptop = parseFloat(jQuery("#" + seqregname).css('top')) + top * parseFloat(height) / sequencelength;
 
-  console.log(seqregname + ":" + height + ":" + maptop + ":" + jQuery("#" + seqregname).css('top'));
   jQuery("#mapmarker").animate({"top": maptop}, 100);
 }
 
 function setMapMarkerHeight(height) {
-  console.log("height")
   var mapheight = height * parseFloat(refheight) / sequencelength;
-  console.log(mapheight)
   jQuery("#mapmarker").animate({"height": mapheight}, 100);
 }
 
 function setMapMarkerLeft() {
   var left = jQuery("#" + seqregname).position().left;
-  console.log("left" + left+":"+seqregname)
   jQuery("#mapmarker").animate({"left": left}, 100);
 }
 
