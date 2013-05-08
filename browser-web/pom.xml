@@ -35,6 +35,30 @@
                 <version>2.5</version>
             </plugin>
 
+             <!--<plugin>-->
+        <!--<artifactId>maven-antrun-plugin</artifactId>-->
+        <!--<version>1.4</version>-->
+        <!--<executions>-->
+          <!--<execution>-->
+            <!--&lt;!&ndash; do some processing on your resources files &ndash;&gt;-->
+            <!--<phase>process-resources</phase>-->
+            <!--<configuration>-->
+              <!--<tasks>-->
+                <!--<echo message="processing files..."/>-->
+                <!--&lt;!&ndash; copy the file to be processed &ndash;&gt;-->
+                <!--<copy-->
+                    <!--file="/storage/browser/tgac-browser.properties"-->
+                    <!--todir="WEB-INF/"/>-->
+                <!--&lt;!&ndash; do the processing (replace the token value with a value passed in on the command line) &ndash;&gt;-->
+
+              <!--</tasks>-->
+            <!--</configuration>-->
+            <!--<goals>-->
+              <!--<goal>war</goal>-->
+            <!--</goals>-->
+          <!--</execution>-->
+        <!--</executions>-->
+      <!--</plugin>-->
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
                 <executions>
@@ -46,9 +70,16 @@
                             <goal>war</goal>
                         </goals>
                         <configuration>
+                            <webResources>
+                                <resource>
+                                    <directory>/storage/browser/tgac-browser</directory>
+                                    <targetPath>WEB-INF</targetPath>
+                                    <filtering>true</filtering>
+                            </resource>
+                            </webResources>
                             <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
                             <filters>
-                                <filter>/storage/browser/tgac-browser.properties</filter>
+                                <filter>/storage/browser/tgac-browser/browser.properties</filter>
                             </filters>
                         </configuration>
                     </execution>
@@ -235,15 +266,15 @@
             <version>2.5.1</version>
         </dependency>
         <dependency>
-             <groupId>commons-dbcp</groupId>
-             <artifactId>commons-dbcp</artifactId>
-             <version>1.2.1</version>
-           </dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <version>1.2.1</version>
+        </dependency>
         <dependency>
-                    <groupId>commons-pool</groupId>
-                    <artifactId>commons-pool</artifactId>
-                    <version>1.6</version>
-                  </dependency>
+            <groupId>commons-pool</groupId>
+            <artifactId>commons-pool</artifactId>
+            <version>1.6</version>
+        </dependency>
         <dependency>
             <groupId>net.sf.ehcache</groupId>
             <artifactId>ehcache-core</artifactId>
