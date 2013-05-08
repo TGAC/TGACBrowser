@@ -34,8 +34,6 @@ function visualLength(temp) {
   var inLength = 0;
   var tempStr = "";
   ruler.innerHTML = "N";
-  console.log(ruler.offsetWidth)
-  console.log(jQuery("#ruler").innerWidth())
   if (jQuery.browser.webkit) {
     inLength = (ruler.offsetWidth - 1) * temp;
   }
@@ -90,7 +88,6 @@ function browser_coordinates() {
 }
 
 function trackToggle(trackname) {
-  console.log(trackname)
   var index = 0;
   var graph = "false";
   var trackid = "";
@@ -257,20 +254,17 @@ function groupCancel() {
 }
 
 function stringTrim(string, width) {
-  console.log(string + ":" + width)
   var ruler = jQuery("#ruler");
   var inLength = 0;
   var tempStr = "";
 
   jQuery("#ruler").html(string);
   inLength = jQuery("#ruler").width();
-  console.log(width + ":" + inLength)
   if (inLength < width) {
     return string;
   }
   else {
     width = parseInt(string.length * width / inLength);
-    console.log(width)
     return "<span title=" + string + ">" + string.substring(0, width) + "... </span>";
   }
 }

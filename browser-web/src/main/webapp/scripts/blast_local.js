@@ -12,7 +12,6 @@ function blastSearch(query, db, type) {
   blastbinary = jQuery("#blastLocation").html();
   jQuery("#notifier").html("<img src='images/browser/loading2.gif' height='10px'> BLAST running ");
   jQuery("#notifier").show();
-  console.log(db)
   var database = db.split(":");
   db = database[0];
   var id = randomString(8);

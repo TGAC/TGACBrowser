@@ -16,11 +16,34 @@ var grouplist = [];
 var tracks = [];
 var tracklocation = [];
 
+function setBlast() {
+  if (jQuery("#blastType").text().indexOf('local') >= 0) {
+
+
+    jQuery.getScript("scripts/blast_local.js", function (data, textStatus, jqxhr) {
+         console.log('Load was performed.');
+       });
+
+    jQuery("#blastdbs").show();
+  }
+  else if (jQuery("#blastType").text().indexOf('ncbi') >= 0) {
+    jQuery.getScript("scripts/blast_ncbi.js", function (data, textStatus, jqxhr) {
+      console.log('Load was performed.');
+    });
+    jQuery("#ncbiblastdbs").show();
+  }
+  else if (jQuery("#blastType").text().indexOf('server') >= 0) {
+    jQuery.getScript("scripts/blast_server.js", function (data, textStatus, jqxhr) {
+         console.log('Load was performed.');
+       });
+    jQuery("#blastdbs").show();
+  }
+}
 
 function onLoad() {
-
+  setBlast()
   path = jQuery('#title').text();
-   jQuery("#notifier").hide()
+  jQuery("#notifier").hide()
   jQuery("#sessionid").hide()
   jQuery("#map").hide()
 
@@ -710,14 +733,12 @@ function getRemovedTracks() {
 function loadEditedTracks(tracks) {
   for (var i = 0; i < tracks.length; i++) {
     window[tracks[i].trackName] = tracks[i].child;
-    console.log(window[tracks[i].trackName])
   }
 }
 
 function loadRemovedTracks(tracks) {
   for (var i = 0; i < tracks.length; i++) {
     window[tracks[i].trackName] = tracks[i].child;
-    console.log(window[tracks[i].trackName])
   }
 }
 

@@ -15,14 +15,6 @@
         <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
     </listener>
 
-    <!-- JNDI database config -->
-    <!--<resource-ref>-->
-        <!--<description>vietnamese_rice DB Connection</description>-->
-        <!--<res-ref-name>jdbc/${browser.urlpath}DB</res-ref-name>-->
-        <!--<res-type>javax.sql.DataSource</res-type>-->
-        <!--<res-auth>Container</res-auth>-->
-    <!--</resource-ref>-->
-
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>WEB-INF/applicationContext.xml</param-value>
@@ -51,16 +43,16 @@
     </context-param>
 
     <context-param>
-         <param-name>blastdblink</param-name>
-         <param-value>${browser.blastdblink}</param-value>
-     </context-param>
+        <param-name>blastdblink</param-name>
+        <param-value>${browser.blastdblink}</param-value>
+    </context-param>
 
     <context-param>
         <param-name>blastdblocation</param-name>
         <param-value>${browser.blastdblocation}</param-value>
     </context-param>
 
-     <context-param>
+    <context-param>
         <param-name>defaultRef</param-name>
         <param-value>${browser.defaultRef}</param-value>
     </context-param>
@@ -81,17 +73,14 @@
     </context-param>
 
     <context-param>
-           <param-name>blastLocation</param-name>
-           <param-value>${browser.blastLocation}</param-value>
-       </context-param>
+        <param-name>blastLocation</param-name>
+        <param-value>${browser.blastLocation}</param-value>
+    </context-param>
 
-    <!--<context-param>-->
-    <!--<param-name>-->
-    <!--javax.servlet.jsp.jstl.sql.dataSource-->
-    <!--</param-name>-->
-
-    <!--<param-value> jdbc:mysql://kathmandu.nbi.bbsrc.ac.uk:3306/bianx_viet_rice_v61_browser,com.mysql.jdbc.Driver,tgac,tgac_bioinf </param-value>-->
-    <!--</context-param>-->
+    <context-param>
+            <param-name>blastType</param-name>
+            <param-value>${browser.blastType}</param-value>
+    </context-param>
 
     <!--parameter goes to JSPs ends-->
 
