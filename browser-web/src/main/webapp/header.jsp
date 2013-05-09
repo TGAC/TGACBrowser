@@ -150,6 +150,4 @@
 <div id="blastType" style="visibility: hidden; position: fixed;">${initParam.blastType}</div>
 
 
-
-
 <div id="content">

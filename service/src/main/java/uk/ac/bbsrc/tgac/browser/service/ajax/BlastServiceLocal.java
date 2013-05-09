@@ -52,8 +52,9 @@ public class BlastServiceLocal {
       StringBuilder sb = new StringBuilder();
       String fasta = json.getString("query");
       String location = json.getString("location");
+      String blastAccession = json.getString("BlastAccession");
 
-      String file = "../temp/" + json.getString("BlastAccession") + ".xml";
+      String file = "../webapps/" + location + "/temp/" + json.getString("BlastAccession") + ".xml";
 
 //      link     location etc
 //      multiple blast ??
@@ -126,8 +127,18 @@ public class BlastServiceLocal {
             id = str1.split("<td>");
             Pattern pline = Pattern.compile(".*1_.*");
             String seqregionName = id[1];
-            String str2 = str1.replaceAll(id[1], "<a href=\"javascript:void(0);\" onclick=\"seqregionSearch(\'" + seqregionName + "\')\">"
-                                                 + seqregionName + "</a>");
+            String hsp_from = id[8];
+            String hsp_to = id[9];
+            String str2 = "";
+            if (location.length() > 0) {
+              str2 = str1.replaceAll(id[1], " <a target='_blank' href='../" + location + "/index.jsp?query=" + seqregionName + "&from=" + hsp_from + "&to=" + hsp_to + "&blasttrack=" + blastAccession + "'>"
+                                            + seqregionName + "</a>");
+            }
+            else {
+              str2 = str1;
+            }
+//            String str2 = str1.replaceAll(id[1], "<a href=\"javascript:void(0);\" onclick=\"seqregionSearch(\'" + seqregionName + "\')\">"
+//                                                 + seqregionName + "</a>");
             sb.append("<tr> <td> " + str2 + "</td></tr>");
             i++;
           }
@@ -195,7 +206,7 @@ public class BlastServiceLocal {
     int noofhits = json.getInt("hit");
     String location = json.getString("location");
     String type = json.getString("type");
-    String file = "../temp/" + json.getString("BlastAccession") + ".xml";
+    String file = "../webapps/" + location + "/temp/" + json.getString("BlastAccession") + ".xml";
     StringBuilder sb1 = new StringBuilder();
 
     JSONObject blast_response = new JSONObject();
@@ -217,7 +228,7 @@ public class BlastServiceLocal {
       out.close();
 
       String execBlast = blastBinary + "/" + type + " -db " + blastdb + " -query " + fastaTmp + " -out " + file + " -outfmt 5 -max_target_seqs 10";
-      log.info("execBlast "+execBlast);
+      log.info("execBlast " + execBlast);
       Process proc = Runtime.getRuntime().exec(execBlast);
 
       log.info("\n\n\nrun time" + Runtime.getRuntime());
@@ -328,5 +339,163 @@ public class BlastServiceLocal {
     }
 
     return textVal;
+  }
+
+
+  public JSONObject checkBlast(HttpSession session, JSONObject json) throws IOException {
+    try {
+      log.info("checkBlast");
+
+      JSONObject blast_response = new JSONObject();
+      String location = json.getString("location");
+      String link = json.getString("link");
+
+      Boolean isExist;
+      String file = "../webapps/" + location + "/temp/" + json.getString("BlastAccession") + ".xml";
+      isExist = false;
+      int query_start = json.getInt("start");
+      int query_end = json.getInt("end");
+      int noofhits = json.getInt("hit");
+      JSONArray blasts = new JSONArray();
+      while (isExist == false) {
+        log.info("loop " + isExist);
+        isExist = fileExist(file);
+        if (isExist == true) {
+          log.info("loop if" + isExist);
+
+//            log.info(parseNCBIXML(urlParameters, query_start, query_end, noofhits, location).toString());
+          blasts = parseFileXML(file, query_start, query_end, noofhits, link, location);
+          break;
+        }
+
+      }
+      blast_response.put("id", json.getString("BlastAccession"));
+      blast_response.put("blast", blasts);
+      return blast_response;
+    }
+    catch (Exception e) {
+      throw new IOException(e);  //To change body of catch statement use File | Settings | File Templates.
+    }
+
+  }
+
+
+  private boolean fileExist(String file) throws IOException {
+    log.info("file exists " + file);
+    try {
+      File f = new File(file);
+      boolean check1 = f.exists();
+      log.info("check 1" + check1);
+
+      boolean isExist = new File(file).exists();
+      log.info("file exist" + isExist);
+      return isExist;
+    }
+    catch (Exception e) {
+      throw new IOException(e);
+    }
+  }
+
+  private JSONArray parseFileXML(String file, int query_start, int query_end, int noofhits, String link, String location) {
+    try {
+
+      log.info("parsefileXML");
+      log.info(file + ":" + query_start);
+
+      FileInputStream fstream = new FileInputStream(file);
+      DataInputStream input = new DataInputStream(fstream);
+      int in = 0;
+      int findHits = 1;
+      JSONArray blasts = new JSONArray();
+      DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+      Document dom;
+      DocumentBuilder db = dbf.newDocumentBuilder();
+
+      dom = db.parse(input);
+      //
+      Element docEle = dom.getDocumentElement();
+      NodeList nl = docEle.getElementsByTagName("Hit");
+
+      if (nl != null && nl.getLength() > 0) {
+        HIT:
+        for (int a = 0; a < nl.getLength(); a++) {
+
+          Element el = (Element) nl.item(a);
+          String hit_id = getTextValue(el, "Hit_def");
+
+          NodeList hsps = el.getElementsByTagName("Hsp");
+          if (hsps != null && hsps.getLength() > 0) {
+            for (int b = 0; b < hsps.getLength(); b++) {
+
+
+              Element ell = (Element) hsps.item(b);
+
+              String hsp_from = getTextValue(ell, "Hsp_query-from");
+
+              String hsp_score = getTextValue(ell, "Hsp_score");
+
+              String hsp_to = getTextValue(ell, "Hsp_query-to");
+
+              JSONObject eachBlast = new JSONObject();
+              JSONArray indels = new JSONArray();
+              JSONObject eachIndel = new JSONObject();
+
+              eachBlast.put("start", query_start + Integer.parseInt(hsp_from));
+              eachBlast.put("end", query_start + Integer.parseInt(hsp_to));
+//              eachBlast.put("desc", "<a href=\"javascript:void(0);\" onclick=\"seqregionSearchPopup(\'" + hit_id + "\')\">"
+//                                    + hit_id + "</a>");
+
+              if (link.length() > 0) {
+                eachBlast.put("desc", " <a target='_blank' href='../" + location + "/index.jsp?query=" + hit_id + "&from=" + hsp_from + "&to=" + hsp_to + "'>"
+                                      + hit_id + "</a>");
+              }
+              else {
+                eachBlast.put("desc", hit_id);
+              }
+              eachBlast.put("score", hsp_score);
+              eachBlast.put("flag", false);
+              eachBlast.put("reverse", "");
+
+              String hsp_midline = getTextValue(ell, "Hsp_midline");
+              if (hsp_midline.split(" ").length > 1) {
+                String hsp_query_seq = getTextValue(ell, "Hsp_qseq");
+                String hsp_hit_seq = getTextValue(ell, "Hsp_hseq");
+                String[] newtemp = hsp_midline.split(" ");
+                int ins = 0;
+                for (int x = 0; x < newtemp.length - 1; x++) {
+                  ins = ins + ((newtemp[x].length() + 1));
+                  eachIndel.put("position", ins + in);
+                  eachIndel.put("query", hsp_query_seq.substring((ins - 3) > -1 ? (ins - 3) : 0, (ins + 2) <= hsp_query_seq.length() ? (ins + 2) : hsp_query_seq.length()));
+                  eachIndel.put("hit", hsp_hit_seq.substring((ins - 3) > -1 ? (ins - 3) : 0, (ins + 2) <= hsp_hit_seq.length() ? (ins + 2) : hsp_hit_seq.length()));
+                  indels.add(eachIndel);
+                  //                 ins = (newtemp[x].length() + 1);
+                }
+              }
+
+              eachBlast.put("indels", indels);
+              blasts.add(eachBlast);
+
+              findHits++;
+              if (findHits > noofhits) {
+                break HIT;
+
+              }
+
+            }
+          }
+          else {
+            blasts.add("No hits found.");
+          }
+        }
+      }
+      return blasts;
+    }
+    catch (Exception e) {
+      JSONArray er = new JSONArray();
+      e.printStackTrace();
+      er.add(JSONUtils.SimpleJSONError(e.getMessage()));
+      return er;
+    }
+
   }
 }

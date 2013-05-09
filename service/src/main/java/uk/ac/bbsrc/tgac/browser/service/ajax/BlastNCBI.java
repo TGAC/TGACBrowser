@@ -121,7 +121,7 @@ public class BlastNCBI {
       }
 
       JSONObject blast_response = new JSONObject();
-       blast_response.put("id", json.getString("BlastAccession"));
+      blast_response.put("id", json.getString("BlastAccession"));
       blast_response.put("blast", blasts);
       return blast_response; //JSONUtils.JSONObjectResponse("blast", result);
 
@@ -158,7 +158,7 @@ public class BlastNCBI {
       wr.close();
       DataInputStream input = new DataInputStream(connection.getInputStream());
       //      log.info(input.readLine());
-      BufferedWriter out = new BufferedWriter(new FileWriter("../webapps/" + location + "/temp/"+blastAccession+".json"));
+      BufferedWriter out = new BufferedWriter(new FileWriter("../webapps/" + location + "/temp/" + blastAccession + ".json"));
       String hsp_from = "";
 
       String hsp_score = "";

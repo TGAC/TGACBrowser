@@ -3,8 +3,6 @@ var track_list, minWidth;
 var start_global, end_global, hit_global, blastid = 0, blastdb = "", oldTracklist;
 
 
-
-
 function seqregionSearch(query) {
   jQuery(window.location).attr('href', "./index.jsp?query=" + query + "&&blast=").attr("target", "_new");
 }
@@ -319,6 +317,7 @@ function loadSession(query) {
           {'location': path, 'query': query, 'url': ajaxurl},
           {'doOnSuccess': function (json) {
             var now = new Date();
+
             seq = json.seq;
             sequencelength = json.seqlen;
             track_list = json.tracklist;
@@ -340,12 +339,12 @@ function loadSession(query) {
             dispSeqCoord();
             displayCursorPosition();
             setNavPanel();
-            checkSession();
             getReferences();
             loadEditedTracks(json.edited_tracks)
             loadRemovedTracks(json.removed_tracks)
             reloadTracks(json.tracks, track_list, json.blast);
             jQuery("#controlsbutton").colorbox({width: "90%", inline: true, href: "#controlpanel"});
+            checkSession();
           }
           });
 }
@@ -365,7 +364,10 @@ function loadSeq(query, from, to) {
 function reloadTracks(tracks, tracklist, blast) {
   for (var i = 0; i < tracklist.length; i++) {
     if (tracklist[i].name.indexOf('blasttrack') >= 0) {
-      window['blasttrack'] = tracks[0].child;
+      jQuery('#' + tracklist[i].name + 'Checkbox').attr('checked', true);
+      window['blasttrack'] = tracks[tracks.length - 1].child;
+
+      trackToggle('blasttrack');
     }
     else if (tracklist[i].disp == 1) {
       jQuery('#' + tracklist[i].name + 'Checkbox').attr('checked', true);
@@ -414,8 +416,11 @@ function reloadTracks(tracks, tracklist, blast) {
     else {
     }
   }
-  if (blast == "true") {
-    for (var j = 0; j < tracks.length; j++) {
+  console.log(blast)
+  if (blast == "true" || blast == 1) {
+    setBlast();
+    console.log("blast is true")
+    for (var j = 0; j < tracks.length - 1; j++) {
       if (tracks[j].trackId == "running") {
         if (!window['blasttrack']) {
           window['blasttrack'] = "running";
@@ -423,8 +428,14 @@ function reloadTracks(tracks, tracklist, blast) {
           jQuery("#blasttrack_wrapper").fadeIn();
           jQuery('input[name=blasttrack-0]').attr('checked', true);
         }
+        jQuery("#notifier").html("<img src='images/browser/loading2.gif' height='10px'> BLAST running ");
+        jQuery("#notifier").show();
+
         var blasts = tracks[j].child;
+        blastsdata = blasts;
         jQuery.each(blasts, function (index) {
+
+          console.log("blast in loop" + blasts)
           checkTask(blasts[index].id, blasts[index].db, blasts[index].format, blasts[index].start, blasts[index].end, blasts[index].hit, blasts[index].link);
         });
         jQuery('input[name=blasttrackCheckbox]').attr('checked', true);
@@ -542,14 +553,14 @@ function getReferences(show) {
               if (seqregname == json.seqregion[referenceLength].name) {
                 refheight = height;
               }
-              var top = parseInt(jQuery("#map").css('top')) + parseInt(jQuery("#map").css('height'))  - (height+20);
+              var top = parseInt(jQuery("#map").css('top')) + parseInt(jQuery("#map").css('height')) - (height + 20);
               if (seqregname == json.seqregion[referenceLength].name) {
                 jQuery("#refmap").append("<div onclick='jumpToHere(event);' class='refmap' id='" + json.seqregion[referenceLength].name + "' style='left: " + left + "px; width:" + width + "px; height:" + height + "px;'></div>");
               }
               else {
                 jQuery("#refmap").append("<div onclick='jumpToOther(event, " + length + ",\"" + json.seqregion[referenceLength].name + "\");' class='refmap' id='" + json.seqregion[referenceLength].name + "' style='left: " + left + "px; width:" + width + "px; height:" + height + "px;'></div>");
               }
-              jQuery("#refmap").append("<div style='position:absolute; bottom: 0px; left: " + (left) + "px; '>" + stringTrim(json.seqregion[referenceLength].name, width*2) + "</div>");
+              jQuery("#refmap").append("<div style='position:absolute; bottom: 0px; left: " + (left) + "px; '>" + stringTrim(json.seqregion[referenceLength].name, width * 2) + "</div>");
               jQuery("#map").show;
             }
             if (show) {

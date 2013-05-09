@@ -64,7 +64,6 @@ public class FileService {
     String filename = json.getString("filename");
     String location = json.getString("location");
     String blast = json.getString("blast");
-    log.info(json.toString());
     log.info(tracks);
 
     JSONObject response = new JSONObject();

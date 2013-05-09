@@ -21,8 +21,8 @@ function setBlast() {
 
 
     jQuery.getScript("scripts/blast_local.js", function (data, textStatus, jqxhr) {
-         console.log('Load was performed.');
-       });
+      console.log('Load was performed.');
+    });
 
     jQuery("#blastdbs").show();
   }
@@ -34,8 +34,8 @@ function setBlast() {
   }
   else if (jQuery("#blastType").text().indexOf('server') >= 0) {
     jQuery.getScript("scripts/blast_server.js", function (data, textStatus, jqxhr) {
-         console.log('Load was performed.');
-       });
+      console.log('Load was performed.');
+    });
     jQuery("#blastdbs").show();
   }
 }
@@ -692,7 +692,7 @@ function getTracks() {
 //      tracks.push(eachTrack);
 //    }
 //  }
-  if (jQuery("#notifier").text().indexOf("BLAST")) {
+  if (jQuery("#notifier").text().indexOf("BLAST") >= 0) {
     eachTrack = { "trackId": "running", "child": blastsdata}
     tracks.push(eachTrack);
   }
