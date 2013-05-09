@@ -151,6 +151,7 @@ function toogleLabelMerged() {
 
 
 function dispBLAST(div, track) {
+console.log("disp blast")
   jQuery(div).html("<img src=\"./images/browser/dna_helix_md_wm.gif\" alt=\"loading\">");
   var blasts = window[track];
   if (!window[track] || window[track] == "running") {

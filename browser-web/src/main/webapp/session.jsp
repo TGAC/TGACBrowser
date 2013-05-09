@@ -14,9 +14,10 @@
 <div id="sessioninput" style="position: absolute; top: 50px;">
     <input type="text" id="session" value=""/>
     <button class="ui-state-default ui-corner-all" onclick="loadSession(jQuery('#session').val());">Session ID
-    </button>  <p>
-    <input type="file"  name="sessionfile"  id="sessionfile" size="10">
-    <input type='button' value='upload' onclick="fileupload();">
+    </button>
+    <p>
+        <input type="file" name="sessionfile" id="sessionfile" size="10">
+        <input type='button' value='upload' onclick="fileupload();">
     </p>
 </div>
 
@@ -31,9 +32,10 @@
 <script type="text/javascript">
 
 
-    jQuery(document).ready(function() {
+    jQuery(document).ready(function () {
+        setBlast()
         metaData();
-        jQuery("#mainsearch").load("browser.jsp", function() {
+        jQuery("#mainsearch").load("browser.jsp", function () {
             onLoad();
             getUrlVariables();
         });
@@ -42,14 +44,14 @@
 
     function getUrlVariables() {
         var vars = [];
-        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m, key, value) {
+        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
             vars.push(value);
 
         });
         if (vars.length > 0) {
             jQuery("#session").val(vars[0]);
             loadSession(jQuery('#session').val());
-        <%--vars[1] for blast and so on --%>
+            <%--vars[1] for blast and so on --%>
         }
     }
 
@@ -58,4 +60,3 @@
 
 
 <%@ include file="footer.jsp" %>
-
