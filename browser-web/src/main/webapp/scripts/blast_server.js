@@ -8,9 +8,7 @@
 
 
 function blastSearch(query, blastdb, type) {
-  var link = blastdb.split(":");
   jQuery('#blastresult').html("<span style=\"position:relative; left:50%;\"> Submitting &nbsp; <img alt=\"Loading\" src=\"./images/browser/loading_big.gif\" style=\"position: relative;\"> </span> </div>");
-
   submitBlastTask(query, blastdb, 6, type);
   jQuery('#main').animate({"height": "0px"}, { duration: 300, queue: false});
   jQuery('#main').fadeOut();
@@ -33,13 +31,7 @@ function blastTrackSearch(query, start, end, hit, blastdb, type) {
             {name: "blasttrack", display_label: "blasttrack", id: 0, desc: "blast from browser", disp: 1, merge: 0}
     );
     window['blasttrack'] = "running";
-    //delete window['blasttrack'];
-    //delete track_list.splice(track_list.length, 1);
-    //jQuery("#blasttrack_div").remove();
-    //jQuery("#blastcheck").remove();
-    //jQuery("#blastcheckmerge").remove();
   }
-
 
   submitBlastTask(query, blastdb, 5, type, start, end, hit);
   start_global = start;
@@ -104,7 +96,6 @@ function checkTask(task, db, format, start, end, hit, link) {
               alert('Blast search: ' + json.result);
               jQuery("#notifier").hide();
               jQuery("#notifier").html("");
-
             }
             else if (json.result == 'RUNNING') {
               jQuery('#blastresult').html("<span style=\"position:relative; left:50%;\"> BLASTing &nbsp; <img alt=\"Loading\" src=\"./images/browser/loading_big.gif\" style=\"position: relative;\"> </span> </div>");

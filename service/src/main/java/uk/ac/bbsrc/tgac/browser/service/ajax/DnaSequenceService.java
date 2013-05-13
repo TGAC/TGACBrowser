@@ -35,9 +35,6 @@ public class DnaSequenceService {
   protected static final Logger log = LoggerFactory.getLogger(DnaSequenceService.class);
   @Autowired
   private SequenceStore sequenceStore;
-//  private SamBamService sambamservice;
-
-  /* user the store interface */
 
   public void setSequenceStore(SequenceStore sequenceStore) {
     this.sequenceStore = sequenceStore;
@@ -46,29 +43,21 @@ public class DnaSequenceService {
   public JSONObject searchSequence(HttpSession session, JSONObject json) {
     String seqName = json.getString("query");
     JSONObject response = new JSONObject();
-    JSONArray tracks = new JSONArray();
     try {
-      log.info("seqname "+seqName);
 
       Integer queryid = sequenceStore.getSeqRegionearchsize(seqName);
-      log.info("queryid "+queryid);
 
       if (queryid > 1) {
-        log.info("queryid > 1");
         response.put("html", "seqregion");
         response.put("seqregion", sequenceStore.getSeqRegionSearch(seqName));
       }
       else if (queryid == 0) {
-        log.info("queryid == 0 ");
-
         response.put("html", "gene");
         response.put("gene", sequenceStore.getGenesSearch(seqName));
         response.put("transcript", sequenceStore.getTranscriptSearch(seqName));
         response.put("GO", sequenceStore.getGOSearch(seqName));
       }
       else {
-        log.info("queryid else "+ queryid);
-
         Integer query = sequenceStore.getSeqRegion(seqName);
         String seqRegName = sequenceStore.getSeqRegionName(query);
         String seqlength = sequenceStore.getSeqLengthbyId(query);
@@ -90,13 +79,10 @@ public class DnaSequenceService {
   public JSONObject seqregionSearchSequence(HttpSession session, JSONObject json) throws IOException {
     try {
       JSONObject response = new JSONObject();
-      JSONArray tracks = new JSONArray();
       String seqName = json.getString("query");
       Integer query = sequenceStore.getSeqRegionforone(seqName);
       String seqRegName = sequenceStore.getSeqRegionName(query);
       String seqlength = sequenceStore.getSeqLengthbyId(query);
-
-      Integer queryid_coord_system_id = sequenceStore.getSeqRegionCoordId(seqName);
 
       response.put("seqlength", seqlength);
       response.put("html", "");
@@ -113,41 +99,7 @@ public class DnaSequenceService {
 
   }
 
-//  public JSONObject seqregionSearchSequence(HttpSession session, JSONObject json) throws IOException {
-//    try {
-//
-//      JSONObject response = new JSONObject();
-//      JSONArray tracks = new JSONArray();
-//      String query = json.getString("query");
-//
-//     String dna  = "";
-//      int seqRegion = sequenceStore.getSeqRegion(query);
-//      if(seqRegion ==0){
-//           response.put("html", "gene");
-////           sequenceStore.getGeneSearch
-//      } else{
-//         dna = sequenceStore.getSeqBySeqRegionId(seqRegion);
-//        response.put("html", dna);
-//      response.put("seqname", "<p> <b>Seq Region ID:</b> " + sequenceStore.getSeqRegion(query) + ",<b> Name: </b> " + query);//+", <b>cds:</b> "+cds+"</p>");
-//      response.put("seqregname", query);
-//      response.put("tracklists", sequenceStore.getAnnotationId());
-//      }
-//
-//
-//
-//
-//
-//      return response; //JSONUtils.JSONObjectResponse("html", dna);
-//    }
-//    catch (IOException e) {
-//      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-//      return JSONUtils.SimpleJSONError(e.getMessage());
-//    }
-//
-//  }
-
   public JSONObject searchSeqRegionforMap(HttpSession session, JSONObject json) {
-     log.info("here");
      String seqName = "";
      JSONObject response = new JSONObject();
      try {
@@ -180,23 +132,18 @@ public class DnaSequenceService {
         response.put(trackName, SamBamService.getWig(start, end, delta, trackId, seqName));
       }
       else if (trackId.indexOf("cs") >= 0) {
-//        graph code
         response.put(trackName, sequenceStore.getAssembly(queryid, trackId, delta));
       }
       else if (sequenceStore.getLogicNameByAnalysisId(Integer.parseInt(trackId)).matches("(?i).*repeat.*")) {
-        log.info("repeat" + trackName);
         if (sequenceStore.countRepeat(queryid, trackId, start, end) < 5000) {
           response.put(trackName, sequenceStore.processRepeat(sequenceStore.getRepeat(queryid, trackId, start, end), start, end, delta, queryid, trackId));
         }
         else {
-          response.put("type", "graph");
           response.put(trackName, sequenceStore.getRepeatGraph(queryid, trackId, start, end));
         }
       }
       else if (sequenceStore.getLogicNameByAnalysisId(Integer.parseInt(trackId)).matches("(?i).*gene.*")) {
-        log.info("gene" + trackName);
         if (sequenceStore.countGene(queryid, trackId, start, end) < 1000) {
-          log.info("gene" + sequenceStore.countGene(queryid, trackId, start, end));
           response.put(trackName, sequenceStore.processGenes(sequenceStore.getGenes(queryid, trackId), start, end, delta, queryid, trackId));
         }
         else {
@@ -205,7 +152,6 @@ public class DnaSequenceService {
         }
       }
       else {
-        log.info("hit" + trackName);
         if (sequenceStore.countHit(queryid, trackId, start, end) < 5000) {
           response.put(trackName, sequenceStore.processHit(sequenceStore.getHit(queryid, trackId, start, end), start, end, delta, queryid, trackId));
         }
@@ -324,88 +270,4 @@ public class DnaSequenceService {
       return JSONUtils.SimpleJSONError(e.getMessage());
     }
   }
-//  public JSONArray getSamBam(long start, long end, int delta) {
-//      JSONArray sam = new JSONArray();
-//      JSONObject response = new JSONObject();
-//      try {
-//        final File inputfile = new File("../webapps/vietnamese_rice/temp/temp.sam");
-////        final File inputfile = new File("../webapps/vietnamese_rice/temp/Pla.bam");
-////        final File index = new File("../webapps/vietnamese_rice/temp/Pla.bam.bai");
-//        final SAMFileReader inputSam;
-//        inputSam = new SAMFileReader(inputfile);//, index, false);
-//
-//        List<Integer> ends = new ArrayList<Integer>();
-//              ends.add(0, 0);
-////
-//        for (final SAMRecord samRecord : inputSam) {
-//          int cigar_pos = 0;
-//          int cigar_len = 0;
-//          int start_pos = samRecord.getAlignmentStart();
-//          int end_pos = samRecord.getAlignmentEnd();
-//
-//          if (start_pos >= start && end_pos <= end || start_pos <= start && end_pos >= end || end_pos >= start && end_pos <= end || start_pos >= start && start_pos <= end) {
-//            JSONObject read = new JSONObject();
-//            JSONObject cigars = new JSONObject();
-//            // Convert read name to upper case.
-//            read.put("cigar", samRecord.getCigar().toString());
-//            read.put("start", samRecord.getAlignmentStart());
-//            read.put("end", samRecord.getAlignmentEnd());
-//            read.put("desc", samRecord.getReadName().toString());
-//            read.put("layer", ends.size());
-//            //        read.put("seq", samRecord.getReadString().toString());
-//            List<CigarElement> cigarelemts = samRecord.getCigar().getCigarElements();
-//            for (CigarElement c : cigarelemts) {
-//
-//              if (cigars.containsKey(c.getOperator().toString())) {
-//                cigars.put(c.getOperator(), cigars.get(c.getOperator().toString()).toString() + "," +cigar_pos+":"+c.getLength());
-//              }
-//              else {
-//                cigars.put(c.getOperator(), cigar_pos+":"+c.getLength());
-//              }
-//
-//              if(c.getOperator().toString().equalsIgnoreCase("I") || c.getOperator().toString().equalsIgnoreCase("M") || c.getOperator().toString().equalsIgnoreCase("=") || c.getOperator().toString().equalsIgnoreCase("X")){
-//                cigar_pos +=  c.getLength();
-//              } else if(c.getOperator().toString().equalsIgnoreCase("D") || c.getOperator().toString().equalsIgnoreCase("N")){
-////                 nothing doing here
-//              }
-////              soft clip and hard clip not included
-//            }
-//            for (int i = 0; i < ends.size(); i++) {
-//                if (start_pos - ends.get(i) > delta) {
-//                  ends.remove(i);
-//                  ends.add(i, end_pos);
-//                  read.put("layer", i + 1);
-//                  break;
-//                }
-//                else if ((start_pos - ends.get(i) < delta) && (i + 1) == ends.size()) {
-//                  if (i == 0) {
-//                    read.put("layer", ends.size());
-//                    ends.add(i, end_pos);
-//                  }
-//                  else {
-//                    read.put("layer", ends.size());
-//                    ends.add(ends.size(), end_pos);
-//                  }
-//                  break;
-//                }
-//                else {
-//                   continue;
-//                }
-//              }
-//            read.put("cigars", cigars);
-//            sam.add(read);
-//          }
-//        }
-//
-//        return sam;
-//      }
-//      catch (Exception e) {
-//        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-//        response.put("error", e.toString());
-//        sam.add(response);
-//        return sam;
-//      }
-//    }
-
-
 }

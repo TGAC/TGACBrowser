@@ -6,14 +6,8 @@ import net.sourceforge.fluxion.ajax.Ajaxified;
 import net.sourceforge.fluxion.ajax.util.JSONUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXParseException;
 
 import javax.servlet.http.HttpSession;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -33,7 +27,6 @@ import java.util.regex.Pattern;
 public class BlastNCBI {
 
   private Logger log = LoggerFactory.getLogger(getClass());
-  private BlastService blastService;
 
   public JSONObject ncbiBlastSearchTrack(HttpSession session, JSONObject json) throws IOException {
     try {
@@ -94,16 +87,13 @@ public class BlastNCBI {
   public JSONObject ncbiBlastGetResultTrack(HttpSession session, JSONObject json) throws IOException {
     try {
       String blastAccession = json.getString("BlastAccession");
-//      String blastDB = json.getString("db");
       int query_start = json.getInt("start");
       int query_end = json.getInt("end");
       int noofhits = json.getInt("hit");
       String location = json.getString("location");
-      JSONObject jsonObject = new JSONObject();
-      JSONArray jsonArray = new JSONArray();
       String urlParameters = "RID=" + blastAccession +
                              "&ALIGNMENT_VIEW=XML" +
-                             "&FORMAT_TYPE=XML";// + blastdb +
+                             "&FORMAT_TYPE=XML";
 
       StringBuilder sb = new StringBuilder();
       String str;
@@ -111,10 +101,10 @@ public class BlastNCBI {
       JSONArray blasts = new JSONArray();
       sb.append(connectNCBI(urlParameters));//;new DataInputStream(connection.getInputStream());
       str = connectNCBI(urlParameters);
+
       while (str == "running") {
         str = connectNCBI(urlParameters);
         if (str == "finished") {
-//            log.info(parseNCBIXML(urlParameters, query_start, query_end, noofhits, location).toString());
           blasts = parseNCBIXML(urlParameters, query_start, query_end, noofhits, location, blastAccession);
           break;
         }
@@ -134,11 +124,9 @@ public class BlastNCBI {
 
   private JSONArray parseNCBIXML(String urlParameters, int query_start, int query_end, int noofhits, String location, String blastAccession) {
     log.info("parse XML");
-    log.info(urlParameters);
 
     try {
-      StringBuffer sb = new StringBuffer();
-      String str, str1 = "";
+      String str;
       URL url = new URL("http://www.ncbi.nlm.nih.gov/blast/Blast.cgi?CMD=Get&");
 
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -150,19 +138,15 @@ public class BlastNCBI {
       connection.setRequestProperty("charset", "utf-8");
       connection.setRequestProperty("Content-Length", "" + Integer.toString(urlParameters.getBytes().length));
       connection.setUseCaches(false);
-      log.info(urlParameters);
 
       DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
       wr.writeBytes(urlParameters);
       wr.flush();
       wr.close();
       DataInputStream input = new DataInputStream(connection.getInputStream());
-      //      log.info(input.readLine());
       BufferedWriter out = new BufferedWriter(new FileWriter("../webapps/" + location + "/temp/" + blastAccession + ".json"));
       String hsp_from = "";
-
       String hsp_score = "";
-
       String hsp_to = "";
       String hit_id = "";
       String mid_line = "";
@@ -171,6 +155,7 @@ public class BlastNCBI {
       int findHits = 1;
       int in = 0;
       JSONArray blasts = new JSONArray();
+
       while (null != (str = input.readLine())) {
         Pattern p = Pattern.compile("<Hit_def>(.*)</Hit_def>");
         Matcher matcher_comment = p.matcher(str);
@@ -233,7 +218,6 @@ public class BlastNCBI {
               eachIndel.put("query", hsp_qseq.substring((ins - 3) > -1 ? (ins - 3) : 0, (ins + 2) <= hsp_qseq.length() ? (ins + 2) : hsp_qseq.length()));
               eachIndel.put("hit", hsp_hseq.substring((ins - 3) > -1 ? (ins - 3) : 0, (ins + 2) <= hsp_hseq.length() ? (ins + 2) : hsp_hseq.length()));
               indels.add(eachIndel);
-//              ins = (newtemp[x].length() + 1);
             }
           }
           eachBlast.put("indels", indels);
@@ -245,7 +229,6 @@ public class BlastNCBI {
           log.info(hit_id + " " + hsp_from + " " + hsp_to + " " + hsp_to + " " + hsp_score + " " + mid_line + " " + hsp_hseq + " " + hsp_qseq);
           hit_id = "";
           hsp_from = "";
-          hsp_to = "";
           hsp_to = "";
           hsp_score = "";
           mid_line = "";
@@ -274,8 +257,6 @@ public class BlastNCBI {
 
   public JSONObject ncbiBlastSearchSequence(HttpSession session, JSONObject json) throws IOException {
     try {
-      log.info("blast search");
-      log.info(json.toString());
       String blastdb = json.getString("blastdb");
       StringBuilder sb = new StringBuilder();
       String query = json.getString("querystring");
@@ -373,12 +354,7 @@ public class BlastNCBI {
 
 
       String result = null;
-      //      if (i > 0) {
       result = sb.toString();
-      //      }
-      //      else {
-      //        result = "No hits found.";
-      //      }
 
       return JSONUtils.JSONObjectResponse("html", result);
     }
@@ -418,11 +394,9 @@ public class BlastNCBI {
       Pattern p = Pattern.compile("<!DOCTYPE html.*");
       Matcher matcher_comment = p.matcher(str);
       if (matcher_comment.find()) {
-        log.info("running");
         str = "running";
       }
       else {
-        log.info("finished");
         str = "finished";
       }
       return str;

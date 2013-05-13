@@ -37,7 +37,6 @@ public class SamBamService {
         inputSam = new SAMFileReader(inputfile);
       }
       else if (trackId.indexOf("bam") >= 0) {
-        log.info("bam");
         final File index = new File(trackId + ".bai");
         inputSam = new SAMFileReader(inputfile, index, false);
       }
@@ -53,11 +52,9 @@ public class SamBamService {
         int end_pos = samRecord.getAlignmentEnd();
         String ref = samRecord.getReferenceName();
         if (ref.equalsIgnoreCase(referece) && (start_pos >= start && end_pos <= end || start_pos <= start && end_pos >= end || end_pos >= start && end_pos <= end || start_pos >= start && start_pos <= end)) {
-//        if ((start_pos >= start && end_pos <= end || start_pos <= start && end_pos >= end || end_pos >= start && end_pos <= end || start_pos >= start && start_pos <= end)) {
           JSONObject read = new JSONObject();
           JSONObject cigars = new JSONObject();
 //          // Convert read name to upper case.
-//          read.put("cigar", samRecord.getCigar().toString());
           read.put("start", samRecord.getAlignmentStart());
           read.put("end", samRecord.getAlignmentEnd());
           read.put("desc", samRecord.getReadName().toString());
@@ -105,7 +102,6 @@ public class SamBamService {
           sam.add(read);
         }
       }
-      log.info("size " + sam.size());
       return sam;
     }
     catch (Exception e) {
@@ -135,12 +131,9 @@ public class SamBamService {
         if ((sCurrentLine.contains("variableStep"))) {
           Matcher matcher_comment = p.matcher(sCurrentLine);
           if (matcher_comment.find()) {
-
-//            log.info(sCurrentLine + ": found");
             found = true;
           }
           else {
-//            log.info(sCurrentLine);
             found = false;
           }
         }
@@ -151,7 +144,6 @@ public class SamBamService {
 
         }
         else if (found == true) {
-//          log.info(line.length + ":" + sCurrentLine);
         }
         else {
 
@@ -164,8 +156,7 @@ public class SamBamService {
         sortedJArray.add(obj);
       }
 
-      if(wig.size() == 0)
-      {
+      if (wig.size() == 0) {
         wig.add("");
       }
       return wig;

@@ -8,8 +8,6 @@
 function blastSearch(query, db, type) {
 //        ncbiBLAST(query, db) {
   ajaxurl = '/' + jQuery('#title').text() + '/' + jQuery('#title').text() + '/fluxion.ajax';
-//  var query = "ACGACTAGCATCGACTAGCACTGACT";
-//  var db = "nr";
   var link = "";
   var id = randomString(8);
   var format = "format";
@@ -26,13 +24,10 @@ function blastSearch(query, db, type) {
           });
 }
 
-//function ncbiBLASTTrack(query, db)
 function blastTrackSearch(query, start, end, hit, db, type) {
   jQuery("#notifier").html("<img src='images/browser/loading2.gif' height='10px'> BLAST running ");
   jQuery("#notifier").show();
   ajaxurl = '/' + jQuery('#title').text() + '/' + jQuery('#title').text() + '/fluxion.ajax';
-//  var query = "ACGACTAGCATCGACTAGCACTGACT";
-//  var db = "nr";
   var link = path;
   var id = randomString(8);
   var format = "format";
@@ -78,8 +73,6 @@ function blastTrackSearch(query, start, end, hit, db, type) {
           });
 }
 function checkTask(id, db, format, start, end, hit, link) {
-  console.log("check task")
-  console.log(id + "," + db + "," + format + "," + start + "," + end + "," + hit + "," + link)
   ajaxurl = '/' + jQuery('#title').text() + '/' + jQuery('#title').text() + '/fluxion.ajax';
   var link = path;
 
@@ -101,13 +94,10 @@ function checkTask(id, db, format, start, end, hit, link) {
               window['blasttrack'] = json.blast;//(decodeURIComponent(json.blast.replace(/\s+/g, ""))).replace(/>/g, "");
             }
             else {
-              //                          window['blasttrack'].push(json.blast);
               jQuery.merge(window['blasttrack'], json.blast);
             }
             jQuery('input[name=blasttrackCheckbox]').attr('checked', true);
-            //                          jQuery("#mergetracklist").append("<span id=blastcheckmerge> <input type=\"checkbox\" id='blasttrackmergedCheckbox' name='blasttrackmergedCheckbox' onClick=mergeTrack(\"blasttrack\"); value=blasttrack >Blast Track</span>");
             trackToggle("blasttrack");
-
           },
             'doOnError': function (json) {
               alert(json.error);
@@ -124,7 +114,7 @@ function ncbiBLASTResult(id) {
   Fluxion.doAjax(
           'blastServiceNCBI',
           'ncbiBlastGetResult',
-          {'url': ajaxurl, 'querystring': query, 'blastdb': db, 'location': link, 'BlastAccession': id, 'format': format},
+          {'url': ajaxurl,  'BlastAccession': id, 'format': format},
           {'doOnSuccess': function (json) {
             jQuery('#blastresult').html(json.html);
             jQuery("#blasttable").tablesorter();
