@@ -7,22 +7,9 @@ import net.sf.json.JSONObject;
 import net.sourceforge.fluxion.ajax.Ajaxified;
 import net.sourceforge.fluxion.ajax.util.JSONUtils;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.security.core.codec.Base64;
 
 import javax.servlet.http.HttpSession;
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.Socket;
-import java.net.URL;
-import java.net.UnknownHostException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -56,10 +43,6 @@ public class BlastServiceLocal {
 
       String file = "../webapps/" + location + "/temp/" + json.getString("BlastAccession") + ".xml";
 
-//      link     location etc
-//      multiple blast ??
-
-
       String type = json.getString("type");
       String blastBinary = json.getString("blastBinary");
       String blastDB = "/storage/blastdb/choblastdb/TGAC_CHO_v1.2_COMPLETE.fa";
@@ -81,21 +64,11 @@ public class BlastServiceLocal {
       proc.waitFor();
       FileInputStream fstream = new FileInputStream(file);
 
-//// get its output (your input) stream
       String str = "running";
-//      while (str == "running") {
-//        str = checkFile(file);
-//        if (str == "finished") {
-////          log.info(parseNCBIXML(urlParameters, query_start, query_end, noofhits, location).toString());
-////          blasts = parseNCBIXML(urlParameters, query_start, query_end, noofhits, location);
-//          break;
-//        }
-//      }
+
 
       DataInputStream input = new DataInputStream(fstream);
 
-//      DataInputStream input = new DataInputStream(connection.getInputStream());
-//      String str;
       int i = 0;
       sb.append("<table class='list' id='blasttable'> <thead><tr>  " +
                 "<th class=\"header\"> Query id </th>" +
@@ -125,7 +98,6 @@ public class BlastServiceLocal {
             String str1 = str.replaceAll("\\s+", "<td>");
             String[] id;
             id = str1.split("<td>");
-            Pattern pline = Pattern.compile(".*1_.*");
             String seqregionName = id[1];
             String hsp_from = id[8];
             String hsp_to = id[9];
@@ -137,8 +109,6 @@ public class BlastServiceLocal {
             else {
               str2 = str1;
             }
-//            String str2 = str1.replaceAll(id[1], "<a href=\"javascript:void(0);\" onclick=\"seqregionSearch(\'" + seqregionName + "\')\">"
-//                                                 + seqregionName + "</a>");
             sb.append("<tr> <td> " + str2 + "</td></tr>");
             i++;
           }
@@ -165,41 +135,12 @@ public class BlastServiceLocal {
 
   }
 
-  ////check file if exist
-//  private String checkFile(String file) {
-//
-//      try {
-//
-//          String str = "";
-//
-//        if (new File(file).exists()) {
-//          log.info("running");
-//          str = "running";
-//        }
-//        else {
-//          log.info("finished");
-//          str = "finished";
-//        }
-//        return str;
-//      }
-//      catch (Exception e) {
-//        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-//        String sb = e.toString();
-//        return sb;
-//      }
-//    }
-//
-//
+
   public JSONObject blastSearchTrack(HttpSession session, JSONObject json) throws IOException {
     log.info(json.toString());
 
-//    String blastdb = json.getString("blastdb");
     String fasta = json.getString("query");
-//    String blastBinary = "/opt/blast+/blastn";
     String blastBinary = json.getString("blastBinary");
-
-    String blastDB = "/storage/blastdb/choblastdb/TGAC_CHO_v1.2_COMPLETE.fa";
-
     String blastdb = json.getString("blastdb");
     int query_start = json.getInt("start");
     int query_end = json.getInt("end");
@@ -207,19 +148,12 @@ public class BlastServiceLocal {
     String location = json.getString("location");
     String type = json.getString("type");
     String file = "../webapps/" + location + "/temp/" + json.getString("BlastAccession") + ".xml";
-    StringBuilder sb1 = new StringBuilder();
 
     JSONObject blast_response = new JSONObject();
-
-//    int query_start = json.getInt("start");
-//    int query_end = json.getInt("end");
-//    int noofhits = json.getInt("hit");
-//    StringBuilder sb1 = new StringBuilder();
 
     File fastaTmp = File.createTempFile("blast", ".fa");
     DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
     Document dom;
-//    dom = parser.newDocument();
 
     try {
       PrintWriter out = new PrintWriter(fastaTmp);
@@ -228,14 +162,9 @@ public class BlastServiceLocal {
       out.close();
 
       String execBlast = blastBinary + "/" + type + " -db " + blastdb + " -query " + fastaTmp + " -out " + file + " -outfmt 5 -max_target_seqs 10";
-      log.info("execBlast " + execBlast);
       Process proc = Runtime.getRuntime().exec(execBlast);
 
-      log.info("\n\n\nrun time" + Runtime.getRuntime());
-// get its output (your input) stream
       proc.waitFor();
-//      DataInputStream input = new DataInputStream(
-//                  proc.getInputStream());
 
       FileInputStream fstream = new FileInputStream(file);
       DataInputStream input = new DataInputStream(fstream);
@@ -293,7 +222,6 @@ public class BlastServiceLocal {
                   eachIndel.put("query", hsp_query_seq.substring((ins - 3) > -1 ? (ins - 3) : 0, (ins + 2) <= hsp_query_seq.length() ? (ins + 2) : hsp_query_seq.length()));
                   eachIndel.put("hit", hsp_hit_seq.substring((ins - 3) > -1 ? (ins - 3) : 0, (ins + 2) <= hsp_hit_seq.length() ? (ins + 2) : hsp_hit_seq.length()));
                   indels.add(eachIndel);
-//                 ins = (newtemp[x].length() + 1);
                 }
               }
 
@@ -308,9 +236,6 @@ public class BlastServiceLocal {
 
             }
           }
-
-          //get the Employee object
-
         }
       }
 
@@ -319,7 +244,7 @@ public class BlastServiceLocal {
       }
       blast_response.put("id", json.getString("BlastAccession"));
       blast_response.put("blast", blasts);
-      return blast_response; //JSONUtils.JSONObjectResponse("blast", result);
+      return blast_response;
 
     }
     catch (SAXParseException sax) {
@@ -362,8 +287,6 @@ public class BlastServiceLocal {
         isExist = fileExist(file);
         if (isExist == true) {
           log.info("loop if" + isExist);
-
-//            log.info(parseNCBIXML(urlParameters, query_start, query_end, noofhits, location).toString());
           blasts = parseFileXML(file, query_start, query_end, noofhits, link, location);
           break;
         }
@@ -442,9 +365,6 @@ public class BlastServiceLocal {
 
               eachBlast.put("start", query_start + Integer.parseInt(hsp_from));
               eachBlast.put("end", query_start + Integer.parseInt(hsp_to));
-//              eachBlast.put("desc", "<a href=\"javascript:void(0);\" onclick=\"seqregionSearchPopup(\'" + hit_id + "\')\">"
-//                                    + hit_id + "</a>");
-
               if (link.length() > 0) {
                 eachBlast.put("desc", " <a target='_blank' href='../" + location + "/index.jsp?query=" + hit_id + "&from=" + hsp_from + "&to=" + hsp_to + "'>"
                                       + hit_id + "</a>");
@@ -468,7 +388,6 @@ public class BlastServiceLocal {
                   eachIndel.put("query", hsp_query_seq.substring((ins - 3) > -1 ? (ins - 3) : 0, (ins + 2) <= hsp_query_seq.length() ? (ins + 2) : hsp_query_seq.length()));
                   eachIndel.put("hit", hsp_hit_seq.substring((ins - 3) > -1 ? (ins - 3) : 0, (ins + 2) <= hsp_hit_seq.length() ? (ins + 2) : hsp_hit_seq.length()));
                   indels.add(eachIndel);
-                  //                 ins = (newtemp[x].length() + 1);
                 }
               }
 
@@ -478,9 +397,7 @@ public class BlastServiceLocal {
               findHits++;
               if (findHits > noofhits) {
                 break HIT;
-
               }
-
             }
           }
           else {

@@ -6,8 +6,7 @@
  * To change this template use File | Settings | File Templates.
  */
 var blastbinary = jQuery("#blastLocation").html();
-//var type = 'blastn';
-//var location = "";
+
 function blastSearch(query, db, type) {
   blastbinary = jQuery("#blastLocation").html();
   jQuery("#notifier").html("<img src='images/browser/loading2.gif' height='10px'> BLAST running ");
@@ -24,7 +23,7 @@ function blastSearch(query, db, type) {
   Fluxion.doAjax(
           'blastservicelocal',
           'blastSearchSequence',
-          {'query': query, 'blastdb': db, 'location': location, 'type': type, 'url': ajaxurl, 'BlastAccession': id, 'blastBinary': blastbinary},
+          {'query': query, 'blastdb': db, 'location': location, 'type': type, 'url': ajaxurl, 'BlastAccession': id, 'blastBinary': blastbinary, 'link': link},
           {'doOnSuccess': function (json) {
             jQuery('#main').animate({"height": "0px"}, { duration: 300, queue: false});
             jQuery('#main').fadeOut();
@@ -55,17 +54,10 @@ function blastTrackSearch(query, start, end, hit, db, type) {
             {name: "blasttrack", display_label: "blasttrack", id: 0, desc: "blast from browser", disp: 1, merge: 0}
     );
     window['blasttrack'] = "running";
-    //delete window['blasttrack'];
-    //delete track_list.splice(track_list.length, 1);
-    //jQuery("#blasttrack_div").remove();
-    //jQuery("#blastcheck").remove();
-    //jQuery("#blastcheckmerge").remove();
   }
 
   ajaxurl = '/' + jQuery('#title').text() + '/' + jQuery('#title').text() + '/fluxion.ajax';
   var location = jQuery('#title').text();
-  var preset = false;
-  var id = randomString(8);
   var database = db.split(":");
   db = database[0];
   var id = randomString(8);
@@ -81,38 +73,31 @@ function blastTrackSearch(query, start, end, hit, db, type) {
             hit: hit,
             link: link,
             format: 5,
-            type: type,
+            type: type
           });
 
-//  jQuery("#blasttrack_div").html("<div align='left' class='handle'><b> Blasttrack </b> </div> <img style='position: fixed; left: 50%; ' src='./images/browser/loading.gif' alt='Loading'>")
-//  jQuery("#blasttrack_div").fadeIn();
   Fluxion.doAjax(
           'blastservicelocal',
           'blastSearchTrack',
           {'query': query, 'blastdb': db, 'location': location, 'url': ajaxurl, 'start': start, 'end': end, 'hit': hit, 'BlastAccession': id, 'type': type, 'blastBinary': blastbinary},
           {'doOnSuccess': function (json) {
-            checkTask(id, blastdb, 5, start, end, hit, location);
-//            findAndRemove(blastsdata, 'id', json.id);
-//
-//            if (blastsdata.length == 0) {
-//              jQuery("#notifier").hide()
-//              jQuery("#notifier").html("");
-//            }
-//            if (!window['blasttrack']) {
-//              window['blasttrack'] = "running";
-//            }
-//            if (window['blasttrack'] == "running") {
-//              window['blasttrack'] = json.blast;//(decodeURIComponent(json.blast.replace(/\s+/g, ""))).replace(/>/g, "");
-//            }
-//            else {
-////                          window['blasttrack'].push(json.blast);
-//              jQuery.merge(window['blasttrack'], json.blast);
-//            }
-//            jQuery('input[name=blasttrackCheckbox]').attr('checked', true);
-////                          jQuery("#mergetracklist").append("<span id=blastcheckmerge> <input type=\"checkbox\" id='blasttrackmergedCheckbox' name='blasttrackmergedCheckbox' onClick=mergeTrack(\"blasttrack\"); value=blasttrack >Blast Track</span>");
-//            trackToggle("blasttrack");
+            findAndRemove(blastsdata, 'id', json.id);
 
-
+            if (blastsdata.length == 0) {
+              jQuery("#notifier").hide()
+              jQuery("#notifier").html("");
+            }
+            if (!window['blasttrack']) {
+              window['blasttrack'] = "running";
+            }
+            if (window['blasttrack'] == "running") {
+              window['blasttrack'] = json.blast;//(decodeURIComponent(json.blast.replace(/\s+/g, ""))).replace(/>/g, "");
+            }
+            else {
+              jQuery.merge(window['blasttrack'], json.blast);
+            }
+            jQuery('input[name=blasttrackCheckbox]').attr('checked', true);
+            trackToggle("blasttrack");
           }
           });
 }
@@ -135,18 +120,11 @@ function checkTask(task, db, format, start, end, hit, link) {
             {name: "blasttrack", display_label: "blasttrack", id: 0, desc: "blast from browser", disp: 1, merge: 0}
     );
     window['blasttrack'] = "running";
-    //delete window['blasttrack'];
-    //delete track_list.splice(track_list.length, 1);
-    //jQuery("#blasttrack_div").remove();
-    //jQuery("#blastcheck").remove();
-    //jQuery("#blastcheckmerge").remove();
   }
 
   ajaxurl = '/' + jQuery('#title').text() + '/' + jQuery('#title').text() + '/fluxion.ajax';
   var location = jQuery('#title').text();
 
-//  jQuery("#blasttrack_div").html("<div align='left' class='handle'><b> Blasttrack </b> </div> <img style='position: fixed; left: 50%; ' src='./images/browser/loading.gif' alt='Loading'>")
-//  jQuery("#blasttrack_div").fadeIn();
   Fluxion.doAjax(
           'blastservicelocal',
           'checkBlast',
@@ -166,14 +144,10 @@ function checkTask(task, db, format, start, end, hit, link) {
               window['blasttrack'] = json.blast;//(decodeURIComponent(json.blast.replace(/\s+/g, ""))).replace(/>/g, "");
             }
             else {
-//                          window['blasttrack'].push(json.blast);
               jQuery.merge(window['blasttrack'], json.blast);
             }
             jQuery('input[name=blasttrackCheckbox]').attr('checked', true);
-//                          jQuery("#mergetracklist").append("<span id=blastcheckmerge> <input type=\"checkbox\" id='blasttrackmergedCheckbox' name='blasttrackmergedCheckbox' onClick=mergeTrack(\"blasttrack\"); value=blasttrack >Blast Track</span>");
             trackToggle("blasttrack");
-
-
           }
           });
 }

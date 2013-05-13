@@ -86,7 +86,6 @@ public class BlastService {
             String str1 = str.replaceAll("\\s+", "<td>");
             String[] id;
             id = str1.split("<td>");
-            Pattern pline = Pattern.compile(".*1_.*");
             String seqregionName = id[1];
             String hsp_from = id[8];
             String hsp_to = id[9];
@@ -125,118 +124,19 @@ public class BlastService {
 
   }
 
-//
-//  public JSONObject blastSearchSequence(HttpSession session, JSONObject json) throws IOException {
-//    try {
-//      String blastDB = json.getString("db");
-//      String blastAccession = json.getString("accession");
-//      StringBuilder sb = new StringBuilder();
-//
-//      FileInputStream fstream = new FileInputStream("/net/tgac-cfs3/ifs/TGAC/browser/jobs/" + blastAccession + ".xml");
-//      log.info(">>>" + fstream);
-//      DataInputStream in = new DataInputStream(fstream);
-//      String str;
-//      int i = 0;
-//      sb.append("<table class='list' id='blasttable'> <thead><tr>  " +
-////                "<th class=\"header\"> Query id </th>" +
-//                "<th class=\"header\"> Subject id </th> " +
-//                "<th class=\"header\"> % identity </th> " +
-//                "<th class=\"header\"> alignment length </th> " +
-//                "<th class=\"header\"> mismatches </th> " +
-//                "<th class=\"header\"> gap openings </th> " +
-//                "<th class=\"header\"> q.start </th> " +
-//                "<th class=\"header\"> q.end </th> " +
-//                "<th class=\"header\"> s.start </th> " +
-//                "<th class=\"header\"> s.end </th> " +
-//                "<th class=\"header\"> e-value </th> " +
-//                "<th class=\"header\"> bit score </th></tr></thead><tbody>");
-//      while (null != (str = in.readLine())) {
-//
-//        Pattern p = Pattern.compile("#");
-//        Matcher matcher_comment = p.matcher(str);
-//        if (matcher_comment.find()) {
-//        }
-//        else {
-//          Pattern p1 = Pattern.compile("<.*>");
-//          Matcher matcher_score = p1.matcher(str);
-//          if (matcher_score.find()) {
-//          }
-//          else {
-//            String[] list = str.split("\\s+");
-//             sb.append("<tr><td>");
-//            if (blastDB.equals("/net/tgac-cfs3/ifs/TGAC/browser/jobs/choblastdb/TGAC_CHO_v2.0_COMPLETE.fa")) {
-//              sb.append(" <a target='_blank' href='../CHO/index.jsp?query=" + list[1] + "&blasttrack="+blastAccession+"'>"
-//                                            +  list[1] + "</a>");
-//            }
-//            else if (blastDB.equals("/net/tgac-cfs3/ifs/TGAC/browser/jobs/choblastdb/unplaced.scaf.fa")) {
-//              sb.append(" <a target='_blank' href='../chobgi/index.jsp?query=" +  list[1] + "&blasttrack="+blastAccession+"'>"
-//                                            +  list[1] + "</a>");
-//            }
-//            else {
-//              sb.append(list[1]);
-//            }
-//            sb.append("</td><td>");
-//            sb.append(list[2]);
-//            sb.append("</td><td>");
-//            sb.append(list[3]);
-//            sb.append("</td><td>");
-//            sb.append(list[4]);
-//            sb.append("</td><td>");
-//            sb.append(list[5]);
-//            sb.append("</td><td>");
-//            sb.append(list[6]);
-//            sb.append("</td><td>");
-//            sb.append(list[7]);
-//            sb.append("</td><td>");
-//            sb.append(list[8]);
-//            sb.append("</td><td>");
-//            sb.append(list[9]);
-//            sb.append("</td><td>");
-//            sb.append(list[10]);
-//            sb.append("</td><td>");
-//            sb.append(list[11]);
-//            sb.append("</td></tr>");
-//            i++;
-//          }
-//        }
-//      }
-//      sb.append("</tbody></table");
-//
-//      in.close();
-//
-//      String result = null;
-//      if (i > 0) {
-//        result = sb.toString();
-//      }
-//      else {
-//        result = "No hits found.";
-//      }
-//
-//      return JSONUtils.JSONObjectResponse("html", result);
-//    }
-//    catch (Exception e) {
-//      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-//      return JSONUtils.SimpleJSONError(e.getMessage());
-//    }
-//
-//  }
 
   public JSONObject blastSearchTrack(HttpSession session, JSONObject json) throws IOException {
     String blastAccession = json.getString("accession");
 
     JSONObject blast_response = new JSONObject();
 
-    String blastDB = json.getString("db");
     int query_start = json.getInt("start");
     int query_end = json.getInt("end");
     int noofhits = json.getInt("hit");
     String location = json.getString("location");
-    StringBuilder sb1 = new StringBuilder();
 
-    File fastaTmp = File.createTempFile("blast", ".fa");
     DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
     Document dom;
-//    dom = parser.newDocument();
 
     try {
 
@@ -289,8 +189,6 @@ public class BlastService {
                 eachBlast.put("desc", hit_id);
               }
 
-//              eachBlast.put("desc", "<a href=\"javascript:void(0);\" onclick=\"seqregionSearchPopup(\'" + hit_id + "\')\">"
-//                                    + hit_id + "</a>");
               eachBlast.put("score", hsp_score);
               eachBlast.put("flag", false);
               eachBlast.put("reverse", "");
@@ -307,7 +205,6 @@ public class BlastService {
                   eachIndel.put("query", hsp_query_seq.substring((ins - 3) > -1 ? (ins - 3) : 0, (ins + 2) <= hsp_query_seq.length() ? (ins + 2) : hsp_query_seq.length()));
                   eachIndel.put("hit", hsp_hit_seq.substring((ins - 3) > -1 ? (ins - 3) : 0, (ins + 2) <= hsp_hit_seq.length() ? (ins + 2) : hsp_hit_seq.length()));
                   indels.add(eachIndel);
-//                 ins = (newtemp[x].length() + 1);
                 }
               }
               eachBlast.put("indels", indels);
@@ -321,9 +218,6 @@ public class BlastService {
 
             }
           }
-
-          //get the Employee object
-
         }
       }
 
@@ -444,9 +338,6 @@ public class BlastService {
       String response = sendMessage(prepareSocket("norwich.nbi.bbsrc.ac.uk", 7899), task.toString());
       if (!"".equals(response)) {
         JSONObject r = JSONObject.fromObject(response);
-//        if (r.has("error")) {
-//          String error = r.getString("error");
-//        }
         return r;
       }
       return JSONUtils.SimpleJSONError("empty response");
@@ -560,8 +451,6 @@ public class BlastService {
       return JSONUtils.SimpleJSONError(e.getMessage());
     }
   }
-
-
 }
 
 

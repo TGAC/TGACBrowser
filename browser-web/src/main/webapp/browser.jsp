@@ -144,7 +144,6 @@
 
 
             </div>
-            <%--<iframe src="browser.html"></iframe>--%>
         </div>
     </div>
 
@@ -538,7 +537,7 @@
             </select>
 
         </div>
-    <br>
+    <p> &nbsp; </p>
     <div id=blastselectorpanel></div>
 
 </div>
@@ -580,13 +579,5 @@
             jQuery('#searchText').val('Search DNA');
             jQuery('#searchDiv').html('');
         }));
-
-//        jQuery("#wrapper").load("browser.html", function (response, status, xhr) {
-//            if (status == "error") {
-//                var msg = "Sorry but there was an error: ";
-//                alert(msg + xhr.status + " " + xhr.statusText);
-//            }
-//        });
-
     });
 </script>
