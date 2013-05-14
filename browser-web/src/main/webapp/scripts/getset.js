@@ -128,8 +128,7 @@ function setEnd(end) {
 
 function setMapMarkerTop(top) {
   var height = jQuery("#" + seqregname).css('height');
-  var maptop = parseFloat(jQuery("#" + seqregname).css('top')) + top * parseFloat(height) / sequencelength;
-
+  var maptop = parseFloat(jQuery("#" + seqregname).position().top) + top * parseFloat(height) / sequencelength;
   jQuery("#mapmarker").animate({"top": maptop}, 100);
 }
 
@@ -139,7 +138,7 @@ function setMapMarkerHeight(height) {
 }
 
 function setMapMarkerLeft() {
-  var left = jQuery("#" + seqregname).position().left;
+  var left = parseInt(jQuery("#" + seqregname).css('left'));
   jQuery("#mapmarker").animate({"left": left}, 100);
 }
 
