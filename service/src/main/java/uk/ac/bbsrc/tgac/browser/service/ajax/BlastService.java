@@ -44,17 +44,24 @@ public class BlastService {
   private Logger log = LoggerFactory.getLogger(getClass());
 
 
-
-
+  /**
+   * Return JSONObject
+   * <p>
+   *   Reads the xml file get ID from ajax call
+   *   Format data into table format and sends back
+   * </p>
+   * @param session an HTTPSession comes from ajax call
+   * @param json  json object with key parameters sent from ajax call
+   * @return JSONObject with BLAST result formatted into table
+   * @throws IOException
+   */
   public JSONObject blastSearchSequence(HttpSession session, JSONObject json) throws IOException {
     try {
-      String blastDB = json.getString("db");
       String blastAccession = json.getString("accession");
       String location = json.getString("location");
       StringBuilder sb = new StringBuilder();
 
       FileInputStream fstream = new FileInputStream("/net/tgac-cfs3/ifs/TGAC/browser/jobs/" + blastAccession + ".xml");
-      log.info(">>>" + fstream);
       DataInputStream in = new DataInputStream(fstream);
       String str;
       int i = 0;
@@ -125,6 +132,16 @@ public class BlastService {
   }
 
 
+  /**
+   * Return JSONObject
+   * <p>
+   *   Reads file ID from ajax call
+   * </p>
+   * @param session an HTTPSession comes from ajax call
+   * @param json json object with key parameters sent from ajax call
+   * @return JSONObject with data formatted into tracks style
+   * @throws IOException
+   */
   public JSONObject blastSearchTrack(HttpSession session, JSONObject json) throws IOException {
     String blastAccession = json.getString("accession");
 
@@ -134,23 +151,22 @@ public class BlastService {
     int query_end = json.getInt("end");
     int noofhits = json.getInt("hit");
     String location = json.getString("location");
-
     DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
     Document dom;
 
     try {
 
       FileInputStream fstream = new FileInputStream("/net/tgac-cfs3/ifs/TGAC/browser/jobs/" + blastAccession + ".xml");
-
       DataInputStream input = new DataInputStream(fstream);
       int in = 0;
       int findHits = 1;
       JSONArray blasts = new JSONArray();
       DocumentBuilder db = dbf.newDocumentBuilder();
 
+//      parse file for DOMs
       dom = db.parse(input);
-//
       Element docEle = dom.getDocumentElement();
+//      get nodes for Hit
       NodeList nl = docEle.getElementsByTagName("Hit");
 
       if (nl != null && nl.getLength() > 0) {
@@ -163,7 +179,6 @@ public class BlastService {
           NodeList hsps = el.getElementsByTagName("Hsp");
           if (hsps != null && hsps.getLength() > 0) {
             for (int b = 0; b < hsps.getLength(); b++) {
-
 
               Element ell = (Element) hsps.item(b);
 
@@ -180,7 +195,6 @@ public class BlastService {
               eachBlast.put("start", query_start + Integer.parseInt(hsp_from));
               eachBlast.put("end", query_start + Integer.parseInt(hsp_to));
 
-
               if (location.length() > 0) {
                 eachBlast.put("desc", " <a target='_blank' href='../" + location + "/index.jsp?query=" + hit_id + "&from=" + hsp_from + "&to=" + hsp_to + "'>"
                                       + hit_id + "</a>");
@@ -194,14 +208,17 @@ public class BlastService {
               eachBlast.put("reverse", "");
 
               String hsp_midline = getTextValue(ell, "Hsp_midline");
+//              if indels present
               if (hsp_midline.split(" ").length > 1) {
                 String hsp_query_seq = getTextValue(ell, "Hsp_qseq");
                 String hsp_hit_seq = getTextValue(ell, "Hsp_hseq");
                 String[] newtemp = hsp_midline.split(" ");
                 int ins = 0;
                 for (int x = 0; x < newtemp.length - 1; x++) {
+
                   ins = ins + ((newtemp[x].length() + 1));
                   eachIndel.put("position", ins + in);
+//                  put 3 bases before and after of indel if starting or ending position then most possible
                   eachIndel.put("query", hsp_query_seq.substring((ins - 3) > -1 ? (ins - 3) : 0, (ins + 2) <= hsp_query_seq.length() ? (ins + 2) : hsp_query_seq.length()));
                   eachIndel.put("hit", hsp_hit_seq.substring((ins - 3) > -1 ? (ins - 3) : 0, (ins + 2) <= hsp_hit_seq.length() ? (ins + 2) : hsp_hit_seq.length()));
                   indels.add(eachIndel);
@@ -213,7 +230,6 @@ public class BlastService {
               findHits++;
               if (findHits > noofhits) {
                 break HIT;
-
               }
 
             }
@@ -236,6 +252,17 @@ public class BlastService {
     }
   }
 
+  /**
+   * Return JSONObject
+   * <p>
+   *   Reads file with ID from ajax call
+   *   Parse file based on space and format to track style
+   * </p>
+   * @param session an HTTPSession comes from ajax call
+   * @param json json object with key parameters sent from ajax call
+   * @return JSONObject with blasttrack result
+   * @throws IOException
+   */
   public JSONObject blastEntry(HttpSession session, JSONObject json) throws IOException {
     try {
       String seqRegion = json.getString("seqregion");
@@ -289,10 +316,16 @@ public class BlastService {
 
   }
 
+  /**
+   * Return String
+   * <p>
+   *   Read XMLDomElement and read the value from key name
+   * </p>
+   * @param ele XMLDOMElement
+   * @param tagName XMLDOMElement tag name
+   * @return Strnig value related to tag name
+   */
   protected String getTextValue(Element ele, String tagName) {
-    log.info(tagName);
-    log.info(ele.toString());
-
     String textVal = null;
     NodeList nl = ele.getElementsByTagName(tagName);
     if (nl != null && nl.getLength() > 0) {
@@ -304,6 +337,18 @@ public class BlastService {
   }
 
 
+  /**
+   * Return JSONObject
+   * <p>
+   *   Reads BLAST parameter from ajax call
+   *   Creates a FASTA file for query
+   *   call method sendMessage with parameters
+   * </p>
+   * @param session an HTTPSession comes from ajax call
+   * @param json json object with key parameters sent from ajax call
+   * @return
+   * @throws IOException
+   */
   public JSONObject submitBlastTask(HttpSession session, JSONObject json) throws IOException {
     try {
 
@@ -348,10 +393,30 @@ public class BlastService {
     }
   }
 
+  /**
+   * Return Socket
+   * <p>
+   *   create new Socket from information
+   * </p>
+   * @param host  String with host name
+   * @param port  int with port number
+   * @return Socket
+   * @throws IOException
+   */
   public static Socket prepareSocket(String host, int port) throws IOException {
     return new Socket(host, port);
   }
 
+  /**
+   * Return String
+   * <p>
+   *
+   * </p>
+   * @param socket Socket information
+   * @param query String with parameters
+   * @return String
+   * @throws IOException
+   */
   public String sendMessage(Socket socket, String query) throws IOException {
     try {
       BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF8"));
@@ -394,6 +459,12 @@ public class BlastService {
     }
   }
 
+  /**
+   *
+   * @param taskId
+   * @return
+   * @throws IOException
+   */
   public JSONArray getTask(String taskId) throws IOException {
     JSONArray er = new JSONArray();
     try {
@@ -420,6 +491,15 @@ public class BlastService {
     }
   }
 
+  /**
+   * Return String
+   * <p>
+   *   check State of a taskId got from argument and return
+   * </p>
+   * @param taskId String
+   * @return String with state
+   * @throws Exception
+   */
   public String getTaskSQL(String taskId) throws Exception {
     String result = null;
     Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -435,6 +515,17 @@ public class BlastService {
     return result;
   }
 
+  /**
+   * Return JSONObject
+   * <p>
+   *   call method taskSQL with taskId received from ajax call
+   *   IF task is completed it returns true for stopUpdater
+   * </p>
+   * @param session  an HTTPSession comes from ajax call
+   * @param json json object with key parameters sent from ajax call
+   * @return JSONObject with stopUpdater
+   * @throws IOException
+   */
   public JSONObject checkTask(HttpSession session, JSONObject json) throws IOException {
     JSONObject q1 = new JSONObject();
     String taskId = json.getString("taskid");

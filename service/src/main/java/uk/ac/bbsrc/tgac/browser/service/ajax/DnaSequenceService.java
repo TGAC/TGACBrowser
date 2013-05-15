@@ -40,6 +40,18 @@ public class DnaSequenceService {
     this.sequenceStore = sequenceStore;
   }
 
+  /**
+   * Returns a JSONObject that can be read as single reference or a list of results
+   * <p>
+   * This calls the methods in sequenceStore class
+   * and search through database for the keyword
+   *  first look for seq_region table
+   *  then gene, transcript and gene_attrib and transcript_attrib
+   * @param session  an HTTPSession comes from ajax call
+   * @param json  json object with key parameters sent from ajax call
+   * @return  JSONObject with one result or list of result
+   */
+
   public JSONObject searchSequence(HttpSession session, JSONObject json) {
     String seqName = json.getString("query");
     JSONObject response = new JSONObject();
@@ -47,16 +59,19 @@ public class DnaSequenceService {
 
       Integer queryid = sequenceStore.getSeqRegionearchsize(seqName);
 
+//      if more than one results
       if (queryid > 1) {
         response.put("html", "seqregion");
         response.put("seqregion", sequenceStore.getSeqRegionSearch(seqName));
       }
+//      if no result from seq_region
       else if (queryid == 0) {
         response.put("html", "gene");
         response.put("gene", sequenceStore.getGenesSearch(seqName));
         response.put("transcript", sequenceStore.getTranscriptSearch(seqName));
         response.put("GO", sequenceStore.getGOSearch(seqName));
       }
+//      if only one result from seq_region
       else {
         Integer query = sequenceStore.getSeqRegion(seqName);
         String seqRegName = sequenceStore.getSeqRegionName(query);
@@ -76,7 +91,17 @@ public class DnaSequenceService {
 
   }
 
-  public JSONObject seqregionSearchSequence(HttpSession session, JSONObject json) throws IOException {
+   /**
+   * Returns a JSONObject that can be read as single reference
+   * <p>
+   * This calls the methods in sequenceStore class
+   * and search through database for the keyword for seq_region table for only one result
+   * @param session  an HTTPSession comes from ajax call
+   * @param json  json object with key parameters sent from ajax call
+   * @return  JSONObject with one result
+   */
+
+   public JSONObject seqregionSearchSequence(HttpSession session, JSONObject json) throws IOException {
     try {
       JSONObject response = new JSONObject();
       String seqName = json.getString("query");
@@ -111,6 +136,26 @@ public class DnaSequenceService {
        return JSONUtils.SimpleJSONError(e.getMessage());
      }
    }
+
+  /**
+   * Returns JSONObject as first key track name and second key with tracks detail
+   * <p>
+   *   It checks for the trackId
+   *   if it contains keyword like .sam or .bam call method getSamBam
+   *   if it contains keyword like .wig call method getWig
+   *   if it contains keyword like cs then call method getAssembly
+   *   if it contains keyword like repeat then call method getRepeat
+   *    if it contains keyword like gene then call method getGene
+   *    or last it call method getHit
+   *</p>
+   * <p>
+   *   for genes if result is more than 1000 it will return result in form of graphs
+   *   for repeats and hits if result is more than 5000 it will return result in form of graphs
+   *   </p>
+   * @param session  an HTTPSession comes from ajax call
+   * @param json  json object with key parameters sent from ajax call
+   * @return JSONObject as first key track name and second key with tracks detail
+   */
 
   public JSONObject loadTrack(HttpSession session, JSONObject json) {
     String seqName = json.getString("query");
@@ -173,6 +218,14 @@ public class DnaSequenceService {
     return response;
   }
 
+  /**
+   * Return result as JSONObject
+   * call method grtdbinfo to retrieve meta info of the database
+   * and call method checkChromosome to check chromosome exist or not for genome map
+   * @param session an HTTPSession comes from ajax call
+   * @param json json object with key parameters sent from ajax call
+   * @return JSONObject with metainfo and chr (boolean)
+   */
   public JSONObject metaInfo(HttpSession session, JSONObject json) {
     JSONObject response = new JSONObject();
     try {
@@ -199,6 +252,15 @@ public class DnaSequenceService {
     }
   }
 
+  /**
+   * Return JSONObject
+   * <p>
+   *   check for the name of transcript in description
+   * </p>
+   * @param session an HTTPSession comes from ajax call
+   * @param json json object with key parameters sent from ajax call
+   * @return
+   */
   public JSONObject loadTranscriptName(HttpSession session, JSONObject json) {
     JSONObject response = new JSONObject();
     int query = json.getInt("id");
@@ -212,6 +274,16 @@ public class DnaSequenceService {
     }
   }
 
+  /**
+   * Returns JSONObject
+   * <p>
+   *   check if the track related to assembly track / repeats / genes or hits
+   * </p>
+   * @param session an HTTPSession comes from ajax call
+   * @param json json object with key parameters sent from ajax call
+   * @return JSONObject with name
+   */
+
   public JSONObject loadTrackName(HttpSession session, JSONObject json) {
     JSONObject response = new JSONObject();
     String trackName = json.getString("track");
@@ -221,6 +293,10 @@ public class DnaSequenceService {
       if (trackid.indexOf("cs") >= 0) {
         response.put("name", sequenceStore.getSeqRegionName(query));
       }
+      else if (sequenceStore.getLogicNameByAnalysisId(Integer.parseInt(trackid)).matches("(?i).*repeat.*")) {
+//              as we dont have decided to save repeat name in a table
+        response.put("name","");
+            }
       else if (sequenceStore.getLogicNameByAnalysisId(Integer.parseInt(trackid)).matches("(?i).*gene.*")) {
         response.put("name", sequenceStore.getGeneNamefromId(query));
       }
@@ -235,6 +311,16 @@ public class DnaSequenceService {
     }
   }
 
+  /**
+   * Return result as JSONObject
+   * <p>
+   *    first call method getSeqRegion to get seq_region_id
+   *    then get sequence from method getSeq
+   * </p>
+   * @param session an HTTPSession comes from ajax call
+   * @param json json object with key parameters sent from ajax call
+   * @return JSONObject with sequence string
+   */
   public JSONObject loadSequence(HttpSession session, JSONObject json) {
     JSONObject response = new JSONObject();
     String query = json.getString("query");
@@ -258,6 +344,15 @@ public class DnaSequenceService {
   }
 
 
+  /**
+   * Return result as JSONObject
+   * <p>
+   *   this method call getMarker method to get markers for all the markers for the database
+   * </p>
+   * @param session an HTTPSession comes from ajax call
+   * @param json  json object with key parameters sent from ajax call
+   * @return  JSONObject with marker information
+   */
   public JSONObject loadMarker(HttpSession session, JSONObject json) {
     JSONObject response = new JSONObject();
     try {
