@@ -27,35 +27,25 @@ public class BlastToLSF extends AbstractTgacLsfProcess {
 
   private final Collection<ConanParameter> parameters;
   private final FlagParameter blastAccession;
- // private final FlagParameter blastQuery;
+  // private final FlagParameter blastQuery;
   private final FlagParameter blastDB;
   private final FlagParameter format;
   private final FlagParameter type;
 
 
-
-  /*
-    bsub -q ngs_processing
-         -J $run_updateDB
-         -w 'ended("$run_statsqc")'
-         cd ~tgaclims/quality_control/ | perl parse_fastqc.pl
-            --input $run_path_to_basecalls/Unaligned/statsDB_string.txt
-            --db_config ~tgaclims/quality_control/db_connection.txt
-   */
-
   public BlastToLSF() {
     setQueueName("cho_blast");
 
     blastAccession = new FlagParameter("BlastAccession");
-   // blastQuery = new FlagParameter("querystring");
+    // blastQuery = new FlagParameter("querystring");
     blastDB = new FlagParameter("blastdb");
     format = new FlagParameter("format");
-    type =  new FlagParameter("type");
+    type = new FlagParameter("type");
 
     parameters = new ArrayList<ConanParameter>();
 
     parameters.add(blastAccession);
-   // parameters.add(blastQuery);
+    // parameters.add(blastQuery);
     parameters.add(blastDB);
     parameters.add(format);
     parameters.add(type);
@@ -79,24 +69,17 @@ public class BlastToLSF extends AbstractTgacLsfProcess {
   protected String getCommand(Map<ConanParameter, String> parameters) {
     try {
       String blast_type = "";
-       blast_type = parameters.get(type);
-      String blastBinary = "/data/workarea/bianx/blast+/"+blast_type+" ";
+      blast_type = parameters.get(type);
+      String blastBinary = "/data/workarea/bianx/blast+/" + blast_type + " ";
       getLog().debug("Executing " + getName() + " with the following parameters: " + parameters.toString());
 
       StringBuilder sb = new StringBuilder();
-      //write query to file first:
-  //    sb.append("echo " + parameters.get(blastQuery) + " > /net/tgac-cfs3/ifs/TGAC/browser/jobs/" + parameters.get(blastAccession) + ".fa &&");
-      // do the blast
+
       sb.append(blastBinary);
-      sb.append(" -db " +  parameters.get(blastDB));
+      sb.append(" -db " + parameters.get(blastDB));
       sb.append(" -query /net/tgac-cfs3.tgaccluster/ifs/TGAC/browser/jobs/" + parameters.get(blastAccession) + ".fa ");
       sb.append(" -out /net/tgac-cfs3.tgaccluster/ifs/TGAC/browser/jobs/" + parameters.get(blastAccession) + ".xml ");
-      sb.append(" -outfmt "+parameters.get(format)+" -max_target_seqs 10");
-//
-//            .append(" -f " + parameters.get(makefilePath))
-//            .append(" -C " + parameters.get(fastqPath));
-
-      log.info("getCommand : "+sb.toString());
+      sb.append(" -outfmt " + parameters.get(format) + " -max_target_seqs 10");
       return sb.toString();
     }
     catch (Exception e) {

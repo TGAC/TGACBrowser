@@ -106,9 +106,6 @@ function checkTask(id, db, format, start, end, hit, link) {
 }
 function ncbiBLASTResult(id) {
   ajaxurl = '/' + jQuery('#title').text() + '/' + jQuery('#title').text() + '/fluxion.ajax';
-  var query = "ACGACTAGCATCGACTAGCACTGACT";
-  var db = "nr";
-  var link = "here";
 
   var format = "format";
   Fluxion.doAjax(
