@@ -26,7 +26,22 @@ public class SamBamService {
 
   protected static final Logger log = LoggerFactory.getLogger(SamBamService.class);
 
-  public static JSONArray getSamBam(long start, long end, int delta, String trackId, String referece) {
+  /**
+   * Return JSONArray
+   * <p>
+   * Read sam or bam+bai file
+   * convert it to SamRecord
+   * loop though each record and parse it to tracks format
+   * </p>
+   *
+   * @param start     long Start position from where track details to be extracted
+   * @param end       long End position to where track details to be extracted
+   * @param delta     int delta for tracks layers
+   * @param trackId   String trackId its the file path and name
+   * @param reference String reference for the tracks
+   * @return JSONArray of tracks
+   */
+  public static JSONArray getSamBam(long start, long end, int delta, String trackId, String reference) {
     JSONArray sam = new JSONArray();
     JSONObject response = new JSONObject();
     try {
@@ -51,7 +66,8 @@ public class SamBamService {
         int start_pos = samRecord.getAlignmentStart();
         int end_pos = samRecord.getAlignmentEnd();
         String ref = samRecord.getReferenceName();
-        if (ref.equalsIgnoreCase(referece) && (start_pos >= start && end_pos <= end || start_pos <= start && end_pos >= end || end_pos >= start && end_pos <= end || start_pos >= start && start_pos <= end)) {
+//        check for reference and positions match
+        if (ref.equalsIgnoreCase(reference) && (start_pos >= start && end_pos <= end || start_pos <= start && end_pos >= end || end_pos >= start && end_pos <= end || start_pos >= start && start_pos <= end)) {
           JSONObject read = new JSONObject();
           JSONObject cigars = new JSONObject();
 //          // Convert read name to upper case.
@@ -112,10 +128,24 @@ public class SamBamService {
     }
   }
 
+  /**
+   * Return JSONArray
+   * <p>
+   * Read wig file
+   * loop though each line and parse it to tracks format filtering position and reference
+   * </p>
+   *
+   * @param start     long Start position from where track details to be extracted
+   * @param end       long End position to where track details to be extracted
+   * @param delta     int delta for tracks layers
+   * @param trackId   String trackId its the file path and name
+   * @param reference String reference for the tracks
+   * @return JSONArray of tracks
+   * @throws Exception
+   */
   public static JSONArray getWig(long start, long end, int delta, String trackId, String reference) throws Exception {
     JSONArray wig = new JSONArray();
     boolean found = false;
-    log.info("wig");
     try {
       File inputfile = new File(trackId);
 

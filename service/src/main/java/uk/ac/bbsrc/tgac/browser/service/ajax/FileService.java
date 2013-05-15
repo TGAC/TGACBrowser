@@ -27,6 +27,15 @@ import java.util.*;
 public class FileService {
   protected static final Logger log = LoggerFactory.getLogger(FileService.class);
 
+  /**
+   * Return JSONObject
+   * <p>
+   *   Create a file from file context received in JSONObject and return a link
+   * </p>
+   * @param session  an HTTPSession comes from ajax call
+   * @param json  json object with key parameters sent from ajax call
+   * @return JSONObject with file link
+   */
   public JSONObject exportFile(HttpSession session, JSONObject json) {
 
     Random generator = new Random();
@@ -49,6 +58,15 @@ public class FileService {
 
   }
 
+  /**
+   * Return JSONObject
+   * <p>
+   *   creates a file for the session attributes received from JSONOject in ajax call
+   * </p>
+   * @param session an HTTPSession comes from ajax call
+   * @param json json object with key parameters sent from ajax call
+   * @return JSONObject with file content
+   */
   public JSONObject saveFile(HttpSession session, JSONObject json) {
     String reference = json.getString("reference");
     String sessionid = json.getString("session");
@@ -92,6 +110,15 @@ public class FileService {
 
   }
 
+  /**
+   * Return JSONObject
+   * <p>
+   *    loads file from the id received from ajax call
+   * </p>
+   * @param session an HTTPSession comes from ajax call
+   * @param json  json object with key parameters sent from ajax call
+   * @return JSONObject with session key and values
+   */
   public String loadSession(HttpSession session, JSONObject json) {
     String query = json.getString("query");
 //    JSONObject response = new JSONObject();
@@ -113,6 +140,15 @@ public class FileService {
 
   }
 
+  /**
+   * Return JSONObject
+   * <p>
+   *   creates a FASTA file data received from ajax call
+   * </p>
+   * @param session an HTTPSession comes from ajax call
+   * @param json json object with key parameters sent from ajax call
+   * @return JSONObject with link to FASTA file
+   */
   public JSONObject saveFasta(HttpSession session, JSONObject json) {
     String reference = json.getString("reference");
     String sequence = json.getString("sequence");
@@ -142,7 +178,15 @@ public class FileService {
 
   }
 
-  public String fastaFormat(String sequence) {
+  /**
+   * Returns string
+   * <p>
+   *   formats FASTA sequence each row of 70
+   * </p>
+   * @param sequence String sequence
+   * @return String formatted FASTA sequence
+   */
+  protected String fastaFormat(String sequence) {
     int start = 0;
     int end = 69;
     String oldString = sequence;
@@ -151,8 +195,6 @@ public class FileService {
     while (oldString.length() > 70) {
       newString = newString + '\n' + oldString.substring(start, end);
       oldString = oldString.substring(end, oldString.length());
-//    start = start + 70;
-//    end = end + 70;
     }
     return newString + '\n' + oldString;
   }

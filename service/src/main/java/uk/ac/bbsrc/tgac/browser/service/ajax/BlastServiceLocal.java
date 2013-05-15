@@ -32,40 +32,50 @@ import org.xml.sax.SAXParseException;
 public class BlastServiceLocal {
   private org.slf4j.Logger log = LoggerFactory.getLogger(getClass());
 
+  /**
+   * Return JSON Object
+   * <p>
+   * Reads json object from ajax call
+   * generate FASTA file from query sequence
+   * run BLAST on local system and wait to finish
+   * read resulting file
+   * Format data into table format and sends back
+   * </p>
+   *
+   * @param session an HTTPSession comes from ajax call
+   * @param json    json object with key parameters sent from ajax call
+   * @return JSONObject with BLAST result converted to tabular format
+   * @throws IOException
+   */
   public JSONObject blastSearchSequence(HttpSession session, JSONObject json) throws IOException {
     try {
-      log.info("here" + json.toString());
       String blastdb = json.getString("blastdb");
       StringBuilder sb = new StringBuilder();
       String fasta = json.getString("query");
       String location = json.getString("location");
       String blastAccession = json.getString("BlastAccession");
-
-      String file = "../webapps/" + location + "/temp/" + json.getString("BlastAccession") + ".xml";
-
       String type = json.getString("type");
       String blastBinary = json.getString("blastBinary");
-      String blastDB = "/storage/blastdb/choblastdb/TGAC_CHO_v1.2_COMPLETE.fa";
+
+      String file = "../webapps/" + location + "/temp/" + json.getString("BlastAccession") + ".xml";
       File fastaTmp = File.createTempFile("blast", ".fa");
-      DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-      Document dom;
 
       PrintWriter out = new PrintWriter(fastaTmp);
       out.println(fasta);
       out.flush();
       out.close();
 
-
+//      generate BLAST command
       String execBlast = blastBinary + "/" + type + " -db " + blastdb + " -query " + fastaTmp + "  -outfmt 6 -out " + file + " -task blastn";
 
-      log.info(execBlast);
-
+//     run Command
       Process proc = Runtime.getRuntime().exec(execBlast);
+//      wait for command to finish
       proc.waitFor();
+
       FileInputStream fstream = new FileInputStream(file);
 
       String str = "running";
-
 
       DataInputStream input = new DataInputStream(fstream);
 
@@ -83,6 +93,7 @@ public class BlastServiceLocal {
                 "<th class=\"header\"> s.end </th> " +
                 "<th class=\"header\"> e-value </th> " +
                 "<th class=\"header\"> bit score </th></tr></thead><tbody>");
+
       while (null != (str = input.readLine())) {
 
         Pattern p = Pattern.compile("#");
@@ -136,9 +147,22 @@ public class BlastServiceLocal {
   }
 
 
+  /**
+   * Return JSONObject
+   * <p>
+   * Reads json object from ajax call
+   * generate FASTA file from query sequence
+   * run BLAST on local system and wait to finish
+   * read resulting file
+   * Parse resulting file and convert into track format
+   * </p>
+   *
+   * @param session an HTTPSession comes from ajax call
+   * @param json    json object with key parameters sent from ajax call
+   * @return JSONObject with BLAST result formatted into track style
+   * @throws IOException
+   */
   public JSONObject blastSearchTrack(HttpSession session, JSONObject json) throws IOException {
-    log.info(json.toString());
-
     String fasta = json.getString("query");
     String blastBinary = json.getString("blastBinary");
     String blastdb = json.getString("blastdb");
@@ -255,6 +279,17 @@ public class BlastServiceLocal {
     }
   }
 
+  /**
+   * Return String
+   * <p>
+   * Read XMLDomElement and read the value from key name
+   * </p>
+   *
+   * @param ele     XMLDOMElement
+   * @param tagName XMLDOMElement tag name
+   * @return Strnig value related to tag name
+   */
+
   private String getTextValue(Element ele, String tagName) {
     String textVal = null;
     NodeList nl = ele.getElementsByTagName(tagName);
@@ -266,6 +301,19 @@ public class BlastServiceLocal {
     return textVal;
   }
 
+
+  /**
+   * Return JSONObject
+   * <p>
+   * check if the file exist
+   * if file exist then call method parseFileXML
+   * </p>
+   *
+   * @param session an HTTPSession comes from ajax call
+   * @param json    json object with key parameters sent from ajax call
+   * @return JSONObject with blastid and BLAST track result
+   * @throws IOException
+   */
 
   public JSONObject checkBlast(HttpSession session, JSONObject json) throws IOException {
     try {
@@ -303,15 +351,19 @@ public class BlastServiceLocal {
   }
 
 
+  /**
+   * Return Boolean
+   * <p>
+   * check if File Exist
+   * </p>
+   *
+   * @param file String file name
+   * @return boolean file exist or not
+   * @throws IOException
+   */
   private boolean fileExist(String file) throws IOException {
-    log.info("file exists " + file);
     try {
-      File f = new File(file);
-      boolean check1 = f.exists();
-      log.info("check 1" + check1);
-
       boolean isExist = new File(file).exists();
-      log.info("file exist" + isExist);
       return isExist;
     }
     catch (Exception e) {
@@ -319,11 +371,23 @@ public class BlastServiceLocal {
     }
   }
 
+  /**
+   * Return JSONArray
+   * <p>
+   * read resulting file
+   * Parse resulting file and convert into track format
+   * </p>
+   *
+   * @param file        String file name
+   * @param query_start int start position of query
+   * @param query_end   int end position of query
+   * @param noofhits    int noohhits
+   * @param link        int link for the hits
+   * @param location    int location of the file
+   * @return JSONArray with BLAST hits
+   */
   private JSONArray parseFileXML(String file, int query_start, int query_end, int noofhits, String link, String location) {
     try {
-
-      log.info("parsefileXML");
-      log.info(file + ":" + query_start);
 
       FileInputStream fstream = new FileInputStream(file);
       DataInputStream input = new DataInputStream(fstream);
@@ -335,7 +399,6 @@ public class BlastServiceLocal {
       DocumentBuilder db = dbf.newDocumentBuilder();
 
       dom = db.parse(input);
-      //
       Element docEle = dom.getDocumentElement();
       NodeList nl = docEle.getElementsByTagName("Hit");
 
