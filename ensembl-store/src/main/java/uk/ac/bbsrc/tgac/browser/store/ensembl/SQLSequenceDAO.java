@@ -1208,7 +1208,7 @@ public class SQLSequenceDAO implements SequenceStore {
 
 
   public String getSeqLevel(String query, int from, int to) throws IOException {
-    System.out.println("get seq level" + query + ":" + from + ":" + to);
+   log.info("get seq level" + query + ":" + from + ":" + to);
 
     String seq = "";
     try {
@@ -1300,6 +1300,7 @@ public class SQLSequenceDAO implements SequenceStore {
 
   public String getSeq(String query, int from, int to) throws IOException {
     try {
+      log.info("get seq " + query);
       String seq = "";
       String query_coord = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{query}, String.class);
       String attrib = template.queryForObject(GET_coord_attrib, new Object[]{query_coord}, String.class);
@@ -1407,4 +1408,18 @@ public class SQLSequenceDAO implements SequenceStore {
       throw new Exception("Chromosome not found");
     }
   }
+
+  public String getCoordSys(String query) throws Exception {
+      try {
+        String coordSys = "";
+        int coord_id = Integer.parseInt(template.queryForObject(GET_coord_sys_id_by_name, new Object[]{query}, String.class));
+        log.info("cooord_id"+coord_id);
+        coordSys  = template.queryForObject(GET_coord_sys_name, new Object[]{coord_id}, String.class);
+         log.info("cooord_sys"+coordSys);
+        return  coordSys;
+      }
+      catch (EmptyStackException e) {
+        throw new Exception("Chromosome not found");
+      }
+    }
 }

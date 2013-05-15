@@ -77,5 +77,6 @@ public interface Store<T> {
   public JSONArray getRepeatGraph(int id, String trackId, long start, long end) throws IOException;
   public JSONArray getMarker() throws IOException;
    public boolean checkChromosome() throws Exception;
+  public String getCoordSys(String query) throws Exception;
 
 }
