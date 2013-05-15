@@ -76,6 +76,6 @@ public interface Store<T> {
   public JSONArray processRepeat(List<Map<String, Object>> maps, long start, long end, int delta, int id, String trackId) throws IOException;
   public JSONArray getRepeatGraph(int id, String trackId, long start, long end) throws IOException;
   public JSONArray getMarker() throws IOException;
-   public boolean checkChromosome() throws Exception;
-
+  public boolean checkChromosome() throws Exception;
+  public String getCoordSys(String query) throws Exception;
 }

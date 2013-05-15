@@ -110,7 +110,7 @@ public class SQLSequenceDAO implements SequenceStore {
   public static final String GET_GO_for_Genes = "select value from gene_attrib where gene_id = ?";
   public static final String GET_Assembly_for_reference = "SELECT * FROM assembly where asm_seq_region_id =?";
   public static final String GET_GENE_SIZE = "SELECT COUNT(*) FROM gene where seq_region_id =? and analysis_id = ?";
-//  public static final String GET_GENOME_MARKER = "SELECT * from marker_feature";
+  //  public static final String GET_GENOME_MARKER = "SELECT * from marker_feature";
   public static final String GET_GENOME_MARKER = "select mf.marker_feature_id as id, sr.name as reference, mf.marker_id as marker_id, mf.seq_region_start as start, mf.seq_region_end as end, mf.analysis_id as analysis_id from marker_feature mf, seq_region sr where mf.seq_region_id = sr.seq_region_id;";
   public static final String GET_TRACKS_VIEW = "select a.logic_name as name, a.analysis_id as id, ad.description, ad.display_label, ad.displayable from analysis a, analysis_description ad where a.analysis_id = ad.analysis_id;";
   public static final String GET_coord_attrib_chr = "SELECT coord_system_id FROM coord_system where name like ? || attrib like ?";
@@ -1396,12 +1396,28 @@ public class SQLSequenceDAO implements SequenceStore {
       Boolean check;
       List<Map<String, Object>> attrib_temp = template.queryForList(GET_coord_attrib_chr, new Object[]{"%chr%", "%chr%"});
       log.info(attrib_temp.toString());
-      if(attrib_temp.size() > 0){
+      if (attrib_temp.size() > 0) {
         check = true;
-      }else{
+      }
+      else {
         check = false;
       }
-      return  check;
+      return check;
+    }
+    catch (EmptyStackException e) {
+      throw new Exception("Chromosome not found");
+    }
+  }
+
+
+  public String getCoordSys(String query) throws Exception {
+    try {
+      String coordSys = "";
+      int coord_id = Integer.parseInt(template.queryForObject(GET_coord_sys_id_by_name, new Object[]{query}, String.class));
+      log.info("cooord_id" + coord_id);
+      coordSys = template.queryForObject(GET_coord_sys_name, new Object[]{coord_id}, String.class);
+      log.info("cooord_sys" + coordSys);
+      return coordSys;
     }
     catch (EmptyStackException e) {
       throw new Exception("Chromosome not found");

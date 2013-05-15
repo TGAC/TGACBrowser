@@ -148,6 +148,6 @@
 <div id="linkLocation" style="visibility: hidden; position: fixed;">${initParam.linkLocation}</div>
 <div id="blastLocation" style="visibility: hidden; position: fixed;">${initParam.blastLocation}</div>
 <div id="blastType" style="visibility: hidden; position: fixed;">${initParam.blastType}</div>
-
+<div id="fasta" style="visibility: hidden; position: fixed;">${initParam.fasta}</div>
 
 <div id="content">

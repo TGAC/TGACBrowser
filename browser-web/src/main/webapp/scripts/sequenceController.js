@@ -38,7 +38,7 @@ function seqBar(seqStart, seqEnd) {
 
   var temp = seqEnd - seqStart;
   seqLen = visualLength(temp);
-  if (parseFloat(seqLen) <= (parseFloat(maxLen))) {
+  if (parseFloat(seqLen) <= (parseFloat(maxLen)) && jQuery("#fasta").html().indexOf('true') >= 0) {
     selectionStart = seqStart;
     selectionEnd = seqEnd;
     var diff = (parseFloat(maxLen)) - parseFloat(seqLen);

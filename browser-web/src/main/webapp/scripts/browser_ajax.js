@@ -83,7 +83,12 @@ function seqregionSearchPopup(query, from, to, blast) {
               dispSeqCoord();
               displayCursorPosition();
               setNavPanel();
-              getReferences();
+              if (json.coord_sys.indexOf('chromosome') >= 0) {
+                getReferences();
+              }
+              else {
+                chromosome = false;
+              }
               loadDefaultTrack(track_list);
               jQuery("#controlsbutton").colorbox({width: "90%", inline: true, href: "#controlpanel"});
 
@@ -542,7 +547,7 @@ function getReferences(show) {
             var width = 15;
             var distance = (parseInt(maxLen) - (width * referenceLength)) / (referenceLength + 1);
             jQuery("#mapmarker").animate({"width": width}, 100);
-            if (referenceLength > 0) {
+            if (referenceLength > 0 && referenceLength < 25) {
               changeCSS();
               while (referenceLength--) {
                 var left = parseInt(referenceLength * (width)) + parseInt(distance * referenceLength) + parseInt(distance);
