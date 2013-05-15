@@ -97,6 +97,7 @@ public class SQLSequenceDAO implements SequenceStore {
   public static final String GET_Coord_systemid_FROM_ID = "SELECT coord_system_id FROM seq_region WHERE seq_region_id = ?";
   public static final String GET_RANK_for_COORD_SYSTEM_ID = "SELECT rank FROM coord_system where coord_system_id =?";
   public static final String GET_Gene_name_from_ID = "SELECT description FROM gene where gene_id =?";
+
   public static final String GET_Transcript_name_from_ID = "SELECT description FROM transcript where transcript_id =?";
   public static final String GET_Tracks_Name = "select analysis_id from analysis where logic_name = ?";
   public static final String GET_hit_name_from_ID = "SELECT hit_name FROM dna_align_feature where dna_align_feature_id =?";
@@ -109,7 +110,8 @@ public class SQLSequenceDAO implements SequenceStore {
   public static final String GET_GO_for_Genes = "select value from gene_attrib where gene_id = ?";
   public static final String GET_Assembly_for_reference = "SELECT * FROM assembly where asm_seq_region_id =?";
   public static final String GET_GENE_SIZE = "SELECT COUNT(*) FROM gene where seq_region_id =? and analysis_id = ?";
-  public static final String GET_GENOME_MARKER = "SELECT * from marker_feature";
+//  public static final String GET_GENOME_MARKER = "SELECT * from marker_feature";
+  public static final String GET_GENOME_MARKER = "select mf.marker_feature_id as id, sr.name as reference, mf.marker_id as marker_id, mf.seq_region_start as start, mf.seq_region_end as end, mf.analysis_id as analysis_id from marker_feature mf, seq_region sr where mf.seq_region_id = sr.seq_region_id;";
   public static final String GET_TRACKS_VIEW = "select a.logic_name as name, a.analysis_id as id, ad.description, ad.display_label, ad.displayable from analysis a, analysis_description ad where a.analysis_id = ad.analysis_id;";
   public static final String GET_coord_attrib_chr = "SELECT coord_system_id FROM coord_system where name like ? || attrib like ?";
 
@@ -1379,13 +1381,7 @@ public class SQLSequenceDAO implements SequenceStore {
       JSONArray markerList = new JSONArray();
       List<Map<String, Object>> maps = template.queryForList(GET_GENOME_MARKER);
       for (Map map : maps) {
-        JSONObject eachTrack = new JSONObject();
-        eachTrack.put("start", map.get("seq_region_start"));
-        eachTrack.put("end", map.get("seq_region_end"));
-        eachTrack.put("reference", template.queryForObject(GET_SEQ_REGION_NAME_FROM_ID, new Object[]{map.get("seq_region_id")}, String.class));
-        eachTrack.put("marker_id", map.get("marker_id"));
-        eachTrack.put("id", map.get("marker_feature_id"));
-        markerList.add(eachTrack);
+        markerList.add(map);
       }
       return markerList;
     }
