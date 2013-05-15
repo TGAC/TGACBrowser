@@ -281,7 +281,7 @@ function loadTrackAjax(trackId, trackname) {
 function metaData() {
   ajaxurl = '/' + jQuery('#title').text() + '/' + jQuery('#title').text() + '/fluxion.ajax';
 //  ajaxurl = "/" +  jQuery('#title').text()    + '/fluxion.ajax';
-  var chromosome = false;
+
   Fluxion.doAjax(
           'dnaSequenceService',
           'metaInfo',
@@ -544,34 +544,34 @@ function getReferences(show) {
             jQuery("#mapmarker").animate({"width": width}, 100);
             if (referenceLength > 0) {
               changeCSS();
+              while (referenceLength--) {
+                var left = parseInt(referenceLength * (width)) + parseInt(distance * referenceLength) + parseInt(distance);
+                var height = (json.seqregion[referenceLength].length * 125 / max);
+                var length = json.seqregion[referenceLength].length;
+                if (seqregname == json.seqregion[referenceLength].name) {
+                  refheight = height;
+                }
+                var top = parseInt(jQuery("#map").css('top')) + parseInt(jQuery("#map").css('height')) - (height + 20);
+                if (seqregname == json.seqregion[referenceLength].name) {
+                  jQuery("#refmap").append("<div onclick='jumpToHere(event);' class='refmap' id='" + json.seqregion[referenceLength].name + "' style='left: " + left + "px; width:" + width + "px; height:" + height + "px;'></div>");
+                }
+                else {
+                  jQuery("#refmap").append("<div onclick='jumpToOther(event, " + length + ",\"" + json.seqregion[referenceLength].name + "\");' class='refmap' id='" + json.seqregion[referenceLength].name + "' style='left: " + left + "px; width:" + width + "px; height:" + height + "px;'></div>");
+                }
+                jQuery("#refmap").append("<div style='position:absolute; bottom: 0px; left: " + (left) + "px; '>" + stringTrim(json.seqregion[referenceLength].name, width * 2) + "</div>");
+                jQuery("#map").fadeIn();
+              }
+              if (show) {
+                jQuery("#searchresultMap").show;
+                jQuery("#searchresultMap").html("<center><h1>References</h1><br>Click to jump to reference</center>" + jQuery("#refmap").html());
+              }
+              setMapMarkerLeft();
+              setMapMarkerTop(getBegin());
+              setMapMarkerHeight(getEnd() - getBegin())
 
+              getMarkers();
             }
-            while (referenceLength--){
-              var left = parseInt(referenceLength * (width)) + parseInt(distance * referenceLength) + parseInt(distance);
-              var height = (json.seqregion[referenceLength].length * 125 / max);
-              var length = json.seqregion[referenceLength].length;
-              if (seqregname == json.seqregion[referenceLength].name) {
-                refheight = height;
-              }
-              var top = parseInt(jQuery("#map").css('top')) + parseInt(jQuery("#map").css('height')) - (height + 20);
-              if (seqregname == json.seqregion[referenceLength].name) {
-                jQuery("#refmap").append("<div onclick='jumpToHere(event);' class='refmap' id='" + json.seqregion[referenceLength].name + "' style='left: " + left + "px; width:" + width + "px; height:" + height + "px;'></div>");
-              }
-              else {
-                jQuery("#refmap").append("<div onclick='jumpToOther(event, " + length + ",\"" + json.seqregion[referenceLength].name + "\");' class='refmap' id='" + json.seqregion[referenceLength].name + "' style='left: " + left + "px; width:" + width + "px; height:" + height + "px;'></div>");
-              }
-              jQuery("#refmap").append("<div style='position:absolute; bottom: 0px; left: " + (left) + "px; '>" + stringTrim(json.seqregion[referenceLength].name, width * 2) + "</div>");
-              jQuery("#map").fadeIn();
-            }
-            if (show) {
-              jQuery("#searchresultMap").show;
-              jQuery("#searchresultMap").html("<center><h1>References</h1><br>Click to jump to reference</center>" + jQuery("#refmap").html());
-            }
-            setMapMarkerLeft();
-            setMapMarkerTop(getBegin());
-            setMapMarkerHeight(getEnd() - getBegin())
 
-            getMarkers();
 
           }
           });

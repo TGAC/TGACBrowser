@@ -45,19 +45,19 @@ public class BrowserAppListener implements ServletContextListener {
     SequenceStore ss = (SequenceStore) context.getBean("sequenceStore");
 
     try {
-//      JSONArray reference_list = ss.getSeqRegionIdSearch("");
+      JSONArray reference_list = ss.getSeqRegionIdSearch("");
 
-//      for (int i = 0; i < reference_list.size(); i++) {
-//        JSONArray tracks = ss.getAnnotationIdList(Integer.parseInt(reference_list.get(i).toString()));
-//        for (int j = 0; j < tracks.size(); j++) {
-////          log.info("ADDING: " + reference_list.getInt(i) + " : " + tracks.getString(j) +" \t" );
+      for (int i = 0; i < reference_list.size(); i++) {
+        JSONArray tracks = ss.getAnnotationIdList(Integer.parseInt(reference_list.get(i).toString()));
+        for (int j = 0; j < tracks.size(); j++) {
+//          log.info("ADDING: " + reference_list.getInt(i) + " : " + tracks.getString(j) +" \t" );
 ////          ss.getHit(reference_list.getInt(i), tracks.getString(j));
 ////          System.gc();
-////          ss.getGenes(reference_list.getInt(i), tracks.get(j).toString());
-////          System.gc();
-//        }
-//
-//      }
+          ss.getGenes(reference_list.getInt(i), tracks.get(j).toString());
+          System.gc();
+        }
+
+      }
 
       CacheManager c = (CacheManager) context.getBean("cacheManager");
       Cache a = c.getCache("hitCache");
