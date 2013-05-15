@@ -15,6 +15,7 @@ var blastsdata = [];
 var grouplist = [];
 var tracks = [];
 var tracklocation = [];
+var chromosome = false;
 
 function setBlast() {
   if (jQuery("#blastType").text().indexOf('local') >= 0) {
@@ -452,7 +453,9 @@ function dispCoord(seqStart, seqEnd) {
 
   setBegin(begin);
   setEnd(end);
-  setMapMarkerTop(getBegin());
+ if(chromosome){
+   setMapMarkerTop(getBegin());
+ }
 }
 
 

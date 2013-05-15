@@ -14,7 +14,9 @@ function getDragableLeft() {
 function setDragableLeft(left) {
   jQuery("#draggable").animate({"left": left}, 100, function () {
     setNavPanel()
-    setMapMarkerTop(getBegin());
+    if(chromosome){
+      setMapMarkerTop(getBegin());
+    }
 
   });
 }
