@@ -617,7 +617,7 @@ function changeCSS() {
   jQuery(".vertical-line").css('top', '260px');
   jQuery("#bg_layer").css('top', '230px');
   jQuery("#draggable").css('top', '229px');
-  jQuery("#wrapper").css('top', '255px');
+  jQuery("#wrapper").css('top', '265px');
   jQuery("#sequence").css('top', '280px');
   jQuery(".fakediv").css('top', '260px');
 
