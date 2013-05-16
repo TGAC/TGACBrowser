@@ -380,7 +380,8 @@ public class BlastService {
 
       task.put("submit", j);
 
-      String response = sendMessage(prepareSocket("norwich.nbi.bbsrc.ac.uk", 7899), task.toString());
+      String server = "norwich.nbi.bbsrc.ac.uk";
+      String response = sendMessage(prepareSocket(server, 7899), task.toString());
       if (!"".equals(response)) {
         JSONObject r = JSONObject.fromObject(response);
         return r;
