@@ -2436,6 +2436,7 @@ span.deleteicon input {
     /*border-left: 1px solid black;*/
     /*border-right: 1px solid black;*/
     z-index: 999;
+    background: white;
 }
 
 #mapmarker {
