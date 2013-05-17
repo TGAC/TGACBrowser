@@ -339,7 +339,7 @@
 
 </div>
 
-<div id=popup_hanging style="display : none;">
+<div id=popup_hanging style="display : none; z-index:999;">
     <div class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" id="revertme">
     </div>
     <div class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"
