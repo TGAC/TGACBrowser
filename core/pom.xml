@@ -3,7 +3,7 @@
     <parent>
         <artifactId>tgac-browser</artifactId>
               <groupId>uk.ac.bbsrc.tgac.tgac-browser</groupId>
-        <version>0.0.1</version>
+        <version>0.1.1</version>
     </parent>
     <groupId>${parent.groupId}</groupId>
     <version>${parent.version}</version>
