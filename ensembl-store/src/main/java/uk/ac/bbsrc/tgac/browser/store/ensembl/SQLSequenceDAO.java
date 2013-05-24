@@ -485,7 +485,7 @@ public class SQLSequenceDAO implements SequenceStore {
             track_end = Integer.parseInt(maps_one.get(j).get("asm_end").toString());
           }
           log.info("\n\ntrack start" + track_start);
-            log.info("\n\ntrack end" + track_end);
+          log.info("\n\ntrack end" + track_end);
           int no_of_tracks = template.queryForObject(GET_HIT_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end}, Integer.class);
           if (no_of_tracks > 0) {
             log.info("\n\nif if " + maps_one.get(j).get("cmp_seq_region_id"));
@@ -630,13 +630,10 @@ public class SQLSequenceDAO implements SequenceStore {
   }
 
   public int countHit(int id, String trackId, long start, long end) {
-//    log.info("count " + id + ":" + trackId + ":" + start + ":" + end);
     int hit_size = template.queryForObject(GET_HIT_SIZE_SLICE, new Object[]{id, trackId, start, end}, Integer.class);
-//    log.info("hit size " + hit_size);
     if (hit_size == 0) {
       hit_size = countRecursiveHit(id, trackId, start, end);
     }
-//    log.info("\n\n\n\nfinal hit size " + hit_size);
     return hit_size;
   }
 
@@ -696,7 +693,7 @@ public class SQLSequenceDAO implements SequenceStore {
   }
 
   public JSONArray getHitLevel(int start_pos, List<Map<String, Object>> maps_two, long start, long end, int delta) {
-    log.info("\n\nhit level 1 " + start_pos + ":" + start + ":" + end + ":" + delta + ":" + maps_two.toString());
+    log.info("\n\nhit level 1 " + start_pos + ":" + start + ":" + end + ":" + delta + ":");
 
     List<Integer> ends = new ArrayList<Integer>();
     ends.add(0, 0);
@@ -750,27 +747,29 @@ public class SQLSequenceDAO implements SequenceStore {
       int track_start = Integer.parseInt(map.get("start").toString()) - 1;
       int track_end = Integer.parseInt(map.get("end").toString()) - 1;
       if (track_start >= start && track_end <= end || track_start <= start && track_end >= end || track_end >= start && track_end <= end || track_start >= start && track_start <= end) {
-        eachTrack.put("start", map.get("start"));
-        eachTrack.put("end", map.get("end"));
-        eachTrack.put("flag", false);
-        if (map.get("cigarline") != null) {
-          eachTrack_temp.put("cigarline", map.get("cigarline").toString());
-        }
+
+//        eachTrack.put("start", map.get("start"));
+//        eachTrack.put("end", map.get("end"));
+//        eachTrack.put("flag", false);
+//        log.info(map.get("cigarline").toString());
+//        if (map.get("cigarline") != null) {
+//          eachTrack_temp.put("cigarline", map.get("cigarline").toString());
+//        }
         for (int i = 0; i < ends.size(); i++) {
           if ((Integer.parseInt(map.get("start").toString()) - ends.get(i)) > delta) {
             ends.remove(i);
             ends.add(i, Integer.parseInt(map.get("end").toString()));
-            eachTrack.put("layer", i + 1);
+            map.put("layer", i + 1);
             break;
 
           }
           else if ((Integer.parseInt(map.get("start").toString()) - ends.get(i) < delta) && (i + 1) == ends.size()) {
             if (i == 0) {
-              eachTrack.put("layer", ends.size());
+              map.put("layer", ends.size());
               ends.add(i, Integer.parseInt(map.get("end").toString()));
             }
             else {
-              eachTrack.put("layer", ends.size());
+              map.put("layer", ends.size());
               ends.add(ends.size(), Integer.parseInt(map.get("end").toString()));
             }
             break;
@@ -779,8 +778,8 @@ public class SQLSequenceDAO implements SequenceStore {
             //             continue;
           }
         }
-        eachTrack.put("desc", map.get("description"));
-        assemblyTracks.add(eachTrack);
+//        eachTrack.put("desc", map.get("desc"));
+        assemblyTracks.add(map);
       }
     }
     return assemblyTracks;
@@ -793,22 +792,20 @@ public class SQLSequenceDAO implements SequenceStore {
 
       List<Integer> ends = new ArrayList<Integer>();
       ends.add(0, 0);
-
       if (template.queryForObject(GET_HIT_SIZE, new Object[]{id, trackId}, Integer.class) > 0) {
         if (maps.size() > 0) {
           ends.add(0, 0);
           trackList = getHitLevel(maps, ends, start, end, delta);
         }
         else {
-          trackList = recursiveHit(0, id, trackId, start, end, delta);
+//          trackList = recursiveHit(0, id, trackId, start, end, delta);
         }
       }
       else {
         trackList = recursiveHit(0, id, trackId, start, end, delta);
       }
-      if (trackList.size() == 0) {
-        trackList.add("getHit no result found");
-      }
+
+
       return trackList;
     }
     catch (EmptyResultDataAccessException e) {
@@ -1042,20 +1039,130 @@ public class SQLSequenceDAO implements SequenceStore {
   }
 
 
-  public JSONArray getGeneGraph(int id, String trackId, long start, long end) throws IOException {
+  public JSONArray recursiveGeneGraph(int start_pos, int id, String trackId, long start, long end) throws IOException {
+    log.info("\n\nrecursive Gene graph " + start_pos + ":" + id + ":" + trackId + ":" + start + ":" + end + "\n\n");
+    try {
+      JSONArray assemblyTracks = new JSONArray();
+      List<Map<String, Object>> maps_one = template.queryForList(GET_Assembly_for_reference, new Object[]{id});
+      if (maps_one.size() > 0) {
+        log.info("\n\nif  \n\n ");
+        for (int j = 0; j < maps_one.size(); j++) {
+          log.info(maps_one.get(j).get("cmp_seq_region_id").toString());
+          long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
+          long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
+          if (track_start < 0) {
+            track_start = 0;
+          }
+          if (track_end > Integer.parseInt(maps_one.get(j).get("asm_end").toString())) {
+            track_end = Integer.parseInt(maps_one.get(j).get("asm_end").toString());
+          }
+          log.info("\n\ntrack start" + track_start);
+          log.info("\n\ntrack end" + track_end);
+          int no_of_tracks = template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end}, Integer.class);
+          if (no_of_tracks > 0) {
+            log.info("\n\nif if " + maps_one.get(j).get("cmp_seq_region_id"));
+            List<Integer> ends = new ArrayList<Integer>();
+            ends.add(0, 0);
+            track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
+            track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
+            if (track_start < 0) {
+              track_start = 0;
+            }
+            if (track_end > Integer.parseInt(maps_one.get(j).get("asm_end").toString())) {
+              track_end = Integer.parseInt(maps_one.get(j).get("asm_end").toString());
+            }
+            //            start_pos += Integer.parseInt(maps_one.get(j).get("asm_start").toString());
+            log.info("\n\ntrack start" + track_start);
+            log.info("\n\ntrack end" + track_end);
+            assemblyTracks.addAll(getGeneGraphLevel(Integer.parseInt(maps_one.get(j).get("asm_start").toString()), Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end));
+          }
+          else {
+            log.info("\n\nelse   ");
+            track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
+            track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
+            if (track_start < 0) {
+              track_start = 0;
+            }
+            if (track_end > Integer.parseInt(maps_one.get(j).get("asm_end").toString())) {
+              track_end = Integer.parseInt(maps_one.get(j).get("asm_end").toString());
+            }
+            List<Integer> ends = new ArrayList<Integer>();
+            start_pos += Integer.parseInt(maps_one.get(j).get("asm_start").toString());
+            ends.add(0, 0);
+            assemblyTracks.addAll(recursiveGeneGraph(Integer.parseInt(maps_one.get(j).get("asm_start").toString()), Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end));
+          }
+
+        }
+      }
+      return assemblyTracks;
+    }
+    catch (EmptyResultDataAccessException e) {
+      throw new IOException("getHit no result found");
+
+    }
+  }
+
+  public JSONArray getGeneGraphLevel(int start_pos, int id, String trackId, long start, long end) throws IOException {
+    log.info("\n\ngetGenegraphlevel " + start_pos + ":" + id + ":" + trackId + ":" + start + ":" + end);
     try {
       JSONArray trackList = new JSONArray();
       long from = start;
+      long to = 0;
+      int no_of_tracks = template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{id, trackId, start, end}, Integer.class);
+      log.info("nooftracks " + no_of_tracks);
+      if (no_of_tracks > 0) {
+        log.info("\n\nif");
+        for (int i = 1; i <= 200; i++) {
+          JSONObject eachTrack = new JSONObject();
+          to = start + (i * (end - start) / 200);
+          no_of_tracks = template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{id, trackId, from, to}, Integer.class);
+          eachTrack.put("start", start_pos + from);
+          eachTrack.put("end", start_pos + to);
+          eachTrack.put("graph", no_of_tracks);
+          eachTrack.put("id", id);
+
+          log.info("\t" + id + ":" + start_pos + from + ":" + start_pos + to + ":" + to);
+          trackList.add(eachTrack);
+          from = to;
+        }
+      }
+      else {
+        log.info("\n\nelse");
+
+
+      }
+
+      log.info("final  " + id + ":" + trackList.size());
+      return trackList;
+    }
+    catch (EmptyResultDataAccessException e) {
+      throw new IOException("getHit no result found");
+    }
+  }
+
+  public JSONArray getGeneGraph(int id, String trackId, long start, long end) throws IOException {
+    try {
+      log.info("getgene graph" + id + ":" + trackId + ":" + start + ":" + end);
+
+      JSONArray trackList = new JSONArray();
+      long from = start;
       long to;
-      for (int i = 1; i <= 200; i++) {
-        JSONObject eachTrack = new JSONObject();
-        to = start + (i * (end - start) / 200);
-        int no_of_tracks = template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{id, trackId, from, to}, Integer.class);
-        eachTrack.put("start", from);
-        eachTrack.put("end", to);
-        eachTrack.put("graph", no_of_tracks);
-        trackList.add(eachTrack);
-        from = to;
+      int no_of_tracks = template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{id, trackId, from, end}, Integer.class);
+
+      if (no_of_tracks > 0) {
+        for (int i = 1; i <= 200; i++) {
+          JSONObject eachTrack = new JSONObject();
+          to = start + (i * (end - start) / 200);
+          no_of_tracks = template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{id, trackId, from, to}, Integer.class);
+          eachTrack.put("start", from);
+          eachTrack.put("end", to);
+          eachTrack.put("graph", no_of_tracks);
+          trackList.add(eachTrack);
+          from = to;
+        }
+      }
+      else {
+        trackList.addAll(recursiveGeneGraph(0, id, trackId, start, end));
       }
       return trackList;
     }
@@ -1064,9 +1171,43 @@ public class SQLSequenceDAO implements SequenceStore {
     }
   }
 
-  public int countGene(int id, String trackId, long start, long end) {
-    return template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{id, trackId, start, end}, Integer.class);
+  public int countRecursiveGene(int id, String trackId, long start, long end) {
+    log.info("count recursive gene" + id + ":" + trackId + ":" + start + ":" + end);
+
+    int gene_size = 0;
+    JSONArray assemblyTracks = new JSONArray();
+    List<Map<String, Object>> maps_one = template.queryForList(GET_Assembly_for_reference, new Object[]{id});
+
+    if (maps_one.size() > 0) {
+      log.info("if " + maps_one.size());
+      for (int j = 0; j < maps_one.size(); j++) {
+        long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
+        long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
+        log.info("\n\nid" + maps_one.get(j).get("cmp_seq_region_id"));
+        log.info("\n\ntrack start" + track_start);
+        log.info("\n\ntrack end" + track_end);
+        if (template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end}, Integer.class) > 0) {
+          gene_size += template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end}, Integer.class);
+        }
+        else {
+          log.info("else ");
+          gene_size += countRecursiveGene(Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end);
+        }
+      }
+    }
+
+
+    return gene_size;
   }
+
+  public int countGene(int id, String trackId, long start, long end) {
+    int gene_size = template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{id, trackId, start, end}, Integer.class);
+    if (gene_size == 0) {
+      gene_size = countRecursiveGene(id, trackId, start, end);
+    }
+    return gene_size;
+  }
+
 
   @Cacheable(cacheName = "geneCache",
              keyGenerator = @KeyGenerator(
@@ -1123,7 +1264,7 @@ public class SQLSequenceDAO implements SequenceStore {
       if (maps_one.size() > 0) {
         log.info("\n\nif  \n\n ");
         for (int j = 0; j < maps_one.size(); j++) {
-          List<Map<String, Object>> maps_two = template.queryForList(GET_HIT_SIZE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId});
+          List<Map<String, Object>> maps_two = template.queryForList(GET_GENE_SIZE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId});
           JSONObject eachTrack_temp = new JSONObject();
           if (maps_two.size() > 0) {
             log.info("\n\nif if " + maps_one.get(j).get("cmp_seq_region_id"));
@@ -1133,7 +1274,7 @@ public class SQLSequenceDAO implements SequenceStore {
             long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
             log.info("\n\ntrack start" + track_start);
             log.info("\n\ntrack end" + track_end);
-            assemblyTracks.addAll(getHitLevel(start_pos + Integer.parseInt(maps_one.get(j).get("asm_start").toString()), getHit(Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end), start, end, delta));
+            assemblyTracks.addAll(getGeneLevel(start_pos + Integer.parseInt(maps_one.get(j).get("asm_start").toString()), getGenes(Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId), start, end, delta));
           }
           else {
             log.info("\n\nelse   ");
@@ -1141,7 +1282,7 @@ public class SQLSequenceDAO implements SequenceStore {
             long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
             List<Integer> ends = new ArrayList<Integer>();
             ends.add(0, 0);
-            assemblyTracks.addAll(recursiveHit(start_pos + Integer.parseInt(maps_one.get(j).get("asm_start").toString()), Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end, delta));
+            assemblyTracks.addAll(recursiveGene(start_pos + Integer.parseInt(maps_one.get(j).get("asm_start").toString()), Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end, delta));
           }
 
         }
@@ -1156,219 +1297,344 @@ public class SQLSequenceDAO implements SequenceStore {
 
   }
 
-  public JSONArray getGeneLevel(int start_pos, List<Map<String, Object>> maps_two, long start, long end, int delta) {
-    log.info("\n\nhit level 1 " + start_pos + ":" + start + ":" + end + ":" + delta + ":" + maps_two.toString());
+  public JSONArray getGeneLevel(int start_add, List<Map<String, Object>> genes, long start, long end, int delta) {
+    log.info("\n\ngene level 1 " + start_add + ":" + start + ":" + end + ":" + delta + ":" + genes.size());
+       JSONArray GeneList = new JSONArray();
+       JSONObject eachTrack_temp = new JSONObject();
+       JSONArray assemblyTracks = new JSONArray();
+   //                  JSONArray filteredgenes = new JSONArray();
+       JSONObject eachGene = new JSONObject();
+       JSONObject eachTrack = new JSONObject();
+       JSONArray exonList = new JSONArray();
+       JSONArray transcriptList = new JSONArray();
+       JSONArray filteredgenes = new JSONArray();
+       String gene_id = "";
+       String transcript_id = "";
+       int layer = 1;
+       int lastsize = 0;
+       int thissize = 0;
+       List<Map<String, Object>> domains;
+       List<Map<String, Object>> translation_start;
+       List<Map<String, Object>> translation_end;
 
-    List<Integer> ends = new ArrayList<Integer>();
-    ends.add(0, 0);
-    JSONObject eachTrack_temp = new JSONObject();
-    JSONArray assemblyTracks = new JSONArray();
-    for (Map map_temp : maps_two) {
-      log.info("map temp\t" + map_temp.toString());
-      int track_start = start_pos + Integer.parseInt(map_temp.get("start").toString()) - 1;
-      int track_end = start_pos + Integer.parseInt(map_temp.get("end").toString()) - 1;
-      if (track_start >= start && track_end <= end || track_start <= start && track_end >= end || track_end >= start && track_end <= end || track_start >= start && track_start <= end) {
-        eachTrack_temp.put("start", track_start);
-        eachTrack_temp.put("end", track_end);
-        eachTrack_temp.put("flag", false);
-        if (map_temp.get("cigarline") != null) {
-          eachTrack_temp.put("cigarline", map_temp.get("cigarline").toString());
-        }
-        for (int i = 0; i < ends.size(); i++) {
-          if ((Integer.parseInt(map_temp.get("start").toString()) - ends.get(i)) > delta) {
-            ends.remove(i);
-            ends.add(i, Integer.parseInt(map_temp.get("end").toString()));
-            eachTrack_temp.put("layer", i + 1);
-            break;
-          }
-          else if ((Integer.parseInt(map_temp.get("start").toString()) - ends.get(i) < delta && (i + 1) == ends.size()) || Integer.parseInt(map_temp.get("start").toString()) == ends.get(i)) {
-            if (i == 0) {
-              eachTrack_temp.put("layer", ends.size());
-              ends.add(i, Integer.parseInt(map_temp.get("end").toString()));
-            }
-            else {
-              eachTrack_temp.put("layer", ends.size());
-              ends.add(ends.size(), Integer.parseInt(map_temp.get("end").toString()));
-            }
-            break;
-          }
-        }
-        eachTrack_temp.put("desc", map_temp.get("desc"));
-        assemblyTracks.add(eachTrack_temp);
-      }
-    }
-    return assemblyTracks;
+       log.info("gene size "+genes.size());
+
+       for (Map gene : genes) {
+         int start_pos = start_add+Integer.parseInt(gene.get("gene_start").toString());
+         int end_pos = start_add+Integer.parseInt(gene.get("gene_end").toString());
+         if (start_pos >= start && end_pos <= end || start_pos <= start && end_pos >= end || end_pos >= start && end_pos <= end || start_pos >= start && start_pos <= end) {
+           filteredgenes.add(filteredgenes.size(), gene);
+         }
+       }
+       log.info("filtered gene size "+filteredgenes.size());
+       for (int i = 0; i < filteredgenes.size(); i++) {
+
+         if (!transcript_id.equalsIgnoreCase(filteredgenes.getJSONObject(i).get("transcript_id").toString())) {
+           if (!transcript_id.equalsIgnoreCase("")) {
+             eachTrack.put("Exons", exonList);
+             transcriptList.add(eachTrack);
+           }
+           transcript_id = filteredgenes.getJSONObject(i).get("transcript_id").toString();
+           exonList = new JSONArray();
+
+           eachTrack = new JSONObject();
+
+           eachTrack.put("id", filteredgenes.getJSONObject(i).get("transcript_id"));
+           eachTrack.put("start", start_add+Integer.parseInt(filteredgenes.getJSONObject(i).get("transcript_start").toString()));
+           eachTrack.put("end", start_add+Integer.parseInt(filteredgenes.getJSONObject(i).get("transcript_end").toString()));
+
+           translation_start = template.queryForList(GET_CDS_start_per_Gene, new Object[]{filteredgenes.getJSONObject(i).get("transcript_id").toString()});
+           translation_end = template.queryForList(GET_CDS_end_per_Gene, new Object[]{filteredgenes.getJSONObject(i).get("transcript_id").toString()});
+           for (Map start_seq : translation_start) {
+             eachTrack.put("transcript_start", start_seq.get("seq_start"));
+
+           }
+
+           for (Map end_seq : translation_end) {
+             eachTrack.put("transcript_end", end_seq.get("seq_end"));
+
+           }
+           eachTrack.put("desc", filteredgenes.getJSONObject(i).get("transcript_name"));
+
+           eachTrack.put("layer", layer);
+           eachTrack.put("domain", 0);
+   //        domains = getTranscriptsGO(filteredgenes.getJSONObject(i).get("transcript_id").toString());
+   //        for (Map domain : domains) {
+   //          eachTrack.put("domain", domain.get("value"));
+   //        }
+           eachTrack.put("flag", false);
+         }
+         if (!gene_id.equalsIgnoreCase(filteredgenes.getJSONObject(i).get("gene_id").toString())) {
+           if (!gene_id.equalsIgnoreCase("")) {
+             eachGene.put("transcript", transcriptList);
+             GeneList.add(eachGene);
+           }
+           gene_id = filteredgenes.getJSONObject(i).get("gene_id").toString();
+           transcriptList = new JSONArray();
+           eachGene.put("id", filteredgenes.getJSONObject(i).get("gene_id"));
+           eachGene.put("start", start_add+Integer.parseInt(filteredgenes.getJSONObject(i).get("gene_start").toString()));
+           eachGene.put("end", start_add+Integer.parseInt(filteredgenes.getJSONObject(i).get("gene_end").toString()));
+           eachGene.put("desc", filteredgenes.getJSONObject(i).get("gene_name"));
+           eachGene.put("strand", filteredgenes.getJSONObject(i).get("gene_strand"));
+           eachGene.put("layer", i % 2 + 1);
+           eachGene.put("domain", 0);
+   //        domains = getGenesGO(filteredgenes.getJSONObject(i).get("gene_id").toString());
+   //        for (Map domain : domains) {
+   //          eachGene.put("domain", domain.get("value"));
+   //        }
+           if (lastsize < 2 && layer > 2) {
+             layer = 1;
+           }
+           else {
+             layer = layer;
+           }
+
+           if (thissize > 1) {
+             layer = 1;
+           }
+           layer++;
+           log.info("gene " + filteredgenes.getJSONObject(i).get("gene_id"));
+
+         }
+
+
+         JSONObject eachExon = new JSONObject();
+         eachExon.put("id", filteredgenes.getJSONObject(i).get("exon_id"));
+         eachExon.put("start", start_add+Integer.parseInt(filteredgenes.getJSONObject(i).get("exon_start").toString()));
+         eachExon.put("end", start_add+Integer.parseInt(filteredgenes.getJSONObject(i).get("exon_end").toString()));
+         exonList.add(eachExon);
+
+         lastsize = thissize;
+       }
+
+       if (filteredgenes.size() > 0) {
+         eachTrack.put("Exons", exonList);
+         transcriptList.add(eachTrack);
+         eachGene.put("transcript", transcriptList);
+         GeneList.add(eachGene);
+       }
+
+//    List<Integer> ends = new ArrayList<Integer>();
+//    ends.add(0, 0);
+//    JSONObject eachTrack_temp = new JSONObject();
+//    JSONArray assemblyTracks = new JSONArray();
+//    for (Map map_temp : maps_two) {
+//      log.info("map temp\t" + map_temp.toString());
+//      int track_start = start_pos + Integer.parseInt(map_temp.get("start").toString()) - 1;
+//      int track_end = start_pos + Integer.parseInt(map_temp.get("end").toString()) - 1;
+//      if (track_start >= start && track_end <= end || track_start <= start && track_end >= end || track_end >= start && track_end <= end || track_start >= start && track_start <= end) {
+//        eachTrack_temp.put("start", track_start);
+//        eachTrack_temp.put("end", track_end);
+//        eachTrack_temp.put("flag", false);
+//        if (map_temp.get("cigarline") != null) {
+//          eachTrack_temp.put("cigarline", map_temp.get("cigarline").toString());
+//        }
+//        for (int i = 0; i < ends.size(); i++) {
+//          if ((Integer.parseInt(map_temp.get("start").toString()) - ends.get(i)) > delta) {
+//            ends.remove(i);
+//            ends.add(i, Integer.parseInt(map_temp.get("end").toString()));
+//            eachTrack_temp.put("layer", i + 1);
+//            break;
+//          }
+//          else if ((Integer.parseInt(map_temp.get("start").toString()) - ends.get(i) < delta && (i + 1) == ends.size()) || Integer.parseInt(map_temp.get("start").toString()) == ends.get(i)) {
+//            if (i == 0) {
+//              eachTrack_temp.put("layer", ends.size());
+//              ends.add(i, Integer.parseInt(map_temp.get("end").toString()));
+//            }
+//            else {
+//              eachTrack_temp.put("layer", ends.size());
+//              ends.add(ends.size(), Integer.parseInt(map_temp.get("end").toString()));
+//            }
+//            break;
+//          }
+//        }
+//        eachTrack_temp.put("desc", map_temp.get("desc"));
+//        assemblyTracks.add(eachTrack_temp);
+//      }
+//    }
+    return GeneList;
   }
 
-  public JSONArray getGeneLevel(List<Map<String, Object>> maps, List<Integer> ends, long start, long end, int delta) {
+  public JSONArray getGeneLevel(List<Map<String, Object>> genes, List<Integer> ends, long start, long end, int delta) {
     log.info("\n\nhit level 2 " + ":" + start + ":" + end + ":" + delta);
-
+    JSONArray GeneList = new JSONArray();
     JSONObject eachTrack_temp = new JSONObject();
     JSONArray assemblyTracks = new JSONArray();
+//                  JSONArray filteredgenes = new JSONArray();
+    JSONObject eachGene = new JSONObject();
+    JSONObject eachTrack = new JSONObject();
+    JSONArray exonList = new JSONArray();
+    JSONArray transcriptList = new JSONArray();
+    JSONArray filteredgenes = new JSONArray();
+    String gene_id = "";
+    String transcript_id = "";
+    int layer = 1;
+    int lastsize = 0;
+    int thissize = 0;
+    List<Map<String, Object>> domains;
+    List<Map<String, Object>> translation_start;
+    List<Map<String, Object>> translation_end;
 
-    for (Map map : maps) {
-      JSONObject eachTrack = new JSONObject();
-      int track_start = Integer.parseInt(map.get("start").toString()) - 1;
-      int track_end = Integer.parseInt(map.get("end").toString()) - 1;
-      if (track_start >= start && track_end <= end || track_start <= start && track_end >= end || track_end >= start && track_end <= end || track_start >= start && track_start <= end) {
-        eachTrack.put("start", map.get("start"));
-        eachTrack.put("end", map.get("end"));
-        eachTrack.put("flag", false);
-        if (map.get("cigarline") != null) {
-          eachTrack_temp.put("cigarline", map.get("cigarline").toString());
-        }
-        for (int i = 0; i < ends.size(); i++) {
-          if ((Integer.parseInt(map.get("start").toString()) - ends.get(i)) > delta) {
-            ends.remove(i);
-            ends.add(i, Integer.parseInt(map.get("end").toString()));
-            eachTrack.put("layer", i + 1);
-            break;
+    log.info("gene size "+genes.size());
 
-          }
-          else if ((Integer.parseInt(map.get("start").toString()) - ends.get(i) < delta) && (i + 1) == ends.size()) {
-            if (i == 0) {
-              eachTrack.put("layer", ends.size());
-              ends.add(i, Integer.parseInt(map.get("end").toString()));
-            }
-            else {
-              eachTrack.put("layer", ends.size());
-              ends.add(ends.size(), Integer.parseInt(map.get("end").toString()));
-            }
-            break;
-          }
-          else {
-            //             continue;
-          }
-        }
-        eachTrack.put("desc", map.get("description"));
-        assemblyTracks.add(eachTrack);
+    for (Map gene : genes) {
+      int start_pos = Integer.parseInt(gene.get("gene_start").toString());
+      int end_pos = Integer.parseInt(gene.get("gene_end").toString());
+      if (start_pos >= start && end_pos <= end || start_pos <= start && end_pos >= end || end_pos >= start && end_pos <= end || start_pos >= start && start_pos <= end) {
+        filteredgenes.add(filteredgenes.size(), gene);
       }
     }
-    return assemblyTracks;
-  }
+    log.info("filtered gene size "+filteredgenes.size());
+    for (int i = 0; i < filteredgenes.size(); i++) {
+
+      if (!transcript_id.equalsIgnoreCase(filteredgenes.getJSONObject(i).get("transcript_id").toString())) {
+        if (!transcript_id.equalsIgnoreCase("")) {
+          eachTrack.put("Exons", exonList);
+          transcriptList.add(eachTrack);
+        }
+        transcript_id = filteredgenes.getJSONObject(i).get("transcript_id").toString();
+        exonList = new JSONArray();
+
+        eachTrack = new JSONObject();
+
+        eachTrack.put("id", filteredgenes.getJSONObject(i).get("transcript_id"));
+        eachTrack.put("start", filteredgenes.getJSONObject(i).get("transcript_start"));
+        eachTrack.put("end", filteredgenes.getJSONObject(i).get("transcript_end"));
+
+        translation_start = template.queryForList(GET_CDS_start_per_Gene, new Object[]{filteredgenes.getJSONObject(i).get("transcript_id").toString()});
+        translation_end = template.queryForList(GET_CDS_end_per_Gene, new Object[]{filteredgenes.getJSONObject(i).get("transcript_id").toString()});
+        for (Map start_seq : translation_start) {
+          eachTrack.put("transcript_start", start_seq.get("seq_start"));
+
+        }
+
+        for (Map end_seq : translation_end) {
+          eachTrack.put("transcript_end", end_seq.get("seq_end"));
+
+        }
+        eachTrack.put("desc", filteredgenes.getJSONObject(i).get("transcript_name"));
+
+        eachTrack.put("layer", layer);
+        eachTrack.put("domain", 0);
+//        domains = getTranscriptsGO(filteredgenes.getJSONObject(i).get("transcript_id").toString());
+//        for (Map domain : domains) {
+//          eachTrack.put("domain", domain.get("value"));
+//        }
+        eachTrack.put("flag", false);
+      }
+      if (!gene_id.equalsIgnoreCase(filteredgenes.getJSONObject(i).get("gene_id").toString())) {
+        if (!gene_id.equalsIgnoreCase("")) {
+          eachGene.put("transcript", transcriptList);
+          GeneList.add(eachGene);
+        }
+        gene_id = filteredgenes.getJSONObject(i).get("gene_id").toString();
+        transcriptList = new JSONArray();
+        eachGene.put("id", filteredgenes.getJSONObject(i).get("gene_id"));
+        eachGene.put("start", filteredgenes.getJSONObject(i).get("gene_start"));
+        eachGene.put("end", filteredgenes.getJSONObject(i).get("gene_end"));
+        eachGene.put("desc", filteredgenes.getJSONObject(i).get("gene_name"));
+        eachGene.put("strand", filteredgenes.getJSONObject(i).get("gene_strand"));
+        eachGene.put("layer", i % 2 + 1);
+        eachGene.put("domain", 0);
+//        domains = getGenesGO(filteredgenes.getJSONObject(i).get("gene_id").toString());
+//        for (Map domain : domains) {
+//          eachGene.put("domain", domain.get("value"));
+//        }
+        if (lastsize < 2 && layer > 2) {
+          layer = 1;
+        }
+        else {
+          layer = layer;
+        }
+
+        if (thissize > 1) {
+          layer = 1;
+        }
+        layer++;
+        log.info("gene " + filteredgenes.getJSONObject(i).get("gene_id"));
+
+      }
+
+
+      JSONObject eachExon = new JSONObject();
+      eachExon.put("id", filteredgenes.getJSONObject(i).get("exon_id"));
+      eachExon.put("start", filteredgenes.getJSONObject(i).get("exon_start"));
+      eachExon.put("end", filteredgenes.getJSONObject(i).get("exon_end"));
+      exonList.add(eachExon);
+
+      lastsize = thissize;
+    }
+
+    if (filteredgenes.size() > 0) {
+      eachTrack.put("Exons", exonList);
+      transcriptList.add(eachTrack);
+      eachGene.put("transcript", transcriptList);
+      GeneList.add(eachGene);
+    }
+
+
+
+//    for (Map map : maps) {
+//      JSONObject eachTrack = new JSONObject();
+//      int track_start = Integer.parseInt(map.get("start").toString()) - 1;
+//      int track_end = Integer.parseInt(map.get("end").toString()) - 1;
+//      if (track_start >= start && track_end <= end || track_start <= start && track_end >= end || track_end >= start && track_end <= end || track_start >= start && track_start <= end) {
+//        eachTrack.put("start", map.get("start"));
+//        eachTrack.put("end", map.get("end"));
+//        eachTrack.put("flag", false);
+//        if (map.get("cigarline") != null) {
+//          eachTrack_temp.put("cigarline", map.get("cigarline").toString());
+//        }
+//        for (int i = 0; i < ends.size(); i++) {
+//          if ((Integer.parseInt(map.get("start").toString()) - ends.get(i)) > delta) {
+//            ends.remove(i);
+//            ends.add(i, Integer.parseInt(map.get("end").toString()));
+//            eachTrack.put("layer", i + 1);
+//            break;
+//
+//          }
+//          else if ((Integer.parseInt(map.get("start").toString()) - ends.get(i) < delta) && (i + 1) == ends.size()) {
+//            if (i == 0) {
+//              eachTrack.put("layer", ends.size());
+//              ends.add(i, Integer.parseInt(map.get("end").toString()));
+//            }
+//            else {
+//              eachTrack.put("layer", ends.size());
+//              ends.add(ends.size(), Integer.parseInt(map.get("end").toString()));
+//            }
+//            break;
+//          }
+//          else {
+//            //             continue;
+//          }
+//        }
+//        eachTrack.put("desc", map.get("description"));
+//        assemblyTracks.add(eachTrack);
+//      }
+//    }
+  return GeneList;
+}
 
 
   public JSONArray processGenes(List<Map<String, Object>> genes, long start, long end, int delta, int id, String trackId) throws IOException {
 
     try {
       JSONArray GeneList = new JSONArray();
-
+      List<Integer> ends = new ArrayList<Integer>();
+      ends.add(0, 0);
       if (template.queryForObject(GET_GENE_SIZE, new Object[]{id, trackId}, Integer.class) > 0) {
-        JSONArray filteredgenes = new JSONArray();
-        JSONObject eachGene = new JSONObject();
-        JSONObject eachTrack = new JSONObject();
-        JSONArray exonList = new JSONArray();
-        JSONArray transcriptList = new JSONArray();
-        String gene_id = "";
-        String transcript_id = "";
-        int layer = 1;
-        int lastsize = 0;
-        int thissize = 0;
-        List<Map<String, Object>> domains;
-        List<Map<String, Object>> translation_start;
-        List<Map<String, Object>> translation_end;
-
-
-        for (Map gene : genes) {
-          int start_pos = Integer.parseInt(gene.get("gene_start").toString());
-          int end_pos = Integer.parseInt(gene.get("gene_end").toString());
-          if (start_pos >= start && end_pos <= end || start_pos <= start && end_pos >= end || end_pos >= start && end_pos <= end || start_pos >= start && start_pos <= end) {
-            filteredgenes.add(filteredgenes.size(), gene);
-          }
+        if (genes.size() > 0) {
+          ends.add(0, 0);
+          GeneList = getGeneLevel(genes, ends, start, end, delta);
         }
-        for (int i = 0; i < filteredgenes.size(); i++) {
-
-          if (!transcript_id.equalsIgnoreCase(filteredgenes.getJSONObject(i).get("transcript_id").toString())) {
-            if (!transcript_id.equalsIgnoreCase("")) {
-              eachTrack.put("Exons", exonList);
-              transcriptList.add(eachTrack);
-            }
-            transcript_id = filteredgenes.getJSONObject(i).get("transcript_id").toString();
-            exonList = new JSONArray();
-
-            eachTrack = new JSONObject();
-
-            eachTrack.put("id", filteredgenes.getJSONObject(i).get("transcript_id"));
-            eachTrack.put("start", filteredgenes.getJSONObject(i).get("transcript_start"));
-            eachTrack.put("end", filteredgenes.getJSONObject(i).get("transcript_end"));
-
-            translation_start = template.queryForList(GET_CDS_start_per_Gene, new Object[]{filteredgenes.getJSONObject(i).get("transcript_id").toString()});
-            translation_end = template.queryForList(GET_CDS_end_per_Gene, new Object[]{filteredgenes.getJSONObject(i).get("transcript_id").toString()});
-            for (Map start_seq : translation_start) {
-              eachTrack.put("transcript_start", start_seq.get("seq_start"));
-
-            }
-
-            for (Map end_seq : translation_end) {
-              eachTrack.put("transcript_end", end_seq.get("seq_end"));
-
-            }
-            eachTrack.put("desc", filteredgenes.getJSONObject(i).get("transcript_name"));
-
-            eachTrack.put("layer", layer);
-            eachTrack.put("domain", 0);
-            domains = getTranscriptsGO(filteredgenes.getJSONObject(i).get("transcript_id").toString());
-            for (Map domain : domains) {
-              eachTrack.put("domain", domain.get("value"));
-            }
-//          log.info("transcript "+filteredgenes.getJSONObject(i).get("transcript_id"));
-            eachTrack.put("flag", false);
-          }
-          if (!gene_id.equalsIgnoreCase(filteredgenes.getJSONObject(i).get("gene_id").toString())) {
-            if (!gene_id.equalsIgnoreCase("")) {
-              eachGene.put("transcript", transcriptList);
-              GeneList.add(eachGene);
-            }
-            gene_id = filteredgenes.getJSONObject(i).get("gene_id").toString();
-            transcriptList = new JSONArray();
-            eachGene.put("id", filteredgenes.getJSONObject(i).get("gene_id"));
-            eachGene.put("start", filteredgenes.getJSONObject(i).get("gene_start"));
-            eachGene.put("end", filteredgenes.getJSONObject(i).get("gene_end"));
-            eachGene.put("desc", filteredgenes.getJSONObject(i).get("gene_name"));
-            eachGene.put("strand", filteredgenes.getJSONObject(i).get("gene_strand"));
-            eachGene.put("layer", i % 2 + 1);
-            eachGene.put("domain", 0);
-            domains = getGenesGO(filteredgenes.getJSONObject(i).get("gene_id").toString());
-            for (Map domain : domains) {
-              eachGene.put("domain", domain.get("value"));
-            }
-            if (lastsize < 2 && layer > 2) {
-              layer = 1;
-            }
-            else {
-              layer = layer;
-            }
-
-            if (thissize > 1) {
-              layer = 1;
-            }
-            layer++;
-            log.info("gene " + filteredgenes.getJSONObject(i).get("gene_id"));
-
-          }
-
-
-          JSONObject eachExon = new JSONObject();
-          eachExon.put("id", filteredgenes.getJSONObject(i).get("exon_id"));
-          eachExon.put("start", filteredgenes.getJSONObject(i).get("exon_start"));
-          eachExon.put("end", filteredgenes.getJSONObject(i).get("exon_end"));
-          exonList.add(eachExon);
-
-          lastsize = thissize;
+        else {
         }
-
-        if (filteredgenes.size() > 0) {
-          eachTrack.put("Exons", exonList);
-          transcriptList.add(eachTrack);
-          eachGene.put("transcript", transcriptList);
-          GeneList.add(eachGene);
-        }
-
-
       }
       else {
-        GeneList.add("getGene no result found");
+        GeneList = recursiveGene(0, id, trackId, start, end, delta);
       }
+
+
       return GeneList;
     }
     catch (EmptyResultDataAccessException e) {
