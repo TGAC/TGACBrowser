@@ -195,6 +195,7 @@ public class DnaSequenceService {
           response.put(trackName, sequenceStore.processRepeat(sequenceStore.getRepeat(queryid, trackId, start, end), start, end, delta, queryid, trackId));
         }
         else {
+          response.put("type", "graph");
           response.put(trackName, sequenceStore.getRepeatGraph(queryid, trackId, start, end));
         }
       }
