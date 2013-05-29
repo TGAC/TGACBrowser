@@ -1434,6 +1434,7 @@ span.counter {
     height: 8%;
     /*background-color: lightblue;*/
     vertical-align: middle;
+top:5px
 }
 
 #nav_panel {
@@ -1638,6 +1639,12 @@ span.counter {
     cursor: pointer;
     vertical-align: middle;
     opacity: 0.7;
+    height:20px;
+left:45%
+}
+
+.browserimagesmall {
+     height:15px;
 }
 
 #SeqLenStart {
@@ -1706,7 +1713,7 @@ span.counter {
     height: 15px;
     border: 0px solid;
     padding: 0px;
-    top: 10px;
+    
 
 }
 
@@ -2498,4 +2505,20 @@ span.deleteicon input {
     border: 1px solid transparent;
     height: 5px;
     cursor: pointer;
+}
+
+.divbutton{
+    background: none repeat scroll 0 0 #EEEEEE;
+        border: 1px solid #AAAAAA;
+        border-radius: 3px 3px 3px 3px;
+        color: #333333;
+        cursor: pointer;
+        font-family: Arial,sans-serif;
+        font-size: 11px;
+        font-weight: bold;
+        padding: 3px 5px;
+        text-decoration: none;
+}
+.divbutton a {
+    text-decoration: none;
 }

@@ -309,9 +309,7 @@ function saveSession() {
           'saveFile',
           {'location': path, 'reference': seqregname, 'session': randomnumber, 'from': getBegin(), 'to': getEnd(), 'seq': seq, 'seqlen': sequencelength, 'track': track_list, 'tracks': tracks, 'filename': (randomnumber), 'blast': blast, 'edited_tracks': edited_tracks, 'removed_tracks': removed_tracks, 'url': ajaxurl},
           {'doOnSuccess': function (json) {
-            jQuery("#export").click(function () {
-              window.location = json.link;
-            });
+            jQuery("#export").html("<a target = '_blank' href='"+json.link+"'>Export</a>")
             jQuery("#export").show();
           }
           });
