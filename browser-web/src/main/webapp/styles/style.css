@@ -1468,7 +1468,7 @@ span.counter {
 
 #translation_div {
     color: black;
-    font-family:  Courier;
+    font-family: Courier;
     /*left: 25%;*/
     position: absolute;
     text-align: center;
@@ -1709,20 +1709,22 @@ span.counter {
     top: 10px;
 
 }
+
 .jumpbutton {
     background: none repeat scroll 0 0 #A9A9A9;
-        border: 0 solid;
-        font-size: small;
-        height: 20px;
-        padding-bottom: 0;
-        position: relative;
-        top: 10px;
-        vertical-align: middle;
+    border: 0 solid;
+    font-size: small;
+    height: 20px;
+    padding-bottom: 0;
+    position: relative;
+    top: 10px;
+    vertical-align: middle;
 }
 
 .jumpbutton a {
     text-decoration: none;
 }
+
 #seqbar {
     color: black;
     background-color: white;
@@ -2440,10 +2442,12 @@ span.deleteicon input {
 }
 
 #mapmarker {
-    border: 2px solid red;
+    border: 1px solid red;
     position: absolute;
     border-radius: 5px;
-z-index:999;
+    z-index: 999;
+    background: red;
+    opacity: 0.1;
 }
 
 #searchresultMap {
