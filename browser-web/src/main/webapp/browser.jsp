@@ -29,59 +29,96 @@
     <div id="canvas" style="display: none">
 
         <div id="controller">
-            <div id="coord" align="left">
+            <table width=100%>
+                <tr>
+                    <td>
 
-                <input type="text" id="begin" size="5" class="jump">
-                <input type="text" id="end" size="5" class="jump">
-                <button onclick="jumpToSeq()" class="jumpbutton"> Go</button>
+                        <div id="coord" align="left">
+                            <table>
+                                <tr>
+                                    <td>
+                                        <input type="text" id="begin" size="5" class="jump">
+                                    </td>
+                                    <td>
+                                        <input type="text" id="end" size="5" class="jump">
+                                    </td>
+                                    <td>
+                                        <div onclick="jumpToSeq()" class="divbutton"> Go</div>
+                                    </td>
+                                    <td>
+                                        <div class="divbutton"
+                                             onClick="parent.location='mailto:tgac.browser@tgac.ac.uk?Subject=TGAC Browser - Feedback'; ">
+                                            Feedback
+                                        </div>
 
-                <button class="jumpbutton"
-                        onClick="parent.location='mailto:tgac.browser@tgac.ac.uk?Subject=TGAC Browser - Feedback'; ">
-                    Feedback
-                </button>
-                <div id=alertDiv></div>
-                <div id="notifier" class="rightAlertdiv"></div>
-            </div>
+                                    </td>
+                                </tr>
+                            </table>
 
-            <img src='images/browser/reset.png' onclick="reset();" class="browserimage" height=50%
-                 alt="Reset" title="Reset"> &nbsp;&nbsp;
-            <img src='images/browser/backward.png' onclick="dragLeft();" id="leftbig" class="browserimage" height=70%
-                 alt="Backward" title="Move Left">
-            <img src='images/browser/backward.png' onclick="seqLeft();" class="browserimage"
-                 height=40% alt="Left" title="Move Left (1bp)">&nbsp;
-            <img src='images/browser/forward.png' onclick="seqRight();" class="browserimage"
-                 height=40% alt="Right" title="Move Right (1bp)">
-            <img src='images/browser/forward.png' onclick="dragRight();" id="rightbig" class="browserimage"
-                 height=70% alt="Forward" title="Move Right">&nbsp;&nbsp;
-            <img src='images/browser/zoomin.png' id="zoominbig" onclick="zoomIn(parseInt(sequencelength/20));"
-                 class="browserimage"
-                 height=70% alt="ZoomIn" title="Zoom In">
-            <img src='images/browser/zoomin.png' id="zoominsmall" onclick="zoomIn(parseInt(sequencelength/40));"
-                 class="browserimage"
-                 height=40% alt="Zoomin" title="Zoom In">&nbsp;
-            <img src='images/browser/zoomout.png' id="zoomoutsmall" onclick="zoomOut(parseInt(sequencelength/40));"
-                 class="browserimage"
-                 height=40% alt="Zoomout" title='Zoom Out'>
-            <img src='images/browser/zoomout.png' id="zoomoutbig" onclick="zoomOut(parseInt(sequencelength/20));"
-                 class="browserimage"
-                 height=70% alt="Zoomout" title="Zoom Out">&nbsp;&nbsp;
-            <img src='images/browser/selectall.png' onclick="expand();" class="browserimage"
-                 height=60% alt="selectall" title="Select All">
+                            <div id=alertDiv></div>
+                            <div id="notifier" class="rightAlertdiv"></div>
+                        </div>
+                    </td>
+                    <td>
+                        <img src='images/browser/reset.png' onclick="reset();" class="browserimage" height=50%
+                             alt="Reset" title="Reset"> &nbsp;&nbsp;
+                        <img src='images/browser/backward.png' onclick="dragLeft();" id="leftbig" class="browserimage"
+                             height=70%
+                             alt="Backward" title="Move Left">
+                        <img src='images/browser/backward.png' onclick="seqLeft();"
+                             class="browserimage browserimagesmall"
+                             height=40% alt="Left" title="Move Left (1bp)">&nbsp;
+                        <img src='images/browser/forward.png' onclick="seqRight();"
+                             class="browserimage browserimagesmall"
+                             height=40% alt="Right" title="Move Right (1bp)">
+                        <img src='images/browser/forward.png' onclick="dragRight();" id="rightbig" class="browserimage"
+                             height=70% alt="Forward" title="Move Right">&nbsp;&nbsp;
+                        <img src='images/browser/zoomin.png' id="zoominbig"
+                             onclick="zoomIn(parseInt(sequencelength/20));"
+                             class="browserimage"
+                             height=70% alt="ZoomIn" title="Zoom In">
+                        <img src='images/browser/zoomin.png' id="zoominsmall"
+                             onclick="zoomIn(parseInt(sequencelength/40));"
+                             class="browserimage browserimagesmall"
+                             height=40% alt="Zoomin" title="Zoom In">&nbsp;
+                        <img src='images/browser/zoomout.png' id="zoomoutsmall"
+                             onclick="zoomOut(parseInt(sequencelength/40));"
+                             class="browserimage browserimagesmall"
+                             height=40% alt="Zoomout" title='Zoom Out'>
+                        <img src='images/browser/zoomout.png' id="zoomoutbig"
+                             onclick="zoomOut(parseInt(sequencelength/20));"
+                             class="browserimage"
+                             height=70% alt="Zoomout" title="Zoom Out">&nbsp;&nbsp;
+                        <img src='images/browser/selectall.png' onclick="expand();" class="browserimage"
+                             height=60% alt="selectall" title="Select All">
+                    </td>
+                    <td>
+                        <table style="position: fixed; right: 0px; top: 25px;">
+                            <tr>
+                                <td>
+                                    <div id=export style=" display: none;"
+                                            class="divbutton"> Export
+                                    </div>
+                                </td>
+                                <td>
+                                    <div onclick="checkSession();"
+                                            class="divbutton">
+                                        Save Session
+                                    </div>
+                                </td>
 
+                                <td>
+                                    <div id="controlsbutton" class="divbutton">
+                                        Tracks / Settings
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                        <div id=sessionid></div>
 
-            <div id="controlsbutton" class="jumpbutton" style="right: 10px; position: absolute;">
-                Tracks / Settings
-            </div>
-
-
-            <div id=sessionid></div>
-
-            <button id=export style="position: absolute; right: 220px; display: none;"
-                    class="jumpbutton">   Export
-            </button>
-            <button onclick="checkSession();" style="right: 120px; position: absolute;" class="jumpbutton">
-                Save Session
-            </button>
+                    </td>
+                </tr>
+            </table>
 
 
         </div>
