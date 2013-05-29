@@ -77,7 +77,7 @@
             <div id=sessionid></div>
 
             <button id=export style="position: absolute; right: 220px; display: none;"
-                    class="jumpbutton">
+                    class="jumpbutton">   Export
             </button>
             <button onclick="checkSession();" style="right: 120px; position: absolute;" class="jumpbutton">
                 Save Session
