@@ -35,25 +35,12 @@
                 <input type="text" id="end" size="5" class="jump">
                 <button onclick="jumpToSeq()" class="jumpbutton"> Go</button>
 
-                <button class="jumpbutton">
-                    <a href="mailto:tgac.browser@tgac.ac.uk?Subject=TGAC Browser - Feedback">
-                        Feedback</a>
+                <button class="jumpbutton"
+                        onClick="parent.location='mailto:tgac.browser@tgac.ac.uk?Subject=TGAC Browser - Feedback'; ">
+                    Feedback
                 </button>
                 <div id=alertDiv></div>
                 <div id="notifier" class="rightAlertdiv"></div>
-
-                <%--<input id="dragRadio" type="radio" name="selectiontogle" checked="checked" onchange="dragToogle()"/>Drag--%>
-                <%--<input id="selectRadio" type="radio" name="selectiontogle" onchange="dragToogle()"/>Select--%>
-
-                </p>
-
-                <%--<input class="deletable" type="text" name="searchText" id="searchText" size="14" value="Search DNA"--%>
-                <%--onkeypress="return isACGT(event)" onkeyup="searchSeq();" onclick="jQuery('#searchText').val('')">--%>
-
-                <%--<span class="ui-button ui-widget ui-state-default ui- corner-all ui-icon ui-icon-refresh"--%>
-                <%--onclick="jQuery('#searchText').val('Search'); jQuery('#searchDiv').html(''); "> </span>--%>
-
-
             </div>
 
             <img src='images/browser/reset.png' onclick="reset();" class="browserimage" height=50%
@@ -81,6 +68,7 @@
             <img src='images/browser/selectall.png' onclick="expand();" class="browserimage"
                  height=60% alt="selectall" title="Select All">
 
+
             <div id="controlsbutton" class="jumpbutton" style="right: 10px; position: absolute;">
                 Tracks / Settings
             </div>
@@ -103,7 +91,7 @@
             <div id="mapmarker">
             </div>
         </div>
-        
+
         <div id="bar_image">
             <div id="searchDiv"></div>
             <div id="SeqLenStart">&nbsp;</div>
@@ -495,49 +483,50 @@
 
 <div id=blastselector class="popupmenu" style="position: absolute; display: none">
 
-   <div id=blastdbs style="position: absolute; display: none">
-       Blast DB <select name="blastdb" id="blastdb">
-               <c:set var="databases">${initParam.blastdblink} </c:set>
+    <div id=blastdbs style="position: absolute; display: none">
+        Blast DB <select name="blastdb" id="blastdb">
+        <c:set var="databases">${initParam.blastdblink} </c:set>
 
-               <c:set var="dateParts" value="${fn:split(databases, ',')}"/>
+        <c:set var="dateParts" value="${fn:split(databases, ',')}"/>
 
-               <c:set var="databasesloc">${initParam.blastdblocation} </c:set>
+        <c:set var="databasesloc">${initParam.blastdblocation} </c:set>
 
-               <c:set var="datePartsloc" value="${fn:split(databasesloc, ',')}"/>
+        <c:set var="datePartsloc" value="${fn:split(databasesloc, ',')}"/>
 
 
-               <c:forEach var="i" begin="1" end='${fn:length(dateParts)}' step="1">
-                   <%--splitting by /--%>
-                   <c:set var="text" value="${fn:split(datePartsloc[i-1],'/')}"/>
-                   <%--considering last entry--%>
-                   <c:set var="text" value="${text[fn:length(text)-1]}"/>
-                   <%--index of . --%>
-                   <c:set var="to" value="${fn:indexOf(text,'.' )}"/>
-                   <%--substring to . --%>
-                   <c:set var="filename" value="${fn:substring(text,0,to) }"/>
+        <c:forEach var="i" begin="1" end='${fn:length(dateParts)}' step="1">
+            <%--splitting by /--%>
+            <c:set var="text" value="${fn:split(datePartsloc[i-1],'/')}"/>
+            <%--considering last entry--%>
+            <c:set var="text" value="${text[fn:length(text)-1]}"/>
+            <%--index of . --%>
+            <c:set var="to" value="${fn:indexOf(text,'.' )}"/>
+            <%--substring to . --%>
+            <c:set var="filename" value="${fn:substring(text,0,to) }"/>
 
-                   <option value="${datePartsloc[i-1]}:${dateParts[i-1]}">${filename}</option>
+            <option value="${datePartsloc[i-1]}:${dateParts[i-1]}">${filename}</option>
 
-                   <%--<option value=${datePartsloc[i-1]}>${dateParts[i-1]}</option>--%>
-               </c:forEach>
-           </select>
+            <%--<option value=${datePartsloc[i-1]}>${dateParts[i-1]}</option>--%>
+        </c:forEach>
+    </select>
 
-   </div>
+    </div>
     <div id="ncbiblastdbs" style="position: absolute; display: none">
-            NCBI BLAST
-            <select name="blastdb" id="ncbiblastdb">
-                <option value=nr>nr</option>
-                <option value=est_human>est_human</option>
-                <option value=est_mouse>nr</option>
-                <option value=est_others>est_others</option>
-                <option value=htg>htg</option>
-                <option value=gss>gss</option>
-                <option value=pataa>pataa</option>
-                <option value=patnt>patnt</option>
-            </select>
+        NCBI BLAST
+        <select name="blastdb" id="ncbiblastdb">
+            <option value=nr>nr</option>
+            <option value=est_human>est_human</option>
+            <option value=est_mouse>nr</option>
+            <option value=est_others>est_others</option>
+            <option value=htg>htg</option>
+            <option value=gss>gss</option>
+            <option value=pataa>pataa</option>
+            <option value=patnt>patnt</option>
+        </select>
 
-        </div>
+    </div>
     <p> &nbsp; </p>
+
     <div id=blastselectorpanel></div>
 
 </div>
