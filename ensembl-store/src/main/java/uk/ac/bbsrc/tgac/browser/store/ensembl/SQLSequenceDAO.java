@@ -114,6 +114,7 @@ public class SQLSequenceDAO implements SequenceStore {
   public static final String GET_GENOME_MARKER = "select mf.marker_feature_id as id, sr.name as reference, mf.marker_id as marker_id, mf.seq_region_start as start, mf.seq_region_end as end, mf.analysis_id as analysis_id from marker_feature mf, seq_region sr where mf.seq_region_id = sr.seq_region_id;";
   public static final String GET_TRACKS_VIEW = "select a.logic_name as name, a.analysis_id as id, ad.description, ad.display_label, ad.displayable from analysis a, analysis_description ad where a.analysis_id = ad.analysis_id;";
   public static final String GET_coord_attrib_chr = "SELECT coord_system_id FROM coord_system where name like ? || attrib like ?";
+  public static final String GET_length_from_seqreg_id = "SELECT length FROM seq_region where seq_region_id =?";
 
   private JdbcTemplate template;
 
@@ -238,11 +239,9 @@ public class SQLSequenceDAO implements SequenceStore {
 
   public JSONArray getSeqRegionSearch(String searchQuery) throws IOException {
     try {
-      log.info("getSeqRegionSearch " + searchQuery);
       JSONArray names = new JSONArray();
       List<Map<String, Object>> maps = template.queryForList(GET_SEQ_REGION_ID_SEARCH, new Object[]{'%' + searchQuery + '%'});
       for (Map map : maps) {
-        log.info(map.toString());
         JSONObject eachName = new JSONObject();
         eachName.put("name", map.get("name"));
         eachName.put("seq_region_id", map.get("seq_region_id"));
@@ -468,14 +467,11 @@ public class SQLSequenceDAO implements SequenceStore {
 
 
   public JSONArray recursiveHitGraph(int start_pos, int id, String trackId, long start, long end) throws IOException {
-    log.info("\n\nrecursive hit graph " + start_pos + ":" + id + ":" + trackId + ":" + start + ":" + end + "\n\n");
     try {
       JSONArray assemblyTracks = new JSONArray();
       List<Map<String, Object>> maps_one = template.queryForList(GET_Assembly_for_reference, new Object[]{id});
       if (maps_one.size() > 0) {
-        log.info("\n\nif  \n\n ");
         for (int j = 0; j < maps_one.size(); j++) {
-          log.info(maps_one.get(j).get("cmp_seq_region_id").toString());
           long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
           long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
           if (track_start < 0) {
@@ -484,11 +480,8 @@ public class SQLSequenceDAO implements SequenceStore {
           if (track_end > Integer.parseInt(maps_one.get(j).get("asm_end").toString())) {
             track_end = Integer.parseInt(maps_one.get(j).get("asm_end").toString());
           }
-          log.info("\n\ntrack start" + track_start);
-          log.info("\n\ntrack end" + track_end);
           int no_of_tracks = template.queryForObject(GET_HIT_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end}, Integer.class);
           if (no_of_tracks > 0) {
-            log.info("\n\nif if " + maps_one.get(j).get("cmp_seq_region_id"));
             List<Integer> ends = new ArrayList<Integer>();
             ends.add(0, 0);
             track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
@@ -500,12 +493,9 @@ public class SQLSequenceDAO implements SequenceStore {
               track_end = Integer.parseInt(maps_one.get(j).get("asm_end").toString());
             }
 //            start_pos += Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-            log.info("\n\ntrack start" + track_start);
-            log.info("\n\ntrack end" + track_end);
             assemblyTracks.addAll(getHitGraphLevel(Integer.parseInt(maps_one.get(j).get("asm_start").toString()), Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end));
           }
           else {
-            log.info("\n\nelse   ");
             track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
             track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
             if (track_start < 0) {
@@ -531,15 +521,12 @@ public class SQLSequenceDAO implements SequenceStore {
   }
 
   public JSONArray getHitGraphLevel(int start_pos, int id, String trackId, long start, long end) throws IOException {
-    log.info("\n\ngethitgraphlevel " + start_pos + ":" + id + ":" + trackId + ":" + start + ":" + end);
     try {
       JSONArray trackList = new JSONArray();
       long from = start;
       long to = 0;
       int no_of_tracks = template.queryForObject(GET_HIT_SIZE_SLICE, new Object[]{id, trackId, start, end}, Integer.class);
-      log.info("nooftracks " + no_of_tracks);
       if (no_of_tracks > 0) {
-        log.info("\n\nif");
         for (int i = 1; i <= 200; i++) {
           JSONObject eachTrack = new JSONObject();
           to = start + (i * (end - start) / 200);
@@ -549,18 +536,15 @@ public class SQLSequenceDAO implements SequenceStore {
           eachTrack.put("graph", no_of_tracks);
           eachTrack.put("id", id);
 
-          log.info("\t" + id + ":" + start_pos + from + ":" + start_pos + to + ":" + to);
           trackList.add(eachTrack);
           from = to;
         }
       }
       else {
-        log.info("\n\nelse");
 
 
       }
 
-      log.info("final  " + id + ":" + trackList.size());
       return trackList;
     }
     catch (EmptyResultDataAccessException e) {
@@ -569,13 +553,11 @@ public class SQLSequenceDAO implements SequenceStore {
   }
 
   public JSONArray getHitGraph(int id, String trackId, long start, long end) throws IOException {
-    log.info("gethit graph" + id + ":" + trackId + ":" + start + ":" + end);
     try {
       JSONArray trackList = new JSONArray();
       long from = start;
       long to = 0;
       int no_of_tracks = template.queryForObject(GET_HIT_SIZE_SLICE, new Object[]{id, trackId, from, end}, Integer.class);
-      log.info("nooftracks " + no_of_tracks);
       if (no_of_tracks > 0) {
         for (int i = 1; i <= 200; i++) {
           JSONObject eachTrack = new JSONObject();
@@ -601,25 +583,18 @@ public class SQLSequenceDAO implements SequenceStore {
 
 
   public int countRecursiveHit(int id, String trackId, long start, long end) {
-//    log.info("count recursive " + id + ":" + trackId + ":" + start + ":" + end);
-
     int hit_size = 0;
     JSONArray assemblyTracks = new JSONArray();
     List<Map<String, Object>> maps_one = template.queryForList(GET_Assembly_for_reference, new Object[]{id});
 
     if (maps_one.size() > 0) {
-//      log.info("if " + maps_one.size());
       for (int j = 0; j < maps_one.size(); j++) {
         long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
         long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-//        log.info("\n\nid" + maps_one.get(j).get("cmp_seq_region_id"));
-//        log.info("\n\ntrack start" + track_start);
-//        log.info("\n\ntrack end" + track_end);
         if (template.queryForObject(GET_HIT_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end}, Integer.class) > 0) {
           hit_size += template.queryForObject(GET_HIT_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end}, Integer.class);
         }
         else {
-          log.info("else ");
           hit_size += countRecursiveHit(Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end);
         }
       }
@@ -631,6 +606,7 @@ public class SQLSequenceDAO implements SequenceStore {
 
   public int countHit(int id, String trackId, long start, long end) {
     int hit_size = template.queryForObject(GET_HIT_SIZE_SLICE, new Object[]{id, trackId, start, end}, Integer.class);
+
     if (hit_size == 0) {
       hit_size = countRecursiveHit(id, trackId, start, end);
     }
@@ -652,27 +628,21 @@ public class SQLSequenceDAO implements SequenceStore {
   }
 
   public JSONArray recursiveHit(int start_pos, int id, String trackId, long start, long end, int delta) throws IOException {
-    log.info("\n\nrecursive hit " + start_pos + ":" + id + ":" + trackId + ":" + start + ":" + end + ":" + delta + "\n\n");
     try {
       JSONArray assemblyTracks = new JSONArray();
       List<Map<String, Object>> maps_one = template.queryForList(GET_Assembly_for_reference, new Object[]{id});
       if (maps_one.size() > 0) {
-        log.info("\n\nif  \n\n ");
         for (int j = 0; j < maps_one.size(); j++) {
           List<Map<String, Object>> maps_two = template.queryForList(GET_HIT_SIZE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId});
           JSONObject eachTrack_temp = new JSONObject();
           if (maps_two.size() > 0) {
-            log.info("\n\nif if " + maps_one.get(j).get("cmp_seq_region_id"));
             List<Integer> ends = new ArrayList<Integer>();
             ends.add(0, 0);
             long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
             long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-            log.info("\n\ntrack start" + track_start);
-            log.info("\n\ntrack end" + track_end);
             assemblyTracks.addAll(getHitLevel(start_pos + Integer.parseInt(maps_one.get(j).get("asm_start").toString()), getHit(Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end), start, end, delta));
           }
           else {
-            log.info("\n\nelse   ");
             long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
             long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
             List<Integer> ends = new ArrayList<Integer>();
@@ -693,14 +663,11 @@ public class SQLSequenceDAO implements SequenceStore {
   }
 
   public JSONArray getHitLevel(int start_pos, List<Map<String, Object>> maps_two, long start, long end, int delta) {
-    log.info("\n\nhit level 1 " + start_pos + ":" + start + ":" + end + ":" + delta + ":");
-
     List<Integer> ends = new ArrayList<Integer>();
     ends.add(0, 0);
     JSONObject eachTrack_temp = new JSONObject();
     JSONArray assemblyTracks = new JSONArray();
     for (Map map_temp : maps_two) {
-      log.info("map temp\t" + map_temp.toString());
       int track_start = start_pos + Integer.parseInt(map_temp.get("start").toString()) - 1;
       int track_end = start_pos + Integer.parseInt(map_temp.get("end").toString()) - 1;
       if (track_start >= start && track_end <= end || track_start <= start && track_end >= end || track_end >= start && track_end <= end || track_start >= start && track_start <= end) {
@@ -737,8 +704,6 @@ public class SQLSequenceDAO implements SequenceStore {
   }
 
   public JSONArray getHitLevel(List<Map<String, Object>> maps, List<Integer> ends, long start, long end, int delta) {
-    log.info("\n\nhit level 2 " + ":" + start + ":" + end + ":" + delta);
-
     JSONObject eachTrack_temp = new JSONObject();
     JSONArray assemblyTracks = new JSONArray();
 
@@ -748,13 +713,6 @@ public class SQLSequenceDAO implements SequenceStore {
       int track_end = Integer.parseInt(map.get("end").toString()) - 1;
       if (track_start >= start && track_end <= end || track_start <= start && track_end >= end || track_end >= start && track_end <= end || track_start >= start && track_start <= end) {
 
-//        eachTrack.put("start", map.get("start"));
-//        eachTrack.put("end", map.get("end"));
-//        eachTrack.put("flag", false);
-//        log.info(map.get("cigarline").toString());
-//        if (map.get("cigarline") != null) {
-//          eachTrack_temp.put("cigarline", map.get("cigarline").toString());
-//        }
         for (int i = 0; i < ends.size(); i++) {
           if ((Integer.parseInt(map.get("start").toString()) - ends.get(i)) > delta) {
             ends.remove(i);
@@ -804,7 +762,13 @@ public class SQLSequenceDAO implements SequenceStore {
       else {
         trackList = recursiveHit(0, id, trackId, start, end, delta);
       }
-
+      if (trackList.size() == 0) {
+        int length = template.queryForObject(GET_length_from_seqreg_id, new Object[]{id}, Integer.class);
+        int counthit = countHit(id, trackId, 0, length);
+        if (counthit < 1) {
+          trackList.add("getHit no result found");
+        }
+      }
 
       return trackList;
     }
@@ -814,14 +778,11 @@ public class SQLSequenceDAO implements SequenceStore {
   }
 
   public JSONArray recursiveRepeatGraph(int start_pos, int id, String trackId, long start, long end) throws IOException {
-    log.info("\n\nrecursive repeat graph " + start_pos + ":" + id + ":" + trackId + ":" + start + ":" + end + "\n\n");
     try {
       JSONArray assemblyTracks = new JSONArray();
       List<Map<String, Object>> maps_one = template.queryForList(GET_Assembly_for_reference, new Object[]{id});
       if (maps_one.size() > 0) {
-        log.info("\n\nif  \n\n ");
         for (int j = 0; j < maps_one.size(); j++) {
-          log.info(maps_one.get(j).get("cmp_seq_region_id").toString());
           long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
           long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
           if (track_start < 0) {
@@ -830,11 +791,8 @@ public class SQLSequenceDAO implements SequenceStore {
           if (track_end > Integer.parseInt(maps_one.get(j).get("asm_end").toString())) {
             track_end = Integer.parseInt(maps_one.get(j).get("asm_end").toString());
           }
-          log.info("\n\ntrack start" + track_start);
-          log.info("\n\ntrack end" + track_end);
           int no_of_tracks = template.queryForObject(GET_REPEAT_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end}, Integer.class);
           if (no_of_tracks > 0) {
-            log.info("\n\nif if " + maps_one.get(j).get("cmp_seq_region_id"));
             List<Integer> ends = new ArrayList<Integer>();
             ends.add(0, 0);
             track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
@@ -846,12 +804,9 @@ public class SQLSequenceDAO implements SequenceStore {
               track_end = Integer.parseInt(maps_one.get(j).get("asm_end").toString());
             }
             //            start_pos += Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-            log.info("\n\ntrack start" + track_start);
-            log.info("\n\ntrack end" + track_end);
             assemblyTracks.addAll(getRepeatGraphLevel(Integer.parseInt(maps_one.get(j).get("asm_start").toString()), Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end));
           }
           else {
-            log.info("\n\nelse   ");
             track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
             track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
             if (track_start < 0) {
@@ -877,15 +832,12 @@ public class SQLSequenceDAO implements SequenceStore {
   }
 
   public JSONArray getRepeatGraphLevel(int start_pos, int id, String trackId, long start, long end) throws IOException {
-    log.info("\n\ngetrepeatgraphlevel " + start_pos + ":" + id + ":" + trackId + ":" + start + ":" + end);
     try {
       JSONArray trackList = new JSONArray();
       long from = start;
       long to = 0;
       int no_of_tracks = template.queryForObject(GET_REPEAT_SIZE_SLICE, new Object[]{id, trackId, start, end}, Integer.class);
-      log.info("nooftracks " + no_of_tracks);
       if (no_of_tracks > 0) {
-        log.info("\n\nif");
         for (int i = 1; i <= 200; i++) {
           JSONObject eachTrack = new JSONObject();
           to = start + (i * (end - start) / 200);
@@ -895,18 +847,10 @@ public class SQLSequenceDAO implements SequenceStore {
           eachTrack.put("graph", no_of_tracks);
           eachTrack.put("id", id);
 
-          log.info("\t" + id + ":" + start_pos + from + ":" + start_pos + to + ":" + to);
           trackList.add(eachTrack);
           from = to;
         }
       }
-      else {
-        log.info("\n\nelse");
-
-
-      }
-
-      log.info("final  " + id + ":" + trackList.size());
       return trackList;
     }
     catch (EmptyResultDataAccessException e) {
@@ -943,24 +887,17 @@ public class SQLSequenceDAO implements SequenceStore {
   }
 
   public int countRecursiveRepeat(int id, String trackId, long start, long end) {
-    log.info("count recursive repeat" + id + ":" + trackId + ":" + start + ":" + end);
-
     int repeat_size = 0;
     List<Map<String, Object>> maps_one = template.queryForList(GET_Assembly_for_reference, new Object[]{id});
 
     if (maps_one.size() > 0) {
-      log.info("if " + maps_one.size());
       for (int j = 0; j < maps_one.size(); j++) {
         long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
         long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-        log.info("\n\nid" + maps_one.get(j).get("cmp_seq_region_id"));
-        log.info("\n\ntrack start" + track_start);
-        log.info("\n\ntrack end" + track_end);
         if (template.queryForObject(GET_REPEAT_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end}, Integer.class) > 0) {
           repeat_size += template.queryForObject(GET_REPEAT_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end}, Integer.class);
         }
         else {
-          log.info("else ");
           repeat_size += countRecursiveRepeat(Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end);
         }
       }
@@ -971,8 +908,6 @@ public class SQLSequenceDAO implements SequenceStore {
   }
 
   public int countRepeat(int id, String trackId, long start, long end) {
-    log.info("count  repeat" + id + ":" + trackId + ":" + start + ":" + end);
-
     int count_size = template.queryForObject(GET_REPEAT_SIZE_SLICE, new Object[]{id, trackId, start, end}, Integer.class);
     if (count_size == 0) {
       count_size = countRecursiveRepeat(id, trackId, start, end);
@@ -994,27 +929,21 @@ public class SQLSequenceDAO implements SequenceStore {
   }
 
   public JSONArray recursiveRepeat(int start_pos, int id, String trackId, long start, long end, int delta) throws IOException {
-    log.info("\n\nrecursive repeat " + start_pos + ":" + id + ":" + trackId + ":" + start + ":" + end + ":" + delta + "\n\n");
     try {
       JSONArray assemblyTracks = new JSONArray();
       List<Map<String, Object>> maps_one = template.queryForList(GET_Assembly_for_reference, new Object[]{id});
       if (maps_one.size() > 0) {
-        log.info("\n\nif  \n\n ");
         for (int j = 0; j < maps_one.size(); j++) {
           List<Map<String, Object>> maps_two = template.queryForList(GET_REPEAT_SIZE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId});
           JSONObject eachTrack_temp = new JSONObject();
           if (maps_two.size() > 0) {
-            log.info("\n\nif if " + maps_one.get(j).get("cmp_seq_region_id"));
             List<Integer> ends = new ArrayList<Integer>();
             ends.add(0, 0);
             long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
             long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-            log.info("\n\ntrack start" + track_start);
-            log.info("\n\ntrack end" + track_end);
             assemblyTracks.addAll(getRepeatLevel(start_pos + Integer.parseInt(maps_one.get(j).get("asm_start").toString()), getRepeat(Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end), start, end, delta));
           }
           else {
-            log.info("\n\nelse   ");
             long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
             long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
             List<Integer> ends = new ArrayList<Integer>();
@@ -1035,7 +964,6 @@ public class SQLSequenceDAO implements SequenceStore {
   }
 
   public JSONArray getRepeatLevel(int start_add, List<Map<String, Object>> maps, long start, long end, int delta) {
-    log.info("\n\nrepeat level 1 " + start_add + ":" + start + ":" + end + ":" + delta + ":");
     List<Integer> ends = new ArrayList<Integer>();
     JSONObject eachTrack_temp = new JSONObject();
     ends.add(0, 0);
@@ -1086,7 +1014,6 @@ public class SQLSequenceDAO implements SequenceStore {
 
 
   public JSONArray getRepeatLevel(List<Map<String, Object>> maps, List<Integer> ends, long start, long end, int delta) {
-    log.info("\n\nrepeat level 2 " + ":" + start + ":" + end + ":" + delta);
     JSONArray trackList = new JSONArray();
     for (Map<String, Object> map : maps) {
       int start_pos = Integer.parseInt(map.get("start").toString());
@@ -1110,8 +1037,6 @@ public class SQLSequenceDAO implements SequenceStore {
               map.put("layer", ends.size());
               ends.add(ends.size(), Integer.parseInt(map.get("end").toString()));
             }
-
-
             break;
           }
           else {
@@ -1138,12 +1063,14 @@ public class SQLSequenceDAO implements SequenceStore {
           trackList = getRepeatLevel(maps, ends, start, end, delta);
 
         }
-        else {
-
-        }
       }
       else {
         trackList = recursiveRepeat(0, id, trackId, start, end, delta);
+      }
+      int length = template.queryForObject(GET_length_from_seqreg_id, new Object[]{id}, Integer.class);
+      int countrepeat = countRepeat(id, trackId, 0, length);
+      if (countrepeat < 1) {
+        trackList.add("getHit no result found");
       }
       return trackList;
     }
@@ -1285,14 +1212,11 @@ public class SQLSequenceDAO implements SequenceStore {
 
 
   public JSONArray recursiveGeneGraph(int start_pos, int id, String trackId, long start, long end) throws IOException {
-    log.info("\n\nrecursive Gene graph " + start_pos + ":" + id + ":" + trackId + ":" + start + ":" + end + "\n\n");
     try {
       JSONArray assemblyTracks = new JSONArray();
       List<Map<String, Object>> maps_one = template.queryForList(GET_Assembly_for_reference, new Object[]{id});
       if (maps_one.size() > 0) {
-        log.info("\n\nif  \n\n ");
         for (int j = 0; j < maps_one.size(); j++) {
-          log.info(maps_one.get(j).get("cmp_seq_region_id").toString());
           long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
           long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
           if (track_start < 0) {
@@ -1301,11 +1225,8 @@ public class SQLSequenceDAO implements SequenceStore {
           if (track_end > Integer.parseInt(maps_one.get(j).get("asm_end").toString())) {
             track_end = Integer.parseInt(maps_one.get(j).get("asm_end").toString());
           }
-          log.info("\n\ntrack start" + track_start);
-          log.info("\n\ntrack end" + track_end);
           int no_of_tracks = template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end}, Integer.class);
           if (no_of_tracks > 0) {
-            log.info("\n\nif if " + maps_one.get(j).get("cmp_seq_region_id"));
             List<Integer> ends = new ArrayList<Integer>();
             ends.add(0, 0);
             track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
@@ -1316,13 +1237,9 @@ public class SQLSequenceDAO implements SequenceStore {
             if (track_end > Integer.parseInt(maps_one.get(j).get("asm_end").toString())) {
               track_end = Integer.parseInt(maps_one.get(j).get("asm_end").toString());
             }
-            //            start_pos += Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-            log.info("\n\ntrack start" + track_start);
-            log.info("\n\ntrack end" + track_end);
             assemblyTracks.addAll(getGeneGraphLevel(Integer.parseInt(maps_one.get(j).get("asm_start").toString()), Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end));
           }
           else {
-            log.info("\n\nelse   ");
             track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
             track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
             if (track_start < 0) {
@@ -1348,15 +1265,12 @@ public class SQLSequenceDAO implements SequenceStore {
   }
 
   public JSONArray getGeneGraphLevel(int start_pos, int id, String trackId, long start, long end) throws IOException {
-    log.info("\n\ngetGenegraphlevel " + start_pos + ":" + id + ":" + trackId + ":" + start + ":" + end);
     try {
       JSONArray trackList = new JSONArray();
       long from = start;
       long to = 0;
       int no_of_tracks = template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{id, trackId, start, end}, Integer.class);
-      log.info("nooftracks " + no_of_tracks);
       if (no_of_tracks > 0) {
-        log.info("\n\nif");
         for (int i = 1; i <= 200; i++) {
           JSONObject eachTrack = new JSONObject();
           to = start + (i * (end - start) / 200);
@@ -1366,18 +1280,13 @@ public class SQLSequenceDAO implements SequenceStore {
           eachTrack.put("graph", no_of_tracks);
           eachTrack.put("id", id);
 
-          log.info("\t" + id + ":" + start_pos + from + ":" + start_pos + to + ":" + to);
           trackList.add(eachTrack);
           from = to;
         }
       }
       else {
-        log.info("\n\nelse");
-
-
       }
 
-      log.info("final  " + id + ":" + trackList.size());
       return trackList;
     }
     catch (EmptyResultDataAccessException e) {
@@ -1387,7 +1296,6 @@ public class SQLSequenceDAO implements SequenceStore {
 
   public JSONArray getGeneGraph(int id, String trackId, long start, long end) throws IOException {
     try {
-      log.info("getgene graph" + id + ":" + trackId + ":" + start + ":" + end);
 
       JSONArray trackList = new JSONArray();
       long from = start;
@@ -1417,25 +1325,18 @@ public class SQLSequenceDAO implements SequenceStore {
   }
 
   public int countRecursiveGene(int id, String trackId, long start, long end) {
-    log.info("count recursive gene" + id + ":" + trackId + ":" + start + ":" + end);
-
     int gene_size = 0;
     JSONArray assemblyTracks = new JSONArray();
     List<Map<String, Object>> maps_one = template.queryForList(GET_Assembly_for_reference, new Object[]{id});
 
     if (maps_one.size() > 0) {
-      log.info("if " + maps_one.size());
       for (int j = 0; j < maps_one.size(); j++) {
         long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
         long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-        log.info("\n\nid" + maps_one.get(j).get("cmp_seq_region_id"));
-        log.info("\n\ntrack start" + track_start);
-        log.info("\n\ntrack end" + track_end);
         if (template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end}, Integer.class) > 0) {
           gene_size += template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end}, Integer.class);
         }
         else {
-          log.info("else ");
           gene_size += countRecursiveGene(Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end);
         }
       }
@@ -1502,34 +1403,27 @@ public class SQLSequenceDAO implements SequenceStore {
 
 
   public JSONArray recursiveGene(int start_pos, int id, String trackId, long start, long end, int delta) throws IOException {
-    log.info("\n\nrecursive hit " + start_pos + ":" + id + ":" + trackId + ":" + start + ":" + end + ":" + delta + "\n\n");
     try {
       JSONArray assemblyTracks = new JSONArray();
       List<Map<String, Object>> maps_one = template.queryForList(GET_Assembly_for_reference, new Object[]{id});
       if (maps_one.size() > 0) {
-        log.info("\n\nif  \n\n ");
         for (int j = 0; j < maps_one.size(); j++) {
           List<Map<String, Object>> maps_two = template.queryForList(GET_GENE_SIZE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId});
           JSONObject eachTrack_temp = new JSONObject();
           if (maps_two.size() > 0) {
-            log.info("\n\nif if " + maps_one.get(j).get("cmp_seq_region_id"));
             List<Integer> ends = new ArrayList<Integer>();
             ends.add(0, 0);
             long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
             long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-            log.info("\n\ntrack start" + track_start);
-            log.info("\n\ntrack end" + track_end);
             assemblyTracks.addAll(getGeneLevel(start_pos + Integer.parseInt(maps_one.get(j).get("asm_start").toString()), getGenes(Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId), start, end, delta));
           }
           else {
-            log.info("\n\nelse   ");
             long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
             long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
             List<Integer> ends = new ArrayList<Integer>();
             ends.add(0, 0);
             assemblyTracks.addAll(recursiveGene(start_pos + Integer.parseInt(maps_one.get(j).get("asm_start").toString()), Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end, delta));
           }
-
         }
       }
 
@@ -1565,7 +1459,6 @@ public class SQLSequenceDAO implements SequenceStore {
         filteredgenes.add(filteredgenes.size(), gene);
       }
     }
-    log.info("filtered gene size " + filteredgenes.size());
     for (int i = 0; i < filteredgenes.size(); i++) {
 
       if (!transcript_id.equalsIgnoreCase(filteredgenes.getJSONObject(i).get("transcript_id").toString())) {
@@ -1741,7 +1634,6 @@ public class SQLSequenceDAO implements SequenceStore {
           layer = 1;
         }
         layer++;
-        log.info("gene " + filteredgenes.getJSONObject(i).get("gene_id"));
 
       }
 
@@ -1782,7 +1674,13 @@ public class SQLSequenceDAO implements SequenceStore {
       else {
         GeneList = recursiveGene(0, id, trackId, start, end, delta);
       }
-
+      if (GeneList.size() == 0) {
+        int length = template.queryForObject(GET_length_from_seqreg_id, new Object[]{id}, Integer.class);
+        int countgene = countGene(id, trackId, 0, length);
+        if (countgene < 1) {
+          GeneList.add("getGene no result found");
+        }
+      }
 
       return GeneList;
     }
@@ -1829,7 +1727,6 @@ public class SQLSequenceDAO implements SequenceStore {
   }
 
   public JSONArray getAnnotationId(int query) throws IOException {
-    log.info("anootaion " + query);
     try {
       int coord = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{query}, Integer.class);
       int rank = template.queryForObject(GET_RANK_for_COORD_SYSTEM_ID, new Object[]{coord}, Integer.class);
@@ -1874,7 +1771,6 @@ public class SQLSequenceDAO implements SequenceStore {
 
   public JSONArray getAnnotationIdList(int query) throws IOException {
     try {
-      log.info("get annottation " + query);
       int coord = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{query}, Integer.class);
       int rank = template.queryForObject(GET_RANK_for_COORD_SYSTEM_ID, new Object[]{coord}, Integer.class);
 
@@ -1902,8 +1798,6 @@ public class SQLSequenceDAO implements SequenceStore {
   public String getDisplayableByAnalysisId(String id) throws IOException {
     try {
       String str = template.queryForObject(GET_DISPLAYABLE_FROM_ANALYSIS_ID, new Object[]{id}, String.class);
-      log.info(id + "\t" + str);
-
       return str;
     }
     catch (EmptyResultDataAccessException e) {
@@ -1995,7 +1889,6 @@ public class SQLSequenceDAO implements SequenceStore {
 
 
   public String getSeqLevel(String query, int from, int to) throws IOException {
-    log.info("get seq level" + query + ":" + from + ":" + to);
 
     String seq = "";
     try {
@@ -2007,9 +1900,6 @@ public class SQLSequenceDAO implements SequenceStore {
       if (to > seq.length()) {
         to = seq.length();
       }
-      log.info("get seq level" + query + ":" + from + ":" + to);
-      log.info("\n\nget seq level length " + seq.substring(from, to).length());
-
       return seq.substring(from, to);
     }
     catch (EmptyResultDataAccessException e) {
@@ -2019,8 +1909,6 @@ public class SQLSequenceDAO implements SequenceStore {
 
 
   public String getSeqRecursive(String query, int from, int to, int asm_from, int asm_to) throws IOException {
-
-    log.info("get seq recursive " + query + ":" + from + ":" + to);
 
     try {
       String seq = "";
@@ -2087,27 +1975,20 @@ public class SQLSequenceDAO implements SequenceStore {
 
   public String getSeq(String query, int from, int to) throws IOException {
     try {
-      log.info("get seq " + query);
       String seq = "";
       String query_coord = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{query}, String.class);
       String attrib = template.queryForObject(GET_coord_attrib, new Object[]{query_coord}, String.class);
-      log.info("get seq attrib " + attrib);
       if (attrib.indexOf("sequence") >= 0) {
-        log.info("get seq if " + query + ":" + from + ":" + to);
         seq = getSeqLevel(query, from, to);
       }
       else {
-        log.info("get seq else " + query + ":" + from + ":" + to);
         List<Map<String, Object>> maps = template.queryForList(GET_SEQS_LIST_API, new Object[]{query, from, to, from, to, from, to, from, to});
         for (Map map : maps) {
 
           String query_coord_temp = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{map.get("cmp_seq_region_id")}, String.class);
           String attrib_temp = template.queryForObject(GET_coord_attrib, new Object[]{query_coord_temp}, String.class);
-          log.info("get seq else size" + maps.size() + " - " + attrib_temp);
 
           if (attrib_temp.indexOf("sequence") >= 0) {
-            log.info("get seq if " + map.get("cmp_seq_region_id") + ":" + from + ":" + to);
-            log.info("map " + map.toString());
             int asm_start = Integer.parseInt(map.get("asm_start").toString());
             int asm_end = Integer.parseInt(map.get("asm_end").toString());
             int start_cmp = Integer.parseInt(map.get("cmp_start").toString());
@@ -2130,7 +2011,6 @@ public class SQLSequenceDAO implements SequenceStore {
             seq = getSeqLevel(map.get("cmp_seq_region_id").toString(), start_temp, end_temp);
           }
           else {
-            log.info("get seq else");
 
             maps = template.queryForList(GET_SEQS_LIST_API, new Object[]{map.get("cmp_seq_region_id"), from, to, from, to, from, to, from, to});
             int asm_start = Integer.parseInt(map.get("asm_start").toString());
@@ -2183,7 +2063,6 @@ public class SQLSequenceDAO implements SequenceStore {
     try {
       Boolean check;
       List<Map<String, Object>> attrib_temp = template.queryForList(GET_coord_attrib_chr, new Object[]{"%chr%", "%chr%"});
-      log.info(attrib_temp.toString());
       if (attrib_temp.size() > 0) {
         check = true;
       }
@@ -2201,9 +2080,7 @@ public class SQLSequenceDAO implements SequenceStore {
     try {
       String coordSys = "";
       int coord_id = Integer.parseInt(template.queryForObject(GET_coord_sys_id_by_name, new Object[]{query}, String.class));
-      log.info("cooord_id" + coord_id);
       coordSys = template.queryForObject(GET_coord_sys_name, new Object[]{coord_id}, String.class);
-      log.info("cooord_sys" + coordSys);
       return coordSys;
     }
     catch (EmptyStackException e) {
