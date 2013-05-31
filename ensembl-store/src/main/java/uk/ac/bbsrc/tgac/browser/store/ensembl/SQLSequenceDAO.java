@@ -54,7 +54,7 @@ public class SQLSequenceDAO implements SequenceStore {
   public static final String GET_DISPLAYABLE_FROM_ANALYSIS_ID = "SELECT displayable FROM analysis_description where analysis_id =?";
   public static final String GET_DISPLAYLABLE_FROM_ANALYSIS_ID = "SELECT display_label FROM analysis_description where analysis_id =?";
   public static final String GET_SEQ_FROM_SEQ_REGION_ID = "SELECT sequence FROM dna WHERE seq_region_id = ?";
-  public static final String GET_SEQ_REGION_ID_FROM_NAME = "SELECT seq_region_id FROM seq_region WHERE name like ? limit 1";
+  public static final String GET_SEQ_REGION_ID_FROM_NAME = "SELECT seq_region_id FROM seq_region WHERE name  = ?";
   public static final String GET_SEQ_REGION_ID_SEARCH = "SELECT * FROM seq_region WHERE name like ? limit 100";
   public static final String GET_GENE_SEARCH = "SELECT * FROM gene WHERE description like ?";
   public static final String GET_TRANSCRIPT_SEARCH = "SELECT * FROM transcript WHERE description like ?";
@@ -374,7 +374,7 @@ public class SQLSequenceDAO implements SequenceStore {
 
   public Integer getSeqRegion(String searchQuery) throws IOException {
     try {
-      int i = template.queryForObject(GET_SEQ_REGION_ID_FROM_NAME, new Object[]{'%' + searchQuery + '%'}, Integer.class);
+      int i = template.queryForObject(GET_SEQ_REGION_ID_FROM_NAME, new Object[]{searchQuery}, Integer.class);
       return i;
     }
     catch (EmptyResultDataAccessException e) {
@@ -1105,7 +1105,6 @@ public class SQLSequenceDAO implements SequenceStore {
   }
 
   public JSONArray recursiveAssembly(int start, int id, String trackId, int delta) throws IOException {
-
     try {
       JSONArray assemblyTracks = new JSONArray();
       List<Map<String, Object>> maps_one = template.queryForList(GET_Assembly_for_reference, new Object[]{id});
@@ -1136,12 +1135,12 @@ public class SQLSequenceDAO implements SequenceStore {
   }
 
   public JSONArray getAssemblyLevel(int start, List<Map<String, Object>> maps_two, int delta) {
-
     List<Integer> ends = new ArrayList<Integer>();
     ends.add(0, 0);
     JSONObject eachTrack_temp = new JSONObject();
     JSONArray assemblyTracks = new JSONArray();
     for (Map map_temp : maps_two) {
+      eachTrack_temp.put("id", map_temp.get("asm_seq_region_id"));
       eachTrack_temp.put("start", start + Integer.parseInt(map_temp.get("asm_start").toString()) - 1);
       eachTrack_temp.put("end", start + Integer.parseInt(map_temp.get("asm_end").toString()) - 1);
       eachTrack_temp.put("flag", false);
@@ -1178,6 +1177,7 @@ public class SQLSequenceDAO implements SequenceStore {
 
     for (Map map : maps) {
       JSONObject eachTrack = new JSONObject();
+      eachTrack.put("id", map.get("asm_seq_region_id"));
       eachTrack.put("start", map.get("asm_start"));
       eachTrack.put("end", map.get("asm_end"));
       eachTrack.put("flag", false);
