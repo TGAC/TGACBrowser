@@ -115,6 +115,8 @@ public class SQLSequenceDAO implements SequenceStore {
   public static final String GET_TRACKS_VIEW = "select a.logic_name as name, a.analysis_id as id, ad.description, ad.display_label, ad.displayable from analysis a, analysis_description ad where a.analysis_id = ad.analysis_id;";
   public static final String GET_coord_attrib_chr = "SELECT coord_system_id FROM coord_system where name like ? || attrib like ?";
   public static final String GET_length_from_seqreg_id = "SELECT length FROM seq_region where seq_region_id =?";
+  public static final String GET_ASSEMBLY_SIZE_SLICE = "SELECT count(*) FROM assembly a, seq_region s where a.asm_seq_region_id = ? and a.cmp_seq_region_id = s.seq_region_id and s.coord_system_id = ? and a.asm_start >= ? and a.asm_start <= ?";
+  public static final String GET_ASSEMBLY_SIZE = "SELECT COUNT(*) FROM assembly where asm_seq_region_id =? and analysis_id = ? and seq_region_start >= ? and seq_region_start <= ?";
 
   private JdbcTemplate template;
 
@@ -1078,6 +1080,152 @@ public class SQLSequenceDAO implements SequenceStore {
       throw new IOException("getHit no result found");
     }
   }
+
+  public JSONArray recursiveAssemblyGraph(int start_pos, int id, String trackId, long start, long end) throws IOException {
+      try {
+        JSONArray assemblyTracks = new JSONArray();
+        List<Map<String, Object>> maps_one = template.queryForList(GET_Assembly_for_reference, new Object[]{id});
+        if (maps_one.size() > 0) {
+          for (int j = 0; j < maps_one.size(); j++) {
+            long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
+            long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
+            if (track_start < 0) {
+              track_start = 0;
+            }
+            if (track_end > Integer.parseInt(maps_one.get(j).get("asm_end").toString())) {
+              track_end = Integer.parseInt(maps_one.get(j).get("asm_end").toString());
+            }
+            int no_of_tracks = template.queryForObject(GET_ASSEMBLY_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId.replace("cs", ""), track_start, track_end}, Integer.class);
+            if (no_of_tracks > 0) {
+              List<Integer> ends = new ArrayList<Integer>();
+              ends.add(0, 0);
+              track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
+              track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
+              if (track_start < 0) {
+                track_start = 0;
+              }
+              if (track_end > Integer.parseInt(maps_one.get(j).get("asm_end").toString())) {
+                track_end = Integer.parseInt(maps_one.get(j).get("asm_end").toString());
+              }
+  //            start_pos += Integer.parseInt(maps_one.get(j).get("asm_start").toString());
+              assemblyTracks.addAll(getAssemblyGraphLevel(Integer.parseInt(maps_one.get(j).get("asm_start").toString()), Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end));
+            }
+            else {
+              track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
+              track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
+              if (track_start < 0) {
+                track_start = 0;
+              }
+              if (track_end > Integer.parseInt(maps_one.get(j).get("asm_end").toString())) {
+                track_end = Integer.parseInt(maps_one.get(j).get("asm_end").toString());
+              }
+              List<Integer> ends = new ArrayList<Integer>();
+              start_pos += Integer.parseInt(maps_one.get(j).get("asm_start").toString());
+              ends.add(0, 0);
+              assemblyTracks.addAll(recursiveHitGraph(Integer.parseInt(maps_one.get(j).get("asm_start").toString()), Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end));
+            }
+
+          }
+        }
+        return assemblyTracks;
+      }
+      catch (EmptyResultDataAccessException e) {
+        throw new IOException("getHit no result found");
+
+      }
+    }
+
+    public JSONArray getAssemblyGraphLevel(int start_pos, int id, String trackId, long start, long end) throws IOException {
+      try {
+        JSONArray trackList = new JSONArray();
+        long from = start;
+        long to = 0;
+        int no_of_tracks = template.queryForObject(GET_ASSEMBLY_SIZE_SLICE, new Object[]{id, trackId.replace("cs", ""), start, end}, Integer.class);
+        if (no_of_tracks > 0) {
+          for (int i = 1; i <= 200; i++) {
+            JSONObject eachTrack = new JSONObject();
+            to = start + (i * (end - start) / 200);
+            no_of_tracks = template.queryForObject(GET_ASSEMBLY_SIZE_SLICE, new Object[]{id, trackId, from, to}, Integer.class);
+            eachTrack.put("start", start_pos + from);
+            eachTrack.put("end", start_pos + to);
+            eachTrack.put("graph", no_of_tracks);
+            eachTrack.put("id", id);
+
+            trackList.add(eachTrack);
+            from = to;
+          }
+        }
+        else {
+
+
+        }
+
+        return trackList;
+      }
+      catch (EmptyResultDataAccessException e) {
+        throw new IOException("getHit no result found");
+      }
+    }
+
+    public JSONArray getAssemblyGraph(int id, String trackId, long start, long end) throws IOException {
+      try {
+        JSONArray trackList = new JSONArray();
+        long from = start;
+        long to = 0;
+        int no_of_tracks = template.queryForObject(GET_ASSEMBLY_SIZE_SLICE, new Object[]{id, trackId.replace("cs", ""), from, end}, Integer.class);
+        if (no_of_tracks > 0) {
+          for (int i = 1; i <= 200; i++) {
+            JSONObject eachTrack = new JSONObject();
+            to = start + (i * (end - start) / 200);
+            no_of_tracks = template.queryForObject(GET_ASSEMBLY_SIZE_SLICE, new Object[]{id, trackId.replace("cs", ""), from, to}, Integer.class);
+            eachTrack.put("start", from);
+            eachTrack.put("end", to);
+            eachTrack.put("graph", no_of_tracks);
+            eachTrack.put("id", id);
+            trackList.add(eachTrack);
+            from = to;
+          }
+        }
+        else {
+          trackList.addAll(recursiveAssemblyGraph(0, id, trackId, start, end));
+        }
+        return trackList;
+      }
+      catch (EmptyResultDataAccessException e) {
+        throw new IOException("getHit no result found");
+      }
+    }
+
+
+  public int countRecursiveAssembly(int id, String trackId, long start, long end) {
+      int hit_size = 0;
+      JSONArray assemblyTracks = new JSONArray();
+      List<Map<String, Object>> maps_one = template.queryForList(GET_Assembly_for_reference, new Object[]{id});
+
+      if (maps_one.size() > 0) {
+        for (int j = 0; j < maps_one.size(); j++) {
+          long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
+          long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
+          if (template.queryForObject(GET_ASSEMBLY_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId.replace("cs", ""), track_start, track_end}, Integer.class) > 0) {
+            hit_size += template.queryForObject(GET_ASSEMBLY_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId.replace("cs", ""), track_start, track_end}, Integer.class);
+          }
+          else {
+            hit_size += countRecursiveAssembly(Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end);
+          }
+        }
+      }
+
+      return hit_size;
+    }
+  public int countAssembly(int id, String trackId, long start, long end) {
+    int hit_size = template.queryForObject(GET_ASSEMBLY_SIZE_SLICE, new Object[]{id, trackId.replace("cs", ""), start, end}, Integer.class);
+
+    if (hit_size == 0) {
+      hit_size = countRecursiveAssembly(id, trackId, start, end);
+    }
+    return hit_size;
+  }
+
 
   public JSONArray getAssembly(int id, String trackId, int delta) throws IOException {
     try {
