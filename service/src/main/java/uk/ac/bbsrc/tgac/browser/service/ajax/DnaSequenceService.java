@@ -183,14 +183,17 @@ public class DnaSequenceService {
         response.put(trackName, SamBamService.getWig(start, end, delta, trackId, seqName));
       }
       else if (trackId.indexOf("cs") >= 0) {
-        response.put(trackName, sequenceStore.getAssembly(queryid, trackId, delta));
+        count = sequenceStore.countAssembly(queryid, trackId, start, end);
+        if (count < 5000) {
+          response.put(trackName, sequenceStore.getAssembly(queryid, trackId, delta));
+        }
+        else {
+          response.put("type", "graph");
+          response.put(trackName, sequenceStore.getAssemblyGraph(queryid, trackId, start, end));
+        }
       }
       else if (sequenceStore.getLogicNameByAnalysisId(Integer.parseInt(trackId)).matches("(?i).*repeat.*")) {
         count = sequenceStore.countRepeat(queryid, trackId, start, end);
-//        if (count == 0) {
-//          response.put(trackName, "getHit no result found");
-//        }
-//        else
         if (count < 5000) {
           response.put(trackName, sequenceStore.processRepeat(sequenceStore.getRepeat(queryid, trackId, start, end), start, end, delta, queryid, trackId));
         }
@@ -201,10 +204,6 @@ public class DnaSequenceService {
       }
       else if (sequenceStore.getLogicNameByAnalysisId(Integer.parseInt(trackId)).matches("(?i).*gene.*")) {
         count = sequenceStore.countGene(queryid, trackId, start, end);
-//        if (count == 0) {
-//          response.put(trackName, "getGene no result found");
-//        }
-//        else
         if (count < 1000) {
           response.put(trackName, sequenceStore.processGenes(sequenceStore.getGenes(queryid, trackId), start, end, delta, queryid, trackId));
         }
@@ -215,10 +214,6 @@ public class DnaSequenceService {
       }
       else {
         count = sequenceStore.countHit(queryid, trackId, start, end);
-//        if (count == 0) {
-//          response.put(trackName, "getHit no result found");
-//        }
-//        else
         if (count < 5000) {
           response.put(trackName, sequenceStore.processHit(sequenceStore.getHit(queryid, trackId, start, end), start, end, delta, queryid, trackId));
         }
