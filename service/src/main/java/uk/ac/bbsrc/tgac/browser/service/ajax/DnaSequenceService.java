@@ -1,3 +1,28 @@
+/*
+#
+# Copyright (c) 2013. The Genome Analysis Centre, Norwich, UK
+# TGAC Browser project contacts: Anil Thanki, Xingdong Bian, Robert Davey, Mario Caccamo @ TGAC
+# **********************************************************************
+#
+# This file is part of TGAC Browser.
+#
+# TGAC Browser is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# TGAC Browser is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with TGAC Browser.  If not, see <http://www.gnu.org/licenses/>.
+#
+# ***********************************************************************
+#
+ */
+
 package uk.ac.bbsrc.tgac.browser.service.ajax;
 
 import net.sf.json.JSONArray;
@@ -181,6 +206,9 @@ public class DnaSequenceService {
       }
       else if (trackId.contains(".wig")) {
         response.put(trackName, SamBamService.getWig(start, end, delta, trackId, seqName));
+      }
+      else if (trackId.contains(".bed")) {
+        response.put(trackName, SamBamService.getBed(start, end, delta, trackId, seqName));
       }
       else if (trackId.indexOf("cs") >= 0) {
         count = sequenceStore.countAssembly(queryid, trackId, start, end);

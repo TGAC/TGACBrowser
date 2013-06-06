@@ -1434,7 +1434,7 @@ span.counter {
     height: 8%;
     /*background-color: lightblue;*/
     vertical-align: middle;
-top:5px
+    top: 5px
 }
 
 #nav_panel {
@@ -1639,12 +1639,12 @@ top:5px
     cursor: pointer;
     vertical-align: middle;
     opacity: 0.7;
-    height:20px;
-left:45%
+    height: 20px;
+    left: 45%
 }
 
 .browserimagesmall {
-     height:15px;
+    height: 15px;
 }
 
 #SeqLenStart {
@@ -1713,7 +1713,6 @@ left:45%
     height: 15px;
     border: 0px solid;
     padding: 0px;
-    
 
 }
 
@@ -1978,14 +1977,15 @@ left:45%
 }
 
 #searchresult {
-    position: absolute;
-    background: #d3d3d3;
+    background: none repeat scroll 0 0 #D3D3D3;
     float: left;
-    z-index: 999;
-    padding: 10px;
+    left: 10px;
     margin-top: 10px;
+    padding: 10px;
+    position: absolute;
     text-align: left;
-    /*border: 1px solid #000000;*/
+    top: 25px;
+    z-index: 999;
 }
 
 .textbutton {
@@ -2232,6 +2232,14 @@ left:45%
     background: steelblue;
 }
 
+.bed_graph {
+    background: none repeat scroll 0 0 blue;
+    border: medium none blue;
+    opacity: 0.5;
+    position: absolute;
+    cursor: pointer;
+}
+
 .unknown {
     position: absolute;
     /*background: url("../images/browser/tempexon.png") repeat-x left top;*/
@@ -2334,6 +2342,7 @@ left:45%
     text-shadow: 0 1px 1px hsla(0, 0%, 100%, .5);
     border: 1px solid #888888;
     width: 200px;
+    z-index: 999;
 }
 
 .bubbleright:after {
@@ -2343,6 +2352,8 @@ left:45%
     content: '';
     position: absolute;
     left: 176px;
+    z-index: 999;
+
 !important;
 }
 
@@ -2350,6 +2361,7 @@ left:45%
     border-left: 25px solid hsla(0, 0%, 0%, .1);
     bottom: -28px;
     left: 22px;
+    z-index: 999;
 }
 
 .gene {
@@ -2507,18 +2519,19 @@ span.deleteicon input {
     cursor: pointer;
 }
 
-.divbutton{
+.divbutton {
     background: none repeat scroll 0 0 #EEEEEE;
-        border: 1px solid #AAAAAA;
-        border-radius: 3px 3px 3px 3px;
-        color: #333333;
-        cursor: pointer;
-        font-family: Arial,sans-serif;
-        font-size: 11px;
-        font-weight: bold;
-        padding: 3px 5px;
-        text-decoration: none;
+    border: 1px solid #AAAAAA;
+    border-radius: 3px 3px 3px 3px;
+    color: #333333;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 3px 5px;
+    text-decoration: none;
 }
+
 .divbutton a {
     text-decoration: none;
 }

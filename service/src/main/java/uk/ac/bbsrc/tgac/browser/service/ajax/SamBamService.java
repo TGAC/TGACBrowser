@@ -1,3 +1,28 @@
+/*
+#
+# Copyright (c) 2013. The Genome Analysis Centre, Norwich, UK
+# TGAC Browser project contacts: Anil Thanki, Xingdong Bian, Robert Davey, Mario Caccamo @ TGAC
+# **********************************************************************
+#
+# This file is part of TGAC Browser.
+#
+# TGAC Browser is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# TGAC Browser is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with TGAC Browser.  If not, see <http://www.gnu.org/licenses/>.
+#
+# ***********************************************************************
+#
+ */
+
 package uk.ac.bbsrc.tgac.browser.service.ajax;
 
 import net.sf.json.JSONArray;
@@ -10,6 +35,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
 import java.io.*;
 import java.util.regex.Matcher;
@@ -41,7 +67,7 @@ public class SamBamService {
    * @param reference String reference for the tracks
    * @return JSONArray of tracks
    */
-  public static JSONArray getSamBam(long start, long end, int delta, String trackId, String reference) {
+  protected static JSONArray getSamBam(long start, long end, int delta, String trackId, String reference) {
     JSONArray sam = new JSONArray();
     JSONObject response = new JSONObject();
     try {
@@ -53,9 +79,18 @@ public class SamBamService {
       }
       else if (trackId.indexOf("bam") >= 0) {
         final File index = new File(trackId + ".bai");
-        inputSam = new SAMFileReader(inputfile, index, false);
-      }
+//        inputSam = new SAMFileReader(inputfile, index, false);
+        BrowseableBAMIndex bbi = inputSam.getBrowseableIndex();
+        BinList bl = bbi.getBinsOverlapping(0, (int) start, (int) end);
 
+        SAMFileSpan sfs = inputSam.getFilePointerSpanningReads();
+
+        log.info("binlist " + bl.toString());
+        log.info("sfs " + sfs.toString());
+
+//        BAMRecord br = new BAMRecord(inputSam.getFileHeader(), reference, );
+      }
+      log.info("hererere");
       List<Integer> ends = new ArrayList<Integer>();
       ends.add(0, 0);
 
@@ -197,6 +232,66 @@ public class SamBamService {
       response.put("error", e.toString());
       wig.add(response);
       return wig;
+    }
+  }
+
+  /**
+   * Return JSONArray
+   * <p>
+   * Read wig file
+   * loop though each line and parse it to tracks format filtering position and reference
+   * </p>
+   *
+   * @param start     long Start position from where track details to be extracted
+   * @param end       long End position to where track details to be extracted
+   * @param delta     int delta for tracks layers
+   * @param trackId   String trackId its the file path and name
+   * @param reference String reference for the tracks
+   * @return JSONArray of tracks
+   * @throws Exception
+   */
+  public static JSONArray getBed(long start, long end, int delta, String trackId, String reference) throws Exception {
+    JSONArray bed = new JSONArray();
+    boolean found = false;
+    try {
+      File inputfile = new File(trackId);
+
+      BufferedReader br = null;
+      String sCurrentLine;
+
+      br = new BufferedReader(new FileReader(inputfile));
+//       Pattern p = Pattern.compile(".*" + reference + "$");
+
+      while ((sCurrentLine = br.readLine()) != null) {
+        String[] line = sCurrentLine.split("\t");
+        JSONObject response = new JSONObject();
+        if (line[0].equalsIgnoreCase("MAL1")){//reference) {
+          if (Integer.parseInt(line[1].toString()) >= start && Integer.parseInt(line[2].toString()) <= end) {
+            response.put("start", line[1]);
+            response.put("end", line[2]);
+            response.put("value", line[4]);
+            bed.add(response);
+          }
+        }
+      }
+      Object[] myArray = bed.toArray();
+
+      JSONArray sortedJArray = new JSONArray();
+      for (Object obj : myArray) {
+        sortedJArray.add(obj);
+      }
+
+      if (bed.size() == 0) {
+        bed.add("");
+      }
+      return bed;
+    }
+    catch (Exception e) {
+      JSONObject response = new JSONObject();
+      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+      response.put("error", e.toString());
+      bed.add(response);
+      return bed;
     }
   }
 
