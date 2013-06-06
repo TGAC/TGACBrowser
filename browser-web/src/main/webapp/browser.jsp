@@ -1,4 +1,3 @@
-<%--<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>--%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib uri='http://java.sun.com/jsp/jstl/core' prefix='c' %>
 <%@ page import="java.util.ArrayList" language="java" %>

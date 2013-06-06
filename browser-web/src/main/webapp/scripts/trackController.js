@@ -1,3 +1,27 @@
+/*
+*
+* Copyright (c) 2013. The Genome Analysis Centre, Norwich, UK
+* TGAC Browser project contacts: Anil Thanki, Xingdong Bian, Robert Davey, Mario Caccamo @ TGAC
+* **********************************************************************
+*
+* This file is part of TGAC Browser.
+*
+* TGAC Browser is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* TGAC Browser is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with TGAC Browser.  If not, see <http://www.gnu.org/licenses/>.
+*
+* ***********************************************************************
+*
+ */
 var layers, mergedTracklist;
 
 function trackStatement(trackClass, track, startposition, stopposition, a, top, j) {
@@ -151,7 +175,7 @@ function toogleLabelMerged() {
 
 
 function dispBLAST(div, track) {
-console.log("disp blast")
+  console.log("disp blast")
   jQuery(div).html("<img src=\"./images/browser/dna_helix_md_wm.gif\" alt=\"loading\">");
   var blasts = window[track];
   if (!window[track] || window[track] == "running") {
@@ -177,7 +201,7 @@ console.log("disp blast")
 
 
       var layers = blasts.length + 1;
-       var maxLen_temp = jQuery("#canvas").css("width");
+      var maxLen_temp = jQuery("#canvas").css("width");
       for (var i = 0; i < blasts.length; i++) {
         var blast_start = blasts[i].start;
         var blast_stop = blasts[i].end;
@@ -542,15 +566,15 @@ function dispGeneExon(track, genestrand) {
 
     var newStart_temp = getBegin();
     var newEnd_temp = getEnd();
-    var maxLentemp =  jQuery("#canvas").css("width");
+    var maxLentemp = jQuery("#canvas").css("width");
 
     var partial = (newEnd_temp - newStart_temp) / 2;
     var start = newStart_temp - partial;
     var end = newEnd_temp + partial;
     var exon_len = geneexons.length;
     var last_exon = 0;
-     var startposition = 0;
-        var stopposition =0;
+    var startposition = 0;
+    var stopposition = 0;
     while (exon_len--) {
 
 
@@ -979,9 +1003,7 @@ function dispCigarLine(cigars, start, top) {
   var trackClass = "";
   var newStart_temp = getBegin();
   var newEnd_temp = getEnd();
-  var maxLentemp =  jQuery("#canvas").css("width");
-
-
+  var maxLentemp = jQuery("#canvas").css("width");
 
 
   var cigar_pos = start;
@@ -1108,51 +1130,107 @@ function dispCigar(cigars, start, top) {
 function dispGraph(div, trackName, trackId) {
   var track_html = "";
 
-  jQuery(div).html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
-  jQuery(div).fadeIn();
-  jQuery("#" + trackName + "_wrapper").fadeIn();
-
-
-  var track = window[trackName];
-  var partial = (parseInt(getEnd()) - parseInt(getBegin())) / 2;
-  var start = parseInt(getBegin()) - parseInt(partial)
-  var end = parseInt(getEnd()) + parseInt(partial);
-  var maxLen_temp = jQuery("#canvas").css("width");
-
-  var newStart_temp = getBegin();
-  var newEnd_temp = getEnd();
-
-  if (track[0]) {
-    track = jQuery.grep(track, function (element, index) {
-      return element.start >= start && element.start <= end; // retain appropriate elements
-    });
-  }
-
-
-  var total = 0;
-  var max = Math.max.apply(Math, track.map(function (o) {
-    return o.graph;
-  }));
-
-  var track_len = track.length;
-
-  while (track_len--) {
-    var track_start = track[track_len].start;
-    var track_stop = track[track_len].end;
-
-    var startposition = (track_start - newStart_temp) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen_temp) / 2;
-    var stopposition = (track_stop - track_start ) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp);
-
-    track_html += "<div class= \"graph\" onclick=\"setBegin(" + track[track_len].start + ");setEnd(" + track[track_len].end + ");jumpToSeq();\"STYLE=\"bottom:0px; height: " + (track[track_len].graph * 45 / max) + "px;" +
-                  "LEFT:" + startposition + "px;" +
-                  "width:" + (stopposition - 1) + "px \" title=\"" + track_start + ":" + track_stop + "->" + track[track_len].graph + "\" ></div>";
+  if (!window[trackName] || window[trackName] == "loading") {
+    jQuery(div).html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
+    jQuery(div).fadeIn();
+    jQuery("#" + trackName + "_wrapper").fadeIn();
 
   }
+  else {
+    var track = window[trackName];
+    var partial = (parseInt(getEnd()) - parseInt(getBegin())) / 2;
+    var start = parseInt(getBegin()) - parseInt(partial)
+    var end = parseInt(getEnd()) + parseInt(partial);
+    var maxLen_temp = jQuery("#canvas").css("width");
+
+    var newStart_temp = getBegin();
+    var newEnd_temp = getEnd();
+
+    if (track[0]) {
+      track = jQuery.grep(track, function (element, index) {
+        return element.start >= start && element.start <= end; // retain appropriate elements
+      });
+    }
+
+
+    var total = 0;
+    var max = Math.max.apply(Math, track.map(function (o) {
+      return o.graph;
+    }));
+
+    var track_len = track.length;
+
+    while (track_len--) {
+      var track_start = track[track_len].start;
+      var track_stop = track[track_len].end;
+
+      var startposition = (track_start - newStart_temp) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen_temp) / 2;
+      var stopposition = (track_stop - track_start ) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp);
+
+      track_html += "<div class= \"bed_graph\" onclick=\"setBegin(" + track[track_len].start + ");setEnd(" + track[track_len].end + ");jumpToSeq();\"STYLE=\"bottom:0px; height: " + (track[track_len].graph * 45 / max) + "px;" +
+                    "LEFT:" + startposition + "px;" +
+                    "width:" + (stopposition - 1) + "px \" title=\"" + track_start + ":" + track_stop + "->" + track[track_len].graph + "\" ></div>";
+
+    }
 //  jQuery(div).css('height', '70px');
-  jQuery(div).fadeIn();
-  jQuery("#" + trackName + "_wrapper").fadeIn();
+    jQuery(div).fadeIn();
+    jQuery("#" + trackName + "_wrapper").fadeIn();
 
-  jQuery(div).html(track_html);
+    jQuery(div).html(track_html);
+  }
+}
+
+function dispGraphBed(div, trackName, trackId) {
+  var track_html = "";
+
+  if (!window[trackName] || window[trackName] == "loading") {
+    jQuery(div).html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
+    jQuery(div).fadeIn();
+    jQuery("#" + trackName + "_wrapper").fadeIn();
+
+  }
+  else {
+    var track = window[trackName];
+    var partial = (parseInt(getEnd()) - parseInt(getBegin())) / 2;
+    var start = parseInt(getBegin()) - parseInt(partial)
+    var end = parseInt(getEnd()) + parseInt(partial);
+    var maxLen_temp = jQuery("#canvas").css("width");
+
+    var newStart_temp = getBegin();
+    var newEnd_temp = getEnd();
+
+    if (track[0]) {
+      track = jQuery.grep(track, function (element, index) {
+        return element.start >= start && element.start <= end; // retain appropriate elements
+      });
+    }
+
+
+    var total = 0;
+    var max = Math.max.apply(Math, track.map(function (o) {
+      return o.value;
+    }));
+
+    var track_len = track.length;
+
+    while (track_len--) {
+      var track_start = track[track_len].start;
+      var track_stop = track[track_len].end;
+
+      var startposition = (track_start - newStart_temp) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen_temp) / 2;
+      var stopposition = (track_stop - track_start ) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp);
+
+      track_html += "<div class= \"graph\" onclick=\"setBegin(" + track[track_len].start + ");setEnd(" + track[track_len].end + ");jumpToSeq();\"STYLE=\"bottom:0px; height: " + (track[track_len].value * 45 / max) + "px;" +
+                    "LEFT:" + startposition + "px;" +
+                    "width:" + (stopposition - 1) + "px \" title=\"" + track_start + ":" + track_stop + "->" + track[track_len].value + "\" ></div>";
+
+    }
+//  jQuery(div).css('height', '70px');
+    jQuery(div).fadeIn();
+    jQuery("#" + trackName + "_wrapper").fadeIn();
+
+    jQuery(div).html(track_html);
+  }
 }
 
 function dispGraphWig(div, trackName, trackId) {

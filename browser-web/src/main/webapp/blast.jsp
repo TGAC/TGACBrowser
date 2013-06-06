@@ -2,8 +2,9 @@
 
 <%--<h1 id="seqnameh1">Blast Search </h1>--%>
 
-<div style="position: absolute; top: 50px;" id="blasttextsearch">
-    Enter sequence below in FASTA or RAW format
+<div style="position: absolute; top: 50px;left: 20px;" id="blasttextsearch">
+    <h1> BLAST Search</h1>
+        Enter sequence below in FASTA or RAW format
     <br>
     <textarea class="ui-corner-all" id="blastsearch" rows="6" cols="60"
               style="margin: 2px 2px 2px 2px; height: 100px; width: 98%; "></textarea>
@@ -42,8 +43,10 @@
             <option value="blastn"> blastn</option>
             <option value="tblastn">tblastn</option>
         </select>
+
+        <input type=checkbox id='filter' name='filter' checked> Include Repeats
         <button class="ui-state-default ui-corner-all"
-                onclick="blastSearch(jQuery('#blastsearch').val(),jQuery('#blastdb').val(),jQuery('#blast_type').val());">
+                onclick=blastFilter()>
             BLAST
         </button>
 
@@ -98,6 +101,20 @@
 
 <script type="text/javascript">
     var seq;
+    function blastFilter(){
+        var params = jQuery('#blast_type').val();
+        if(jQuery("#filter").attr('checked'))
+        {
+            console.log("filter rtue")
+            if(jQuery('#blast_type').val().indexOf('tblastn') >= 0){
+                params += " -seg no";
+            }
+            else {
+                params += " -dust no";
+            }
+        }
+        blastSearch(jQuery('#blastsearch').val(),jQuery('#blastdb').val(),params);
+    }
     jQuery(document).ready(function () {
         getUrlVars();
         setBlast();

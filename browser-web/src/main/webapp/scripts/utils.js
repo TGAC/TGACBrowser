@@ -1,3 +1,28 @@
+/*
+*
+* Copyright (c) 2013. The Genome Analysis Centre, Norwich, UK
+* TGAC Browser project contacts: Anil Thanki, Xingdong Bian, Robert Davey, Mario Caccamo @ TGAC
+* **********************************************************************
+*
+* This file is part of TGAC Browser.
+*
+* TGAC Browser is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* TGAC Browser is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with TGAC Browser.  If not, see <http://www.gnu.org/licenses/>.
+*
+* ***********************************************************************
+*
+ */
+
 /**
  * Created by IntelliJ IDEA.
  * User: thankia
@@ -88,8 +113,6 @@ function browser_coordinates() {
 }
 
 function trackToggle(trackname) {
-console.log(trackname)
-
   var index = 0;
   var graph = "false";
   var trackid = "";
@@ -104,7 +127,6 @@ console.log(trackname)
     }
   }
 
-console.log("before if "+trackname)
   if (trackname == "all") {
     jQuery("#mergedtrack").html("<div id= \"mergelabel\" align='left' class='handle'></div>");
     for (var i = 0; i < track_list.length; i++) {
@@ -118,8 +140,11 @@ console.log("before if "+trackname)
         else if (track_list[i].name.toLowerCase().indexOf("gene") >= 0) {
           dispGenes("#" + track_list[i].name + "_div", track_list[i].name, track_list[i].expand);
         }
-        else if (track_list[i].name.toLowerCase().indexOf("wig") >= 0) {
+        else if (track_list[i].name.toLowerCase().indexOf("wig") >= 0 || track_list[i].name.toLowerCase().indexOf("bed") >= 0) {
           dispGraphWig("#" + track_list[i].name + "_div", track_list[i].name, trackid);
+        }
+        else if (track_list[i].name.toLowerCase().indexOf("bed") >= 0) {
+          dispGraphBed("#" + track_list[i].name + "_div", track_list[i].name);
         }
         else {
           dispTrack("#" + track_list[i].name + "_div", track_list[i].name);
@@ -131,28 +156,24 @@ console.log("before if "+trackname)
     }
   }
   else {
-console.log("else"+trackname)
     if (jQuery('#' + trackname + 'Checkbox').is(':checked')) {
-
       if (graph == "true") {
-console.log("if "+trackname)
         dispGraph("#" + trackname + "_div", trackname);
       }
       else if (trackname.toLowerCase().indexOf("blasttrack") >= 0) {
-console.log("else if "+trackname)
         dispBLAST("#" + trackname + "_div", 'blasttrack');
       }
       else if (trackname.toLowerCase().indexOf("gene") >= 0) {
-       console.log("else if "+trackname)
- dispGenes("#" + trackname + "_div", trackname, track_list[index].expand);
+        dispGenes("#" + trackname + "_div", trackname, track_list[index].expand);
       }
       else if (trackname.toLowerCase().indexOf("wig") >= 0) {
-        console.log("else if "+trackname)
-dispGraphWig("#" + trackname + "_div", trackname, trackid);
+        dispGraphWig("#" + trackname + "_div", trackname, trackid);
+      }
+      else if (trackname.toLowerCase().indexOf("bed") >= 0) {
+        dispGraphBed("#" + trackname + "_div", trackname);
       }
       else {
-      console.log("else "+trackname)
-  dispTrack("#" + trackname + "_div", trackname);
+        dispTrack("#" + trackname + "_div", trackname);
       }
     }
     else {
