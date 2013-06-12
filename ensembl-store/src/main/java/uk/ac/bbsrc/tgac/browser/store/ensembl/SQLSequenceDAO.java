@@ -99,7 +99,7 @@ public class SQLSequenceDAO implements SequenceStore {
     public static final String GET_HIT_SIZE = "SELECT COUNT(*) FROM dna_align_feature where seq_region_id =? and analysis_id = ?";
     public static final String GET_HIT_SIZE_SLICE = "SELECT COUNT(*) FROM dna_align_feature where seq_region_id =? and analysis_id = ? and seq_region_start >= ? and seq_region_start <= ?";
     public static final String GET_Gene_SIZE_SLICE = "SELECT COUNT(*) FROM gene where seq_region_id =? and analysis_id = ? and seq_region_start >= ? and seq_region_start <= ?";
-    public static final String GET_HIT = "SELECT dna_align_feature_id as id,seq_region_start as start, seq_region_end as end,seq_region_strand as strand,hit_start as hitstart, hit_end as hitend, hit_name as 'desc', cigar_line as cigarline FROM dna_align_feature where seq_region_id =? and analysis_id = ? AND ((seq_region_start >= ? AND seq_region_end <= ?) OR (seq_region_start <= ? AND seq_region_end >= ?) OR (seq_region_end >= ? AND seq_region_end <= ?) OR (seq_region_start >= ? AND seq_region_start <= ?)) ORDER BY start,(end-start) asc"; //seq_region_start ASC";//" AND ((hit_start >= ? AND hit_end <= ?) OR (hit_start <= ? AND hit_end >= ?) OR (hit_end >= ? AND hit_end <= ?) OR (hit_start >= ? AND hit_start <= ?))";
+    public static final String GET_HIT = "SELECT dna_align_feature_id as id,seq_region_start as start, seq_region_end as end,seq_region_strand as strand,hit_start as hitstart, hit_end as hitend, hit_name as 'desc', cigar_line as cigarline FROM dna_align_feature where seq_region_id =? and analysis_id = ? AND ((seq_region_start >= ? AND seq_region_end <= ?) OR (seq_region_start <= ? AND seq_region_end >= ?) OR (seq_region_end >= ? AND seq_region_end <= ?) OR (seq_region_start >= ? AND seq_region_start <= ?)) ORDER BY (end-start) desc"; //seq_region_start ASC";//" AND ((hit_start >= ? AND hit_end <= ?) OR (hit_start <= ? AND hit_end >= ?) OR (hit_end >= ? AND hit_end <= ?) OR (hit_start >= ? AND hit_start <= ?))";
     public static final String GET_Tracks_API = "select analysis_id, logic_name from analysis";
     public static final String Get_Tracks_Desc = "select description from analysis_description where analysis_id = ?";
     public static final String Get_Tracks_Info = "select * from analysis_description";
@@ -678,6 +678,7 @@ public class SQLSequenceDAO implements SequenceStore {
     }
 
     public JSONArray getHitLevel(int start_pos, List<Map<String, Object>> maps_two, long start, long end, int delta) {
+       log.info("get hit 1");
         List<Integer> ends = new ArrayList<Integer>();
         ends.add(0, 0);
         JSONObject eachTrack_temp = new JSONObject();
@@ -686,6 +687,7 @@ public class SQLSequenceDAO implements SequenceStore {
             int track_start = start_pos + Integer.parseInt(map_temp.get("start").toString()) - 1;
             int track_end = start_pos + Integer.parseInt(map_temp.get("end").toString()) - 1;
             if (track_start >= start && track_end <= end || track_start <= start && track_end >= end || track_end >= start && track_end <= end || track_start >= start && track_start <= end) {
+                eachTrack_temp.put("id", map_temp.get("id"));
                 eachTrack_temp.put("start", track_start);
                 eachTrack_temp.put("end", track_end);
                 eachTrack_temp.put("flag", false);
@@ -694,19 +696,28 @@ public class SQLSequenceDAO implements SequenceStore {
                 }
                 for (int i = 0; i < ends.size(); i++) {
                     if ((Integer.parseInt(map_temp.get("start").toString()) - ends.get(i)) > delta) {
+                        log.info("if"+Integer.parseInt(map_temp.get("start").toString())+":"+ends.get(i)+">"+delta+"==>"+(i + 1));
                         ends.remove(i);
                         ends.add(i, Integer.parseInt(map_temp.get("end").toString()));
                         eachTrack_temp.put("layer", i + 1);
                         break;
                     } else if ((Integer.parseInt(map_temp.get("start").toString()) - ends.get(i) < delta && (i + 1) == ends.size()) || Integer.parseInt(map_temp.get("start").toString()) == ends.get(i)) {
+
                         if (i == 0) {
-                            eachTrack_temp.put("layer", ends.size());
+                            log.info(" else if if"+Integer.parseInt(map_temp.get("start").toString())+":"+ends.get(i)+">"+delta+"=>"+ends.size());
+
                             ends.add(i, Integer.parseInt(map_temp.get("end").toString()));
-                        } else {
                             eachTrack_temp.put("layer", ends.size());
+                        } else {
+                            log.info(" else if else"+Integer.parseInt(map_temp.get("start").toString())+":"+ends.get(i)+">"+delta+"=>"+ends.size());
                             ends.add(ends.size(), Integer.parseInt(map_temp.get("end").toString()));
+
+                            eachTrack_temp.put("layer", ends.size());
                         }
                         break;
+                    }      else{
+                        log.info("else"+Integer.parseInt(map_temp.get("start").toString())+":"+ends.get(i)+">"+delta);
+
                     }
                 }
                 eachTrack_temp.put("desc", map_temp.get("desc"));
@@ -717,6 +728,8 @@ public class SQLSequenceDAO implements SequenceStore {
     }
 
     public JSONArray getHitLevel(List<Map<String, Object>> maps, List<Integer> ends, long start, long end, int delta) {
+        log.info("get hit 2");
+
         JSONObject eachTrack_temp = new JSONObject();
         JSONArray assemblyTracks = new JSONArray();
 
@@ -728,21 +741,29 @@ public class SQLSequenceDAO implements SequenceStore {
 
                 for (int i = 0; i < ends.size(); i++) {
                     if ((Integer.parseInt(map.get("start").toString()) - ends.get(i)) > delta) {
+                        log.info("if"+Integer.parseInt(map.get("start").toString())+":"+ends.get(i)+">"+delta);
                         ends.remove(i);
                         ends.add(i, Integer.parseInt(map.get("end").toString()));
                         map.put("layer", i + 1);
                         break;
 
                     } else if ((Integer.parseInt(map.get("start").toString()) - ends.get(i) < delta) && (i + 1) == ends.size()) {
+
                         if (i == 0) {
+                            log.info(" else if if"+Integer.parseInt(map.get("start").toString())+":"+ends.get(i)+">"+delta+"==>"+ends.size());
+
                             map.put("layer", ends.size());
                             ends.add(i, Integer.parseInt(map.get("end").toString()));
                         } else {
+                            log.info(" else if lse"+Integer.parseInt(map.get("start").toString())+":"+ends.get(i)+">"+delta+"==>"+ends.size());
+
                             map.put("layer", ends.size());
                             ends.add(ends.size(), Integer.parseInt(map.get("end").toString()));
                         }
                         break;
                     } else {
+                        log.info("else"+Integer.parseInt(map.get("start").toString())+":"+ends.get(i)+">"+delta);
+
                         //             continue;
                     }
                 }
@@ -971,6 +992,7 @@ public class SQLSequenceDAO implements SequenceStore {
             int start_pos = start_add + Integer.parseInt(map.get("start").toString());
             int end_pos = start_add + Integer.parseInt(map.get("end").toString());
             if (start_pos >= start && end_pos <= end || start_pos <= start && end_pos >= end || end_pos >= start && end_pos <= end || start_pos >= start && start_pos <= end) {
+                eachTrack_temp.put("id", map.get("id"));
                 eachTrack_temp.put("start", start_pos);
                 eachTrack_temp.put("end", end_pos);
                 eachTrack_temp.put("flag", false);
@@ -1267,7 +1289,7 @@ public class SQLSequenceDAO implements SequenceStore {
         JSONObject eachTrack_temp = new JSONObject();
         JSONArray assemblyTracks = new JSONArray();
         for (Map map_temp : maps_two) {
-            eachTrack_temp.put("id", map_temp.get("asm_seq_region_id"));
+            eachTrack_temp.put("id", map_temp.get("cmp_seq_region_id"));
             eachTrack_temp.put("start", start + Integer.parseInt(map_temp.get("asm_start").toString()) - 1);
             eachTrack_temp.put("end", start + Integer.parseInt(map_temp.get("asm_end").toString()) - 1);
             eachTrack_temp.put("flag", false);
@@ -1303,7 +1325,7 @@ public class SQLSequenceDAO implements SequenceStore {
 
         for (Map map : maps) {
             JSONObject eachTrack = new JSONObject();
-            eachTrack.put("id", map.get("asm_seq_region_id"));
+            eachTrack.put("id", map.get("cmp_seq_region_id"));
             eachTrack.put("start", map.get("asm_start"));
             eachTrack.put("end", map.get("asm_end"));
             eachTrack.put("flag", false);
