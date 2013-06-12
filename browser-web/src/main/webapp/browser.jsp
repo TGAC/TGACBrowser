@@ -59,37 +59,42 @@
                         </div>
                     </td>
                     <td>
-                        <img src='images/browser/reset.png' onclick="reset();" class="browserimage" height=50%
-                             alt="Reset" title="Reset"> &nbsp;&nbsp;
-                        <img src='images/browser/backward.png' onclick="dragLeft();" id="leftbig" class="browserimage"
-                             height=70%
-                             alt="Backward" title="Move Left">
-                        <img src='images/browser/backward.png' onclick="seqLeft();"
-                             class="browserimage browserimagesmall"
-                             height=40% alt="Left" title="Move Left (1bp)">&nbsp;
-                        <img src='images/browser/forward.png' onclick="seqRight();"
-                             class="browserimage browserimagesmall"
-                             height=40% alt="Right" title="Move Right (1bp)">
-                        <img src='images/browser/forward.png' onclick="dragRight();" id="rightbig" class="browserimage"
-                             height=70% alt="Forward" title="Move Right">&nbsp;&nbsp;
-                        <img src='images/browser/zoomin.png' id="zoominbig"
-                             onclick="zoomIn(parseInt(sequencelength/20));"
-                             class="browserimage"
-                             height=70% alt="ZoomIn" title="Zoom In">
-                        <img src='images/browser/zoomin.png' id="zoominsmall"
-                             onclick="zoomIn(parseInt(sequencelength/40));"
-                             class="browserimage browserimagesmall"
-                             height=40% alt="Zoomin" title="Zoom In">&nbsp;
-                        <img src='images/browser/zoomout.png' id="zoomoutsmall"
-                             onclick="zoomOut(parseInt(sequencelength/40));"
-                             class="browserimage browserimagesmall"
-                             height=40% alt="Zoomout" title='Zoom Out'>
-                        <img src='images/browser/zoomout.png' id="zoomoutbig"
-                             onclick="zoomOut(parseInt(sequencelength/20));"
-                             class="browserimage"
-                             height=70% alt="Zoomout" title="Zoom Out">&nbsp;&nbsp;
-                        <img src='images/browser/selectall.png' onclick="expand();" class="browserimage"
-                             height=60% alt="selectall" title="Select All">
+                        <div style="width: 100%; margin: 0px auto; position: fixed; left: 0px;">
+                            <center>
+                                <img src='images/browser/reset.png' onclick="reset();" class="browserimage" height=50%
+                                     alt="Reset" title="Reset"> &nbsp;&nbsp;
+                                <img src='images/browser/backward.png' onclick="dragLeft();" id="leftbig" class="browserimage"
+                                     height=70%
+                                     alt="Backward" title="Move Left">
+                                <img src='images/browser/backward.png' onclick="seqLeft();"
+                                     class="browserimage browserimagesmall"
+                                     height=40% alt="Left" title="Move Left (1bp)">&nbsp;
+                                <img src='images/browser/forward.png' onclick="seqRight();"
+                                     class="browserimage browserimagesmall"
+                                     height=40% alt="Right" title="Move Right (1bp)">
+                                <img src='images/browser/forward.png' onclick="dragRight();" id="rightbig" class="browserimage"
+                                     height=70% alt="Forward" title="Move Right">&nbsp;&nbsp;
+                                <img src='images/browser/zoomin.png' id="zoominbig"
+                                     onclick="zoomIn(parseInt(sequencelength/20));"
+                                     class="browserimage"
+                                     height=70% alt="ZoomIn" title="Zoom In">
+                                <img src='images/browser/zoomin.png' id="zoominsmall"
+                                     onclick="zoomIn(parseInt(sequencelength/40));"
+                                     class="browserimage browserimagesmall"
+                                     height=40% alt="Zoomin" title="Zoom In">&nbsp;
+                                <img src='images/browser/zoomout.png' id="zoomoutsmall"
+                                     onclick="zoomOut(parseInt(sequencelength/40));"
+                                     class="browserimage browserimagesmall"
+                                     height=40% alt="Zoomout" title='Zoom Out'>
+                                <img src='images/browser/zoomout.png' id="zoomoutbig"
+                                     onclick="zoomOut(parseInt(sequencelength/20));"
+                                     class="browserimage"
+                                     height=70% alt="Zoomout" title="Zoom Out">&nbsp;&nbsp;
+                                <img src='images/browser/selectall.png' onclick="expand();" class="browserimage"
+                                     height=60% alt="selectall" title="Select All">
+                            </center>
+
+                            </div>
                     </td>
                     <td>
                         <table style="position: fixed; right: 0px; top: 25px;">
