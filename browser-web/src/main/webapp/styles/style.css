@@ -59,6 +59,7 @@ body {
 
 .headerlink {
     color: white;
+    font-family: arial;
 }
 
 .headerlink a:link {
@@ -83,9 +84,10 @@ body {
 }
 
 .seachbox {
-    height: 8pt;
-    margin: 2px;
-    border: 0px solid;
+    border: 0 solid;
+    font-size: 9pt;
+    height: 12px;
+    margin: 1px;
 }
 
 #dbinfo {
@@ -94,7 +96,7 @@ body {
     float: left;
     font-size: small;
     left: 0;
-    margin: 5px;
+    margin-left: 5px;
     position: fixed;
 }
 
@@ -204,8 +206,11 @@ pre.wrap {
 }
 
 #footer {
+    bottom: 0;
     clear: both;
     font-size: 0.7em;
+    left: 40%;
+    position: fixed;
     text-align: center;
 }
 
@@ -1620,7 +1625,7 @@ span.counter {
 .vertical-line {
     position: fixed;
     display: inline;
-    top: 115px;
+    top: 119px;
     border: 1px solid #d3d3d3;
     border-top: 0;
     border-bottom: 0;
@@ -1630,6 +1635,7 @@ span.counter {
     -webkit-user-select: none;
     z-index: 999;
     width: 0px;
+    font-size: 9pt;
 }
 
 .browserimage {
@@ -1640,7 +1646,7 @@ span.counter {
     vertical-align: middle;
     opacity: 0.7;
     height: 20px;
-    left: 45%
+    /*left: 45%*/
 }
 
 .browserimagesmall {
@@ -1767,7 +1773,7 @@ span.counter {
     margin-left: 10px;
     /*background-color: blue;*/
     color: black;
-    font-weight: bold;
+    /*font-weight: bold;*/
     top: 0px;
 
 }
@@ -1890,7 +1896,7 @@ span.counter {
 
 #blastresult {
     position: relative;
-    top: 230px;
+    top: 270px;
 }
 
 /*#popup:before{*/
@@ -2183,8 +2189,8 @@ span.counter {
     /*background: url("../images/browser/tempexon.png") repeat-x left top;*/
     background-position: center center;
     background: #ff8c00;
-    border: 1px solid #000000;
-    height: 10px;
+    /*border: 1px solid #000000;*/
+    height: 5px;
 }
 
 .clone {
@@ -2419,7 +2425,7 @@ span.deleteicon input {
 }
 
 .ui-resizable {
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid gray;
 
 }
 
@@ -2534,4 +2540,11 @@ span.deleteicon input {
 
 .divbutton a {
     text-decoration: none;
+}
+
+.tracklable{
+    font-family: Arial;
+    font-size: x-small;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
