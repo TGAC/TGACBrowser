@@ -123,7 +123,7 @@ public class SQLSequenceDAO implements SequenceStore {
     public static final String GET_Coord_systemid_FROM_ID = "SELECT coord_system_id FROM seq_region WHERE seq_region_id = ?";
     public static final String GET_RANK_for_COORD_SYSTEM_ID = "SELECT rank FROM coord_system where coord_system_id =?";
     public static final String GET_Gene_name_from_ID = "SELECT description FROM gene where gene_id =?";
-
+    public static final String CHECK_Coord_sys_attr = "select * from coord_system where coord_system_id = ? and (name like ? OR attrib like ?);";
     public static final String GET_Transcript_name_from_ID = "SELECT description FROM transcript where transcript_id =?";
     public static final String GET_Tracks_Name = "select analysis_id from analysis where logic_name = ?";
     public static final String GET_hit_name_from_ID = "SELECT hit_name FROM dna_align_feature where dna_align_feature_id =?";
@@ -228,89 +228,55 @@ public class SQLSequenceDAO implements SequenceStore {
 //  }
 //
 
+    private boolean checkCoord(int id, String str) {
+        boolean check = false;
+        List<Map<String, Object>> maps = template.queryForList(CHECK_Coord_sys_attr, new Object[]{id, '%' + str + '%', '%' + str + '%'});
+        if (maps.size() > 0) {
+            check = true;
+        }
+        return check;
+    }
+
+
     public Integer getSeqRegionCoordId(String query) throws IOException {
         try {
             int coord_id = Integer.parseInt(template.queryForObject(GET_coord_sys_id_by_name, new Object[]{query}, String.class));
             return coord_id;
         } catch (EmptyResultDataAccessException e) {
             return 0;
-//      throw new IOException("Sequence not found");
         }
     }
 
     public int getPositionOnReference(int id, int pos) {
-        log.info("getposition " + id);
-        String query_coord = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{id}, String.class);
-        String attrib = template.queryForObject(GET_coord_attrib, new Object[]{query_coord}, String.class);
-        String name = template.queryForObject(GET_coord_sys_name, new Object[]{query_coord}, String.class);
-        if (name.indexOf("chr") >= 0) {
+        if (checkCoord(id, "chr")) {
+
         } else {
             List<Map<String, Object>> maps = template.queryForList(GET_reference_for_Assembly, new Object[]{id});
             for (Map map : maps) {
-                query_coord = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{Integer.parseInt(map.get("asm_seq_region_id").toString())}, String.class);
-                attrib = template.queryForObject(GET_coord_attrib, new Object[]{query_coord}, String.class);
-                name = template.queryForObject(GET_coord_sys_name, new Object[]{query_coord}, String.class);
-                if (name.indexOf("chr") >= 0) {
+                if (checkCoord(Integer.parseInt(map.get("asm_seq_region_id").toString()), "chr")) {
                     pos += Integer.parseInt(map.get("asm_start").toString());
-
-//
-////            log.info("\n" + (attrib.indexOf("chr")));
-////            log.info("\n" + attrib.indexOf("CHR"));
-//            log.info("\n" + name.indexOf("chr"));
-//            log.info("\n" + name.indexOf("CHR"));
-                    log.info("pos if \t" + pos);
-//
                 } else {
-                    log.info("recursive\t" + map.get("asm_seq_region_id").toString() + "\n" + query_coord + ":" + attrib + "\n\n");
-                    log.info("pos before \t" + pos);
                     pos += getPositionOnReference(Integer.parseInt(map.get("asm_seq_region_id").toString()), Integer.parseInt(map.get("asm_start").toString()));
-                    log.info("pos after \t" + pos);
                 }
-
             }
-            log.info("pos\t" + pos);
         }
-
         return pos;
     }
 
     public int getAssemblyReference(int id) {
-        log.info("getposition " + id);
         int ref_id = 0;
-        String query_coord = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{id}, String.class);
-        String attrib = template.queryForObject(GET_coord_attrib, new Object[]{query_coord}, String.class);
-        String name = template.queryForObject(GET_coord_sys_name, new Object[]{query_coord}, String.class);
-        if (name.indexOf("chr") >= 0) {
+        if (checkCoord(id, "chr")) {
             ref_id = id;
         } else {
             List<Map<String, Object>> maps = template.queryForList(GET_reference_for_Assembly, new Object[]{id});
             for (Map map : maps) {
-                log.info(map.toString());
-                log.info(map.get("asm_seq_region_id").toString());
-                ref_id = Integer.parseInt(map.get("asm_seq_region_id").toString());
-                query_coord = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{ref_id}, String.class);
-                log.info(query_coord);
-                attrib = template.queryForObject(GET_coord_attrib, new Object[]{query_coord}, String.class);
-                name = template.queryForObject(GET_coord_sys_name, new Object[]{query_coord}, String.class);
-                log.info("attrib \t" + attrib);
-                log.info("name \t" + name);
-                if (name.indexOf("chr") >= 0) {
-//
-////            log.info("\n" + (attrib.indexOf("chr")));
-////            log.info("\n" + attrib.indexOf("CHR"));
-//            log.info("\n" + name.indexOf("chr"));
-//            log.info("\n" + name.indexOf("CHR"));
-//                log.info("pos if \t" + pos);
-//
+                if (checkCoord(Integer.parseInt(map.get("asm_seq_region_id").toString()), "chr")) {
+                    ref_id = Integer.parseInt(map.get("asm_seq_region_id").toString());
                 } else {
-//                log.info("recursive\t" +map.get("asm_seq_region_id").toString()+"\n"+query_coord+":"+attrib+"\n\n" );
-//                log.info("pos before \t" + pos);
                     ref_id = getAssemblyReference(ref_id);
-                    log.info("asseonref refid after \t" + ref_id);
                 }
             }
         }
-        log.info("ref id\t" + ref_id);
         return ref_id;
     }
 
@@ -323,9 +289,7 @@ public class SQLSequenceDAO implements SequenceStore {
                 eachGene.put("Type", getLogicNameByAnalysisId(Integer.parseInt(map.get("analysis_id").toString())));
                 eachGene.put("name", map.get("description"));
                 if (checkChromosome()) {
-                    log.info("send\t");
                     int pos = getPositionOnReference(Integer.parseInt(map.get("seq_region_id").toString()), 0);
-                    log.info("back\t" + pos);
                     eachGene.put("start", pos + Integer.parseInt(map.get("seq_region_start").toString()));
                     eachGene.put("end", pos + Integer.parseInt(map.get("seq_region_end").toString()));
                     eachGene.put("parent", getSeqRegionName(getAssemblyReference(Integer.parseInt(map.get("seq_region_id").toString()))));
