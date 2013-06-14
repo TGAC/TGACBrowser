@@ -57,362 +57,339 @@ import java.util.List;
  */
 @Ajaxified
 public class DnaSequenceService {
-  protected static final Logger log = LoggerFactory.getLogger(DnaSequenceService.class);
-  @Autowired
-  private SequenceStore sequenceStore;
+    protected static final Logger log = LoggerFactory.getLogger(DnaSequenceService.class);
+    @Autowired
+    private SequenceStore sequenceStore;
 
-  public void setSequenceStore(SequenceStore sequenceStore) {
-    this.sequenceStore = sequenceStore;
-  }
+    public void setSequenceStore(SequenceStore sequenceStore) {
+        this.sequenceStore = sequenceStore;
+    }
 
-  /**
-   * Returns a JSONObject that can be read as single reference or a list of results
-   * <p/>
-   * This calls the methods in sequenceStore class
-   * and search through database for the keyword
-   * first look for seq_region table
-   * then gene, transcript and gene_attrib and transcript_attrib
-   *
-   * @param session an HTTPSession comes from ajax call
-   * @param json    json object with key parameters sent from ajax call
-   * @return JSONObject with one result or list of result
-   */
+    /**
+     * Returns a JSONObject that can be read as single reference or a list of results
+     * <p/>
+     * This calls the methods in sequenceStore class
+     * and search through database for the keyword
+     * first look for seq_region table
+     * then gene, transcript and gene_attrib and transcript_attrib
+     *
+     * @param session an HTTPSession comes from ajax call
+     * @param json    json object with key parameters sent from ajax call
+     * @return JSONObject with one result or list of result
+     */
 
-  public JSONObject searchSequence(HttpSession session, JSONObject json) {
-    String seqName = json.getString("query");
-    JSONObject response = new JSONObject();
-    try {
+    public JSONObject searchSequence(HttpSession session, JSONObject json) {
+        String seqName = json.getString("query");
+        JSONObject response = new JSONObject();
+        try {
 
-      Integer queryid = sequenceStore.getSeqRegionearchsize(seqName);
+            Integer queryid = sequenceStore.getSeqRegionearchsize(seqName);
 
 //      if more than one results
-      if (queryid > 1) {
-        response.put("html", "seqregion");
-        response.put("seqregion", sequenceStore.getSeqRegionSearch(seqName));
-      }
+            if (queryid > 1) {
+                response.put("html", "seqregion");
+                response.put("seqregion", sequenceStore.getSeqRegionSearch(seqName));
+                response.put("chromosome", sequenceStore.checkChromosome());
+            }
 //      if no result from seq_region
-      else if (queryid == 0) {
-        response.put("html", "gene");
-        response.put("gene", sequenceStore.getGenesSearch(seqName));
-        response.put("transcript", sequenceStore.getTranscriptSearch(seqName));
-        response.put("GO", sequenceStore.getGOSearch(seqName));
-      }
+            else if (queryid == 0) {
+                response.put("html", "gene");
+                response.put("gene", sequenceStore.getGenesSearch(seqName));
+                response.put("transcript", sequenceStore.getTranscriptSearch(seqName));
+                response.put("GO", sequenceStore.getGOSearch(seqName));
+                response.put("chromosome", sequenceStore.checkChromosome());
+            }
 //      if only one result from seq_region
-      else {
-        Integer query = sequenceStore.getSeqRegion(seqName);
-        String seqRegName = sequenceStore.getSeqRegionName(query);
-        String seqlength = sequenceStore.getSeqLengthbyId(query);
-        response.put("seqlength", seqlength);
-        response.put("html", "");
-        response.put("seqname", "<p> <b>Seq Region ID:</b> " + query + ",<b> Name: </b> " + seqRegName);//+", <b>cds:</b> "+cds+"</p>");
-        response.put("seqregname", seqRegName);
-        response.put("tracklists", sequenceStore.getAnnotationId(query));
-        response.put("coord_sys", sequenceStore.getCoordSys(seqName));
-      }
-      return response;
-    }
-    catch (Exception e) {
-      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-      return JSONUtils.SimpleJSONError(e.getMessage());
-    }
-
-  }
-
-  /**
-   * Returns a JSONObject that can be read as single reference
-   * <p/>
-   * This calls the methods in sequenceStore class
-   * and search through database for the keyword for seq_region table for only one result
-   *
-   * @param session an HTTPSession comes from ajax call
-   * @param json    json object with key parameters sent from ajax call
-   * @return JSONObject with one result
-   */
-
-  public JSONObject seqregionSearchSequence(HttpSession session, JSONObject json) throws IOException {
-    try {
-      JSONObject response = new JSONObject();
-      String seqName = json.getString("query");
-      Integer query = sequenceStore.getSeqRegionforone(seqName);
-      String seqRegName = sequenceStore.getSeqRegionName(query);
-      String seqlength = sequenceStore.getSeqLengthbyId(query);
-
-      response.put("seqlength", seqlength);
-      response.put("html", "");
-      response.put("seqname", "<p> <b>Seq Region ID:</b> " + query + ",<b> Name: </b> " + seqRegName);//+", <b>cds:</b> "+cds+"</p>");
-      response.put("seqregname", seqRegName);
-      response.put("tracklists", sequenceStore.getAnnotationId(query));
-      response.put("coord_sys", sequenceStore.getCoordSys(seqRegName));
-
-      return response;
-    }
-    catch (Exception e) {
-      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-      return JSONUtils.SimpleJSONError(e.getMessage());
-    }
-
-  }
-
-  public JSONObject searchSeqRegionforMap(HttpSession session, JSONObject json) {
-    String seqName = "";
-    JSONObject response = new JSONObject();
-    try {
-      response.put("seqregion", sequenceStore.getSeqRegionSearchMap(seqName));
-      return response;
-    }
-    catch (IOException e) {
-      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-      return JSONUtils.SimpleJSONError(e.getMessage());
-    }
-  }
-
-  /**
-   * Returns JSONObject as first key track name and second key with tracks detail
-   * <p>
-   * It checks for the trackId
-   * if it contains keyword like .sam or .bam call method getSamBam
-   * if it contains keyword like .wig call method getWig
-   * if it contains keyword like cs then call method getAssembly
-   * if it contains keyword like repeat then call method getRepeat
-   * if it contains keyword like gene then call method getGene
-   * or last it call method getHit
-   * </p>
-   * <p>
-   * for genes if result is more than 1000 it will return result in form of graphs
-   * for repeats and hits if result is more than 5000 it will return result in form of graphs
-   * </p>
-   *
-   * @param session an HTTPSession comes from ajax call
-   * @param json    json object with key parameters sent from ajax call
-   * @return JSONObject as first key track name and second key with tracks detail
-   */
-
-  public JSONObject loadTrack(HttpSession session, JSONObject json) {
-    String seqName = json.getString("query");
-    JSONObject response = new JSONObject();
-    String trackName = json.getString("name");
-    String trackId = json.getString("trackid");
-    long start = json.getInt("start");
-    long end = json.getInt("end");
-    int delta = json.getInt("delta");
-    response.put("name", trackName);
-    log.info(trackName);
-    log.info(trackId);
-    int count;
-    try {
-      Integer queryid = sequenceStore.getSeqRegion(seqName);
-      if (trackId.contains(".sam") || trackId.contains(".bam")) {
-        response.put(trackName, SamBamService.getSamBam(start, end, delta, trackId, seqName));
-      }
-      else if (trackId.contains(".wig")) {
-        response.put(trackName, SamBamService.getWig(start, end, delta, trackId, seqName));
-      }
-      else if (trackId.contains(".bed")) {
-        response.put(trackName, SamBamService.getBed(start, end, delta, trackId, seqName));
-      }
-      else if (trackId.indexOf("cs") >= 0) {
-        count = sequenceStore.countAssembly(queryid, trackId, start, end);
-        if (count < 5000) {
-          response.put(trackName, sequenceStore.getAssembly(queryid, trackId, delta));
+            else {
+                Integer query = sequenceStore.getSeqRegion(seqName);
+                String seqRegName = sequenceStore.getSeqRegionName(query);
+                String seqlength = sequenceStore.getSeqLengthbyId(query);
+                response.put("seqlength", seqlength);
+                response.put("html", "");
+                response.put("seqname", "<p> <b>Seq Region ID:</b> " + query + ",<b> Name: </b> " + seqRegName);//+", <b>cds:</b> "+cds+"</p>");
+                response.put("seqregname", seqRegName);
+                response.put("tracklists", sequenceStore.getAnnotationId(query));
+                response.put("coord_sys", sequenceStore.getCoordSys(seqName));
+            }
+            return response;
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return JSONUtils.SimpleJSONError(e.getMessage());
         }
-        else {
-          response.put("type", "graph");
-          response.put(trackName, sequenceStore.getAssemblyGraph(queryid, trackId, start, end));
-        }
-      }
-      else if (sequenceStore.getLogicNameByAnalysisId(Integer.parseInt(trackId)).matches("(?i).*repeat.*")) {
-        count = sequenceStore.countRepeat(queryid, trackId, start, end);
-        if (count < 5000) {
-          response.put(trackName, sequenceStore.processRepeat(sequenceStore.getRepeat(queryid, trackId, start, end), start, end, delta, queryid, trackId));
-        }
-        else {
-          response.put("type", "graph");
-          response.put(trackName, sequenceStore.getRepeatGraph(queryid, trackId, start, end));
-        }
-      }
-      else if (sequenceStore.getLogicNameByAnalysisId(Integer.parseInt(trackId)).matches("(?i).*gene.*")) {
-        count = sequenceStore.countGene(queryid, trackId, start, end);
-        if (count < 1000) {
-          response.put(trackName, sequenceStore.processGenes(sequenceStore.getGenes(queryid, trackId), start, end, delta, queryid, trackId));
-        }
-        else {
-          response.put("type", "graph");
-          response.put(trackName, sequenceStore.getGeneGraph(queryid, trackId, start, end));
-        }
-      }
-      else {
-        count = sequenceStore.countHit(queryid, trackId, start, end);
-        if (count < 5000) {
-          response.put(trackName, sequenceStore.processHit(sequenceStore.getHit(queryid, trackId, start, end), start, end, delta, queryid, trackId));
-        }
-        else {
-          response.put("type", "graph");
-          response.put(trackName, sequenceStore.getHitGraph(queryid, trackId, start, end));
-        }
-      }
 
     }
-    catch (IOException e) {
-      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-      return JSONUtils.SimpleJSONError(e.getMessage());
-    }
-    catch (Exception e) {
-      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+
+    /**
+     * Returns a JSONObject that can be read as single reference
+     * <p/>
+     * This calls the methods in sequenceStore class
+     * and search through database for the keyword for seq_region table for only one result
+     *
+     * @param session an HTTPSession comes from ajax call
+     * @param json    json object with key parameters sent from ajax call
+     * @return JSONObject with one result
+     */
+
+    public JSONObject seqregionSearchSequence(HttpSession session, JSONObject json) throws IOException {
+        try {
+            JSONObject response = new JSONObject();
+            String seqName = json.getString("query");
+            Integer query = sequenceStore.getSeqRegionforone(seqName);
+            String seqRegName = sequenceStore.getSeqRegionName(query);
+            String seqlength = sequenceStore.getSeqLengthbyId(query);
+
+            response.put("seqlength", seqlength);
+            response.put("html", "");
+            response.put("seqname", "<p> <b>Seq Region ID:</b> " + query + ",<b> Name: </b> " + seqRegName);//+", <b>cds:</b> "+cds+"</p>");
+            response.put("seqregname", seqRegName);
+            response.put("tracklists", sequenceStore.getAnnotationId(query));
+            response.put("coord_sys", sequenceStore.getCoordSys(seqRegName));
+
+            return response;
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return JSONUtils.SimpleJSONError(e.getMessage());
+        }
+
     }
 
-    return response;
-  }
+    public JSONObject searchSeqRegionforMap(HttpSession session, JSONObject json) {
+        String seqName = "";
+        JSONObject response = new JSONObject();
+        try {
+            response.put("seqregion", sequenceStore.getSeqRegionSearchMap(seqName));
+            return response;
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return JSONUtils.SimpleJSONError(e.getMessage());
+        }
+    }
 
-  /**
-   * Return result as JSONObject
-   * call method grtdbinfo to retrieve meta info of the database
-   * and call method checkChromosome to check chromosome exist or not for genome map
-   *
-   * @param session an HTTPSession comes from ajax call
-   * @param json    json object with key parameters sent from ajax call
-   * @return JSONObject with metainfo and chr (boolean)
-   */
-  public JSONObject metaInfo(HttpSession session, JSONObject json) {
-    JSONObject response = new JSONObject();
-    try {
-      response.put("metainfo", sequenceStore.getdbinfo());
-      response.put("chr", sequenceStore.checkChromosome());
-      return response;
-    }
-    catch (Exception e) {
-      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-      return JSONUtils.SimpleJSONError(e.getMessage());
-    }
-  }
+    /**
+     * Returns JSONObject as first key track name and second key with tracks detail
+     * <p>
+     * It checks for the trackId
+     * if it contains keyword like .sam or .bam call method getSamBam
+     * if it contains keyword like .wig call method getWig
+     * if it contains keyword like cs then call method getAssembly
+     * if it contains keyword like repeat then call method getRepeat
+     * if it contains keyword like gene then call method getGene
+     * or last it call method getHit
+     * </p>
+     * <p>
+     * for genes if result is more than 1000 it will return result in form of graphs
+     * for repeats and hits if result is more than 5000 it will return result in form of graphs
+     * </p>
+     *
+     * @param session an HTTPSession comes from ajax call
+     * @param json    json object with key parameters sent from ajax call
+     * @return JSONObject as first key track name and second key with tracks detail
+     */
 
-  public JSONObject loadDomains(HttpSession session, JSONObject json) {
-    String geneid = json.getString("geneid");
-    JSONObject response = new JSONObject();
-    try {
-      response.put("domains", sequenceStore.getDomains(geneid));
-      return response;
-    }
-    catch (IOException e) {
-      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-      return JSONUtils.SimpleJSONError(e.getMessage());
-    }
-  }
+    public JSONObject loadTrack(HttpSession session, JSONObject json) {
+        String seqName = json.getString("query");
+        JSONObject response = new JSONObject();
+        String trackName = json.getString("name");
+        String trackId = json.getString("trackid");
+        long start = json.getInt("start");
+        long end = json.getInt("end");
+        int delta = json.getInt("delta");
+        response.put("name", trackName);
+        log.info(trackName);
+        log.info(trackId);
+        int count;
+        try {
+            Integer queryid = sequenceStore.getSeqRegion(seqName);
+            if (trackId.contains(".sam") || trackId.contains(".bam")) {
+                response.put(trackName, SamBamService.getSamBam(start, end, delta, trackId, seqName));
+            } else if (trackId.contains(".wig")) {
+                response.put(trackName, SamBamService.getWig(start, end, delta, trackId, seqName));
+            } else if (trackId.contains(".bed")) {
+                response.put(trackName, SamBamService.getBed(start, end, delta, trackId, seqName));
+            } else if (trackId.indexOf("cs") >= 0) {
+                count = sequenceStore.countAssembly(queryid, trackId, start, end);
+                if (count < 5000) {
+                    response.put(trackName, sequenceStore.getAssembly(queryid, trackId, delta));
+                } else {
+                    response.put("type", "graph");
+                    response.put(trackName, sequenceStore.getAssemblyGraph(queryid, trackId, start, end));
+                }
+            } else if (sequenceStore.getLogicNameByAnalysisId(Integer.parseInt(trackId)).matches("(?i).*repeat.*")) {
+                count = sequenceStore.countRepeat(queryid, trackId, start, end);
+                if (count < 5000) {
+                    response.put(trackName, sequenceStore.processRepeat(sequenceStore.getRepeat(queryid, trackId, start, end), start, end, delta, queryid, trackId));
+                } else {
+                    response.put("type", "graph");
+                    response.put(trackName, sequenceStore.getRepeatGraph(queryid, trackId, start, end));
+                }
+            } else if (sequenceStore.getLogicNameByAnalysisId(Integer.parseInt(trackId)).matches("(?i).*gene.*")) {
+                count = sequenceStore.countGene(queryid, trackId, start, end);
+                if (count < 1000) {
+                    response.put(trackName, sequenceStore.processGenes(sequenceStore.getGenes(queryid, trackId), start, end, delta, queryid, trackId));
+                } else {
+                    response.put("type", "graph");
+                    response.put(trackName, sequenceStore.getGeneGraph(queryid, trackId, start, end));
+                }
+            } else {
+                count = sequenceStore.countHit(queryid, trackId, start, end);
+                if (count < 5000) {
+                    response.put(trackName, sequenceStore.processHit(sequenceStore.getHit(queryid, trackId, start, end), start, end, delta, queryid, trackId));
+                } else {
+                    response.put("type", "graph");
+                    response.put(trackName, sequenceStore.getHitGraph(queryid, trackId, start, end));
+                }
+            }
 
-  /**
-   * Return JSONObject
-   * <p>
-   * check for the name of transcript in description
-   * </p>
-   *
-   * @param session an HTTPSession comes from ajax call
-   * @param json    json object with key parameters sent from ajax call
-   * @return
-   */
-  public JSONObject loadTranscriptName(HttpSession session, JSONObject json) {
-    JSONObject response = new JSONObject();
-    int query = json.getInt("id");
-    try {
-      response.put("name", sequenceStore.getTranscriptNamefromId(query));
-      return response;
-    }
-    catch (IOException e) {
-      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-      return JSONUtils.SimpleJSONError(e.getMessage());
-    }
-  }
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return JSONUtils.SimpleJSONError(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
 
-  /**
-   * Returns JSONObject
-   * <p>
-   * check if the track related to assembly track / repeats / genes or hits
-   * </p>
-   *
-   * @param session an HTTPSession comes from ajax call
-   * @param json    json object with key parameters sent from ajax call
-   * @return JSONObject with name
-   */
+        return response;
+    }
 
-  public JSONObject loadTrackName(HttpSession session, JSONObject json) {
-    JSONObject response = new JSONObject();
-    String trackName = json.getString("track");
-    int query = json.getInt("id");
-    try {
-      String trackid = sequenceStore.getTrackIDfromName(trackName);
-      if (trackid.indexOf("cs") >= 0) {
-        response.put("name", sequenceStore.getSeqRegionName(query));
-      }
-      else if (sequenceStore.getLogicNameByAnalysisId(Integer.parseInt(trackid)).matches("(?i).*repeat.*")) {
+    /**
+     * Return result as JSONObject
+     * call method grtdbinfo to retrieve meta info of the database
+     * and call method checkChromosome to check chromosome exist or not for genome map
+     *
+     * @param session an HTTPSession comes from ajax call
+     * @param json    json object with key parameters sent from ajax call
+     * @return JSONObject with metainfo and chr (boolean)
+     */
+    public JSONObject metaInfo(HttpSession session, JSONObject json) {
+        JSONObject response = new JSONObject();
+        try {
+            response.put("metainfo", sequenceStore.getdbinfo());
+            response.put("chr", sequenceStore.checkChromosome());
+            return response;
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return JSONUtils.SimpleJSONError(e.getMessage());
+        }
+    }
+
+    public JSONObject loadDomains(HttpSession session, JSONObject json) {
+        String geneid = json.getString("geneid");
+        JSONObject response = new JSONObject();
+        try {
+            response.put("domains", sequenceStore.getDomains(geneid));
+            return response;
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return JSONUtils.SimpleJSONError(e.getMessage());
+        }
+    }
+
+    /**
+     * Return JSONObject
+     * <p>
+     * check for the name of transcript in description
+     * </p>
+     *
+     * @param session an HTTPSession comes from ajax call
+     * @param json    json object with key parameters sent from ajax call
+     * @return
+     */
+    public JSONObject loadTranscriptName(HttpSession session, JSONObject json) {
+        JSONObject response = new JSONObject();
+        int query = json.getInt("id");
+        try {
+            response.put("name", sequenceStore.getTranscriptNamefromId(query));
+            return response;
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return JSONUtils.SimpleJSONError(e.getMessage());
+        }
+    }
+
+    /**
+     * Returns JSONObject
+     * <p>
+     * check if the track related to assembly track / repeats / genes or hits
+     * </p>
+     *
+     * @param session an HTTPSession comes from ajax call
+     * @param json    json object with key parameters sent from ajax call
+     * @return JSONObject with name
+     */
+
+    public JSONObject loadTrackName(HttpSession session, JSONObject json) {
+        JSONObject response = new JSONObject();
+        String trackName = json.getString("track");
+        int query = json.getInt("id");
+        try {
+            String trackid = sequenceStore.getTrackIDfromName(trackName);
+            if (trackid.indexOf("cs") >= 0) {
+                response.put("name", sequenceStore.getSeqRegionName(query));
+            } else if (sequenceStore.getLogicNameByAnalysisId(Integer.parseInt(trackid)).matches("(?i).*repeat.*")) {
 //              as we dont have decided to save repeat name in a table
-        response.put("name", "");
-      }
-      else if (sequenceStore.getLogicNameByAnalysisId(Integer.parseInt(trackid)).matches("(?i).*gene.*")) {
-        response.put("name", sequenceStore.getGeneNamefromId(query));
-      }
-      else {
-        response.put("name", sequenceStore.getHitNamefromId(query));
-      }
-      return response;
+                response.put("name", "");
+            } else if (sequenceStore.getLogicNameByAnalysisId(Integer.parseInt(trackid)).matches("(?i).*gene.*")) {
+                response.put("name", sequenceStore.getGeneNamefromId(query));
+            } else {
+                response.put("name", sequenceStore.getHitNamefromId(query));
+            }
+            return response;
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return JSONUtils.SimpleJSONError(e.getMessage());
+        }
     }
-    catch (IOException e) {
-      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-      return JSONUtils.SimpleJSONError(e.getMessage());
-    }
-  }
 
-  /**
-   * Return result as JSONObject
-   * <p>
-   * first call method getSeqRegion to get seq_region_id
-   * then get sequence from method getSeq
-   * </p>
-   *
-   * @param session an HTTPSession comes from ajax call
-   * @param json    json object with key parameters sent from ajax call
-   * @return JSONObject with sequence string
-   */
-  public JSONObject loadSequence(HttpSession session, JSONObject json) {
-    JSONObject response = new JSONObject();
-    String query = json.getString("query");
-    int from = json.getInt("from");
-    int to = json.getInt("to");
-    try {
-      String queryid = sequenceStore.getSeqRegion(query).toString();
-      if (from <= to) {
-        response.put("seq", sequenceStore.getSeq(queryid, from, to));
-      }
-      else {
-        response.put("seq", sequenceStore.getSeq(queryid, to, from));
-      }
+    /**
+     * Return result as JSONObject
+     * <p>
+     * first call method getSeqRegion to get seq_region_id
+     * then get sequence from method getSeq
+     * </p>
+     *
+     * @param session an HTTPSession comes from ajax call
+     * @param json    json object with key parameters sent from ajax call
+     * @return JSONObject with sequence string
+     */
+    public JSONObject loadSequence(HttpSession session, JSONObject json) {
+        JSONObject response = new JSONObject();
+        String query = json.getString("query");
+        int from = json.getInt("from");
+        int to = json.getInt("to");
+        try {
+            String queryid = sequenceStore.getSeqRegion(query).toString();
+            if (from <= to) {
+                response.put("seq", sequenceStore.getSeq(queryid, from, to));
+            } else {
+                response.put("seq", sequenceStore.getSeq(queryid, to, from));
+            }
 
-      return response;
+            return response;
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return JSONUtils.SimpleJSONError(e.getMessage());
+        }
     }
-    catch (IOException e) {
-      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-      return JSONUtils.SimpleJSONError(e.getMessage());
-    }
-  }
 
 
-  /**
-   * Return result as JSONObject
-   * <p>
-   * this method call getMarker method to get markers for all the markers for the database
-   * </p>
-   *
-   * @param session an HTTPSession comes from ajax call
-   * @param json    json object with key parameters sent from ajax call
-   * @return JSONObject with marker information
-   */
-  public JSONObject loadMarker(HttpSession session, JSONObject json) {
-    JSONObject response = new JSONObject();
-    try {
-      response.put("marker", sequenceStore.getMarker());
+    /**
+     * Return result as JSONObject
+     * <p>
+     * this method call getMarker method to get markers for all the markers for the database
+     * </p>
+     *
+     * @param session an HTTPSession comes from ajax call
+     * @param json    json object with key parameters sent from ajax call
+     * @return JSONObject with marker information
+     */
+    public JSONObject loadMarker(HttpSession session, JSONObject json) {
+        JSONObject response = new JSONObject();
+        try {
+            response.put("marker", sequenceStore.getMarker());
 
-      return response;
+            return response;
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return JSONUtils.SimpleJSONError(e.getMessage());
+        }
     }
-    catch (IOException e) {
-      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-      return JSONUtils.SimpleJSONError(e.getMessage());
-    }
-  }
 }

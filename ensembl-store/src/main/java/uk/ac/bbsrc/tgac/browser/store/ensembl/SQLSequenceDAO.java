@@ -135,6 +135,7 @@ public class SQLSequenceDAO implements SequenceStore {
     public static final String GET_GO_for_Transcripts = "select value from transcript_attrib where transcript_id =  ?";
     public static final String GET_GO_for_Genes = "select value from gene_attrib where gene_id = ?";
     public static final String GET_Assembly_for_reference = "SELECT * FROM assembly where asm_seq_region_id =?";
+    public static final String GET_reference_for_Assembly = "SELECT * FROM assembly where cmp_seq_region_id =?";
     public static final String GET_GENE_SIZE = "SELECT COUNT(*) FROM gene where seq_region_id =? and analysis_id = ?";
     //  public static final String GET_GENOME_MARKER = "SELECT * from marker_feature";
     public static final String GET_GENOME_MARKER = "select mf.marker_feature_id as id, sr.name as reference, mf.marker_id as marker_id, mf.seq_region_start as start, mf.seq_region_end as end, mf.analysis_id as analysis_id from marker_feature mf, seq_region sr where mf.seq_region_id = sr.seq_region_id;";
@@ -237,6 +238,82 @@ public class SQLSequenceDAO implements SequenceStore {
         }
     }
 
+    public int getPositionOnReference(int id, int pos) {
+        log.info("getposition " + id);
+        String query_coord = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{id}, String.class);
+        String attrib = template.queryForObject(GET_coord_attrib, new Object[]{query_coord}, String.class);
+        String name = template.queryForObject(GET_coord_sys_name, new Object[]{query_coord}, String.class);
+        if (name.indexOf("chr") >= 0) {
+        } else {
+            List<Map<String, Object>> maps = template.queryForList(GET_reference_for_Assembly, new Object[]{id});
+            for (Map map : maps) {
+                query_coord = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{Integer.parseInt(map.get("asm_seq_region_id").toString())}, String.class);
+                attrib = template.queryForObject(GET_coord_attrib, new Object[]{query_coord}, String.class);
+                name = template.queryForObject(GET_coord_sys_name, new Object[]{query_coord}, String.class);
+                if (name.indexOf("chr") >= 0) {
+                    pos += Integer.parseInt(map.get("asm_start").toString());
+
+//
+////            log.info("\n" + (attrib.indexOf("chr")));
+////            log.info("\n" + attrib.indexOf("CHR"));
+//            log.info("\n" + name.indexOf("chr"));
+//            log.info("\n" + name.indexOf("CHR"));
+                    log.info("pos if \t" + pos);
+//
+                } else {
+                    log.info("recursive\t" + map.get("asm_seq_region_id").toString() + "\n" + query_coord + ":" + attrib + "\n\n");
+                    log.info("pos before \t" + pos);
+                    pos += getPositionOnReference(Integer.parseInt(map.get("asm_seq_region_id").toString()), Integer.parseInt(map.get("asm_start").toString()));
+                    log.info("pos after \t" + pos);
+                }
+
+            }
+            log.info("pos\t" + pos);
+        }
+
+        return pos;
+    }
+
+    public int getAssemblyReference(int id) {
+        log.info("getposition " + id);
+        int ref_id = 0;
+        String query_coord = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{id}, String.class);
+        String attrib = template.queryForObject(GET_coord_attrib, new Object[]{query_coord}, String.class);
+        String name = template.queryForObject(GET_coord_sys_name, new Object[]{query_coord}, String.class);
+        if (name.indexOf("chr") >= 0) {
+            ref_id = id;
+        } else {
+            List<Map<String, Object>> maps = template.queryForList(GET_reference_for_Assembly, new Object[]{id});
+            for (Map map : maps) {
+                log.info(map.toString());
+                log.info(map.get("asm_seq_region_id").toString());
+                ref_id = Integer.parseInt(map.get("asm_seq_region_id").toString());
+                query_coord = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{ref_id}, String.class);
+                log.info(query_coord);
+                attrib = template.queryForObject(GET_coord_attrib, new Object[]{query_coord}, String.class);
+                name = template.queryForObject(GET_coord_sys_name, new Object[]{query_coord}, String.class);
+                log.info("attrib \t" + attrib);
+                log.info("name \t" + name);
+                if (name.indexOf("chr") >= 0) {
+//
+////            log.info("\n" + (attrib.indexOf("chr")));
+////            log.info("\n" + attrib.indexOf("CHR"));
+//            log.info("\n" + name.indexOf("chr"));
+//            log.info("\n" + name.indexOf("CHR"));
+//                log.info("pos if \t" + pos);
+//
+                } else {
+//                log.info("recursive\t" +map.get("asm_seq_region_id").toString()+"\n"+query_coord+":"+attrib+"\n\n" );
+//                log.info("pos before \t" + pos);
+                    ref_id = getAssemblyReference(ref_id);
+                    log.info("asseonref refid after \t" + ref_id);
+                }
+            }
+        }
+        log.info("ref id\t" + ref_id);
+        return ref_id;
+    }
+
     public JSONArray getGenesSearch(String searchQuery) throws IOException {
         try {
             JSONArray genes = new JSONArray();
@@ -245,9 +322,20 @@ public class SQLSequenceDAO implements SequenceStore {
                 JSONObject eachGene = new JSONObject();
                 eachGene.put("Type", getLogicNameByAnalysisId(Integer.parseInt(map.get("analysis_id").toString())));
                 eachGene.put("name", map.get("description"));
-                eachGene.put("start", map.get("seq_region_start"));
-                eachGene.put("end", map.get("seq_region_end"));
-                eachGene.put("parent", getSeqRegionName(Integer.parseInt(map.get("seq_region_id").toString())));
+                if (checkChromosome()) {
+                    log.info("send\t");
+                    int pos = getPositionOnReference(Integer.parseInt(map.get("seq_region_id").toString()), 0);
+                    log.info("back\t" + pos);
+                    eachGene.put("start", pos + Integer.parseInt(map.get("seq_region_start").toString()));
+                    eachGene.put("end", pos + Integer.parseInt(map.get("seq_region_end").toString()));
+                    eachGene.put("parent", getSeqRegionName(getAssemblyReference(Integer.parseInt(map.get("seq_region_id").toString()))));
+                } else {
+                    eachGene.put("start", map.get("seq_region_start"));
+                    eachGene.put("end", map.get("seq_region_end"));
+                    eachGene.put("parent", getSeqRegionName(Integer.parseInt(map.get("seq_region_id").toString())));
+                }
+
+
                 eachGene.put("analysis_id", template.queryForObject(GET_LOGIC_NAME_FROM_ANALYSIS_ID, new Object[]{map.get("analysis_id")}, String.class));
                 genes.add(eachGene);
             }
@@ -255,6 +343,8 @@ public class SQLSequenceDAO implements SequenceStore {
         } catch (EmptyResultDataAccessException e) {
 //     return getGOSearch(searchQuery);
             throw new IOException("result not found");
+        } catch (Exception e) {
+            throw new IOException("result not found");  //To change body of catch statement use File | Settings | File Templates.
         }
     }
 
@@ -350,9 +440,16 @@ public class SQLSequenceDAO implements SequenceStore {
                 JSONObject eachGene = new JSONObject();
                 eachGene.put("Type", getLogicNameByAnalysisId(Integer.parseInt(map.get("analysis_id").toString())));
                 eachGene.put("name", map.get("description"));
-                eachGene.put("start", map.get("seq_region_start"));
-                eachGene.put("end", map.get("seq_region_end"));
-                eachGene.put("parent", getSeqRegionName(Integer.parseInt(map.get("seq_region_id").toString())));
+                if (checkChromosome()) {
+                    int pos = getPositionOnReference(Integer.parseInt(map.get("seq_region_id").toString()), 0);
+                    eachGene.put("start", pos + Integer.parseInt(map.get("seq_region_start").toString()));
+                    eachGene.put("end", pos + Integer.parseInt(map.get("seq_region_end").toString()));
+                    eachGene.put("parent", getSeqRegionName(getAssemblyReference(Integer.parseInt(map.get("seq_region_id").toString()))));
+                } else {
+                    eachGene.put("start", map.get("seq_region_start"));
+                    eachGene.put("end", map.get("seq_region_end"));
+                    eachGene.put("parent", getSeqRegionName(Integer.parseInt(map.get("seq_region_id").toString())));
+                }
                 eachGene.put("analysis_id", template.queryForObject(GET_LOGIC_NAME_FROM_ANALYSIS_ID, new Object[]{map.get("analysis_id")}, String.class));
                 genes.add(eachGene);
             }
@@ -360,6 +457,8 @@ public class SQLSequenceDAO implements SequenceStore {
         } catch (EmptyResultDataAccessException e) {
 //     return getGOSearch(searchQuery);
             throw new IOException("result not found");
+        } catch (Exception e) {
+            throw new IOException("result not found");  //To change body of catch statement use File | Settings | File Templates.
         }
     }
 
@@ -373,10 +472,18 @@ public class SQLSequenceDAO implements SequenceStore {
                 for (Map gene : genes) {
                     JSONObject eachGo = new JSONObject();
                     eachGo.put("name", gene.get("description"));
-                    eachGo.put("start", gene.get("seq_region_start"));
-                    eachGo.put("end", gene.get("seq_region_end"));
+                    if (checkChromosome()) {
+                        int pos = getPositionOnReference(Integer.parseInt(map.get("seq_region_id").toString()), 0);
+                        eachGo.put("start", pos + Integer.parseInt(map.get("seq_region_start").toString()));
+                        eachGo.put("end", pos + Integer.parseInt(map.get("seq_region_end").toString()));
+                        eachGo.put("parent", getSeqRegionName(getAssemblyReference(Integer.parseInt(map.get("seq_region_id").toString()))));
+                    } else {
+                        eachGo.put("start", map.get("seq_region_start"));
+                        eachGo.put("end", map.get("seq_region_end"));
+                        eachGo.put("parent", getSeqRegionName(Integer.parseInt(map.get("seq_region_id").toString())));
+                    }
                     eachGo.put("Type", "Gene");
-                    eachGo.put("parent", getSeqRegionName(Integer.parseInt(gene.get("seq_region_id").toString())));
+//                    eachGo.put("parent", getSeqRegionName(Integer.parseInt(gene.get("seq_region_id").toString())));
                     eachGo.put("analysis_id", getLogicNameByAnalysisId(Integer.parseInt(gene.get("analysis_id").toString())));
                     GOs.add(eachGo);
                 }
@@ -389,10 +496,18 @@ public class SQLSequenceDAO implements SequenceStore {
                 for (Map gene : genes) {
                     JSONObject eachGo = new JSONObject();
                     eachGo.put("name", gene.get("description"));
-                    eachGo.put("start", gene.get("seq_region_start"));
-                    eachGo.put("end", gene.get("seq_region_end"));
+                    if (checkChromosome()) {
+                        int pos = getPositionOnReference(Integer.parseInt(map.get("seq_region_id").toString()), 0);
+                        eachGo.put("start", pos + Integer.parseInt(map.get("seq_region_start").toString()));
+                        eachGo.put("end", pos + Integer.parseInt(map.get("seq_region_end").toString()));
+                        eachGo.put("parent", getSeqRegionName(getAssemblyReference(Integer.parseInt(map.get("seq_region_id").toString()))));
+                    } else {
+                        eachGo.put("start", map.get("seq_region_start"));
+                        eachGo.put("end", map.get("seq_region_end"));
+                        eachGo.put("parent", getSeqRegionName(Integer.parseInt(map.get("seq_region_id").toString())));
+                    }
                     eachGo.put("Type", "Transcript");
-                    eachGo.put("parent", getSeqRegionName(Integer.parseInt(gene.get("seq_region_id").toString())));
+//                    eachGo.put("parent", getSeqRegionName(Integer.parseInt(gene.get("seq_region_id").toString())));
                     eachGo.put("analysis_id", getLogicNameByAnalysisId(Integer.parseInt(gene.get("analysis_id").toString())));
                     GOs.add(eachGo);
                 }
@@ -400,6 +515,8 @@ public class SQLSequenceDAO implements SequenceStore {
             return GOs;
         } catch (EmptyResultDataAccessException e) {
             throw new IOException("result not found");
+        } catch (Exception e) {
+            throw new IOException("result not found");  //To change body of catch statement use File | Settings | File Templates.
         }
     }
 
@@ -678,7 +795,7 @@ public class SQLSequenceDAO implements SequenceStore {
     }
 
     public JSONArray getHitLevel(int start_pos, List<Map<String, Object>> maps_two, long start, long end, int delta) {
-       log.info("get hit 1");
+        log.info("get hit 1");
         List<Integer> ends = new ArrayList<Integer>();
         ends.add(0, 0);
         JSONObject eachTrack_temp = new JSONObject();
@@ -696,7 +813,7 @@ public class SQLSequenceDAO implements SequenceStore {
                 }
                 for (int i = 0; i < ends.size(); i++) {
                     if ((Integer.parseInt(map_temp.get("start").toString()) - ends.get(i)) > delta) {
-                        log.info("if"+Integer.parseInt(map_temp.get("start").toString())+":"+ends.get(i)+">"+delta+"==>"+(i + 1));
+                        log.info("if" + Integer.parseInt(map_temp.get("start").toString()) + ":" + ends.get(i) + ">" + delta + "==>" + (i + 1));
                         ends.remove(i);
                         ends.add(i, Integer.parseInt(map_temp.get("end").toString()));
                         eachTrack_temp.put("layer", i + 1);
@@ -704,19 +821,19 @@ public class SQLSequenceDAO implements SequenceStore {
                     } else if ((Integer.parseInt(map_temp.get("start").toString()) - ends.get(i) < delta && (i + 1) == ends.size()) || Integer.parseInt(map_temp.get("start").toString()) == ends.get(i)) {
 
                         if (i == 0) {
-                            log.info(" else if if"+Integer.parseInt(map_temp.get("start").toString())+":"+ends.get(i)+">"+delta+"=>"+ends.size());
+                            log.info(" else if if" + Integer.parseInt(map_temp.get("start").toString()) + ":" + ends.get(i) + ">" + delta + "=>" + ends.size());
 
                             ends.add(i, Integer.parseInt(map_temp.get("end").toString()));
                             eachTrack_temp.put("layer", ends.size());
                         } else {
-                            log.info(" else if else"+Integer.parseInt(map_temp.get("start").toString())+":"+ends.get(i)+">"+delta+"=>"+ends.size());
+                            log.info(" else if else" + Integer.parseInt(map_temp.get("start").toString()) + ":" + ends.get(i) + ">" + delta + "=>" + ends.size());
                             ends.add(ends.size(), Integer.parseInt(map_temp.get("end").toString()));
 
                             eachTrack_temp.put("layer", ends.size());
                         }
                         break;
-                    }      else{
-                        log.info("else"+Integer.parseInt(map_temp.get("start").toString())+":"+ends.get(i)+">"+delta);
+                    } else {
+                        log.info("else" + Integer.parseInt(map_temp.get("start").toString()) + ":" + ends.get(i) + ">" + delta);
 
                     }
                 }
@@ -741,7 +858,7 @@ public class SQLSequenceDAO implements SequenceStore {
 
                 for (int i = 0; i < ends.size(); i++) {
                     if ((Integer.parseInt(map.get("start").toString()) - ends.get(i)) > delta) {
-                        log.info("if"+Integer.parseInt(map.get("start").toString())+":"+ends.get(i)+">"+delta);
+                        log.info("if" + Integer.parseInt(map.get("start").toString()) + ":" + ends.get(i) + ">" + delta);
                         ends.remove(i);
                         ends.add(i, Integer.parseInt(map.get("end").toString()));
                         map.put("layer", i + 1);
@@ -750,19 +867,19 @@ public class SQLSequenceDAO implements SequenceStore {
                     } else if ((Integer.parseInt(map.get("start").toString()) - ends.get(i) < delta) && (i + 1) == ends.size()) {
 
                         if (i == 0) {
-                            log.info(" else if if"+Integer.parseInt(map.get("start").toString())+":"+ends.get(i)+">"+delta+"==>"+ends.size());
+                            log.info(" else if if" + Integer.parseInt(map.get("start").toString()) + ":" + ends.get(i) + ">" + delta + "==>" + ends.size());
 
                             map.put("layer", ends.size());
                             ends.add(i, Integer.parseInt(map.get("end").toString()));
                         } else {
-                            log.info(" else if lse"+Integer.parseInt(map.get("start").toString())+":"+ends.get(i)+">"+delta+"==>"+ends.size());
+                            log.info(" else if lse" + Integer.parseInt(map.get("start").toString()) + ":" + ends.get(i) + ">" + delta + "==>" + ends.size());
 
                             map.put("layer", ends.size());
                             ends.add(ends.size(), Integer.parseInt(map.get("end").toString()));
                         }
                         break;
                     } else {
-                        log.info("else"+Integer.parseInt(map.get("start").toString())+":"+ends.get(i)+">"+delta);
+                        log.info("else" + Integer.parseInt(map.get("start").toString()) + ":" + ends.get(i) + ">" + delta);
 
                         //             continue;
                     }
