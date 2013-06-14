@@ -1,26 +1,26 @@
 /*
-*
-* Copyright (c) 2013. The Genome Analysis Centre, Norwich, UK
-* TGAC Browser project contacts: Anil Thanki, Xingdong Bian, Robert Davey, Mario Caccamo @ TGAC
-* **********************************************************************
-*
-* This file is part of TGAC Browser.
-*
-* TGAC Browser is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* TGAC Browser is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with TGAC Browser.  If not, see <http://www.gnu.org/licenses/>.
-*
-* ***********************************************************************
-*
+ *
+ * Copyright (c) 2013. The Genome Analysis Centre, Norwich, UK
+ * TGAC Browser project contacts: Anil Thanki, Xingdong Bian, Robert Davey, Mario Caccamo @ TGAC
+ * **********************************************************************
+ *
+ * This file is part of TGAC Browser.
+ *
+ * TGAC Browser is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * TGAC Browser is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with TGAC Browser.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * ***********************************************************************
+ *
  */
 
 /**
@@ -32,194 +32,187 @@
  */
 
 function stringColour(temp) {
-  var letters = temp.split('');
-  var newSeq = "";
-  for (var i = 0; i < letters.length; i++) {
-    if (letters[i] == 'A') {
-      newSeq += '<span style="color:#ff8c00;">' + letters[i] + '</span>';
+    var letters = temp.split('');
+    var newSeq = "";
+    for (var i = 0; i < letters.length; i++) {
+        if (letters[i] == 'A') {
+            newSeq += '<span style="color:#ff8c00;">' + letters[i] + '</span>';
+        }
+        else if (letters[i] == 'C') {
+            newSeq += '<span style="color:green; ">' + letters[i] + '</span>';
+        }
+        else if (letters[i] == 'G') {
+            newSeq += '<span style="color:blue;">' + letters[i] + '</span>';
+        }
+        else if (letters[i] == 'T') {
+            newSeq += '<span style="color:red; ;">' + letters[i] + '</span>';
+        }
+        else {
+            newSeq += '<span style="color:black; ">' + letters[i] + '</span>';
+        }
     }
-    else if (letters[i] == 'C') {
-      newSeq += '<span style="color:green; ">' + letters[i] + '</span>';
-    }
-    else if (letters[i] == 'G') {
-      newSeq += '<span style="color:blue;">' + letters[i] + '</span>';
-    }
-    else if (letters[i] == 'T') {
-      newSeq += '<span style="color:red; ;">' + letters[i] + '</span>';
-    }
-    else {
-      newSeq += '<span style="color:black; ">' + letters[i] + '</span>';
-    }
-  }
-  return newSeq;
+    return newSeq;
 }
 
 function visualLength(temp) {
-  var ruler = $("ruler");
-  var inLength = 0;
-  var tempStr = "";
-  ruler.innerHTML = "N";
-  if (jQuery.browser.webkit) {
-    inLength = (ruler.offsetWidth - 1) * temp;
-  }
-  else {
-    inLength = (ruler.offsetWidth) * temp;
-  }
-  return inLength;
-  /*
-   if ((temp / 10000) >= 1) {
-   for (var i = 0; i < 10000; i++) {
-   tempStr += "N";
-   }
-   ruler.innerHTML = tempStr;
-   inLength += ruler.offsetWidth;
-   inLength = inLength * (temp / 10000)
-   }
-
-   ruler.innerHTML = "";
-   tempStr = "";
-
-   for (var i = 0; i < temp % 10000; i++) {
-   tempStr += "N";
-   }
-
-   ruler.innerHTML = tempStr;
-   inLength += ruler.offsetWidth;
-   ruler.innerHTML = "";
-   return inLength;*/
+    var ruler = $("ruler");
+    var inLength = 0;
+    var tempStr = "";
+    ruler.innerHTML = "N";
+    if (jQuery.browser.webkit) {
+        inLength = (ruler.offsetWidth - 1) * temp;
+    }
+    else {
+        inLength = (ruler.offsetWidth) * temp;
+    }
+    return inLength;
 }
 
 function findminwidth() {
-  maxLen = jQuery(window).width();
-  var len = visualLength(sequencelength);
-  var seqWidth = parseFloat(maxLen) * sequencelength / parseFloat(len);
-  deltaWidth = parseInt(sequencelength) * 2 / parseInt(maxLen);
-  return parseInt(seqWidth);
+    maxLen = jQuery(window).width();
+    var len = visualLength(sequencelength);
+    var seqWidth = parseFloat(maxLen) * sequencelength / parseFloat(len);
+    deltaWidth = parseInt(sequencelength) * 2 / parseInt(maxLen);
+    if (sequencelength < seqWidth) {
+//       still need to recode
+        seqWidth = sequencelength;
+        maxLen = len;
+        jQuery('#canvas').width(len)
+        jQuery('#bar_image').width(len)
+        var left = (parseInt(jQuery(window).width()) - len) / 2;
+        setbglayerLeft(left, true)
+        setbglayerWidth(len)
+        setDragableLeft(left, true)
+        setDragableWidth(len)
+        jQuery('#bar_image').animate({"left": left}, { duration: 500, queue: false});
+        jQuery('.browserimage').hide();
+    }
+    return parseInt(seqWidth);
 }
 function browser_coordinates() {
 
-  var temp = "<FONT style=\"BACKGROUND-COLOR: #d3d3d3\">";
-  jQuery("#vertical0").html(temp + Math.round(getBegin()));
-  jQuery("#vertical1").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.1)));
-  jQuery("#vertical2").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.2)));
-  jQuery("#vertical3").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.3)));
-  jQuery("#vertical4").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.4)));
-  jQuery("#vertical5").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.5)));
-  jQuery("#vertical6").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.6)));
-  jQuery("#vertical7").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.7)));
-  jQuery("#vertical8").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.8)));
-  jQuery("#vertical9").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.9)));
-  jQuery("#vertical10").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()))));
+    var temp = "<FONT style=\"BACKGROUND-COLOR: #d3d3d3\">";
+    jQuery("#vertical0").html(temp + Math.round(getBegin()));
+    jQuery("#vertical1").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.1)));
+    jQuery("#vertical2").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.2)));
+    jQuery("#vertical3").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.3)));
+    jQuery("#vertical4").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.4)));
+    jQuery("#vertical5").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.5)));
+    jQuery("#vertical6").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.6)));
+    jQuery("#vertical7").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.7)));
+    jQuery("#vertical8").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.8)));
+    jQuery("#vertical9").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.9)));
+    jQuery("#vertical10").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()))));
 }
 
 function trackToggle(trackname) {
-  var index = 0;
-  var graph = "false";
-  var trackid = "";
-  layers = jQuery("#rowoftracks").val();
-  for (var i = 0; i < track_list.length; i++) {
-    if (track_list[i].name == trackname) {
-      index = i;
-      trackid = track_list[i].id;
-    }
-    if (track_list[i].name == trackname && track_list[i].graph == "true") {
-      graph = "true";
-    }
-  }
-
-  if (trackname == "all") {
-    jQuery("#mergedtrack").html("<div id= \"mergelabel\" align='left' class='handle'></div>");
+    var index = 0;
+    var graph = "false";
+    var trackid = "";
+    layers = jQuery("#rowoftracks").val();
     for (var i = 0; i < track_list.length; i++) {
-      if (jQuery("#" + track_list[i].name + "Checkbox").is(':checked')) {
-        if (track_list[i].graph == "true") {
-          dispGraph("#" + track_list[i].name + "_div", track_list[i].name)
+        if (track_list[i].name == trackname) {
+            index = i;
+            trackid = track_list[i].id;
         }
-        else if (track_list[i].name.toLowerCase().indexOf("blasttrack") >= 0) {
-          dispBLAST("#" + track_list[i].name + "_div", 'blasttrack');
+        if (track_list[i].name == trackname && track_list[i].graph == "true") {
+            graph = "true";
         }
-        else if (track_list[i].name.toLowerCase().indexOf("gene") >= 0) {
-          dispGenes("#" + track_list[i].name + "_div", track_list[i].name, track_list[i].expand);
-        }
-        else if (track_list[i].name.toLowerCase().indexOf("wig") >= 0 || track_list[i].name.toLowerCase().indexOf("bed") >= 0) {
-          dispGraphWig("#" + track_list[i].name + "_div", track_list[i].name, trackid);
-        }
-        else if (track_list[i].name.toLowerCase().indexOf("bed") >= 0) {
-          dispGraphBed("#" + track_list[i].name + "_div", track_list[i].name);
-        }
-        else {
-          dispTrack("#" + track_list[i].name + "_div", track_list[i].name);
-        }
-      }
-      else {
-        jQuery("#" + track_list[i].name + "_wrapper").fadeOut();
-      }
     }
-  }
-  else {
-    if (jQuery('#' + trackname + 'Checkbox').is(':checked')) {
-      if (graph == "true") {
-        dispGraph("#" + trackname + "_div", trackname);
-      }
-      else if (trackname.toLowerCase().indexOf("blasttrack") >= 0) {
-        dispBLAST("#" + trackname + "_div", 'blasttrack');
-      }
-      else if (trackname.toLowerCase().indexOf("gene") >= 0) {
-        dispGenes("#" + trackname + "_div", trackname, track_list[index].expand);
-      }
-      else if (trackname.toLowerCase().indexOf("wig") >= 0) {
-        dispGraphWig("#" + trackname + "_div", trackname, trackid);
-      }
-      else if (trackname.toLowerCase().indexOf("bed") >= 0) {
-        dispGraphBed("#" + trackname + "_div", trackname);
-      }
-      else {
-        dispTrack("#" + trackname + "_div", trackname);
-      }
+
+    if (trackname == "all") {
+        jQuery("#mergedtrack").html("<div id= \"mergelabel\" align='left' class='handle'></div>");
+        for (var i = 0; i < track_list.length; i++) {
+            if (jQuery("#" + track_list[i].name + "Checkbox").is(':checked')) {
+                if (track_list[i].graph == "true") {
+                    dispGraph("#" + track_list[i].name + "_div", track_list[i].name)
+                }
+                else if (track_list[i].name.toLowerCase().indexOf("blasttrack") >= 0) {
+                    dispBLAST("#" + track_list[i].name + "_div", 'blasttrack');
+                }
+                else if (track_list[i].name.toLowerCase().indexOf("gene") >= 0) {
+                    dispGenes("#" + track_list[i].name + "_div", track_list[i].name, track_list[i].expand);
+                }
+                else if (track_list[i].name.toLowerCase().indexOf("wig") >= 0 || track_list[i].name.toLowerCase().indexOf("bed") >= 0) {
+                    dispGraphWig("#" + track_list[i].name + "_div", track_list[i].name, trackid);
+                }
+                else if (track_list[i].name.toLowerCase().indexOf("bed") >= 0) {
+                    dispGraphBed("#" + track_list[i].name + "_div", track_list[i].name);
+                }
+                else {
+                    dispTrack("#" + track_list[i].name + "_div", track_list[i].name);
+                }
+            }
+            else {
+                jQuery("#" + track_list[i].name + "_wrapper").fadeOut();
+            }
+        }
     }
     else {
-      jQuery("#" + trackname + "_wrapper").fadeOut();
-    }
+        if (jQuery('#' + trackname + 'Checkbox').is(':checked')) {
+            if (graph == "true") {
+                dispGraph("#" + trackname + "_div", trackname);
+            }
+            else if (trackname.toLowerCase().indexOf("blasttrack") >= 0) {
+                dispBLAST("#" + trackname + "_div", 'blasttrack');
+            }
+            else if (trackname.toLowerCase().indexOf("gene") >= 0) {
+                dispGenes("#" + trackname + "_div", trackname, track_list[index].expand);
+            }
+            else if (trackname.toLowerCase().indexOf("wig") >= 0) {
+                dispGraphWig("#" + trackname + "_div", trackname, trackid);
+            }
+            else if (trackname.toLowerCase().indexOf("bed") >= 0) {
+                dispGraphBed("#" + trackname + "_div", trackname);
+            }
+            else {
+                dispTrack("#" + trackname + "_div", trackname);
+            }
+        }
+        else {
+            jQuery("#" + trackname + "_wrapper").fadeOut();
+        }
 
-  }
-  if (jQuery("#mergedtrack").text() == "") {
-    jQuery("#mergedtrack").fadeOut();
-    jQuery("#mergedtrack").html();
-  }
+    }
+    if (jQuery("#mergedtrack").text() == "") {
+        jQuery("#mergedtrack").fadeOut();
+        jQuery("#mergedtrack").html();
+    }
 }
 
 function mergeTrack(check) {
-  jQuery(track_list).each(function (index) {
-    //this is the object in the array, index is the index of the object in the array
+    jQuery(track_list).each(function (index) {
+        //this is the object in the array, index is the index of the object in the array
 
-    if (jQuery("#" + track_list[index].name + "mergedCheckbox").attr('checked')) {//
-      this.merge = 1;
-    }
-    else {
-      this.merge = 0;
-    }
-  });
+        if (jQuery("#" + track_list[index].name + "mergedCheckbox").attr('checked')) {//
+            this.merge = 1;
+        }
+        else {
+            this.merge = 0;
+        }
+    });
 
-  merged_track_list = "";
-  jQuery("#mergedtrack").html("<div id= \"mergelabel\" align='left' class='handle'></div>");
-  jQuery('#mergetracklist input:checked').each(function () {
-    var track = jQuery(this).attr('name').replace("mergedCheckbox", "");
-    merged_track_list += track + ", ";
-    if (jQuery('#' + track + 'Checkbox').is(':checked')) {
-      trackToggle(track);
+    merged_track_list = "";
+    jQuery("#mergedtrack").html("<div id= \"mergelabel\" align='left' class='handle'></div>");
+    jQuery('#mergetracklist input:checked').each(function () {
+        var track = jQuery(this).attr('name').replace("mergedCheckbox", "");
+        merged_track_list += track + ", ";
+        if (jQuery('#' + track + 'Checkbox').is(':checked')) {
+            trackToggle(track);
+        }
+    });
+    if (!jQuery('input[name=' + check + 'mergedCheckbox]').is(':checked')) {
+        trackToggle(check);
     }
-  });
-  if (!jQuery('input[name=' + check + 'mergedCheckbox]').is(':checked')) {
-    trackToggle(check);
-  }
 }
 
 //remove tracklist when reload
 function removeTrackslist(trackList) {
 
-  for (var i = 0; i < trackList.length; i++) {
-    delete window[trackList[i].name];
-  }
-  jQuery("#mergetracklist").html("");
+    for (var i = 0; i < trackList.length; i++) {
+        delete window[trackList[i].name];
+    }
+    jQuery("#mergetracklist").html("");
 }
 //
 //function controls() {
@@ -227,132 +220,132 @@ function removeTrackslist(trackList) {
 //}
 
 function toggleLeftInfo(div, id) {
-  if (jQuery(div).hasClass("toggleLeft")) {
-    jQuery(div).removeClass("toggleLeft").addClass("toggleLeftDown");
-  }
-  else {
-    jQuery(div).removeClass("toggleLeftDown").addClass("toggleLeft");
-  }
-  jQuery("#" + id).toggle("blind", {}, 500);
+    if (jQuery(div).hasClass("toggleLeft")) {
+        jQuery(div).removeClass("toggleLeft").addClass("toggleLeftDown");
+    }
+    else {
+        jQuery(div).removeClass("toggleLeftDown").addClass("toggleLeft");
+    }
+    jQuery("#" + id).toggle("blind", {}, 500);
 }
 
 function groupTogether() {
-  var trackid;
-  jQuery(window[grouptrack]).each(function (index) {
+    var trackid;
+    jQuery(window[grouptrack]).each(function (index) {
 
-    if (window[grouptrack][index].id == grouplastid) {
-      trackid = index;
+        if (window[grouptrack][index].id == grouplastid) {
+            trackid = index;
+        }
+    });
+
+    var a = 0;
+    for (var j = 0; j < window[grouptrack][trackid].transcript.length; j++) {
+        if (jQuery.inArray(window[grouptrack][trackid].transcript[j].id, grouplist) > -1) {
+            window[grouptrack][trackid].transcript[j].layer = jQuery.inArray(window[grouptrack][trackid].transcript[j].id, grouplist) + 1;
+        }
     }
-  });
 
-  var a = 0;
-  for (var j = 0; j < window[grouptrack][trackid].transcript.length; j++) {
-    if (jQuery.inArray(window[grouptrack][trackid].transcript[j].id, grouplist) > -1) {
-      window[grouptrack][trackid].transcript[j].layer = jQuery.inArray(window[grouptrack][trackid].transcript[j].id, grouplist) + 1;
+    for (var j = 0; j < window[grouptrack][trackid].transcript.length; j++) {
+        if (jQuery.inArray(window[grouptrack][trackid].transcript[j].id, grouplist) < 0) {
+            window[grouptrack][trackid].transcript[j].layer = grouplist.length + a + 1;
+            a += 1;
+        }
     }
-  }
-
-  for (var j = 0; j < window[grouptrack][trackid].transcript.length; j++) {
-    if (jQuery.inArray(window[grouptrack][trackid].transcript[j].id, grouplist) < 0) {
-      window[grouptrack][trackid].transcript[j].layer = grouplist.length + a + 1;
-      a += 1;
+    function SortByLayer(x, y) {
+        return ((x.layer == y.layer) ? 0 : ((x.layer > y.layer) ? 1 : -1 ));
     }
-  }
-  function SortByLayer(x, y) {
-    return ((x.layer == y.layer) ? 0 : ((x.layer > y.layer) ? 1 : -1 ));
-  }
 
-  // Call Sort By Name
-  window[grouptrack][trackid].transcript.sort(SortByLayer);
-  trackToggle(grouptrack);
-  jQuery("#makegroup").hide();
-  backup_tracks(grouptrack, trackid)
-  ctrldown = false;
-  grouplist = [];
-  grouplastid = null;
-  grouptrack = null;
+    // Call Sort By Name
+    window[grouptrack][trackid].transcript.sort(SortByLayer);
+    trackToggle(grouptrack);
+    jQuery("#makegroup").hide();
+    backup_tracks(grouptrack, trackid)
+    ctrldown = false;
+    grouplist = [];
+    grouplastid = null;
+    grouptrack = null;
 
 }
 
 function groupCancel() {
-  trackToggle(grouptrack);
-  jQuery("#makegroup").hide();
-  ctrldown = false;
-  grouplist = [];
-  grouplastid = null;
-  grouptrack = null;
+    trackToggle(grouptrack);
+    jQuery("#makegroup").hide();
+    ctrldown = false;
+    grouplist = [];
+    grouplastid = null;
+    grouptrack = null;
 
 }
 
 function stringTrim(string, width) {
-  var ruler = jQuery("#ruler");
-  var inLength = 0;
-  var tempStr = "";
+    var ruler = jQuery("#ruler");
+    var inLength = 0;
+    var tempStr = "";
 
-  jQuery("#ruler").html(string);
-  inLength = jQuery("#ruler").width();
-  if (inLength < width) {
-    return string;
-  }
-  else {
-    width = parseInt(string.length * width / inLength);
-    return "<span title=" + string + ">" + string.substring(0, width) + "... </span>";
-  }
+    jQuery("#ruler").html(string);
+    inLength = jQuery("#ruler").width();
+    if (inLength < width) {
+        return string;
+    }
+    else {
+        width = parseInt(string.length * width / inLength);
+        return "<span title=" + string + ">" + string.substring(0, width) + "... </span>";
+    }
 }
 
 function findAndRemove(array, property, value) {
-  jQuery.each(blastsdata, function (index, result) {
-    if (result[property] == value) {
-      blastsdata.splice(index, 1);
-      return false;
-    }
-  });
+    jQuery.each(blastsdata, function (index, result) {
+        if (result[property] == value) {
+            blastsdata.splice(index, 1);
+            return false;
+        }
+    });
 }
 
 function backup_tracks(track, i) {
-  var add = window[track][i];
-  var index = -1;
-  if (!window[track + "_edited"]) {
-    add.edited = 1;
-    window[track + "_edited"] = [];
-    window[track + "_edited"].push(add);
+    var add = window[track][i];
+    var index = -1;
+    if (!window[track + "_edited"]) {
+        add.edited = 1;
+        window[track + "_edited"] = [];
+        window[track + "_edited"].push(add);
 
-  }
-  else {
-    jQuery.each(window[track + "_edited"], function (b, w) {
-      if (w.id == add.id) {
-        index = b;
-        add.edited = parseInt(add.edited) + 1;
-        window[track + "_edited"].splice(b, 1, add);
-        return;
-      }
-    });
-
-    if (index == -1) {
-      add.edited = 1;
-      window[track + "_edited"].push(add);
     }
-  }
+    else {
+        jQuery.each(window[track + "_edited"], function (b, w) {
+            if (w.id == add.id) {
+                index = b;
+                add.edited = parseInt(add.edited) + 1;
+                window[track + "_edited"].splice(b, 1, add);
+                return;
+            }
+        });
+
+        if (index == -1) {
+            add.edited = 1;
+            window[track + "_edited"].push(add);
+        }
+    }
 }
 
 function backup_tracks_minus(track, i) {
-  var add = window[track][i];
-  jQuery.each(window[track + "_edited"], function (b, w) {
-    if (w.id == window[track][i].id) {
-      window[track + "_edited"][b].edited = window[track + "_edited"][b].edited - 1;
-      if (window[track + "_edited"][b].edited == 0) {
-        window[track + "_edited"].splice(b, 1);
-      }
-    }
-  });
+    var add = window[track][i];
+    jQuery.each(window[track + "_edited"], function (b, w) {
+        if (w.id == window[track][i].id) {
+            window[track + "_edited"][b].edited = window[track + "_edited"][b].edited - 1;
+            if (window[track + "_edited"][b].edited == 0) {
+                window[track + "_edited"].splice(b, 1);
+            }
+        }
+    });
 }
 
 function backup_tracks_removed(track, i) {
-  var add = window[track][i];
-  if (!window[track + "_removed"]) {
-    window[track + "_removed"] = [];
-  }
-  window[track + "_removed"].push(add);
+    var add = window[track][i];
+    if (!window[track + "_removed"]) {
+        window[track + "_removed"] = [];
+    }
+    window[track + "_removed"].push(add);
 
 //
 //  can be used if removed tracks need to be add again new feature
