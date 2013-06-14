@@ -93,7 +93,7 @@
     </listener>
     <context-param>
         <param-name>webAppRootKey</param-name>
-        <param-value>tgacbrowser</param-value>
+        <param-value>${browser.urlpath}</param-value>
     </context-param>
 
     <servlet>
