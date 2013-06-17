@@ -622,13 +622,17 @@ function getReferences(show) {
                     if (show.html) {
                         dispOnMap(show, maximumLengthname, maximumsequencelength);
                     }
-                    jQuery("#searchresultMap").html("<center><h1>References</h1><br>Click to jump to reference</center>" + jQuery("#refmap").html());
+
+                    jQuery("#searchresultMap").append("<center><h1>References</h1><br>Click to jump to reference</center>");
+                }
+                else{
+                    getMarkers();
                 }
                 setMapMarkerLeft();
                 setMapMarkerTop(getBegin());
                 setMapMarkerHeight(getEnd() - getBegin())
 
-                // getMarkers();
+
             }
 
 
@@ -682,7 +686,7 @@ function dispOnMap(json, maximumLengthname, maximumsequencelength) {
             jQuery("#refmap").append("<div  title='" + markers[i].name + ":" + markers[i].start+"-"+markers[i].end + "' class='refmapsearchmarkergo'  style='left:" + left + "px; bottom:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick='window.location.replace(\"index.jsp?query=" + markers[i].parent + "&from=" + markers[i].start + "&to=" + markers[i].end + "\");' ></div>");
         }
     }
-    jQuery("#searchresultMap").html("<center><h1>References</h1><br>Click to jump to reference</center>" + jQuery("#refmap").html());
+    // jQuery("#searchresultMap").html("<center><h1>References</h1><br>Click to jump to reference</center>" + jQuery("#refmap").html());
 
 }
 function getMarkers() {
@@ -716,7 +720,7 @@ function getMarkers() {
 function changeCSS() {
     jQuery("#bar_image").css('top', '210px');
     jQuery("#nav_panel").css('top', '242px');
-    jQuery(".vertical-line").css('top', '260px');
+    jQuery(".vertical-line").css('top', '264px');
     jQuery("#bg_layer").css('top', '230px');
     jQuery("#draggable").css('top', '229px');
     jQuery("#wrapper").css('top', '265px');
