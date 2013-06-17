@@ -84,7 +84,7 @@ public class SQLSequenceDAO implements SequenceStore {
     public static final String Get_Tracks_Desc = "select description from analysis_description where analysis_id = ?";
     public static final String Get_Tracks_Info = "select * from analysis_description";
     public static final String GET_Tracks_Name = "select analysis_id from analysis where logic_name = ?";
-    public static final String GET_TRACKS_VIEW = "select a.logic_name as name, a.analysis_id as id, ad.description, ad.display_label, ad.displayable from analysis a, analysis_description ad where a.analysis_id = ad.analysis_id;";
+    public static final String GET_TRACKS_VIEW = "select a.logic_name as name, a.analysis_id as id, ad.description, ad.display_label, ad.displayable, ad.web_data from analysis a, analysis_description ad where a.analysis_id = ad.analysis_id;";
 
 
     public static final String GET_SEQ_FROM_SEQ_REGION_ID = "SELECT sequence FROM dna WHERE seq_region_id = ?";
@@ -95,6 +95,8 @@ public class SQLSequenceDAO implements SequenceStore {
     public static final String GET_SEQ_LENGTH_FROM_ID = "SELECT length FROM seq_region WHERE seq_region_id = ?";
     public static final String GET_length_from_seqreg_id = "SELECT length FROM seq_region where seq_region_id =?";
     public static final String GET_SEQ_REGION_ID_SEARCH_For_One = "SELECT seq_region_id FROM seq_region WHERE name = ?";
+
+    public static final String GET_SEQ_REGION_ATTRIB_FROM_ID = "SELECT * FROM seq_region_attrib WHERE seq_region_id = ? and attrib_type_id = 3";
 
 
     public static final String GET_GENE_SEARCH = "SELECT * FROM gene WHERE description like ?";
@@ -123,8 +125,6 @@ public class SQLSequenceDAO implements SequenceStore {
     public static final String GET_HIT_SIZE = "SELECT COUNT(*) FROM dna_align_feature where seq_region_id =? and analysis_id = ?";
     public static final String GET_HIT_SIZE_SLICE = "SELECT COUNT(*) FROM dna_align_feature where seq_region_id =? and analysis_id = ? and seq_region_start >= ? and seq_region_start <= ?";
     public static final String GET_HIT = "SELECT dna_align_feature_id as id,seq_region_start as start, seq_region_end as end,seq_region_strand as strand,hit_start as hitstart, hit_end as hitend, hit_name as 'desc', cigar_line as cigarline FROM dna_align_feature where seq_region_id =? and analysis_id = ? AND ((seq_region_start >= ? AND seq_region_end <= ?) OR (seq_region_start <= ? AND seq_region_end >= ?) OR (seq_region_end >= ? AND seq_region_end <= ?) OR (seq_region_start >= ? AND seq_region_start <= ?)) ORDER BY (end-start) desc"; //seq_region_start ASC";//" AND ((hit_start >= ? AND hit_end <= ?) OR (hit_start <= ? AND hit_end >= ?) OR (hit_end >= ? AND hit_end <= ?) OR (hit_start >= ? AND hit_start <= ?))";
-
-
 
 
     public static final String Get_Database_information = "SELECT meta_key,meta_value from meta";// + var1;
@@ -1362,7 +1362,7 @@ public class SQLSequenceDAO implements SequenceStore {
 
     public JSONArray getAssemblyLevel(int start, List<Map<String, Object>> maps_two, int delta) {
         log.info("assembly level 1");
-
+        List<Map<String, Object>> attribs;
         List<Integer> ends = new ArrayList<Integer>();
         ends.add(0, 0);
         JSONObject eachTrack_temp = new JSONObject();
@@ -1397,6 +1397,10 @@ public class SQLSequenceDAO implements SequenceStore {
                 }
             }
             eachTrack_temp.put("desc", template.queryForObject(GET_SEQ_REGION_NAME_FROM_ID, new Object[]{map_temp.get("cmp_seq_region_id")}, String.class));
+            attribs = template.queryForList(GET_SEQ_REGION_ATTRIB_FROM_ID, new Object[]{map_temp.get("cmp_seq_region_id")});
+            for (Map attrib : attribs) {
+                eachTrack_temp.put("colour", attrib.get("value"));
+            }
             assemblyTracks.add(eachTrack_temp);
         }
         return assemblyTracks;
@@ -1406,6 +1410,7 @@ public class SQLSequenceDAO implements SequenceStore {
         log.info("assembly level 2");
         JSONObject eachTrack_temp = new JSONObject();
         JSONArray assemblyTracks = new JSONArray();
+        List<Map<String, Object>> attribs;
 
         for (Map map : maps) {
             JSONObject eachTrack = new JSONObject();
@@ -1444,6 +1449,10 @@ public class SQLSequenceDAO implements SequenceStore {
                 }
             }
             eachTrack.put("desc", template.queryForObject(GET_SEQ_REGION_NAME_FROM_ID, new Object[]{map.get("cmp_seq_region_id")}, String.class));
+            attribs = template.queryForList(GET_SEQ_REGION_ATTRIB_FROM_ID, new Object[]{map.get("cmp_seq_region_id")});
+            for (Map attrib : attribs) {
+                eachTrack.put("colour", attrib.get("value"));
+            }
             assemblyTracks.add(eachTrack);
         }
         return assemblyTracks;
@@ -1645,8 +1654,6 @@ public class SQLSequenceDAO implements SequenceStore {
                     if (maps_two.size() > 0) {
                         List<Integer> ends = new ArrayList<Integer>();
                         ends.add(0, 0);
-                        long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-                        long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
                         assemblyTracks.addAll(getGeneLevel(start_pos + Integer.parseInt(maps_one.get(j).get("asm_start").toString()), getGenes(Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId), start, end, delta));
                     } else {
                         long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
@@ -1963,10 +1970,11 @@ public class SQLSequenceDAO implements SequenceStore {
                 annotationid.put("id", map.get("id"));
                 annotationid.put("desc", map.get("description"));
                 annotationid.put("disp", map.get("displayable"));
-                annotationid.put("display_label", map.get("display_label"));
+                annotationid.put("display_label", map.get("display_label").toString().replaceAll(" ", "_"));
                 annotationid.put("merge", "0");
                 annotationid.put("label", "0");
                 annotationid.put("graph", "false");
+                annotationid.put("colour", map.get("web_data"));
                 annotationlist.add(annotationid);
             }
             List<Map<String, Object>> coords = template.queryForList(GET_Coords_sys_API, new Object[]{rank});
@@ -1982,6 +1990,7 @@ public class SQLSequenceDAO implements SequenceStore {
                 annotationid.put("merge", "0");
                 annotationid.put("label", "0");
                 annotationid.put("graph", "false");
+//                annotationid.put("colour", "blue");
                 annotationlist.add(annotationid);
             }
             return annotationlist;
