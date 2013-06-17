@@ -9,6 +9,11 @@
     <div id="seqdrag"><p id="dragLabel"></div>
     <div id="searchresultMap" style="display: none">
     </div>
+    <div id='map'>
+        <div id="refmap"></div>
+        <div id="mapmarker">
+        </div>
+    </div>
     <div id="searchresult">
         <div id="searchresultHead"></div>
         <div id="searchnavtabs">
@@ -127,11 +132,7 @@
 
         </div>
 
-        <div id='map'>
-            <div id="refmap"></div>
-            <div id="mapmarker">
-            </div>
-        </div>
+
 
         <div id="bar_image">
             <div id="searchDiv"></div>
