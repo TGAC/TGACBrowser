@@ -175,7 +175,6 @@ function toogleLabelMerged() {
 
 
 function dispBLAST(div, track) {
-    console.log("disp blast")
     jQuery(div).html("<img src=\"./images/browser/dna_helix_md_wm.gif\" alt=\"loading\">");
     var blasts = window[track];
     if (!window[track] || window[track] == "running") {
@@ -317,7 +316,7 @@ function dispBLASTindel(j, blast_start) {
 }
 
 
-function dispGenes(div, track, expand) {
+function dispGenes(div, track, expand, className) {
     var labeltoogle = "display : in-line;";
     var labelclass = "label" + track;
 
@@ -444,7 +443,7 @@ function dispGenes(div, track, expand) {
 
                 var startposition = (gene_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                 var stopposition = (gene_stop - gene_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
-                track_html.push("<div class='" + trackClass + "' STYLE=\"position:absolute;  cursor:pointer; TOP:" + top + "px; " +
+                track_html.push("<div class='" + trackClass + " " + className + "_exon' STYLE=\"position:absolute;  cursor:pointer; TOP:" + top + "px; " +
                     "LEFT:" + startposition + "px; width :" + stopposition + "px; \" " +
                     "onclick=trackClick(\"" + track + "\",\"" + len + "\"); onmouseover=trackmouseover(\"" + track + "\",\"" + len + "\"); onmouseout=trackmouseout(); > " +
                     "<div style='" + labeltoogle + " z-index: 999; overflow: hidden;text-overflow: ellipsis;' class = \"tracklabel " + labelclass + "\"> <p class='track_label'>" + label + "</p></div></div>");
@@ -490,12 +489,12 @@ function dispGenes(div, track, expand) {
                     var top = genes[len].transcript[transcript_len].layer * 20 + 15;
                     var startposition = (gene_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                     var stopposition = (gene_stop - gene_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
-                    track_html.push("<div class='" + trackClass + "' STYLE=\"height: 10px; TOP:" + top + "px; " +
+                    track_html.push("<div class='" + trackClass + " " + className + "' STYLE=\"height: 10px; TOP:" + top + "px; " +
                         "LEFT:" + startposition + "px; width :" + stopposition + "px; \" " +
                         " > <div style='overflow: hidden;text-overflow: ellipsis; " + labeltoogle + "' class = \"tracklabel " + labelclass + "\"> <p>" + label + "</p></div></div>");
 
                     if (stopposition > 10) {
-                        track_html.push(dispGeneExon(genes[len].transcript[transcript_len], genes[len].strand));
+                        track_html.push(dispGeneExon(genes[len].transcript[transcript_len], genes[len].strand, className));
                     }
                     else {
                         track_html.push("<div class='exon' STYLE=\"TOP:" + top + "px; " +
@@ -544,9 +543,9 @@ function dispGenes(div, track, expand) {
     }
 }
 
-function dispGeneExon(track, genestrand) {
-    var trackClass = "exon";
-    var utrtrackClass = "utr";
+function dispGeneExon(track, genestrand, className) {
+    var trackClass = className + "_exon";
+    var utrtrackClass = className + "_utr";
 
 
     var geneexons = track.Exons;
@@ -769,9 +768,9 @@ function dispGeneExon(track, genestrand) {
     }
 }
 
-function dispTrack(div, trackName) {
+function dispTrack(div, trackName, className) {
     var labelclass = "label" + trackName;
-
+    var modi_style;
     var now = new Date();
 //  console.log(now.getMinutes() + ":" + now.getSeconds() + ":" + now.getMilliseconds());
     var labeltoogle = "display : none;";
@@ -918,6 +917,12 @@ function dispTrack(div, trackName) {
                     if (track[track_len].layer > j) {
                         j = track[track_len].layer;
                     }
+
+                    if (track[track_len].colour) {
+                        modi_style = 'background:' + track[track_len].colour + "; ";
+                    } else {
+                        modi_style = '';
+                    }
                 }
                 else {
                     top = ((track_len) % (layers) + 1) * 20 + 15;
@@ -943,13 +948,13 @@ function dispTrack(div, trackName) {
 
                 }
 
-                track_html.push("<div class='" + trackClass + "' STYLE=\"" + border + "TOP:" + top + "px; LEFT:" + (startposition) + "px; " +
+                track_html.push("<div class='" + trackClass + " " + className + "' STYLE=\"" + border + "" + modi_style + "TOP:" + top + "px; LEFT:" + (startposition) + "px; " +
                     "width:" + (stopposition) + "px \" " +
                     "onclick=trackClick(\"" + trackName + "\",\"" + track_len + "\"); " +
                     "title=" + label + ">" +
                     "<div style='" + labeltoogle + " z-index: 999; overflow: hidden;text-overflow: ellipsis;' class = \"tracklabel " + labelclass + "\">" + label + "</div></div>")
                 if (stopposition > 10) {
-                    track_html.push("<span style=\"cursor:pointer; position:absolute; TOP:" + (top - 6) + "px; left:" + (parseInt(startposition) + parseInt(stopposition / 2) -8) + "px; opacity:0.6; \" class= \"" + spanclass + "\"></span>");
+                    track_html.push("<span style=\"cursor:pointer; position:absolute; TOP:" + (top - 6) + "px; left:" + (parseInt(startposition) + parseInt(stopposition / 2) - 8) + "px; opacity:0.6; \" class= \"" + spanclass + "\"></span>");
                 }
                 if (track[track_len].cigars && stopposition > 50) {
                     track_html.push(dispCigar(track[track_len].cigars, track[track_len].start, top));
@@ -1127,7 +1132,7 @@ function dispCigar(cigars, start, top) {
 }
 
 
-function dispGraph(div, trackName, trackId) {
+function dispGraph(div, trackName,  className) {
     var track_html = "";
 
     if (!window[trackName] || window[trackName] == "loading") {
@@ -1167,7 +1172,7 @@ function dispGraph(div, trackName, trackId) {
             var startposition = (track_start - newStart_temp) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen_temp) / 2;
             var stopposition = (track_stop - track_start ) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp);
 
-            track_html += "<div class= \"bed_graph\" onclick=\"setBegin(" + track[track_len].start + ");setEnd(" + track[track_len].end + ");jumpToSeq();\"STYLE=\"bottom:0px; height: " + (track[track_len].graph * 45 / max) + "px;" +
+            track_html += "<div class= \"graph "+className+"_graph\" onclick=\"setBegin(" + track[track_len].start + ");setEnd(" + track[track_len].end + ");jumpToSeq();\"STYLE=\"bottom:0px; height: " + (track[track_len].graph * 45 / max) + "px;" +
                 "LEFT:" + startposition + "px;" +
                 "width:" + (stopposition - 1) + "px \" title=\"" + track_start + ":" + track_stop + "->" + track[track_len].graph + "\" ></div>";
 
@@ -1180,7 +1185,7 @@ function dispGraph(div, trackName, trackId) {
     }
 }
 
-function dispGraphBed(div, trackName, trackId) {
+function dispGraphBed(div, trackName, trackId, className) {
     var track_html = "";
 
     if (!window[trackName] || window[trackName] == "loading") {
@@ -1220,7 +1225,7 @@ function dispGraphBed(div, trackName, trackId) {
             var startposition = (track_start - newStart_temp) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen_temp) / 2;
             var stopposition = (track_stop - track_start ) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp);
 
-            track_html += "<div class= \"graph\" onclick=\"setBegin(" + track[track_len].start + ");setEnd(" + track[track_len].end + ");jumpToSeq();\"STYLE=\"bottom:0px; height: " + (track[track_len].value * 45 / max) + "px;" +
+            track_html += "<div class= \"graph "+className+"graph\" onclick=\"setBegin(" + track[track_len].start + ");setEnd(" + track[track_len].end + ");jumpToSeq();\"STYLE=\"bottom:0px; height: " + (track[track_len].value * 45 / max) + "px;" +
                 "LEFT:" + startposition + "px;" +
                 "width:" + (stopposition - 1) + "px \" title=\"" + track_start + ":" + track_stop + "->" + track[track_len].value + "\" ></div>";
 
@@ -1233,7 +1238,7 @@ function dispGraphBed(div, trackName, trackId) {
     }
 }
 
-function dispGraphWig(div, trackName, trackId) {
+function dispGraphWig(div, trackName, trackId, className) {
 
     var track_html = "";
 

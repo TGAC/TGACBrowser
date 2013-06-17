@@ -125,22 +125,22 @@ function trackToggle(trackname) {
         for (var i = 0; i < track_list.length; i++) {
             if (jQuery("#" + track_list[i].name + "Checkbox").is(':checked')) {
                 if (track_list[i].graph == "true") {
-                    dispGraph("#" + track_list[i].name + "_div", track_list[i].name)
+                    dispGraph("#" + track_list[i].name + "_div", track_list[i].name, track_list[i].display_label)
                 }
                 else if (track_list[i].name.toLowerCase().indexOf("blasttrack") >= 0) {
                     dispBLAST("#" + track_list[i].name + "_div", 'blasttrack');
                 }
                 else if (track_list[i].name.toLowerCase().indexOf("gene") >= 0) {
-                    dispGenes("#" + track_list[i].name + "_div", track_list[i].name, track_list[i].expand);
+                    dispGenes("#" + track_list[i].name + "_div", track_list[i].name, track_list[i].expand, track_list[i].display_label);
                 }
                 else if (track_list[i].name.toLowerCase().indexOf("wig") >= 0 || track_list[i].name.toLowerCase().indexOf("bed") >= 0) {
-                    dispGraphWig("#" + track_list[i].name + "_div", track_list[i].name, trackid);
+                    dispGraphWig("#" + track_list[i].name + "_div", track_list[i].name, trackid, track_list[i].display_label);
                 }
                 else if (track_list[i].name.toLowerCase().indexOf("bed") >= 0) {
-                    dispGraphBed("#" + track_list[i].name + "_div", track_list[i].name);
+                    dispGraphBed("#" + track_list[i].name + "_div", track_list[i].name, track_list[i].display_label);
                 }
                 else {
-                    dispTrack("#" + track_list[i].name + "_div", track_list[i].name);
+                    dispTrack("#" + track_list[i].name + "_div", track_list[i].name, track_list[i].display_label);
                 }
             }
             else {
@@ -151,22 +151,22 @@ function trackToggle(trackname) {
     else {
         if (jQuery('#' + trackname + 'Checkbox').is(':checked')) {
             if (graph == "true") {
-                dispGraph("#" + trackname + "_div", trackname);
+                dispGraph("#" + trackname + "_div", trackname, track_list[index].display_label);
             }
             else if (trackname.toLowerCase().indexOf("blasttrack") >= 0) {
                 dispBLAST("#" + trackname + "_div", 'blasttrack');
             }
             else if (trackname.toLowerCase().indexOf("gene") >= 0) {
-                dispGenes("#" + trackname + "_div", trackname, track_list[index].expand);
+                dispGenes("#" + trackname + "_div", trackname, track_list[index].expand, track_list[index].display_label);
             }
             else if (trackname.toLowerCase().indexOf("wig") >= 0) {
-                dispGraphWig("#" + trackname + "_div", trackname, trackid);
+                dispGraphWig("#" + trackname + "_div", trackname, trackid, track_list[index].display_label);
             }
             else if (trackname.toLowerCase().indexOf("bed") >= 0) {
-                dispGraphBed("#" + trackname + "_div", trackname);
+                dispGraphBed("#" + trackname + "_div", trackname, track_list[index].display_label);
             }
             else {
-                dispTrack("#" + trackname + "_div", trackname);
+                dispTrack("#" + trackname + "_div", trackname, track_list[index].display_label);
             }
         }
         else {
