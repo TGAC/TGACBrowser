@@ -2472,7 +2472,7 @@ span.deleteicon input {
     border-radius: 5px;
     z-index: 999;
     background: red;
-    opacity: 0.1;
+    opacity: 0.5;
 }
 
 #searchresultMap {
@@ -2485,7 +2485,7 @@ span.deleteicon input {
     text-align: left;
     height: 200px;
     width: 100%;
-    top: 10px;
+    top: 0px;
     /*border: 1px solid #000000;*/
 }
 
