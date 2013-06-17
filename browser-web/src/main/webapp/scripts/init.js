@@ -538,7 +538,7 @@ function trackList(tracklist) {
                              "</tr>" +
                              "</table>" +
                              "</div>" +
-                             "<div id='" + Tracklist[i].name + "_div' class='feature_tracks' style=\"display:none\" > " + Tracklist[i].name + "</div>" +
+                             "<div id='" + Tracklist[i].name + "_div' class='feature_tracks' style=\"display:none; top:10px;\" > " + Tracklist[i].name + "</div>" +
                              "</div>");
     jQuery(function () {
       jQuery("#" + Tracklist[i].name + "_wrapper").resizable({
