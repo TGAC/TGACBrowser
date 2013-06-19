@@ -1992,6 +1992,21 @@ span.counter {
     text-align: left;
     top: 25px;
     z-index: 999;
+    left: 200px;
+}
+
+#searchResultLegend {
+    position: fixed;
+    left: 10px;
+    top: 80px;
+}
+
+.searchResultLegend {
+    position: absolute;
+    height: 10px;
+    width: 100px;
+    z-index: 1999;
+    text-align: left;
 }
 
 .textbutton {
@@ -2498,7 +2513,7 @@ span.deleteicon input {
     opacity: 1;
     overflow: hidden;
     position: absolute;
-    box-shadow:1px 1px 5px 2px rgba(0, 0, 0, 0.3) inset;
+    box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.3) inset;
 }
 
 #refmap {
@@ -2524,7 +2539,25 @@ span.deleteicon input {
     /*border: 0.5px solid black;*/
     background: red;
     border-radius: 1px;
+    margin: 0px;
+    padding: 0px;
 }
+
+.refmapsearchmarkerseqregion {
+    opacity: 0.5;
+    cursor: pointer;
+    position: absolute;
+    border: 0.5px solid black;
+    background: gray;
+    border-radius: 1px;
+    margin: 0px;
+    padding: 0px;
+}
+
+/*.refmapsearchmarkergene:hover {*/
+/*margin: 10px;*/
+/*padding: 10px;*/
+/*}*/
 
 .refmapsearchmarkertranscript {
     opacity: 0.5;
@@ -2533,7 +2566,14 @@ span.deleteicon input {
     /*border: 0.5px solid black;*/
     background: green;
     border-radius: 1px;
+    margin: 0px;
+    padding: 0px;
 }
+
+/*.refmapsearchmarkertranscript:hover {*/
+/*margin: 10px;*/
+/*padding: 10px;*/
+/*}*/
 
 .refmapsearchmarkergo {
     opacity: 0.5;
@@ -2542,7 +2582,14 @@ span.deleteicon input {
     /*border: 0.5px solid black;*/
     background: black;
     border-radius: 1px;
+    margin: 0px;
+    padding: 0px;
 }
+
+/*.refmapsearchmarkergo:hover {*/
+/*margin: 10px;*/
+/*padding: 10px;*/
+/*}*/
 
 .est {
     position: absolute;
@@ -2571,7 +2618,7 @@ span.deleteicon input {
     text-decoration: none;
 }
 
-.tracklable{
+.tracklable {
     font-family: Arial;
     font-size: x-small;
     overflow: hidden;

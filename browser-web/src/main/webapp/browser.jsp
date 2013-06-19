@@ -9,6 +9,7 @@
     <div id="seqdrag"><p id="dragLabel"></div>
     <div id="searchresultMap" style="display: none">
     </div>
+    <div id="searchResultLegend"></div>
     <div id='map'>
         <div id="refmap"></div>
         <div id="mapmarker">
@@ -99,19 +100,19 @@
                                      height=60% alt="selectall" title="Select All">
                             </center>
 
-                            </div>
+                        </div>
                     </td>
                     <td>
                         <table style="position: fixed; right: 0px; top: 25px;">
                             <tr>
                                 <td>
                                     <div id=export style=" display: none;"
-                                            class="divbutton"> Export
+                                         class="divbutton"> Export
                                     </div>
                                 </td>
                                 <td>
                                     <div onclick="checkSession();"
-                                            class="divbutton">
+                                         class="divbutton">
                                         Save Session
                                     </div>
                                 </td>
