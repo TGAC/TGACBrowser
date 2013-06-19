@@ -34,7 +34,6 @@
     <%--<script type="text/javascript"  src="<c:url value='/scripts/jquery/js/jquery.jqplot.js'/>"></script>--%>
     <%--<script type="text/javascript"  src="<c:url value='/scripts/jquery/js/jqplot.canvasAxisLabelRenderer.js'/>"></script>--%>
     <%--<script type="text/javascript"  src="<c:url value='/scripts/jquery/js/jqplot.canvasTextRenderer.js'/>"></script>--%>
-    <script src="http://www.amcharts.com/lib/amcharts.js" type="text/javascript"></script>
 
     <script src="<c:url value='/scripts/d3.js/d3.v3.min.js'/>"></script>
     <%--<script src="http://d3js.org/d3.v3.js"></script>--%>
@@ -42,6 +41,8 @@
 
     <script type="text/javascript" src="http://canvg.googlecode.com/svn/trunk/rgbcolor.js"></script>
     <script type="text/javascript" src="http://canvg.googlecode.com/svn/trunk/canvg.js"></script>
+
+
 
 
     <link rel="stylesheet" href="<c:url value='/scripts/jquery/css/smoothness/jquery-ui-1.8.custom.css'/>"
