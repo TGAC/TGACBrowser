@@ -43,13 +43,10 @@ function dispSeq() {
   seqEnd = seqStart + parseFloat(width) * len / parseFloat(maxLen);
   seqEnd = Math.round(parseFloat(seqEnd));
   removeAllPopup();
-//  removeDragPopup();
-//  removeBlastPopup();
   seqBar(seqStart, seqEnd);
   dispCoord(seqStart, seqEnd);
   browser_coordinates();
   setNavPanel();
-//  trackToggle("all");
   updateJSON();
 }
 
@@ -119,19 +116,8 @@ function seqBar(seqStart, seqEnd) {
 
     jQuery("#translation_div").hide();
     jQuery("#sequence").css('height', '20px');
-//    jQuery("#wrapper").css('top', '190px');
     jQuery("#tracks").css('top', '20px');
-
-
-//    }
-//    else {
-//      jQuery("#translation_div").html("");
-//      jQuery("#translation_div").hide();
-//
-//    }
     jQuery('#sequenceString').html("<hr id = \"seqbar\" style='background-color: silver; z-index: 999'>");
-//    jQuery('#sequenceString').html("<hr id = \"seqbar\" style='background-color: silver; z-index: 999'>");
-
   }
 }
 
@@ -176,8 +162,6 @@ function jumpToSeq() {
     var seqEnd = parseInt(end) * parseInt(maxLen) / len;
     var width = parseFloat(seqEnd) - parseFloat(seqStart);
     removeAllPopup();
-//    removeBlastPopup();
-//    removeDragPopup();
     setDragableLeft(seqStart);
     setDragableWidth(width);
     setbglayerLeft(seqStart, false);

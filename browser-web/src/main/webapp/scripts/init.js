@@ -542,9 +542,6 @@ function trackList(tracklist) {
             "<div align='left' class='handle'>" +
             "<table>" +
             "<tr>" +
-//                             "<td><div onclick=\"toggleLeftInfo(jQuery('" + Tracklist[i].display_label + "_arrowclick'), '" + Tracklist[i].display_label + "_div');\"> " +
-//                             "<div id='" + Tracklist[i].display_label + "_arrowclick' class=\"toggleRight\"></div> " +
-//                             "</div></td>" +
             "<td><b>" + Tracklist[i].display_label + "</b></td>" +
             "<td><div class=\"ui-icon ui-icon-comment\" onclick=toogleLabel(\"" + Tracklist[i].name + "\");> </div></td>" + checkGene(Tracklist[i].name) +
             "<td><div class='closehandle ui-icon ui-icon-close' onclick=removeTrack(\"" + Tracklist[i].name + "_div\",\"" + Tracklist[i].name + "\");></div></td>" +
@@ -724,16 +721,6 @@ function getTracks() {
 
     var tracks = [];
     var eachTrack = {};
-//  for (var i = 0; i < track_list.length; i++) {
-//    if (jQuery("#" + track_list[i].name + "Checkbox").is(':checked')) {
-//      var track = window[track_list[i].name];
-//      var trackId = track_list[i].id;
-//      if (window[track_list[i].name] && window[track_list[i].name] != 'running') {
-//        eachTrack = { "trackId": trackId, "child": track}
-//      }
-//      tracks.push(eachTrack);
-//    }
-//  }
     if (jQuery("#notifier").text().indexOf("BLAST") >= 0) {
         eachTrack = { "trackId": "running", "child": blastsdata}
         tracks.push(eachTrack);
@@ -784,146 +771,6 @@ function loadRemovedTracks(tracks) {
     }
 }
 
-function dragToogle() {
-    if (jQuery("#dragRadio").is(':checked')) {
-        jQuery('#wrapper').css('cursor', 'default');
-        jQuery('#wrapper').unbind('mousedown');
-        var dragstart = 0;
-        jQuery("#wrapper").draggable(
-            {
-
-                axis: "x",
-                start: function () {
-                },
-                drag: function () {
-
-                    jQuery(".handle").each(function (i) {
-                        jQuery(this).css("left", '1%');
-                        jQuery(this).css("top", (jQuery(this).parent().position().top) - parseInt(jQuery(window).scrollTop()) + (parseInt(jQuery("#wrapper").position().top)) + (parseInt(jQuery("#canvas").position().top)));
-                        jQuery(this).css("position", 'fixed');
-                    });
-//              var temp = parseFloat(jQuery('#canvas').css("left")) - parseFloat(jQuery('#wrapper').css("left"));
-//
-//              console.log(temp+" "+parseFloat(jQuery('#wrapper').css("left")));
-//              var beginnew = parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * temp / parseFloat(maxLen));
-//              var endnew = parseFloat(getEnd()) + parseFloat((getEnd() - getBegin()) * temp / parseFloat(maxLen));
-//
-//              if (beginnew <= 0) {
-//                beginnew = 1;
-//              } else  if (endnew >= parseFloat(sequencelength)) {
-//                endnew = sequencelength;
-//              }
-//              else{
-//
-//                 var seqStart = parseInt(beginnew) * parseInt(maxLen) / sequencelength;
-//              removeAllPopup();
-//              setDragableLeft(seqStart);
-//              setbglayerLeft(seqStart, false);
-//                setBegin(beginnew);
-//              setEnd(endnew);
-//              }
-//
-//
-                },
-                stop: function () {
-                    jQuery(".handle").css("position", 'absolute');
-                    jQuery(".handle").css("left", '25%');
-                    jQuery(".handle").css("top", '0px');
-                    trackDrag();
-                }
-            });
-
-        jQuery("#tracks").sortable(
-            {
-                axis: 'y',
-                handle: '.handle',
-                cursor: 'move',
-                start: function () {
-                    removeAllPopup()
-                }
-
-            });
-
-    }
-    else {
-        var seqX = 0;
-        jQuery('#wrapper').draggable("destroy");
-        jQuery('#wrapper').css('cursor', 'crosshair');
-//
-//  Drag popup codes
-        jQuery('#wrapper').mousedown(function (e) {
-            e.preventDefault();
-            removeDragPopup();
-            seqX = mouseX;
-            var begin, end
-            jQuery("#seqdrag").css("top", jQuery('#sequence').offset().top);
-            jQuery("#seqdrag").css("left", seqX);
-            jQuery("#seqdrag").css("width", "1px");
-            jQuery("#seqdrag").css('height', Math.round(jQuery('#canvas').height() - (jQuery('#sequence').offset().top - jQuery('#canvas').offset().top)));
-            jQuery("#seqdrag").show();
-            jQuery(window).bind('mousemove', function () {
-                if (mouseX > seqX) {
-                    var seqWidth = parseFloat(mouseX) - parseFloat(seqX);
-                    jQuery("#seqdrag").css("width", seqWidth);
-                }
-                else {
-                    var seqWidth = parseFloat(seqX) - parseFloat(mouseX);
-                    jQuery("#seqdrag").css("width", seqWidth);
-                    jQuery("#seqdrag").css("left", mouseX);
-                }
-
-                begin = parseInt(getBegin()) - 1 + Math.round((getEnd() - getBegin()) * (seqX) / parseFloat(maxLen) + getBegin());
-                end = parseInt(getBegin()) + Math.round((getEnd() - getBegin()) * (mouseX) / parseFloat(maxLen) + getBegin());
-                var bp = "bp";
-                var diff;
-                if (parseInt(begin) < parseInt(end)) {
-                    diff = parseInt(end) - parseInt(begin);
-
-                }
-                else {
-                    diff = parseInt(begin) - parseInt(end);
-                }
-                if (diff > 100000000) {
-                    diff = (diff / 1000000);
-                    bp = "Gbp";
-                }
-                else if (diff > 1000000) {
-                    diff = (diff / 1000000);
-                    bp = "Mbp";
-                }
-                else if (diff > 1000) {
-                    diff = diff / 1000;
-                    bp = "Kbp";
-                }
-
-                jQuery("#dragLabel").html(diff + bp);
-
-            });
-
-            jQuery(window).bind('mouseup', function () {
-
-                if (parseInt(begin) < parseInt(end) && parseInt(end) - parseInt(begin) > 3) {
-                    jQuery(window).unbind('mousemove mouseleave');
-                    newDragpopup(begin, end, "true");
-                    jQuery(window).unbind('mouseup');
-                }
-                else if (parseInt(begin) - parseInt(end) > 3) {
-                    jQuery(window).unbind('mousemove mouseleave');
-                    newDragpopup(end, begin, "false");
-                    jQuery(window).unbind('mouseup');
-                }
-                else {
-                    jQuery(window).unbind('mousemove mouseleave');
-                    jQuery("#seqdrag").hide();
-                    jQuery(window).unbind('mouseup');
-                }
-            });
-        });
-
-
-    }
-}
-
 function tooglehangingmenu() {
 
     jQuery("#popup_hanging").css('left', mouseX + 5);
@@ -944,18 +791,9 @@ function selectAllCheckbox() {
                 eval(jQuery(this).attr('onClick'));
             }
         })
-//    trackToggle("all")
     }
     else {
-//     jQuery("#tracklist input").each(function () {
-//     if (jQuery(this).is(':checked')) {
-//       jQuery(this).attr('checked', false);
-//       eval(jQuery(this).attr('onClick'));
-//     }
-//     else {
-//       //    do nothing
-//     }
-//   })
+
     }
 
 }
