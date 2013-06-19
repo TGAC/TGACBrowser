@@ -309,7 +309,6 @@ function backup_tracks(track, i) {
         add.edited = 1;
         window[track + "_edited"] = [];
         window[track + "_edited"].push(add);
-
     }
     else {
         jQuery.each(window[track + "_edited"], function (b, w) {

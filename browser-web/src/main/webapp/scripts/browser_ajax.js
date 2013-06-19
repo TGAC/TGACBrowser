@@ -457,10 +457,8 @@ function reloadTracks(tracks, tracklist, blast) {
         else {
         }
     }
-    console.log(blast)
     if (blast == "true" || blast == 1) {
         setBlast();
-        console.log("blast is true")
         for (var j = 0; j < tracks.length - 1; j++) {
             if (tracks[j].trackId == "running") {
                 if (!window['blasttrack']) {
@@ -476,7 +474,6 @@ function reloadTracks(tracks, tracklist, blast) {
                 blastsdata = blasts;
                 jQuery.each(blasts, function (index) {
 
-                    console.log("blast in loop" + blasts)
                     checkTask(blasts[index].id, blasts[index].db, blasts[index].format, blasts[index].start, blasts[index].end, blasts[index].hit, blasts[index].link);
                 });
                 jQuery('input[name=blasttrackCheckbox]').attr('checked', true);
@@ -574,8 +571,6 @@ function getReferences(show) {
         {'doOnSuccess': function (json) {
             var maximumLengthname, maximumsequencelength;
             var max = Math.max.apply(Math, json.seqregion.map(function (o) {
-
-
                 return o.length;
             }));
 
@@ -591,12 +586,6 @@ function getReferences(show) {
                 changeCSS();
                 while (referenceLength--) {
                     if (json.seqregion[referenceLength].length == max) {
-
-                        console.log(json.seqregion[referenceLength].name)
-
-
-                        console.log("here")
-
                         maximumLengthname = json.seqregion[referenceLength].name;
                         maximumsequencelength = json.seqregion[referenceLength].length;
                     }
@@ -623,9 +612,9 @@ function getReferences(show) {
                         dispOnMap(show, maximumLengthname, maximumsequencelength);
                     }
 
-                    jQuery("#searchresultMap").append("<center><h1>References</h1><br>Click to jump to reference</center>");
+                    jQuery("#searchresultMap").html("<center><h1>References</h1><br>Click to jump to reference</center>");
                 }
-                else{
+                else {
                     getMarkers();
                 }
                 setMapMarkerLeft();
@@ -641,52 +630,82 @@ function getReferences(show) {
 }
 
 function dispOnMap(json, maximumLengthname, maximumsequencelength) {
-    console.log("here")
+    var width = 15;
+    jQuery("#searchResultLegend").html("")
+    jQuery("#searchResultLegend").fadeIn();
+
+//    jQuery("#map").css({height: '300px'});
+//    jQuery(".refmap").css({bottom: '20px'});
+//    jQuery(".refmap").each(function () {
+//        console.log(jQuery(this).css('height'))
+//        jQuery(this).css({height: parseInt(jQuery(this).css('height')) * 2});
+//        jQuery(this).css({height: parseInt(jQuery(this).css('height')) * 2});
+//        console.log(jQuery(this).css('height'))
+//    });
+
+
+    if (json.html == "seqregion") {
+        jQuery("#searchResultLegend").html("<div class='searchResultLegend'><input checked type=checkbox name='refmapsearchmarkerseqregion' onClick=jQuery('.refmapsearchmarkerseqregion').toggle()> Seq Region </div> ")
+
+        var markers = json.seqregion;
+        for (var i = 0; i < markers.length; i++) {
+
+            var length = maximumsequencelength * parseFloat(jQuery("#" + markers[i].parent).css('height')) / parseFloat(jQuery("#" + maximumLengthname).css('height'));
+            var maptop = parseFloat(jQuery("#" + markers[i].parent).css('height')) + parseInt(jQuery("#" + markers[i].parent).css('bottom')) - (parseInt(markers[i].end) * parseFloat(jQuery("#" + markers[i].parent).css('height')) / length);
+            var left = parseInt(jQuery("#" + markers[i].parent).css('left')) + parseInt(20);
+            var mapheight = ((markers[i].end - markers[i].start) * parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
+            if (mapheight < 1) {
+                mapheight = 1;
+            }
+            jQuery("#refmap").append("<div  title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' class='refmapsearchmarkerseqregion'  style='left:" + left + "px; bottom:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick='window.location.replace(\"index.jsp?query=" + markers[i].parent + "&from=" + markers[i].start + "&to=" + markers[i].end + "\");' ></div>");
+        }
+
+    }
+
     if (json.html == "gene" || json.html == "GO" || json.html == "transcript") {
+        jQuery("#searchResultLegend").append("<br><div class='searchResultLegend'><input checked type=checkbox name='refmapsearchmarkergene' onClick=jQuery('.refmapsearchmarkergene').toggle()> Gene </div> ")
+        jQuery("#searchResultLegend").append("<br><div class='searchResultLegend'><input checked type=checkbox name='refmapsearchmarkertranscript' onClick=jQuery('.refmapsearchmarkertranscript').toggle()> Transcript </div> ")
+        jQuery("#searchResultLegend").append("<br><div class='searchResultLegend'><input checked  type=checkbox name='refmapsearchmarkergo' onClick=jQuery('.refmapsearchmarkergo').toggle()> GO </div>")
         var markers = json.gene;
-        console.log("gene")
-        var width = 15;
 
         for (var i = 0; i < markers.length; i++) {
             var length = maximumsequencelength * parseFloat(jQuery("#" + markers[i].parent).css('height')) / parseFloat(jQuery("#" + maximumLengthname).css('height'));
-            var maptop = parseInt(jQuery("#" + markers[i].parent).css('bottom')) + parseInt(markers[i].end) * parseFloat(jQuery("#" + markers[i].parent).css('height')) / length;
+            var maptop = parseFloat(jQuery("#" + markers[i].parent).css('height')) + parseInt(jQuery("#" + markers[i].parent).css('bottom')) - (parseInt(markers[i].end) * parseFloat(jQuery("#" + markers[i].parent).css('height')) / length);
             var left = parseInt(jQuery("#" + markers[i].parent).css('left')) + parseInt(20);
-            var mapheight = ((markers[i].end-markers[i].start)*parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
+            var mapheight = ((markers[i].end - markers[i].start) * parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
             if (mapheight < 1) {
                 mapheight = 1;
             }
-            jQuery("#refmap").append("<div  title='" + markers[i].name + ":" + markers[i].start+"-"+markers[i].end + "' class='refmapsearchmarkergene'  style='left:" + left + "px; bottom:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick='window.location.replace(\"index.jsp?query=" + markers[i].parent + "&from=" + markers[i].start + "&to=" + markers[i].end + "\");' ></div>");
+            jQuery("#refmap").append("<div  title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' class='refmapsearchmarkergene'  style='left:" + left + "px; bottom:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick='window.location.replace(\"index.jsp?query=" + markers[i].parent + "&from=" + markers[i].start + "&to=" + markers[i].end + "\");' ></div>");
         }
+
         var markers = json.transcript;
-        console.log("trans")
-        var width = 15;
 
         for (var i = 0; i < markers.length; i++) {
             var length = maximumsequencelength * parseFloat(jQuery("#" + markers[i].parent).css('height')) / parseFloat(jQuery("#" + maximumLengthname).css('height'));
-            var maptop = parseInt(jQuery("#" + markers[i].parent).css('bottom')) + parseInt(markers[i].end) * parseFloat(jQuery("#" + markers[i].parent).css('height')) / length;
+            var maptop = parseFloat(jQuery("#" + markers[i].parent).css('height')) + parseInt(jQuery("#" + markers[i].parent).css('bottom')) - (parseInt(markers[i].end) * parseFloat(jQuery("#" + markers[i].parent).css('height')) / length);
             var left = parseInt(jQuery("#" + markers[i].parent).css('left')) + parseInt(20);
-            var mapheight = ((markers[i].end-markers[i].start)*parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
+            var mapheight = ((markers[i].end - markers[i].start) * parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
             if (mapheight < 1) {
                 mapheight = 1;
             }
-            jQuery("#refmap").append("<div  title='" + markers[i].name + ":" + markers[i].start+"-"+markers[i].end + "' class='refmapsearchmarkertranscript'  style='left:" + left + "px; bottom:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick='window.location.replace(\"index.jsp?query=" + markers[i].parent + "&from=" + markers[i].start + "&to=" + markers[i].end + "\");' ></div>");
+            jQuery("#refmap").append("<div  title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' class='refmapsearchmarkertranscript'  style='left:" + left + "px; bottom:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick='window.location.replace(\"index.jsp?query=" + markers[i].parent + "&from=" + markers[i].start + "&to=" + markers[i].end + "\");' ></div>");
         }
+
         var markers = json.GO;
-        console.log("go")
-        var width = 15;
 
         for (var i = 0; i < markers.length; i++) {
             var length = maximumsequencelength * parseFloat(jQuery("#" + markers[i].parent).css('height')) / parseFloat(jQuery("#" + maximumLengthname).css('height'));
-            var maptop = parseInt(jQuery("#" + markers[i].parent).css('bottom')) + parseInt(markers[i].end) * parseFloat(jQuery("#" + markers[i].parent).css('height')) / length;
+            var maptop = parseFloat(jQuery("#" + markers[i].parent).css('height')) + parseInt(jQuery("#" + markers[i].parent).css('bottom')) - (parseInt(markers[i].end) * parseFloat(jQuery("#" + markers[i].parent).css('height')) / length);
             var left = parseInt(jQuery("#" + markers[i].parent).css('left')) + parseInt(20);
-            var mapheight = ((markers[i].end-markers[i].start)*parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
+            var mapheight = ((markers[i].end - markers[i].start) * parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
             if (mapheight < 1) {
                 mapheight = 1;
             }
-            jQuery("#refmap").append("<div  title='" + markers[i].name + ":" + markers[i].start+"-"+markers[i].end + "' class='refmapsearchmarkergo'  style='left:" + left + "px; bottom:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick='window.location.replace(\"index.jsp?query=" + markers[i].parent + "&from=" + markers[i].start + "&to=" + markers[i].end + "\");' ></div>");
+            jQuery("#refmap").append("<div  title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' class='refmapsearchmarkergo'  style='left:" + left + "px; bottom:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick='window.location.replace(\"index.jsp?query=" + markers[i].parent + "&from=" + markers[i].start + "&to=" + markers[i].end + "\");' ></div>");
         }
     }
-    // jQuery("#searchresultMap").html("<center><h1>References</h1><br>Click to jump to reference</center>" + jQuery("#refmap").html());
+    //jQuery("#searchresultMap").append(jQuery("#searchResultLegend").html());
 
 }
 function getMarkers() {
