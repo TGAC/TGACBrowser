@@ -544,8 +544,8 @@ function dispGenes(div, track, expand, className) {
 }
 
 function dispGeneExon(track, genestrand, className) {
-    var trackClass = className + "_exon";
-    var utrtrackClass = className + "_utr";
+    var trackClass = "exon "+className + "_exon";
+    var utrtrackClass = "utr "+className + "_utr";
 
 
     var geneexons = track.Exons;
