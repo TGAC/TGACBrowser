@@ -29,7 +29,7 @@
     <parent>
         <artifactId>tgac-browser</artifactId>
         <groupId>uk.ac.bbsrc.tgac.tgac-browser</groupId>
-        <version>0.1.1</version>
+        <version>0.1.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>${parent.groupId}</groupId>
@@ -65,7 +65,7 @@
         <dependency>
             <groupId>uk.ac.bbsrc.tgac.tgac-browser</groupId>
             <artifactId>core</artifactId>
-            <version>0.1.1</version>
+            <version>0.1.2</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
