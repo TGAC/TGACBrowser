@@ -2441,6 +2441,7 @@ span.deleteicon input {
 
 .ui-resizable {
     border-bottom: 1px solid gray;
+    min-height: 110px;
 
 }
 
