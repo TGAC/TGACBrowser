@@ -400,18 +400,21 @@ function addJSON(from, to, trackName, trackId) {
                 var trackname = json.name;
                 window[trackname] = json[trackname];
                 if (json.type == "graph") {
-                  for (var j = 0; j < track_list.length; j++) {
-                    if (track_list[j].name == trackname) {
-                      track_list[j].graph = "true";
-                    }
-                  }
+                  window['track_list' + json.name].graph = "true";
+//                  for (var j = 0; j < track_list.length; j++) {
+//                    if (track_list[j].name == trackname) {
+//                      track_list[j].graph = "true";
+//                    }
+//                  }
                 }
                 else {
-                  for (var j = 0; j < track_list.length; j++) {
-                    if (track_list[j].name == trackname) {
-                      track_list[j].graph = "false";
-                    }
-                  }
+                  window['track_list' + json.name].graph = "false";
+
+//                  for (var j = 0; j < track_list.length; j++) {
+//                    if (track_list[j].name == trackname) {
+//                      track_list[j].graph = "false";
+//                    }
+//                  }
                   //  console.log("merging "+JSON.parse(window[trackname + "_edited"]))
                   if (window[trackname + "_edited"]) {
 
@@ -460,18 +463,20 @@ function addJSON(from, to, trackName, trackId) {
                       window[trackname] = json[trackname];
 
                       if (json.type == "graph") {
-                        for (var j = 0; j < track_list.length; j++) {
-                          if (track_list[j].name == trackname) {
-                            track_list[j].graph = "true";
-                          }
-                        }
+                        window['track_list' + json.name].graph = "true";
+//                        for (var j = 0; j < track_list.length; j++) {
+//                          if (track_list[j].name == trackname) {
+//                            track_list[j].graph = "true";
+//                          }
+//                        }
                       }
                       else {
-                        for (var j = 0; j < track_list.length; j++) {
-                          if (track_list[j].name == trackname) {
-                            track_list[j].graph = "false";
-                          }
-                        }
+                        window['track_list' + json.name].graph = "false";
+//                        for (var j = 0; j < track_list.length; j++) {
+//                          if (track_list[j].name == trackname) {
+//                            track_list[j].graph = "false";
+//                          }
+//                        }
 
                         if (window[trackname + "_edited"]) {
 

@@ -35,6 +35,7 @@ function getStart(track_start) {
 }
 
 function toogleLabel(trackName) {
+<<<<<<< HEAD
     jQuery(track_list).each(function (index) {
         if (track_list[index].name == trackName) {
             if (track_list[index].label == 1) {
@@ -46,11 +47,35 @@ function toogleLabel(trackName) {
         }
 
     });
+=======
+  console.log(window['track_list' + trackName].label)
+  if (window['track_list' + trackName].label == 1) {
+    window['track_list' + trackName].label = 0
+  }
+  else {
+    window['track_list' + trackName].label = 1
+
+  }
+//  jQuery(track_list).each(function (index) {
+//    if (track_list[index].name == trackName) {
+//      if (track_list[index].label == 1) {
+////        track_list[index].label = 0;
+//
+//      }
+//      else {
+//        track_list[index].label = 1;
+//
+//      }
+//    }
+//
+//  });
+>>>>>>> d095b59... vars created for tracks so most of the loops on track_list eliminated
 
     jQuery(".label" + trackName).toggle();
 }
 
 function toogleTrackView(trackName) {
+<<<<<<< HEAD
     jQuery(track_list).each(function (index) {
         if (track_list[index].name == trackName) {
             if (track_list[index].expand == 1) {
@@ -60,9 +85,38 @@ function toogleTrackView(trackName) {
                 track_list[index].expand = 1;
             }
         }
+=======
+  console.log(window['track_list' + trackName].expand)
+  if (window['track_list' + trackName].expand == 1) {
+    window['track_list' + trackName].expand = 0
+    //        track_list[index].expand = 0;
+  }
+  else {
+//          track_list[index].expand = 1;
+    window['track_list' + trackName].expand = 1
+>>>>>>> d095b59... vars created for tracks so most of the loops on track_list eliminated
 
+  }
 
+<<<<<<< HEAD
     });
+=======
+//  jQuery(track_list).each(function (index) {
+//    if (track_list[index].name == trackName) {
+//      if (track_list[index].expand == 1) {
+//        window['track_list' + trackName].expand = 0
+////        track_list[index].expand = 0;
+//      }
+//      else {
+//        track_list[index].expand = 1;
+//        window['track_list' + trackName].expand = 1
+//
+//      }
+//    }
+//
+//
+//  });
+>>>>>>> d095b59... vars created for tracks so most of the loops on track_list eliminated
 
     trackToggle(trackName);
 }
@@ -130,6 +184,7 @@ function indelClick(query, hit) {
 function removeTrack(div, track) {
     jQuery('#' + track + 'Checkbox').attr('checked', false);
 //  jQuery("#" + track + "span").remove();
+<<<<<<< HEAD
     jQuery("#" + track + "mergedCheckbox").attr("disabled", true);
     jQuery(div).html();
     jQuery(div).fadeOut();
@@ -152,10 +207,40 @@ function removeMergedTrack() {
     jQuery("#mergedtrack").html("<div id= \"mergelabel\" align='left' class='handle'></div>");
     jQuery("#mergedtrack").fadeOut();
     jQuery("#mergedtrack_wrapper").fadeOut();
+=======
+  jQuery("#" + track + "mergedCheckbox").attr("disabled", true);
+  jQuery(div).html();
+  jQuery(div).fadeOut();
+  jQuery("#" + track + "_wrapper").fadeOut();
+  window['track_list' + track].disp = 0
+
+//  jQuery(track_list).each(function (index) {
+//    if (track_list[index].name == track) {
+//      track_list[index].disp = 0;
+//    }
+//  });
+}
+
+function removeMergedTrack() {
+
+  jQuery(track_list).each(function (index) {
+    if (jQuery("#" + track_list[index].name + "mergedCheckbox").attr('checked')) {
+//      this.disp = 0;
+      window['track_list' + track_list[index].name].disp = 0
+
+      jQuery('input[name=' + track_list[index].name + 'mergedCheckbox]').attr('checked', false);
+      trackToggle(track_list[index].name);
+    }
+  });
+  jQuery("#mergedtrack").html("<div id= \"mergelabel\" align='left' class='handle'></div>");
+  jQuery("#mergedtrack").fadeOut();
+  jQuery("#mergedtrack_wrapper").fadeOut();
+>>>>>>> d095b59... vars created for tracks so most of the loops on track_list eliminated
 
 }
 
 function toogleLabelMerged() {
+<<<<<<< HEAD
     jQuery(track_list).each(function (index) {
         if (jQuery("#" + track_list[index].name + "mergedCheckbox").attr('checked')) {
             this.disp = 0;
@@ -165,6 +250,19 @@ function toogleLabelMerged() {
             else {
                 this.label = 1;
             }
+=======
+  jQuery(track_list).each(function (index) {
+    if (jQuery("#" + track_list[index].name + "mergedCheckbox").attr('checked')) {
+//      this.disp = 0;
+      if (this.label == 1) {
+        window['track_list' + track_list[index].name].label = 0
+//        this.label = 0;
+      }
+      else {
+        window['track_list' + track_list[index].name].label = 1
+//        this.label = 1;
+      }
+>>>>>>> d095b59... vars created for tracks so most of the loops on track_list eliminated
 
         }
     });
@@ -317,6 +415,7 @@ function dispBLASTindel(j, blast_start) {
 
 
 function dispGenes(div, track, expand, className) {
+<<<<<<< HEAD
     var labeltoogle = "display : in-line;";
     var labelclass = "label" + track;
 
@@ -337,6 +436,32 @@ function dispGenes(div, track, expand, className) {
             }
         }
     });
+=======
+  var labeltoogle = "display : in-line;";
+  var labelclass = "label" + track;
+
+  if (track.indexOf("RNA") >= 0) {
+    trackClass = "rnaseq_exon";
+  }
+  else if (track.toLowerCase().indexOf("cufflink") >= 0) {
+    trackClass = "cufflink_exon";
+  }
+  else {
+    trackClass = "exon";
+  }
+  console.log(window['track_list' + track].label)
+  if (window['track_list' + track].label == 0) {
+    labeltoogle = "display : none;";
+  }
+
+//  jQuery(track_list).each(function (index) {
+//    if (track_list[index].name == track) {
+//      if (track_list[index].label == 0) {
+//        labeltoogle = "display : none;";
+//      }
+//    }
+//  });
+>>>>>>> d095b59... vars created for tracks so most of the loops on track_list eliminated
 
 //  var genes_old = window[track];
     var genes = window[track];
@@ -773,6 +898,7 @@ function dispTrack(div, trackName, className) {
     var modi_style;
     var now = new Date();
 //  console.log(now.getMinutes() + ":" + now.getSeconds() + ":" + now.getMilliseconds());
+<<<<<<< HEAD
     var labeltoogle = "display : none;";
     var trackId;
     jQuery(track_list).each(function (index) {
@@ -783,6 +909,23 @@ function dispTrack(div, trackName, className) {
             }
         }
     });
+=======
+  var labeltoogle = "display : none;";
+  var trackId;
+
+  if (window['track_list' + trackName].label == 0) {
+    labeltoogle = "display : none;";
+  }
+
+//  jQuery(track_list).each(function (index) {
+//    if (track_list[index].name == trackName) {
+//      trackId = track_list[index].id;
+//      if (track_list[index].label == 1) {
+//        labeltoogle = "display : in-line;";
+//      }
+//    }
+//  });
+>>>>>>> d095b59... vars created for tracks so most of the loops on track_list eliminated
 
     if (!window[trackName] || window[trackName] == "loading") {
         jQuery(div).html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
@@ -849,7 +992,107 @@ function dispTrack(div, trackName, className) {
             else {
                 jQuery(div).html(track_html.join(""));
 //        track_html = "";
+<<<<<<< HEAD
             }
+=======
+      }
+
+      if (window['track_list' + trackName].id.toString().indexOf('cs') > -1) {
+        coord = true;
+      }
+      else {
+        coord = false;
+      }
+
+//      jQuery(track_list).each(function (index) {
+//        if (this.name == trackName && this.id.toString().indexOf('cs') > -1) {
+//          coord = true;
+//        }
+//        else {
+//          coord = false;
+//        }
+//      });
+      track_html = [];
+
+      var j = 0;
+      if (trackName.toLowerCase().indexOf("cds") >= 0) {
+        trackClass = "cds";
+      }
+      else if (trackName.toLowerCase().indexOf("exon") >= 0) {
+        trackClass = "exon track";
+      }
+      else if (trackName.toLowerCase().indexOf("contig") >= 0) {
+        trackClass = "contigs track";
+      }
+      else if (trackName.toLowerCase().indexOf("est") >= 0) {
+        trackClass = "est track";
+      }
+      else if (trackName.toLowerCase().indexOf("clone") >= 0) {
+        trackClass = "clone track";
+      }
+      else if (trackName.toLowerCase().indexOf("align") >= 0) {
+        trackClass = "align track";
+      }
+      else if (trackName.toLowerCase().indexOf("sam") >= 0 || trackName.toLowerCase().indexOf("bam") >= 0) {
+        trackClass = "sam track";
+      }
+      else if (trackName.toLowerCase().indexOf("repeat") >= 0) {
+        trackClass = "repeat track";
+      }
+      else {
+        trackClass = "unknown track";
+      }
+
+
+      var track_len = track.length;
+      while (track_len--) {
+
+        var strand = track[track_len].strand;
+
+        var spanclass = "ui-icon ui-icon-carat-1-e";
+        if (strand == -1 || strand == false) {
+          spanclass = "ui-icon ui-icon-carat-1-w";
+        }
+
+
+        var track_start = track[track_len].start;
+        var track_stop = track[track_len].end ? track[track_len].end : parseInt(track[track_len].start) + 1;
+
+        var border = "";
+        if (track[track_len].flag) {
+          border = "border: 1px solid black;";
+        }
+        var track_desc = track[track_len].desc;
+        var top;
+        if (coord || track[track_len].layer) {
+          top = (track[track_len].layer) * 10 + 10;
+          if (track[track_len].layer > j) {
+            j = track[track_len].layer;
+          }
+        }
+        else {
+          top = ((track_len) % (layers) + 1) * 20 + 15;
+        }
+        if (track[track_len].colour) {
+          modi_style = 'background:' + track[track_len].colour + "; ";
+        }
+        else {
+          modi_style = '';
+        }
+        var startposition = (track_start - newStart_temp) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen_temp) / 2;
+        var stopposition = (track_stop - track_start + 1) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp);
+        if (stopposition < 2) {
+          stopposition = 2;
+        }
+        var trackClass, label;
+
+        if (trackName.toLowerCase().indexOf("snp") >= 0) {
+          spanclass = "";
+          if (stopposition < 2) {
+            stopposition = 2;
+          }
+          trackClass = 'snp' + track[track_len].cigarline + ' track';
+>>>>>>> d095b59... vars created for tracks so most of the loops on track_list eliminated
 
             jQuery(track_list).each(function (index) {
                 if (this.name == trackName && this.id.toString().indexOf('cs') > -1) {
