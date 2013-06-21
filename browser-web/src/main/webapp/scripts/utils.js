@@ -109,22 +109,25 @@ function trackToggle(trackname) {
     var index = 0;
     var graph = "false";
     var trackid = "";
-    layers = jQuery("#rowoftracks").val();
-    for (var i = 0; i < track_list.length; i++) {
-        if (track_list[i].name == trackname) {
-            index = i;
-            trackid = track_list[i].id;
-        }
-        if (track_list[i].name == trackname && track_list[i].graph == "true") {
-            graph = "true";
-        }
-    }
+   
+
+//    for (var i = 0; i < track_list.length; i++) {
+//        if (track_list[i].name == trackname) {
+//            index = i;
+//            trackid = track_list[i].id;
+//        }
+//        if (track_list[i].name == trackname && track_list[i].graph == "true") {
+//            graph = "true";
+//        }
+//    }
 
     if (trackname == "all") {
+console.log("all")
         jQuery("#mergedtrack").html("<div id= \"mergelabel\" align='left' class='handle'></div>");
         for (var i = 0; i < track_list.length; i++) {
+console.log(track_list[i].name)
             if (jQuery("#" + track_list[i].name + "Checkbox").is(':checked')) {
-                if (track_list[i].graph == "true") {
+                if (window['track_list' + track_list[i].name].graph == "true") {
                     dispGraph("#" + track_list[i].name + "_div", track_list[i].name, track_list[i].display_label)
                 }
                 else if (track_list[i].name.toLowerCase().indexOf("blasttrack") >= 0) {
@@ -144,29 +147,33 @@ function trackToggle(trackname) {
                 }
             }
             else {
+console.log("else"+track_list[i].name)
                 jQuery("#" + track_list[i].name + "_wrapper").fadeOut();
             }
         }
     }
     else {
+ layers = jQuery("#rowoftracks").val();
+  trackid = window['track_list' + trackname].id;
+  graph = window['track_list' + trackname].graph;
         if (jQuery('#' + trackname + 'Checkbox').is(':checked')) {
             if (graph == "true") {
-                dispGraph("#" + trackname + "_div", trackname, track_list[index].display_label);
+                dispGraph("#" + trackname + "_div", trackname, window['track_list'+trackname].display_label);
             }
             else if (trackname.toLowerCase().indexOf("blasttrack") >= 0) {
                 dispBLAST("#" + trackname + "_div", 'blasttrack');
             }
             else if (trackname.toLowerCase().indexOf("gene") >= 0) {
-                dispGenes("#" + trackname + "_div", trackname, track_list[index].expand, track_list[index].display_label);
+                dispGenes("#" + trackname + "_div", trackname, window['track_list'+trackname].expand, window['track_list'+trackname].display_label);
             }
             else if (trackname.toLowerCase().indexOf("wig") >= 0) {
-                dispGraphWig("#" + trackname + "_div", trackname, trackid, track_list[index].display_label);
+                dispGraphWig("#" + trackname + "_div", trackname, trackid, window['track_list'+trackname].display_label);
             }
             else if (trackname.toLowerCase().indexOf("bed") >= 0) {
-                dispGraphBed("#" + trackname + "_div", trackname, track_list[index].display_label);
+                dispGraphBed("#" + trackname + "_div", trackname, window['track_list'+trackname].display_label);
             }
             else {
-                dispTrack("#" + trackname + "_div", trackname, track_list[index].display_label);
+                dispTrack("#" + trackname + "_div", trackname, window['track_list'+trackname].display_label);
             }
         }
         else {
@@ -185,10 +192,12 @@ function mergeTrack(check) {
         //this is the object in the array, index is the index of the object in the array
 
         if (jQuery("#" + track_list[index].name + "mergedCheckbox").attr('checked')) {//
-            this.merge = 1;
+//            this.merge = 1;
+          window['track_list' + track_list[index].name].merge = 1;
         }
         else {
-            this.merge = 0;
+//            this.merge = 0;
+          window['track_list' + track_list[index].name].merge = 0;
         }
     });
 
