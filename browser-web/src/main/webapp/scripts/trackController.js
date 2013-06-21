@@ -35,34 +35,58 @@ function getStart(track_start) {
 }
 
 function toogleLabel(trackName) {
-  jQuery(track_list).each(function (index) {
-    if (track_list[index].name == trackName) {
-      if (track_list[index].label == 1) {
-        track_list[index].label = 0;
-      }
-      else {
-        track_list[index].label = 1;
-      }
-    }
+  console.log(window['track_list' + trackName].label)
+  if (window['track_list' + trackName].label == 1) {
+    window['track_list' + trackName].label = 0
+  }
+  else {
+    window['track_list' + trackName].label = 1
 
-  });
+  }
+//  jQuery(track_list).each(function (index) {
+//    if (track_list[index].name == trackName) {
+//      if (track_list[index].label == 1) {
+////        track_list[index].label = 0;
+//
+//      }
+//      else {
+//        track_list[index].label = 1;
+//
+//      }
+//    }
+//
+//  });
 
   jQuery(".label" + trackName).toggle();
 }
 
 function toogleTrackView(trackName) {
-  jQuery(track_list).each(function (index) {
-    if (track_list[index].name == trackName) {
-      if (track_list[index].expand == 1) {
-        track_list[index].expand = 0;
-      }
-      else {
-        track_list[index].expand = 1;
-      }
-    }
+  console.log(window['track_list' + trackName].expand)
+  if (window['track_list' + trackName].expand == 1) {
+    window['track_list' + trackName].expand = 0
+    //        track_list[index].expand = 0;
+  }
+  else {
+//          track_list[index].expand = 1;
+    window['track_list' + trackName].expand = 1
 
+  }
 
-  });
+//  jQuery(track_list).each(function (index) {
+//    if (track_list[index].name == trackName) {
+//      if (track_list[index].expand == 1) {
+//        window['track_list' + trackName].expand = 0
+////        track_list[index].expand = 0;
+//      }
+//      else {
+//        track_list[index].expand = 1;
+//        window['track_list' + trackName].expand = 1
+//
+//      }
+//    }
+//
+//
+//  });
 
   trackToggle(trackName);
 }
@@ -134,17 +158,22 @@ function removeTrack(div, track) {
   jQuery(div).html();
   jQuery(div).fadeOut();
   jQuery("#" + track + "_wrapper").fadeOut();
-  jQuery(track_list).each(function (index) {
-    if (track_list[index].name == track) {
-      track_list[index].disp = 0;
-    }
-  });
+  window['track_list' + track].disp = 0
+
+//  jQuery(track_list).each(function (index) {
+//    if (track_list[index].name == track) {
+//      track_list[index].disp = 0;
+//    }
+//  });
 }
 
 function removeMergedTrack() {
+
   jQuery(track_list).each(function (index) {
     if (jQuery("#" + track_list[index].name + "mergedCheckbox").attr('checked')) {
-      this.disp = 0;
+//      this.disp = 0;
+      window['track_list' + track_list[index].name].disp = 0
+
       jQuery('input[name=' + track_list[index].name + 'mergedCheckbox]').attr('checked', false);
       trackToggle(track_list[index].name);
     }
@@ -158,12 +187,14 @@ function removeMergedTrack() {
 function toogleLabelMerged() {
   jQuery(track_list).each(function (index) {
     if (jQuery("#" + track_list[index].name + "mergedCheckbox").attr('checked')) {
-      this.disp = 0;
+//      this.disp = 0;
       if (this.label == 1) {
-        this.label = 0;
+        window['track_list' + track_list[index].name].label = 0
+//        this.label = 0;
       }
       else {
-        this.label = 1;
+        window['track_list' + track_list[index].name].label = 1
+//        this.label = 1;
       }
 
     }
@@ -329,14 +360,18 @@ function dispGenes(div, track, expand, className) {
   else {
     trackClass = "exon";
   }
+  console.log(window['track_list' + track].label)
+  if (window['track_list' + track].label == 0) {
+    labeltoogle = "display : none;";
+  }
 
-  jQuery(track_list).each(function (index) {
-    if (track_list[index].name == track) {
-      if (track_list[index].label == 0) {
-        labeltoogle = "display : none;";
-      }
-    }
-  });
+//  jQuery(track_list).each(function (index) {
+//    if (track_list[index].name == track) {
+//      if (track_list[index].label == 0) {
+//        labeltoogle = "display : none;";
+//      }
+//    }
+//  });
 
 //  var genes_old = window[track];
   var genes = window[track];
@@ -775,14 +810,19 @@ function dispTrack(div, trackName, className) {
 //  console.log(now.getMinutes() + ":" + now.getSeconds() + ":" + now.getMilliseconds());
   var labeltoogle = "display : none;";
   var trackId;
-  jQuery(track_list).each(function (index) {
-    if (track_list[index].name == trackName) {
-      trackId = track_list[index].id;
-      if (track_list[index].label == 1) {
-        labeltoogle = "display : in-line;";
-      }
-    }
-  });
+
+  if (window['track_list' + trackName].label == 0) {
+    labeltoogle = "display : none;";
+  }
+
+//  jQuery(track_list).each(function (index) {
+//    if (track_list[index].name == trackName) {
+//      trackId = track_list[index].id;
+//      if (track_list[index].label == 1) {
+//        labeltoogle = "display : in-line;";
+//      }
+//    }
+//  });
 
   if (!window[trackName] || window[trackName] == "loading") {
     jQuery(div).html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
@@ -851,14 +891,21 @@ function dispTrack(div, trackName, className) {
 //        track_html = "";
       }
 
-      jQuery(track_list).each(function (index) {
-        if (this.name == trackName && this.id.toString().indexOf('cs') > -1) {
-          coord = true;
-        }
-        else {
-          coord = false;
-        }
-      });
+      if (window['track_list' + trackName].id.toString().indexOf('cs') > -1) {
+        coord = true;
+      }
+      else {
+        coord = false;
+      }
+
+//      jQuery(track_list).each(function (index) {
+//        if (this.name == trackName && this.id.toString().indexOf('cs') > -1) {
+//          coord = true;
+//        }
+//        else {
+//          coord = false;
+//        }
+//      });
       track_html = [];
 
       var j = 0;

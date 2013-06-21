@@ -261,14 +261,18 @@ function loadTrackAjax(trackId, trackname) {
 //  jQuery.cookie('trackslist', track_list.toJSON());
     mergeTrackList(trackname);
     var query = jQuery('#search').val();
+
     jQuery(track_list).each(function (index) {
         //this is the object in the array, index is the index of the object in the array
         if (jQuery("#" + track_list[index].name + "Checkbox").attr('checked')) {//
-            this.disp = 1;
+          window['track_list' + track_list[index].name].disp = 1
+//          this.disp = 1;
             jQuery("#unSelectAllCheckbox").attr('checked', false)
         }
         else {
-            this.disp = 0;
+//            this.disp = 0;
+          window['track_list' + track_list[index].name].disp = 0
+
             jQuery("#selectAllCheckbox").attr('checked', false)
         }
     });
@@ -299,18 +303,20 @@ function loadTrackAjax(trackId, trackname) {
                 var trackname = json.name;
 
                 if (json.type == "graph") {
-                    for (var j = 0; j < track_list.length; j++) {
-                        if (track_list[j].name == trackname) {
-                            track_list[j].graph = "true";
-                        }
-                    }
+                  window['track_list' + json.name].graph = "true";
+//                    for (var j = 0; j < track_list.length; j++) {
+//                        if (track_list[j].name == trackname) {
+//                            track_list[j].graph = "true";
+//                        }
+//                    }
                 }
                 else {
-                    for (var j = 0; j < track_list.length; j++) {
-                        if (track_list[j].name == trackname) {
-                            track_list[j].graph = "false";
-                        }
-                    }
+                  window['track_list' + json.name].graph = "true";
+//                    for (var j = 0; j < track_list.length; j++) {
+//                        if (track_list[j].name == trackname) {
+//                            track_list[j].graph = "false";
+//                        }
+//                    }
                 }
                 window[trackname] = json[trackname];
                 trackToggle(trackname);
@@ -436,18 +442,20 @@ function reloadTracks(tracks, tracklist, blast) {
                     var trackname = json.name;
 
                     if (json.type == "graph") {
-                        for (var j = 0; j < track_list.length; j++) {
-                            if (track_list[j].name == trackname) {
-                                track_list[j].graph = "true";
-                            }
-                        }
+                      window['track_list' + json.name].graph = "true";
+//                        for (var j = 0; j < track_list.length; j++) {
+//                            if (track_list[j].name == trackname) {
+//                                track_list[j].graph = "true";
+//                            }
+//                        }
                     }
                     else {
-                        for (var j = 0; j < track_list.length; j++) {
-                            if (track_list[j].name == trackname) {
-                                track_list[j].graph = "false";
-                            }
-                        }
+                      window['track_list' + json.name].graph = "false";
+//                        for (var j = 0; j < track_list.length; j++) {
+//                            if (track_list[j].name == trackname) {
+//                                track_list[j].graph = "false";
+//                            }
+//                        }
                     }
                     window[trackname] = json[trackname];
                     trackToggle(trackname);
@@ -719,17 +727,18 @@ function getMarkers() {
             var width = 15;
             for (var i = 0; i < markers.length; i++) {
                 var length = sequencelength * parseFloat(jQuery("#" + markers[i].reference).css('height')) / parseFloat(jQuery("#" + seqregname).css('height'));
-                var maptop = parseFloat(jQuery("#" + markers[i].reference).css('top')) + parseInt(markers[i].start) * parseFloat(jQuery("#" + markers[i].reference).css('height')) / length;
+               // var maptop = parseFloat(jQuery("#" + markers[i].reference).css('top')) + parseInt(markers[i].start) * parseFloat(jQuery("#" + markers[i].reference).css('height')) / length;
+                var maptop = parseFloat(jQuery("#" + markers[i].reference).css('height')) + parseInt(jQuery("#" + markers[i].reference).css('bottom')) - (parseInt(markers[i].end) * parseFloat(jQuery("#" + markers[i].reference).css('height')) / length);
                 var left = parseInt(jQuery("#" + markers[i].reference).position().left) + parseInt(20);
                 var mapheight = parseFloat(jQuery("#" + markers[i].reference).css('height')) / length;
                 if (mapheight < 1) {
                     mapheight = 1;
                 }
                 if (seqregname == markers[i].reference) {
-                    jQuery("#refmap").append("<div title='" + markers[i].reference + ":" + markers[i].start + "' class='refmapmarker'  style='left:" + left + "px; top:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick='setBegin(" + markers[i].start + "); setEnd(" + parseInt(parseInt(markers[i].start) + parseInt(1)) + "); jumpToSeq();'></div>");
+                    jQuery("#refmap").append("<div title='" + markers[i].reference + ":" + markers[i].start + "' class='refmapmarker'  style='left:" + left + "px; bottom:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick='setBegin(" + markers[i].start + "); setEnd(" + parseInt(parseInt(markers[i].start) + parseInt(1)) + "); jumpToSeq();'></div>");
                 }
                 else {
-                    jQuery("#refmap").append("<div  title='" + markers[i].reference + ":" + markers[i].start + "' class='refmapmarker'  style='left:" + left + "px; top:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick='window.location.replace(\"index.jsp?query=" + markers[i].reference + "&from=" + markers[i].start + "&to=" + parseInt(parseInt(markers[i].start) + parseInt(1)) + "\");' ></div>");
+                    jQuery("#refmap").append("<div  title='" + markers[i].reference + ":" + markers[i].start + "' class='refmapmarker'  style='left:" + left + "px; bottom:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick='window.location.replace(\"index.jsp?query=" + markers[i].reference + "&from=" + markers[i].start + "&to=" + parseInt(parseInt(markers[i].start) + parseInt(1)) + "\");' ></div>");
                 }
             }
         }

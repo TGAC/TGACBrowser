@@ -54,11 +54,12 @@ function newpopup(track, i, j) {
   removePopup()
   var width = jQuery("#popup").width();
   jQuery('#blastselector').hide();
-   for (var a = 0; a < track_list.length; a++) {
-      if (track_list[a].name  == track) {
-        jQuery("#popuptrack").html(track_list[a].display_label);
-      }
-   }
+  console.log(window['track_list' + track].display_label);
+//   for (var a = 0; a < track_list.length; a++) {
+//      if (track_list[a].name  == track) {
+//        jQuery("#popuptrack").html(track_list[a].display_label);
+//      }
+//   }
 
   var position = window[track][i].start + position_func(window[track][i]);
   var endposition;
