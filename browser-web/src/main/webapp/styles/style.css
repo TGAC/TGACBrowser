@@ -2181,6 +2181,12 @@ span.counter {
     height: 10px;
 }
 
+.snpN {
+    position: absolute;
+    background: url("../images/browser/snpblack.png") top center;
+    height: 10px;
+}
+
 .snpG {
     position: absolute;
     background: url("../images/browser/snpblue.png") top center;
