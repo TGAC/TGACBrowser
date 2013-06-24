@@ -35,7 +35,6 @@ function getStart(track_start) {
 }
 
 function toogleLabel(trackName) {
-  console.log(window['track_list' + trackName].label)
   if (window['track_list' + trackName].label == 1) {
     window['track_list' + trackName].label = 0
   }
@@ -43,50 +42,16 @@ function toogleLabel(trackName) {
     window['track_list' + trackName].label = 1
 
   }
-//  jQuery(track_list).each(function (index) {
-//    if (track_list[index].name == trackName) {
-//      if (track_list[index].label == 1) {
-////        track_list[index].label = 0;
-//
-//      }
-//      else {
-//        track_list[index].label = 1;
-//
-//      }
-//    }
-//
-//  });
-
   jQuery(".label" + trackName).toggle();
 }
 
 function toogleTrackView(trackName) {
-  console.log(window['track_list' + trackName].expand)
   if (window['track_list' + trackName].expand == 1) {
     window['track_list' + trackName].expand = 0
-    //        track_list[index].expand = 0;
   }
   else {
-//          track_list[index].expand = 1;
     window['track_list' + trackName].expand = 1
-
   }
-
-//  jQuery(track_list).each(function (index) {
-//    if (track_list[index].name == trackName) {
-//      if (track_list[index].expand == 1) {
-//        window['track_list' + trackName].expand = 0
-////        track_list[index].expand = 0;
-//      }
-//      else {
-//        track_list[index].expand = 1;
-//        window['track_list' + trackName].expand = 1
-//
-//      }
-//    }
-//
-//
-//  });
 
   trackToggle(trackName);
 }
@@ -353,20 +318,10 @@ function dispGenes(div, track, expand, className) {
 
     trackClass = "exon";
 
-  console.log(window['track_list' + track].label)
   if (window['track_list' + track].label == 0) {
     labeltoogle = "display : none;";
   }
 
-//  jQuery(track_list).each(function (index) {
-//    if (track_list[index].name == track) {
-//      if (track_list[index].label == 0) {
-//        labeltoogle = "display : none;";
-//      }
-//    }
-//  });
-
-//  var genes_old = window[track];
   var genes = window[track];
 
   var newStart_temp = getBegin();
@@ -377,12 +332,7 @@ function dispGenes(div, track, expand, className) {
   var start = newStart_temp - partial;
   var label = "";
   var end = parseInt(getEnd()) + partial;
-//  jQuery(genes_old).each(function (i) {
-//    //   console.log(this.start+"_"+this.end+"-"+start+"_"+end)
-//    if (this.start >= start && this.end <= end || this.start <= start && this.end >= end || this.start <= start && this.end >= start || this.start <= start && this.end >= end) {
-//      genes.push(this);
-//    }
-//  })
+
 
   var trackClass;
   if (!window[track] || window[track] == "loading") {
@@ -422,9 +372,6 @@ function dispGenes(div, track, expand, className) {
     var j = 0;
     var len = genes.length;
 
-
-    var now = new Date();
-//    console.log(now.getMinutes() + ":" + now.getSeconds() + ":" + now.getMilliseconds());
     if (genes[0] == null) {
       track_html = [];
       track_html.push("<font size=4><center>No data available for selected region</center></font>");
@@ -449,8 +396,6 @@ function dispGenes(div, track, expand, className) {
           gene_stop = genes[len].start;
         }
 
-
-        //    var show = showObject(start, end, gene_start, gene_stop);
         //  if (show) {
         var gene_desc = genes[len].desc;
         var border = " border-left: 1px solid #000000; border-right: 1px solid #000000;";
@@ -476,8 +421,6 @@ function dispGenes(div, track, expand, className) {
                         "onclick=trackClick(\"" + track + "\",\"" + len + "\"); onmouseover=trackmouseover(\"" + track + "\",\"" + len + "\"); onmouseout=trackmouseout(); > " +
                         "<div style='" + labeltoogle + " z-index: 999; overflow: hidden;text-overflow: ellipsis;' class = \"tracklabel " + labelclass + "\"> <p class='track_label'>" + label + "</p></div></div>");
 
-//            console.log(track_html);
-        //}
       }
     }
     else {
@@ -539,16 +482,12 @@ function dispGenes(div, track, expand, className) {
         }
       }
     }
-    var now = new Date();
-//    console.log(now.getMinutes() + ":" + now.getSeconds() + ":" + now.getMilliseconds());
-
     if (jQuery('input[name=' + track + 'mergedCheckbox]').is(':checked')) {
       jQuery(div).fadeOut();
       jQuery("#" + track + "_wrapper").fadeOut();
 
       jQuery(div).html();
 
-      //  track_html = track_html.replace(/tracks_image/g, 'merged_tracks_image')
       jQuery("#mergedtrack").css('height', (j * 20) + parseInt(50));
       jQuery("#mergedtrack").append(track_html.join(''));
       jQuery("#mergedtrack").fadeIn();
@@ -799,23 +738,12 @@ function dispGeneExon(track, genestrand, className) {
 function dispTrack(div, trackName, className) {
   var labelclass = "label" + trackName;
   var modi_style;
-  var now = new Date();
-//  console.log(now.getMinutes() + ":" + now.getSeconds() + ":" + now.getMilliseconds());
   var labeltoogle = "display : none;";
   var trackId;
 
   if (window['track_list' + trackName].label == 0) {
     labeltoogle = "display : none;";
   }
-
-//  jQuery(track_list).each(function (index) {
-//    if (track_list[index].name == trackName) {
-//      trackId = track_list[index].id;
-//      if (track_list[index].label == 1) {
-//        labeltoogle = "display : in-line;";
-//      }
-//    }
-//  });
 
   if (!window[trackName] || window[trackName] == "loading") {
     jQuery(div).html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
@@ -840,26 +768,11 @@ function dispTrack(div, trackName, className) {
     var newEnd_temp = getEnd();
     var maxLen_temp = jQuery("#canvas").css("width");
 
-//    var track_old = window[trackName];
     var track = window[trackName];
-    var now = new Date();
 
-//    if (track_old[0] && track_old[0].end) {
-//      track = jQuery.grep(track_old, function (element, index) {
-//        return element.start >= start && element.start <= end || element.start <= start && element.end >= end || element.start <= start && element.end >= start || element.start <= start && element.end >= end; // retain appropriate elements
-//      });
-//    }
-//    else if (track_old[0]) {
-//      track = jQuery.grep(track_old, function (element, index) {
-//        return element.start >= start && element.start <= end; // retain appropriate elements
-//      });
-//    }
     if (track[0] == null) {
       track_html = [];
-//      track_html.push("<span class='handle' style='left: 0%; width:100%'><center>No data available for selected region</center></span>");
       track_html.push("<font size=4><center>No data available for selected region</center></font>");
-
-
       jQuery(div).html(track_html.join(""));
 //      jQuery(div).css('height', 50)
 
@@ -873,7 +786,6 @@ function dispTrack(div, trackName, className) {
       if (jQuery('input[name=' + trackName + 'mergedCheckbox]').is(':checked')) {
         jQuery(div).fadeOut();
         jQuery(div).html("");
-//        div = "#mergedtrack";
         track_html.push("(" + merged_track_list + ")");
         jQuery("#mergelabel").html(track_html.join(""));
         trackClass += " mergedtrack";
@@ -881,7 +793,6 @@ function dispTrack(div, trackName, className) {
       }
       else {
         jQuery(div).html(track_html.join(""));
-//        track_html = "";
       }
 
       if (window['track_list' + trackName].id.toString().indexOf('cs') > -1) {
@@ -891,14 +802,6 @@ function dispTrack(div, trackName, className) {
         coord = false;
       }
 
-//      jQuery(track_list).each(function (index) {
-//        if (this.name == trackName && this.id.toString().indexOf('cs') > -1) {
-//          coord = true;
-//        }
-//        else {
-//          coord = false;
-//        }
-//      });
       track_html = [];
 
       var j = 0;
@@ -934,7 +837,6 @@ function dispTrack(div, trackName, className) {
         if (strand == -1 || strand == false) {
           spanclass = "ui-icon ui-icon-carat-1-w";
         }
-
 
         var track_start = track[track_len].start;
         var track_stop = track[track_len].end ? track[track_len].end : parseInt(track[track_len].start) + 1;
@@ -1056,15 +958,7 @@ function dispCigarLine(cigars, start, top) {
       var key = cigar[1];
       var length = cigar[0];
       if (key == "M") {
-
-//        trackClass = "match";
-//        startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen) / 2;
-//        stopposition = (length) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
-//        track_html += trackHTML(startposition, stopposition, top, trackClass);
-//        console.log(cigar_pos + "," + length)
         cigar_pos = parseInt(cigar_pos) + parseInt(length);
-
-//        console.log(startposition + "," + stopposition + "," + top + "," + trackClass)
       }
       else if (key == "I") {
         trackClass = "insert";
@@ -1088,13 +982,7 @@ function dispCigarLine(cigars, start, top) {
         cigar_pos = parseInt(cigar_pos) + parseInt(length)
       }
       else if (key == "=") {
-//        trackClass = "match";
-//        startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen) / 2;
-//        stopposition = (length) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
-//        track_html += trackHTML(startposition, stopposition, top, trackClass);
-//        console.log(cigar_pos + "," + length)
         cigar_pos = parseInt(cigar_pos) + parseInt(length)
-//        console.log(startposition + "," + stopposition + "," + top + "," + trackClass)
       }
     }
   }
@@ -1112,7 +1000,6 @@ function dispCigarLine(cigars, start, top) {
   return track_html;
 }
 function dispCigar(cigars, start, top) {
-//  console.log("cigars")
   var track_html = "";
   var trackClass = "";
   var newStart_temp = getBegin();
@@ -1140,16 +1027,13 @@ function dispCigar(cigars, start, top) {
     }
     var cigar = cigars[key].split(",");
     for (var i = 0; i < cigar.length; i++) {
-//(track_start - newStart_temp) * parseFloat(maxLen) / (newEnd_temp - newStart_temp) + parseFloat(maxLen) / 2;
       var cigar_start = parseInt(cigar[i].split(":")[0]) + parseInt(start);
       var cigar_stop = cigar[i].split(":")[1];
       var startposition = (cigar_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
 
 
-      //  var startposition =parseInt( (parseInt(parseInt(start)+ parseInt(cigar[i].split(":")[0]) - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2));
       var stopposition;
       if (key == "M" || key == "I" || key == "X" || key == "=") {
-        //  stopposition = (parseInt(cigar[i].split(":")[1])) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
         stopposition = (cigar_stop) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
       }
       else {
