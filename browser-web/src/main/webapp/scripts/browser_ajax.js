@@ -117,13 +117,13 @@ function seqregionSearchPopup(query, from, to, blast) {
               }
               dispSeqCoord();
               displayCursorPosition();
-              console.log("here2")
               if (json.coord_sys.indexOf('chromosome') >= 0) {
                 getReferences();
               }
               else {
                 chromosome = false;
               }
+loadDefaultTrack(track_list);
             }
           }
           });
@@ -312,7 +312,7 @@ function loadTrackAjax(trackId, trackname) {
 //                    }
               }
               else {
-                window['track_list' + json.name].graph = "true";
+                window['track_list' + json.name].graph = "false";
 //                    for (var j = 0; j < track_list.length; j++) {
 //                        if (track_list[j].name == trackname) {
 //                            track_list[j].graph = "false";
@@ -346,11 +346,12 @@ function saveSession() {
   var tracks = getTracks();
   var edited_tracks = getEditedTracks();
   var removed_tracks = getRemovedTracks();
+  var trackslist  = getTracklist();
   var blast = jQuery("#notifier").text().indexOf("BLAST");
   Fluxion.doAjax(
           'fileService',
           'saveFile',
-          {'location': path, 'reference': seqregname, 'session': randomnumber, 'from': getBegin(), 'to': getEnd(), 'seq': seq, 'seqlen': sequencelength, 'track': track_list, 'tracks': tracks, 'filename': (randomnumber), 'blast': blast, 'edited_tracks': edited_tracks, 'removed_tracks': removed_tracks, 'url': ajaxurl},
+          {'location': path, 'reference': seqregname, 'session': randomnumber, 'from': getBegin(), 'to': getEnd(), 'seq': seq, 'seqlen': sequencelength, 'track': trackslist, 'tracks': tracks, 'filename': (randomnumber), 'blast': blast, 'edited_tracks': edited_tracks, 'removed_tracks': removed_tracks, 'url': ajaxurl},
           {'doOnSuccess': function (json) {
             jQuery("#export").html("<a target = '_blank' href='" + json.link + "'>Export</a>")
             jQuery("#export").show();
@@ -638,16 +639,6 @@ function dispOnMap(json, maximumLengthname, maximumsequencelength) {
   var width = 15;
   jQuery("#searchResultLegend").html("")
   jQuery("#searchResultLegend").fadeIn();
-
-//    jQuery("#map").css({height: '300px'});
-//    jQuery(".refmap").css({bottom: '20px'});
-//    jQuery(".refmap").each(function () {
-//        console.log(jQuery(this).css('height'))
-//        jQuery(this).css({height: parseInt(jQuery(this).css('height')) * 2});
-//        jQuery(this).css({height: parseInt(jQuery(this).css('height')) * 2});
-//        console.log(jQuery(this).css('height'))
-//    });
-
 
   if (json.html == "seqregion") {
     jQuery("#searchResultLegend").html("<div class='searchResultLegend'><input checked type=checkbox name='refmapsearchmarkerseqregion' onClick=jQuery('.refmapsearchmarkerseqregion').toggle()> Seq Region </div> ")

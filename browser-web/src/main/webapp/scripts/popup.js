@@ -1,26 +1,26 @@
 /*
-*
-* Copyright (c) 2013. The Genome Analysis Centre, Norwich, UK
-* TGAC Browser project contacts: Anil Thanki, Xingdong Bian, Robert Davey, Mario Caccamo @ TGAC
-* **********************************************************************
-*
-* This file is part of TGAC Browser.
-*
-* TGAC Browser is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* TGAC Browser is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with TGAC Browser.  If not, see <http://www.gnu.org/licenses/>.
-*
-* ***********************************************************************
-*
+ *
+ * Copyright (c) 2013. The Genome Analysis Centre, Norwich, UK
+ * TGAC Browser project contacts: Anil Thanki, Xingdong Bian, Robert Davey, Mario Caccamo @ TGAC
+ * **********************************************************************
+ *
+ * This file is part of TGAC Browser.
+ *
+ * TGAC Browser is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * TGAC Browser is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with TGAC Browser.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * ***********************************************************************
+ *
  */
 
 /**
@@ -54,22 +54,18 @@ function newpopup(track, i, j) {
   removePopup()
   var width = jQuery("#popup").width();
   jQuery('#blastselector').hide();
-  console.log(window['track_list' + track].display_label);
-//   for (var a = 0; a < track_list.length; a++) {
-//      if (track_list[a].name  == track) {
-//        jQuery("#popuptrack").html(track_list[a].display_label);
-//      }
-//   }
+  jQuery("#popuptrack").html(window['track_list' + track].display_label);
 
   var position = window[track][i].start + position_func(window[track][i]);
   var endposition;
+
   function position_func(test) {
     if (test.end) {
       endposition = test.end;
       return "-" + test.end
     }
     else {
-      endposition = parseInt(test.start)+1;
+      endposition = parseInt(test.start) + 1;
       return "";
     }
   }
@@ -86,7 +82,7 @@ function newpopup(track, i, j) {
     jQuery("#EditDescription").html('<span title="Edit" class="ui-button ui-icon ui-icon-pencil" onclick=showEditDesc(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
     jQuery("#deleteTrack").html('<span title="Remove" class="ui-button ui-icon ui-icon-trash" onclick=deleteTrack(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
     jQuery("#flagTrack").html('<span title="Flag" class="ui-button ui-icon ui-icon-flag" onclick=flagTrack(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
-    jQuery("#Linkme").html("<a target='_blank' href='"+jQuery("#linkLocation").html()+"" + window[track][i].desc + "'> <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\"></span></a>");
+    jQuery("#Linkme").html("<a target='_blank' href='" + jQuery("#linkLocation").html() + "" + window[track][i].desc + "'> <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\"></span></a>");
     jQuery("#revertme").html('<span title="Revert_Name" class="ui-button ui-icon ui-icon-arrowreturnthick-1-w" onclick=revertTrack(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
     jQuery("#Detail").html(stringTrim(window[track][i].transcript[j].desc + "(" + window[track][i].desc + ")", width));
 
@@ -110,7 +106,7 @@ function newpopup(track, i, j) {
 
     }
 
-    jQuery("#ZoomHere").html('<span title="Zoom Here" class="ui-button ui-icon ui-icon-zoomin" onclick=zoomHere(' + window[track][i].start + ',' +endposition + ');></span>');
+    jQuery("#ZoomHere").html('<span title="Zoom Here" class="ui-button ui-icon ui-icon-zoomin" onclick=zoomHere(' + window[track][i].start + ',' + endposition + ');></span>');
     jQuery("#EditDescription").html('<span title="Edit" class="ui-button ui-icon ui-icon-pencil" onclick=showEditDesc(\"' + track + '\",\'' + i + '\');></span>');
     jQuery("#deleteTrack").html('<span title="Remove" class="ui-button ui-icon ui-icon-trash" onclick=deleteTrack(\"' + track + '\",\'' + i + '\');></span>');
     jQuery("#flagTrack").html('<span title="Flag" class="ui-button ui-icon ui-icon-flag" onclick=flagTrack(\"' + track + '\",\'' + i + '\');></span>');
@@ -254,7 +250,7 @@ function preBlast(begin, end, popup) {
 //                       "Select BLAST Type<select name=\"blasttype\" id=\"blasttype\">  " +
 //                                              "<option value=\"blastn\">blastn</option>  " +
 //                                              "<option value=\"tblastn\">tblastn</option> " +
-                                              "</select> " +
+                       "</select> " +
 //                       "</td></tr>"
                        "<td><span class=\"fg-button ui-icon ui-widget ui-state-default ui-corner-all ui-icon-close\" id=\"dontblast\"></span>" +
                        "<span class=\"fg-button ui-icon ui-widget ui-state-default ui-corner-all ui-icon-check\" id=\"doblast\"></span> </td></tr></table>";
@@ -275,8 +271,9 @@ function preBlast(begin, end, popup) {
     var hit = jQuery('#blasthit').val();
     var blastdb = ""
     if (jQuery("#blastType").text().indexOf('local') >= 0 || jQuery("#blastType").text().indexOf('server') >= 0) {
-    blastdb = jQuery('#blastdb').val();
-    }       else {
+      blastdb = jQuery('#blastdb').val();
+    }
+    else {
       blastdb = jQuery('#ncbiblastdb').val();
 
     }

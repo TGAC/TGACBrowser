@@ -1,26 +1,26 @@
 /*
-*
-* Copyright (c) 2013. The Genome Analysis Centre, Norwich, UK
-* TGAC Browser project contacts: Anil Thanki, Xingdong Bian, Robert Davey, Mario Caccamo @ TGAC
-* **********************************************************************
-*
-* This file is part of TGAC Browser.
-*
-* TGAC Browser is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* TGAC Browser is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with TGAC Browser.  If not, see <http://www.gnu.org/licenses/>.
-*
-* ***********************************************************************
-*
+ *
+ * Copyright (c) 2013. The Genome Analysis Centre, Norwich, UK
+ * TGAC Browser project contacts: Anil Thanki, Xingdong Bian, Robert Davey, Mario Caccamo @ TGAC
+ * **********************************************************************
+ *
+ * This file is part of TGAC Browser.
+ *
+ * TGAC Browser is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * TGAC Browser is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with TGAC Browser.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * ***********************************************************************
+ *
  */
 
 /**
@@ -311,7 +311,7 @@ function updateJSON() {
 
   for (var j = 0; j < track_list.length; j++) {
 
-    if (track_list[j].graph == "true") {
+    if (window["track_list" + track_list[j].name].graph == "true") {
 //      if (parseInt(lastStart) < parseInt(getBegin()) && parseInt(lastEnd) > parseInt(getEnd())) {
       from = Math.ceil(parseInt(getBegin()) - partial);
       to = Math.ceil(parseInt(getEnd()) + partial);
@@ -401,23 +401,10 @@ function addJSON(from, to, trackName, trackId) {
                 window[trackname] = json[trackname];
                 if (json.type == "graph") {
                   window['track_list' + json.name].graph = "true";
-//                  for (var j = 0; j < track_list.length; j++) {
-//                    if (track_list[j].name == trackname) {
-//                      track_list[j].graph = "true";
-//                    }
-//                  }
                 }
                 else {
                   window['track_list' + json.name].graph = "false";
-
-//                  for (var j = 0; j < track_list.length; j++) {
-//                    if (track_list[j].name == trackname) {
-//                      track_list[j].graph = "false";
-//                    }
-//                  }
-                  //  console.log("merging "+JSON.parse(window[trackname + "_edited"]))
                   if (window[trackname + "_edited"]) {
-
                     jQuery.each(window[trackname], function (i, v) {
                       jQuery.each(window[trackname + "_edited"], function (j, w) {
                         if (w.id == v.id) {
@@ -464,20 +451,9 @@ function addJSON(from, to, trackName, trackId) {
 
                       if (json.type == "graph") {
                         window['track_list' + json.name].graph = "true";
-//                        for (var j = 0; j < track_list.length; j++) {
-//                          if (track_list[j].name == trackname) {
-//                            track_list[j].graph = "true";
-//                          }
-//                        }
                       }
                       else {
                         window['track_list' + json.name].graph = "false";
-//                        for (var j = 0; j < track_list.length; j++) {
-//                          if (track_list[j].name == trackname) {
-//                            track_list[j].graph = "false";
-//                          }
-//                        }
-
                         if (window[trackname + "_edited"]) {
 
                           jQuery.each(window[trackname], function (i, v) {
@@ -512,6 +488,61 @@ function addJSON(from, to, trackName, trackId) {
 
 }
 
+<<<<<<< HEAD
+=======
+/*
+ this can be modified to use for edited and removed tracks
+ var obj1 = [
+ {id:2, comment:"comment22",edited:"new"}
+ ] ;
+
+ var obj2 =  [
+ {id:1, comment:"comment2"},
+ {id:2, comment:"comment2"},
+ {id:3, comment:"comment33"},
+ {id:4, comment:"comment4"}
+ ];
+
+ function merge(one, two){
+
+ var final = one;
+ // merge
+ for(var i = 0 ; i < two.length;i++){
+ var item = two[i];
+ insert(item, final);
+ }
+ return final;
+ }
+
+
+ function insert(item, obj){
+ var data = obj;
+ var insertIndex = data.length;
+ for(var i = 0; i < data.length; i++){
+ if(item.id == data[i].id){
+ $('#o').append( item.id +"=="+ data[i].id +"\n");
+ // ignore duplicates
+ insertIndex = -1;
+ break;
+ } else if(item.id < data[i].id){
+ $('#o').append( item.id +"<"+ data[i].id  +"\n");
+ insertIndex = i;
+ break;
+ }
+ }
+ if(insertIndex == data.length){
+ data.push(item);
+ } else if(insertIndex != -1) {
+ data.splice(insertIndex,0,item);
+ }
+ }
+
+ var final = merge(obj1, obj2);
+
+ $('#o').append("\n\n\nUsing merge()\n");
+ $('#o').append( JSON.stringify(final) );
+ */
+>>>>>>> 803b040... Preloadtrack bug fixed and unwanted scripts removed
 
 function removeJSON(from, to) {
   if (from < 0) {

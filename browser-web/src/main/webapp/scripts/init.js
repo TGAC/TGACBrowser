@@ -194,7 +194,7 @@ function onLoad() {
               {name: track_list[index].name, disp: window["track_list" + track_list[index].name].disp, display_label: window["track_list" + track_list[index].name].display_label}
       );
     });
-    jQuery.cookie('trackslist', track_list_cookie.toJSON(), { path: '/'+jQuery("#title").html(), expires: 10});
+    jQuery.cookie('trackslist', track_list_cookie.toJSON(), { path: '/', expires: 10});
   });
 
   jQuery("#draggable").mouseover(function () {
@@ -497,6 +497,7 @@ function trackList(tracklist) {
   var Tracklist = tracklist;
   for (var i = 0; i < Tracklist.length; i++) {
     window['track_list' + Tracklist[i].name] = {
+      name: Tracklist[i].name,
       id: Tracklist[i].id,
       display_label: Tracklist[i].display_label,
       desc: Tracklist[i].desc,
@@ -654,7 +655,7 @@ function toggleLeftInfo(div, id) {
 
 
 function loadDefaultTrack(tracklist) {
-
+  console.log("loadDefaultTrack")
   var Tracklist = tracklist;
   var cookietest = []
   if (jQuery.cookie('trackslist')) {
@@ -687,19 +688,9 @@ function loadDefaultTrack(tracklist) {
 
                   if (json.type == "graph") {
                     window['track_list' + json.name].graph = "true";
-//                    for (var j = 0; j < track_list.length; j++) {
-//                      if (track_list[j].name == trackname) {
-//                        track_list[j].graph = "true";
-//                      }
-//                    }
                   }
                   else {
                     window['track_list' + json.name].graph = "false";
-//                    for (var j = 0; j < track_list.length; j++) {
-//                      if (track_list[j].name == trackname) {
-//                        track_list[j].graph = "false";
-//                      }
-//                    }
                   }
                   window[trackname] = json[trackname];
                   trackToggle(trackname);
@@ -708,7 +699,9 @@ function loadDefaultTrack(tracklist) {
       }
     }
   }
+
   for (var i = 0; i < Tracklist.length; i++) {
+
     jQuery.each(cookietest, function (j, v) {
       if (v.name == Tracklist[i].name && v.disp == 1) {
         jQuery('#' + Tracklist[i].name + 'Checkbox').attr('checked', true);
@@ -734,19 +727,9 @@ function loadDefaultTrack(tracklist) {
 
                   if (json.type == "graph") {
                     window['track_list' + json.name].graph = "true";
-//                    for (var j = 0; j < track_list.length; j++) {
-//                      if (track_list[j].name == trackname) {
-//                        track_list[j].graph = "true";
-//                      }
-//                    }
                   }
                   else {
                     window['track_list' + json.name].graph = "false";
-//                    for (var j = 0; j < track_list.length; j++) {
-//                      if (track_list[j].name == trackname) {
-//                        track_list[j].graph = "false";
-//                      }
-//                    }
                   }
                   window[trackname] = json[trackname];
                   trackToggle(trackname);
@@ -757,6 +740,11 @@ function loadDefaultTrack(tracklist) {
         jQuery('#' + Tracklist[i].name + 'Checkbox').attr('checked', true);
         loadTrackAjax(Tracklist[i].id, Tracklist[i].name);
         return false; // stops the loop
+      }
+      else if (v.name == Tracklist[i].name && v.disp == 0) {
+
+        window["track_list" + Tracklist[i].name].disp = 0;
+
       }
     });
     continue;
@@ -781,7 +769,6 @@ function checkSession() {
     track_list_cookie.push(
             {name: track_list[index].name, disp: window["track_list" + track_list[index].name].disp}
     );
-    console.log(track_list[index].name + ":" + window["track_list" + track_list[index].name].disp + ":" + window["track_list" + track_list[index].name].display_label)
   });
   var now = new Date();
   if (randomnumber == null) {
@@ -812,16 +799,6 @@ function getTracks() {
 =======
   var tracks = [];
   var eachTrack = {};
-//  for (var i = 0; i < track_list.length; i++) {
-//    if (jQuery("#" + track_list[i].name + "Checkbox").is(':checked')) {
-//      var track = window[track_list[i].name];
-//      var trackId = track_list[i].id;
-//      if (window[track_list[i].name] && window[track_list[i].name] != 'running') {
-//        eachTrack = { "trackId": trackId, "child": track}
-//      }
-//      tracks.push(eachTrack);
-//    }
-//  }
   if (jQuery("#notifier").text().indexOf("BLAST") >= 0) {
     eachTrack = { "trackId": "running", "child": blastsdata}
     tracks.push(eachTrack);
@@ -835,6 +812,17 @@ function getTracks() {
 
   return tracks;
 >>>>>>> d095b59... vars created for tracks so most of the loops on track_list eliminated
+}
+
+function getTracklist() {
+
+  var tracks = [];
+  for (var i = 0; i < track_list.length; i++) {
+
+    tracks.push(window["track_list" + track_list[i].name]);
+  }
+
+  return tracks;
 }
 
 function getEditedTracks() {
@@ -1075,7 +1063,7 @@ function unSelectAllCheckbox() {
     jQuery("#tracklist input").each(function () {
       if (jQuery(this).is(':checked')) {
         jQuery(this).attr('checked', false);
-//        eval(jQuery(this).attr('onClick'));
+        window['track_list' + this.id.replace("Checkbox", "")].disp = 0
       }
       else {
         //    do nothing

@@ -36,6 +36,7 @@ function getStart(track_start) {
 
 function toogleLabel(trackName) {
 <<<<<<< HEAD
+<<<<<<< HEAD
     jQuery(track_list).each(function (index) {
         if (track_list[index].name == trackName) {
             if (track_list[index].label == 1) {
@@ -49,6 +50,8 @@ function toogleLabel(trackName) {
     });
 =======
   console.log(window['track_list' + trackName].label)
+=======
+>>>>>>> 803b040... Preloadtrack bug fixed and unwanted scripts removed
   if (window['track_list' + trackName].label == 1) {
     window['track_list' + trackName].label = 0
   }
@@ -56,6 +59,7 @@ function toogleLabel(trackName) {
     window['track_list' + trackName].label = 1
 
   }
+<<<<<<< HEAD
 //  jQuery(track_list).each(function (index) {
 //    if (track_list[index].name == trackName) {
 //      if (track_list[index].label == 1) {
@@ -87,13 +91,18 @@ function toogleTrackView(trackName) {
         }
 =======
   console.log(window['track_list' + trackName].expand)
+=======
+  jQuery(".label" + trackName).toggle();
+}
+
+function toogleTrackView(trackName) {
+>>>>>>> 803b040... Preloadtrack bug fixed and unwanted scripts removed
   if (window['track_list' + trackName].expand == 1) {
     window['track_list' + trackName].expand = 0
-    //        track_list[index].expand = 0;
   }
   else {
-//          track_list[index].expand = 1;
     window['track_list' + trackName].expand = 1
+<<<<<<< HEAD
 >>>>>>> d095b59... vars created for tracks so most of the loops on track_list eliminated
 
   }
@@ -119,6 +128,11 @@ function toogleTrackView(trackName) {
 >>>>>>> d095b59... vars created for tracks so most of the loops on track_list eliminated
 
     trackToggle(trackName);
+=======
+  }
+
+  trackToggle(trackName);
+>>>>>>> 803b040... Preloadtrack bug fixed and unwanted scripts removed
 }
 
 function showObject(start, end, objStart, objEnd) {
@@ -442,11 +456,11 @@ function dispGenes(div, track, expand, className) {
 
     trackClass = "exon";
 
-  console.log(window['track_list' + track].label)
   if (window['track_list' + track].label == 0) {
     labeltoogle = "display : none;";
   }
 
+<<<<<<< HEAD
 //  jQuery(track_list).each(function (index) {
 //    if (track_list[index].name == track) {
 //      if (track_list[index].label == 0) {
@@ -458,11 +472,15 @@ function dispGenes(div, track, expand, className) {
 
 //  var genes_old = window[track];
     var genes = window[track];
+=======
+  var genes = window[track];
+>>>>>>> 803b040... Preloadtrack bug fixed and unwanted scripts removed
 
     var newStart_temp = getBegin();
     var newEnd_temp = getEnd();
     var maxLentemp = jQuery("#canvas").css("width");
 
+<<<<<<< HEAD
     var partial = (newEnd_temp - newStart_temp) / 2;
     var start = newStart_temp - partial;
     var label = "";
@@ -473,6 +491,13 @@ function dispGenes(div, track, expand, className) {
 //      genes.push(this);
 //    }
 //  })
+=======
+  var partial = (newEnd_temp - newStart_temp) / 2;
+  var start = newStart_temp - partial;
+  var label = "";
+  var end = parseInt(getEnd()) + partial;
+
+>>>>>>> 803b040... Preloadtrack bug fixed and unwanted scripts removed
 
     var trackClass;
     if (!window[track] || window[track] == "loading") {
@@ -512,12 +537,18 @@ function dispGenes(div, track, expand, className) {
         var j = 0;
         var len = genes.length;
 
+<<<<<<< HEAD
 
         var now = new Date();
 //    console.log(now.getMinutes() + ":" + now.getSeconds() + ":" + now.getMilliseconds());
         if (genes[0] == null) {
             track_html = [];
             track_html.push("<font size=4><center>No data available for selected region</center></font>");
+=======
+    if (genes[0] == null) {
+      track_html = [];
+      track_html.push("<font size=4><center>No data available for selected region</center></font>");
+>>>>>>> 803b040... Preloadtrack bug fixed and unwanted scripts removed
 
             jQuery(div).html(track_html.join(""));
 //      jQuery(div).css('height', 50)
@@ -566,9 +597,19 @@ function dispGenes(div, track, expand, className) {
                     "onclick=trackClick(\"" + track + "\",\"" + len + "\"); onmouseover=trackmouseover(\"" + track + "\",\"" + len + "\"); onmouseout=trackmouseout(); > " +
                     "<div style='" + labeltoogle + " z-index: 999; overflow: hidden;text-overflow: ellipsis;' class = \"tracklabel " + labelclass + "\"> <p class='track_label'>" + label + "</p></div></div>");
 
+<<<<<<< HEAD
 //            console.log(track_html);
                 //}
             }
+=======
+        //  if (show) {
+        var gene_desc = genes[len].desc;
+        var border = " border-left: 1px solid #000000; border-right: 1px solid #000000;";
+        if (genes[len].flag) {
+          if (trackClass.indexOf("geneflag") < 0) {
+            trackClass += " geneflag";
+          }
+>>>>>>> 803b040... Preloadtrack bug fixed and unwanted scripts removed
         }
         else {
             var len = genes.length;
@@ -609,7 +650,34 @@ function dispGenes(div, track, expand, className) {
                     var stopposition = (gene_stop - gene_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
                     track_html.push("<div class='" + trackClass + " " + className + "' STYLE=\"height: 10px; TOP:" + top + "px; " +
                         "LEFT:" + startposition + "px; width :" + stopposition + "px; \" " +
+<<<<<<< HEAD
                         " > <div style='overflow: hidden;text-overflow: ellipsis; " + labeltoogle + "' class = \"tracklabel " + labelclass + "\"> <p>" + label + "</p></div></div>");
+=======
+                        "onclick=trackClick(\"" + track + "\",\"" + len + "\"); onmouseover=trackmouseover(\"" + track + "\",\"" + len + "\"); onmouseout=trackmouseout(); > " +
+                        "<div style='" + labeltoogle + " z-index: 999; overflow: hidden;text-overflow: ellipsis;' class = \"tracklabel " + labelclass + "\"> <p class='track_label'>" + label + "</p></div></div>");
+
+      }
+    }
+    else {
+      var len = genes.length;
+      var template = "<div STYLE=\"position:absolute;  cursor:pointer; height: 10px;  \">";
+      var template_label = "<div style=' z-index: 999;' class = \"label\"> <p></p></div></div>";
+      while (len--) {
+        trackClass = "gene track";
+        var transcript_len = genes[len].transcript.length;
+        while (transcript_len--) {
+
+          var gene_start;
+          var gene_stop;
+          if (genes[len].transcript[transcript_len].start < genes[len].transcript[transcript_len].end) {
+            gene_start = genes[len].transcript[transcript_len].start;
+            gene_stop = genes[len].transcript[transcript_len].end;
+          }
+          else {
+            gene_start = genes[len].transcript[transcript_len].end;
+            gene_stop = genes[len].transcript[transcript_len].start;
+          }
+>>>>>>> 803b040... Preloadtrack bug fixed and unwanted scripts removed
 
                     if (stopposition > 10) {
                         track_html.push(dispGeneExon(genes[len].transcript[transcript_len], genes[len].strand, className));
@@ -629,20 +697,35 @@ function dispGenes(div, track, expand, className) {
                 }
             }
         }
+<<<<<<< HEAD
         var now = new Date();
 //    console.log(now.getMinutes() + ":" + now.getSeconds() + ":" + now.getMilliseconds());
 
         if (jQuery('input[name=' + track + 'mergedCheckbox]').is(':checked')) {
             jQuery(div).fadeOut();
             jQuery("#" + track + "_wrapper").fadeOut();
+=======
+      }
+    }
+    if (jQuery('input[name=' + track + 'mergedCheckbox]').is(':checked')) {
+      jQuery(div).fadeOut();
+      jQuery("#" + track + "_wrapper").fadeOut();
+>>>>>>> 803b040... Preloadtrack bug fixed and unwanted scripts removed
 
             jQuery(div).html();
 
+<<<<<<< HEAD
             //  track_html = track_html.replace(/tracks_image/g, 'merged_tracks_image')
             jQuery("#mergedtrack").css('height', (j * 20) + parseInt(50));
             jQuery("#mergedtrack").append(track_html.join(''));
             jQuery("#mergedtrack").fadeIn();
             jQuery("#mergedtrack_wrapper").fadeIn();
+=======
+      jQuery("#mergedtrack").css('height', (j * 20) + parseInt(50));
+      jQuery("#mergedtrack").append(track_html.join(''));
+      jQuery("#mergedtrack").fadeIn();
+      jQuery("#mergedtrack_wrapper").fadeIn();
+>>>>>>> 803b040... Preloadtrack bug fixed and unwanted scripts removed
 
 
         }
@@ -887,6 +970,7 @@ function dispGeneExon(track, genestrand, className) {
 }
 
 function dispTrack(div, trackName, className) {
+<<<<<<< HEAD
     var labelclass = "label" + trackName;
     var modi_style;
     var now = new Date();
@@ -903,6 +987,10 @@ function dispTrack(div, trackName, className) {
         }
     });
 =======
+=======
+  var labelclass = "label" + trackName;
+  var modi_style;
+>>>>>>> 803b040... Preloadtrack bug fixed and unwanted scripts removed
   var labeltoogle = "display : none;";
   var trackId;
 
@@ -910,6 +998,7 @@ function dispTrack(div, trackName, className) {
     labeltoogle = "display : none;";
   }
 
+<<<<<<< HEAD
 //  jQuery(track_list).each(function (index) {
 //    if (track_list[index].name == trackName) {
 //      trackId = track_list[index].id;
@@ -924,6 +1013,12 @@ function dispTrack(div, trackName, className) {
         jQuery(div).html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
         jQuery(div).fadeIn();
         jQuery("#" + trackName + "_wrapper").fadeIn();
+=======
+  if (!window[trackName] || window[trackName] == "loading") {
+    jQuery(div).html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
+    jQuery(div).fadeIn();
+    jQuery("#" + trackName + "_wrapper").fadeIn();
+>>>>>>> 803b040... Preloadtrack bug fixed and unwanted scripts removed
 
     }
     else if (window[trackName][0] == "getHit no result found") {
@@ -943,6 +1038,7 @@ function dispTrack(div, trackName, className) {
         var newEnd_temp = getEnd();
         var maxLen_temp = jQuery("#canvas").css("width");
 
+<<<<<<< HEAD
 //    var track_old = window[trackName];
         var track = window[trackName];
         var now = new Date();
@@ -964,11 +1060,20 @@ function dispTrack(div, trackName, className) {
 
 
             jQuery(div).html(track_html.join(""));
+=======
+    var track = window[trackName];
+
+    if (track[0] == null) {
+      track_html = [];
+      track_html.push("<font size=4><center>No data available for selected region</center></font>");
+      jQuery(div).html(track_html.join(""));
+>>>>>>> 803b040... Preloadtrack bug fixed and unwanted scripts removed
 //      jQuery(div).css('height', 50)
 
             jQuery(div).fadeIn();
             jQuery("#" + trackName + "_wrapper").fadeIn();
 
+<<<<<<< HEAD
         }
         else if (track.length > 0 && (track.length < 10000 || diff <= minWidth)) {
             var track_html = [];
@@ -988,6 +1093,22 @@ function dispTrack(div, trackName, className) {
 <<<<<<< HEAD
             }
 =======
+=======
+    }
+    else if (track.length > 0 && (track.length < 10000 || diff <= minWidth)) {
+      var track_html = [];
+      var coord;
+      if (jQuery('input[name=' + trackName + 'mergedCheckbox]').is(':checked')) {
+        jQuery(div).fadeOut();
+        jQuery(div).html("");
+        track_html.push("(" + merged_track_list + ")");
+        jQuery("#mergelabel").html(track_html.join(""));
+        trackClass += " mergedtrack";
+        labelclass = "Merged_Track";
+      }
+      else {
+        jQuery(div).html(track_html.join(""));
+>>>>>>> 803b040... Preloadtrack bug fixed and unwanted scripts removed
       }
 
       if (window['track_list' + trackName].id.toString().indexOf('cs') > -1) {
@@ -997,14 +1118,6 @@ function dispTrack(div, trackName, className) {
         coord = false;
       }
 
-//      jQuery(track_list).each(function (index) {
-//        if (this.name == trackName && this.id.toString().indexOf('cs') > -1) {
-//          coord = true;
-//        }
-//        else {
-//          coord = false;
-//        }
-//      });
       track_html = [];
 
       var j = 0;
@@ -1040,7 +1153,6 @@ function dispTrack(div, trackName, className) {
         if (strand == -1 || strand == false) {
           spanclass = "ui-icon ui-icon-carat-1-w";
         }
-
 
         var track_start = track[track_len].start;
         var track_stop = track[track_len].end ? track[track_len].end : parseInt(track[track_len].start) + 1;
@@ -1234,6 +1346,7 @@ function dispTrack(div, trackName, className) {
     var now = new Date();
 }
 function dispCigarLine(cigars, start, top) {
+<<<<<<< HEAD
     var track_html = "";
     var trackClass = "";
     var newStart_temp = getBegin();
@@ -1294,6 +1407,53 @@ function dispCigarLine(cigars, start, top) {
 //        console.log(startposition + "," + stopposition + "," + top + "," + trackClass)
             }
         }
+=======
+  var track_html = "";
+  var trackClass = "";
+  var newStart_temp = getBegin();
+  var newEnd_temp = getEnd();
+  var maxLentemp = jQuery("#canvas").css("width");
+
+
+  var cigar_pos = start;
+  var startposition;
+  var stopposition;
+  if (cigars != '*') {
+    cigars = cigars.replace(/([SIXMND])/g, ":$1,");
+    var cigars_array = cigars.split(',');
+    for (var i = 0; i < cigars_array.length - 1; i++) {
+      var cigar = cigars_array[i].split(":");
+
+      var key = cigar[1];
+      var length = cigar[0];
+      if (key == "M") {
+        cigar_pos = parseInt(cigar_pos) + parseInt(length);
+      }
+      else if (key == "I") {
+        trackClass = "insert";
+        startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+        stopposition = (length) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+        track_html += trackHTML(startposition, stopposition, top, trackClass);
+        cigar_pos = parseInt(cigar_pos) + parseInt(length)
+      }
+      else if (key == "D") {
+        trackClass = "delete";
+        startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+        stopposition = 1
+        track_html += trackHTML(startposition, stopposition, top, trackClass);
+      }
+
+      else if (key == "X") {
+        trackClass = "mismatch";
+        startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+        stopposition = (length) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+        track_html += trackHTML(startposition, stopposition, top, trackClass);
+        cigar_pos = parseInt(cigar_pos) + parseInt(length)
+      }
+      else if (key == "=") {
+        cigar_pos = parseInt(cigar_pos) + parseInt(length)
+      }
+>>>>>>> 803b040... Preloadtrack bug fixed and unwanted scripts removed
     }
 
     function trackHTML(startposition, stopposition, top, trackClass) {
@@ -1309,6 +1469,7 @@ function dispCigarLine(cigars, start, top) {
     return track_html;
 }
 function dispCigar(cigars, start, top) {
+<<<<<<< HEAD
 //  console.log("cigars")
     var track_html = "";
     var trackClass = "";
@@ -1356,6 +1517,51 @@ function dispCigar(cigars, start, top) {
                 "STYLE=\"height: 5px; z-index: 100; TOP:" + top + "px; LEFT:" + startposition + "px; " +
                 "width:" + (stopposition) + "px \" > </div>";
         }
+=======
+  var track_html = "";
+  var trackClass = "";
+  var newStart_temp = getBegin();
+  var newEnd_temp = getEnd();
+  var maxLentemp = jQuery("#canvas").css("width");
+
+  for (var key in cigars) {
+    if (key == "M") {
+      trackClass = "match";
+    }
+    else if (key == "I") {
+      trackClass = "insert";
+    }
+    else if (key == "D") {
+      trackClass = "delete";
+    }
+    else if (key == "D") {
+      trackClass = "skip";
+    }
+    else if (key == "X") {
+      trackClass = "mismatch";
+    }
+    else if (key == "=") {
+      trackClass = "match";
+    }
+    var cigar = cigars[key].split(",");
+    for (var i = 0; i < cigar.length; i++) {
+      var cigar_start = parseInt(cigar[i].split(":")[0]) + parseInt(start);
+      var cigar_stop = cigar[i].split(":")[1];
+      var startposition = (cigar_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+
+
+      var stopposition;
+      if (key == "M" || key == "I" || key == "X" || key == "=") {
+        stopposition = (cigar_stop) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+      }
+      else {
+        stopposition = 1;
+      }
+      track_html += "<div class='" + trackClass + "'  " +
+                    "STYLE=\"height: 5px; z-index: 100; TOP:" + top + "px; LEFT:" + startposition + "px; " +
+                    "width:" + (stopposition) + "px \" > </div>";
+    }
+>>>>>>> 803b040... Preloadtrack bug fixed and unwanted scripts removed
 
     }
     return track_html;
