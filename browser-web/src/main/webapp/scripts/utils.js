@@ -120,12 +120,9 @@ function trackToggle(trackname) {
 //            graph = "true";
 //        }
 //    }
-
     if (trackname == "all") {
-console.log("all")
         jQuery("#mergedtrack").html("<div id= \"mergelabel\" align='left' class='handle'></div>");
         for (var i = 0; i < track_list.length; i++) {
-console.log(track_list[i].name)
             if (jQuery("#" + track_list[i].name + "Checkbox").is(':checked')) {
                 if (window['track_list' + track_list[i].name].graph == "true") {
                     dispGraph("#" + track_list[i].name + "_div", track_list[i].name, track_list[i].display_label)
@@ -136,7 +133,7 @@ console.log(track_list[i].name)
                 else if (track_list[i].name.toLowerCase().indexOf("gene") >= 0) {
                     dispGenes("#" + track_list[i].name + "_div", track_list[i].name, track_list[i].expand, track_list[i].display_label);
                 }
-                else if (track_list[i].name.toLowerCase().indexOf("wig") >= 0 || track_list[i].name.toLowerCase().indexOf("bed") >= 0) {
+                else if (track_list[i].name.toLowerCase().indexOf("wig") >= 0) {
                     dispGraphWig("#" + track_list[i].name + "_div", track_list[i].name, trackid, track_list[i].display_label);
                 }
                 else if (track_list[i].name.toLowerCase().indexOf("bed") >= 0) {
@@ -147,7 +144,6 @@ console.log(track_list[i].name)
                 }
             }
             else {
-console.log("else"+track_list[i].name)
                 jQuery("#" + track_list[i].name + "_wrapper").fadeOut();
             }
         }

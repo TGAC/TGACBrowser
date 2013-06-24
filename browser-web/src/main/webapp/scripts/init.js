@@ -496,7 +496,6 @@ function trackList(tracklist) {
 
   var Tracklist = tracklist;
   for (var i = 0; i < Tracklist.length; i++) {
-
     window['track_list' + Tracklist[i].name] = {
       id: Tracklist[i].id,
       display_label: Tracklist[i].display_label,
@@ -507,13 +506,11 @@ function trackList(tracklist) {
       graph: Tracklist[i].graph
     }
   }
-  console.log("here")
   var tracks = "<table> <tr>";
   var mergeTrack = "<table> <tr>";
 
 
   for (var i = 0; i < Tracklist.length; i++) {
-
 
     tracks += "<td> <span title='" + Tracklist[i].desc + "'><input type=\"checkbox\" id='" + Tracklist[i].name + "Checkbox' name='" + Tracklist[i].name + "-" + Tracklist[i].id + "'  onClick=loadTrackAjax(\"" + Tracklist[i].id + "\",\"" + Tracklist[i].name + "\"); />  " + Tracklist[i].display_label + " </span> </td>";
     mergeTrack += "<td><span id='" + Tracklist[i].name + "span'> <input type=\"checkbox\" disabled id='" + Tracklist[i].name + "mergedCheckbox' name='" + Tracklist[i].name + "mergedCheckbox' onClick=mergeTrack(\"" + Tracklist[i].name + "\"); value=" + Tracklist[i].name + " >" + Tracklist[i].display_label + "  </span> </td>";
@@ -538,7 +535,6 @@ function trackList(tracklist) {
 
     }
   }
-
   jQuery("#mergetracklist").html(mergeTrack);
   jQuery("#tracklist").html(tracks);
   jQuery("#tracks").html("<div id='mergedtrack_wrapper' class='feature_tracks' style=\"display:none\">  " +
@@ -585,7 +581,6 @@ function trackList(tracklist) {
                                                              });
     });
   }
-
   function checkGene(track) {
     if (track.toLowerCase().indexOf('gene') >= 0) {
       return "<td><div title='Expand/Shrink' class=\"closehandle ui-icon ui-icon-carat-2-n-s\" onclick=toogleTrackView(\"" + track + "\");> </div></td>"
@@ -714,12 +709,8 @@ function loadDefaultTrack(tracklist) {
         return false; // stops the loop
       }
     });
-
     continue;
-
-
   }
-
 }
 
 function mergeTrackList(trackName) {

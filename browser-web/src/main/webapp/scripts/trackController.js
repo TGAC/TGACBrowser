@@ -351,15 +351,8 @@ function dispGenes(div, track, expand, className) {
   var labeltoogle = "display : in-line;";
   var labelclass = "label" + track;
 
-  if (track.indexOf("RNA") >= 0) {
-    trackClass = "rnaseq_exon";
-  }
-  else if (track.toLowerCase().indexOf("cufflink") >= 0) {
-    trackClass = "cufflink_exon";
-  }
-  else {
     trackClass = "exon";
-  }
+
   console.log(window['track_list' + track].label)
   if (window['track_list' + track].label == 0) {
     labeltoogle = "display : none;";
@@ -909,13 +902,7 @@ function dispTrack(div, trackName, className) {
       track_html = [];
 
       var j = 0;
-      if (trackName.toLowerCase().indexOf("cds") >= 0) {
-        trackClass = "cds";
-      }
-      else if (trackName.toLowerCase().indexOf("exon") >= 0) {
-        trackClass = "exon track";
-      }
-      else if (trackName.toLowerCase().indexOf("contig") >= 0) {
+      if (trackName.toLowerCase().indexOf("contig") >= 0) {
         trackClass = "contigs track";
       }
       else if (trackName.toLowerCase().indexOf("est") >= 0) {
