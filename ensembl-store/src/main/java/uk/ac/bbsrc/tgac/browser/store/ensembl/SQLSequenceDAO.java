@@ -1937,7 +1937,65 @@ public class SQLSequenceDAO implements SequenceStore {
         } catch (EmptyResultDataAccessException e) {
             throw new IOException("getGene no result found.");
 
+<<<<<<< HEAD
         }
+=======
+      for (Map map : maps) {
+        JSONObject eachTrack = new JSONObject();
+        eachTrack.put("start", map.get("seq_region_start"));
+        eachTrack.put("end", map.get("seq_region_end"));
+        eachTrack.put("desc", map.get("seq_region_strand"));
+        eachTrack.put("flag", false);
+
+        trackList.add(eachTrack);
+      }
+      return trackList;
+    }
+    catch (EmptyResultDataAccessException e) {
+      throw new IOException("getHit no result found");
+
+    }
+  }
+
+  public JSONArray getAnnotationId(int query) throws IOException {
+    try {
+      int coord = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{query}, Integer.class);
+      int rank = template.queryForObject(GET_RANK_for_COORD_SYSTEM_ID, new Object[]{coord}, Integer.class);
+
+      JSONArray annotationlist = new JSONArray();
+      List<Map<String, Object>> maps = template.queryForList(GET_TRACKS_VIEW);
+
+      for (Map map : maps) {
+        JSONObject annotationid = new JSONObject();
+        annotationid.put("name", map.get("name").toString().replaceAll("\\s+", "_").replaceAll("[.]","_"));
+        annotationid.put("id", map.get("id"));
+        annotationid.put("desc", map.get("description"));
+        annotationid.put("disp", map.get("displayable"));
+        annotationid.put("display_label", map.get("display_label").toString().replaceAll("\\s+", "_").replaceAll("[.]","_"));
+        annotationid.put("merge", "0");
+        annotationid.put("label", "0");
+        annotationid.put("graph", "false");
+        annotationid.put("colour", map.get("web_data"));
+        annotationlist.add(annotationid);
+      }
+      List<Map<String, Object>> coords = template.queryForList(GET_Coords_sys_API, new Object[]{rank});
+
+      for (Map map : coords) {
+        JSONObject annotationid = new JSONObject();
+
+        annotationid.put("name", map.get("name"));
+        annotationid.put("id", "cs" + map.get("coord_system_id"));
+        annotationid.put("desc", "Coordinate System Rank:" + map.get("rank"));
+        annotationid.put("disp", "0");
+        annotationid.put("display_label", map.get("name"));
+        annotationid.put("merge", "0");
+        annotationid.put("label", "0");
+        annotationid.put("graph", "false");
+//                annotationid.put("colour", "blue");
+        annotationlist.add(annotationid);
+      }
+      return annotationlist;
+>>>>>>> 0cad888... track name dot and spaces skipping and scripts factoring
     }
 
     public Integer getSeqRegionforone(String searchQuery) throws IOException {
