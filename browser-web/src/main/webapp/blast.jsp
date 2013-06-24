@@ -105,7 +105,6 @@
         var params = jQuery('#blast_type').val();
         if(jQuery("#filter").attr('checked'))
         {
-            console.log("filter rtue")
             if(jQuery('#blast_type').val().indexOf('tblastn') >= 0){
                 params += " -seg no";
             }
