@@ -133,8 +133,8 @@ function checkTask(task, db, format, start, end, hit, link) {
                         'blastSearchSequence',
                         {'accession': task, 'db': db, 'location': link, 'url': ajaxurl},
                         {'doOnSuccess': function (json) {
-                          jQuery('#blastresult').html(json.html);
-                          jQuery("#blasttable").tablesorter();
+                            parseBLAST(json);
+                            jQuery("#blasttable").tablesorter();
                           jQuery("#notifier").hide()
                           jQuery("#notifier").html("");
                         }

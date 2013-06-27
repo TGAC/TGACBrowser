@@ -82,7 +82,12 @@ public class BlastService {
    */
   public JSONObject blastSearchSequence(HttpSession session, JSONObject json) throws IOException {
     try {
-      String blastAccession = json.getString("accession");
+       JSONArray blasts = new JSONArray();
+            JSONObject html = new JSONObject();
+        String blastdb = json.getString("db");
+
+
+        String blastAccession = json.getString("accession");
       String location = json.getString("location");
       StringBuilder sb = new StringBuilder();
 
@@ -104,6 +109,8 @@ public class BlastService {
                 "<th class=\"header\"> e-value </th> " +
                 "<th class=\"header\"> bit score </th></tr></thead><tbody>");
       while (null != (str = in.readLine())) {
+        JSONObject eachBlast = new JSONObject();
+
 
         Pattern p = Pattern.compile("#");
         Matcher matcher_comment = p.matcher(str);
@@ -118,19 +125,33 @@ public class BlastService {
             String str1 = str.replaceAll("\\s+", "<td>");
             String[] id;
             id = str1.split("<td>");
-            String seqregionName = id[1];
-            String hsp_from = id[8];
-            String hsp_to = id[9];
+              String seqregionName = id[1];
+              String hsp_from = id[8];
+              String hsp_to = id[9];
 
-            String str2 = "";
-            if (location.length() > 0) {
-              str2 = str1.replaceAll(id[1], " <a target='_blank' href='../" + location + "/index.jsp?query=" + seqregionName + "&from=" + hsp_from + "&to=" + hsp_to + "&blasttrack=" + blastAccession + "'>"
-                                            + seqregionName + "</a>");
-            }
-            else {
-              str2 = str1;
-            }
-            sb.append("<tr> <td> " + str2 + "</td></tr>");
+              eachBlast.put("q_id", id[0]);
+                        if (location.length() > 0) {
+                            eachBlast.put("s_id", "<a target='_blank' href='../" + location + "/index.jsp?query=" + seqregionName + "&from=" + hsp_from + "&to=" + hsp_to + "&blasttrack=" + blastAccession + "'>"
+                                    + seqregionName + "</a>");
+                        } else {
+                            eachBlast.put("s_id", id[1]);
+
+                        }
+                        eachBlast.put("identity", id[2]);
+                        eachBlast.put("aln_length", id[3]);
+                        eachBlast.put("mismatch", id[4]);
+                        eachBlast.put("gap_open", id[5]);
+                        eachBlast.put("q_start", id[6]);
+                        eachBlast.put("q_end", id[7]);
+                        eachBlast.put("s_start", id[8]);
+                        eachBlast.put("s_end", id[9]);
+                        eachBlast.put("e_value", id[10]);
+                        eachBlast.put("bit_score", id[11]);
+                        eachBlast.put("s_db", blastdb.substring(blastdb.lastIndexOf("/") + 1));
+
+
+
+
             i++;
           }
         }
@@ -140,14 +161,13 @@ public class BlastService {
       in.close();
 
       String result = null;
-      if (i > 0) {
-        result = sb.toString();
-      }
-      else {
-        result = "No hits found.";
-      }
+        if (i > 0) {
+        } else {
+            blasts.add("No hits found.");
+        }
 
-      return JSONUtils.JSONObjectResponse("html", result);
+        html.put("html", blasts);
+        return html;
     }
     catch (Exception e) {
       e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.

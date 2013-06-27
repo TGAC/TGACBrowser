@@ -3,15 +3,15 @@
 <%--<h1 id="seqnameh1">Blast Search </h1>--%>
 
 <div style="position: absolute; top: 50px;left: 20px;" id="blasttextsearch">
-    <h1> BLAST Search</h1>
-        Enter sequence below in FASTA or RAW format
+
+    Enter sequence below in FASTA or RAW format
     <br>
     <textarea class="ui-corner-all" id="blastsearch" rows="6" cols="60"
               style="margin: 2px 2px 2px 2px; height: 100px; width: 98%; "></textarea>
 
     </select> Blast DB
     <div id="blastdbs" position: style="position: absolute; display: none">
-        <select name="blastdb" id="blastdb">
+        <select name="blastdb" id="blastdb" multiple>
 
             <c:set var="databases">${initParam.blastdblink} </c:set>
 
@@ -48,6 +48,11 @@
         <button class="ui-state-default ui-corner-all"
                 onclick=blastFilter()>
             BLAST
+        </button>
+
+        <button class="ui-state-default ui-corner-all"
+                onclick="resetBLAST()">
+            Clear
         </button>
 
     </div>
@@ -97,22 +102,54 @@
 
 </div>
 
-<div id="blastresult"></div>
+<div id="blastresult" style="display: none">
+    <table class='list' id='blasttable'>
+        <thead>
+        <tr>
+            <th class="header"> Query id </th>
+            <th class="header"> Subject id </th>
+            <th class="header"> % identity </th>
+            <th class="header"> alignment length </th>
+            <th class="header"> mismatches </th>
+            <th class="header"> gap openings </th>
+            <th class="header"> q.start </th>
+            <th class="header"> q.end </th>
+            <th class="header"> s.start </th>
+            <th class="header"> s.end </th>
+            <th class="header"> e-value </th>
+            <th class="header"> bit score </th>
+            <th class="header"> Subject db </th>
+        </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+</div>
 
 <script type="text/javascript">
     var seq;
     function blastFilter(){
-        var params = jQuery('#blast_type').val();
-        if(jQuery("#filter").attr('checked'))
-        {
-            if(jQuery('#blast_type').val().indexOf('tblastn') >= 0){
-                params += " -seg no";
-            }
-            else {
-                params += " -dust no";
+
+        var dbs = jQuery('#blastdb').val()
+        if(dbs ==  null){
+            alert("Select a database")
+        } else{
+            for(var i=0; i<dbs.length; i++){
+                var params = jQuery('#blast_type').val();
+                if(jQuery("#filter").attr('checked'))
+                {
+                    if(jQuery('#blast_type').val().indexOf('tblastn') >= 0){
+                        params += " -seg no";
+                    }
+                    else {
+                        params += " -dust no";
+                    }
+                }
+                blastSearch(jQuery('#blastsearch').val(),dbs[i],params);
             }
         }
-        blastSearch(jQuery('#blastsearch').val(),jQuery('#blastdb').val(),params);
+
     }
     jQuery(document).ready(function () {
         getUrlVars();
