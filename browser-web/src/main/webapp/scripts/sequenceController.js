@@ -47,14 +47,18 @@ function dispSeq() {
   dispCoord(seqStart, seqEnd);
   browser_coordinates();
   setNavPanel();
+<<<<<<< HEAD
+=======
+  trackToggle("all");
+>>>>>>> 1087e9c... tracks get cleared specially in merge tracks
   updateJSON();
 }
 
 function changeSeq(begin, end) {
-  updateJSON();
+    trackToggle("all");
+    updateJSON();
   seqBar(begin, end);
   browser_coordinates();
-//  trackToggle("all");
 }
 
 function seqBar(seqStart, seqEnd) {
