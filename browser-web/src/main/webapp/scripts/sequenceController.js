@@ -49,15 +49,15 @@ function dispSeq() {
   dispCoord(seqStart, seqEnd);
   browser_coordinates();
   setNavPanel();
-//  trackToggle("all");
+  trackToggle("all");
   updateJSON();
 }
 
 function changeSeq(begin, end) {
-  updateJSON();
+    trackToggle("all");
+    updateJSON();
   seqBar(begin, end);
   browser_coordinates();
-//  trackToggle("all");
 }
 
 function seqBar(seqStart, seqEnd) {
