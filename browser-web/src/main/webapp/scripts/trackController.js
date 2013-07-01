@@ -1064,6 +1064,24 @@ function dispCigar(cigars, start, top) {
 function dispGraph(div, trackName, className) {
     var track_html = "";
 
+     if (jQuery('input[name=' + trackName + 'mergedCheckbox]').is(':checked')) {
+        jQuery(div).fadeOut();
+        jQuery("#" + trackName + "_wrapper").fadeOut();
+        div = "#mergedtrack";
+        jQuery("#mergedtrack").fadeIn();
+        jQuery("#mergedtrack_wrapper").fadeIn();
+
+        track_html.push("(" + merged_track_list + ")");
+        jQuery("#mergelabel").html(track_html.join(""));
+
+        className = " mergedtrack "+className;
+        labelclass = "Merged_Track";
+    }
+    else {
+        jQuery(div).fadeIn();
+        jQuery("#" + track + "_wrapper").fadeIn();
+    }
+
     if (!window[trackName] || window[trackName] == "loading") {
         jQuery(div).html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
         jQuery(div).fadeIn();
@@ -1101,16 +1119,24 @@ function dispGraph(div, trackName, className) {
             var startposition = (track_start - newStart_temp) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen_temp) / 2;
             var stopposition = (track_stop - track_start ) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp);
 
-            track_html += "<div class= \"graph " + className + "_graph\" onclick=\"setBegin(" + track[track_len].start + ");setEnd(" + track[track_len].end + ");jumpToSeq();\"STYLE=\"bottom:0px; height: " + (track[track_len].graph * 45 / max) + "px;" +
-                "LEFT:" + startposition + "px;" +
-                "width:" + (stopposition - 1) + "px \" title=\"" + track_start + ":" + track_stop + "->" + track[track_len].graph + "\" ></div>";
+             jQuery("<div>").attr({
+                        'id': trackName + "" + track_len,
+                        'class': "graph " + className+"_graph",
+                        'style': "bottom:0px; height: " + (track[track_len].graph * 45 / max) + "px; LEFT:" + startposition + "px; width:" + (stopposition - 1) + "px",
+                        'title': track_start + ":" + track_stop + "->" + track[track_len].graph,
+                        'onClick': "setBegin(" + track[track_len].start + ");setEnd(" + track[track_len].end + ");jumpToSeq();"
+                    }).appendTo(div);
+
+//            track_html += "<div class= \"graph " + className + "_graph\" onclick=\"setBegin(" + track[track_len].start + ");setEnd(" + track[track_len].end + ");jumpToSeq();\"STYLE=\"bottom:0px; height: " + (track[track_len].graph * 45 / max) + "px;" +
+//                "LEFT:" + startposition + "px;" +
+//                "width:" + (stopposition - 1) + "px \" title=\"" + track_start + ":" + track_stop + "->" + track[track_len].graph + "\" ></div>";
 
         }
 //  jQuery(div).css('height', '70px');
-        jQuery(div).fadeIn();
-        jQuery("#" + trackName + "_wrapper").fadeIn();
-
-        jQuery(div).html(track_html);
+//        jQuery(div).fadeIn();
+//        jQuery("#" + trackName + "_wrapper").fadeIn();
+//
+//        jQuery(div).html(track_html);
     }
 }
 
