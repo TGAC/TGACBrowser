@@ -72,22 +72,23 @@ public class BlastService {
   /**
    * Return JSONObject
    * <p>
-   *   Reads the xml file get ID from ajax call
-   *   Format data into table format and sends back
+   * Reads the xml file get ID from ajax call
+   * Format data into table format and sends back
    * </p>
+   *
    * @param session an HTTPSession comes from ajax call
-   * @param json  json object with key parameters sent from ajax call
+   * @param json    json object with key parameters sent from ajax call
    * @return JSONObject with BLAST result formatted into table
    * @throws IOException
    */
   public JSONObject blastSearchSequence(HttpSession session, JSONObject json) throws IOException {
     try {
-       JSONArray blasts = new JSONArray();
-            JSONObject html = new JSONObject();
-        String blastdb = json.getString("db");
+      JSONArray blasts = new JSONArray();
+      JSONObject html = new JSONObject();
+      String blastdb = json.getString("db");
 
 
-        String blastAccession = json.getString("accession");
+      String blastAccession = json.getString("accession");
       String location = json.getString("location");
       StringBuilder sb = new StringBuilder();
 
@@ -125,49 +126,48 @@ public class BlastService {
             String str1 = str.replaceAll("\\s+", "<td>");
             String[] id;
             id = str1.split("<td>");
-              String seqregionName = id[1];
-              String hsp_from = id[8];
-              String hsp_to = id[9];
+            String seqregionName = id[1];
+            String hsp_from = id[8];
+            String hsp_to = id[9];
 
-              eachBlast.put("q_id", id[0]);
-                        if (location.length() > 0) {
-                            eachBlast.put("s_id", "<a target='_blank' href='../" + location + "/index.jsp?query=" + seqregionName + "&from=" + hsp_from + "&to=" + hsp_to + "&blasttrack=" + blastAccession + "'>"
+            eachBlast.put("q_id", id[0]);
+            if (location.length() > 0) {
+              eachBlast.put("s_id", "<a target='_blank' href='../" + location + "/index.jsp?query=" + seqregionName + "&from=" + hsp_from + "&to=" + hsp_to + "&blasttrack=" + blastAccession + "'>"
                                     + seqregionName + "</a>");
-                        } else {
-                            eachBlast.put("s_id", id[1]);
+            }
+            else {
+              eachBlast.put("s_id", id[1]);
 
-                        }
-                        eachBlast.put("identity", id[2]);
-                        eachBlast.put("aln_length", id[3]);
-                        eachBlast.put("mismatch", id[4]);
-                        eachBlast.put("gap_open", id[5]);
-                        eachBlast.put("q_start", id[6]);
-                        eachBlast.put("q_end", id[7]);
-                        eachBlast.put("s_start", id[8]);
-                        eachBlast.put("s_end", id[9]);
-                        eachBlast.put("e_value", id[10]);
-                        eachBlast.put("bit_score", id[11]);
-                        eachBlast.put("s_db", blastdb.substring(blastdb.lastIndexOf("/") + 1));
-
-
-
-
+            }
+            eachBlast.put("identity", id[2]);
+            eachBlast.put("aln_length", id[3]);
+            eachBlast.put("mismatch", id[4]);
+            eachBlast.put("gap_open", id[5]);
+            eachBlast.put("q_start", id[6]);
+            eachBlast.put("q_end", id[7]);
+            eachBlast.put("s_start", id[8]);
+            eachBlast.put("s_end", id[9]);
+            eachBlast.put("e_value", id[10]);
+            eachBlast.put("bit_score", id[11]);
+            eachBlast.put("s_db", blastdb.substring(blastdb.lastIndexOf("/") + 1));
             i++;
           }
         }
+        blasts.add(eachBlast);
       }
       sb.append("</tbody></table");
 
       in.close();
 
       String result = null;
-        if (i > 0) {
-        } else {
-            blasts.add("No hits found.");
-        }
+      if (i > 0) {
+      }
+      else {
+        blasts.add("No hits found.");
+      }
 
-        html.put("html", blasts);
-        return html;
+      html.put("html", blasts);
+      return html;
     }
     catch (Exception e) {
       e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -180,10 +180,11 @@ public class BlastService {
   /**
    * Return JSONObject
    * <p>
-   *   Reads file ID from ajax call
+   * Reads file ID from ajax call
    * </p>
+   *
    * @param session an HTTPSession comes from ajax call
-   * @param json json object with key parameters sent from ajax call
+   * @param json    json object with key parameters sent from ajax call
    * @return JSONObject with data formatted into tracks style
    * @throws IOException
    */
@@ -300,11 +301,12 @@ public class BlastService {
   /**
    * Return JSONObject
    * <p>
-   *   Reads file with ID from ajax call
-   *   Parse file based on space and format to track style
+   * Reads file with ID from ajax call
+   * Parse file based on space and format to track style
    * </p>
+   *
    * @param session an HTTPSession comes from ajax call
-   * @param json json object with key parameters sent from ajax call
+   * @param json    json object with key parameters sent from ajax call
    * @return JSONObject with blasttrack result
    * @throws IOException
    */
@@ -364,9 +366,10 @@ public class BlastService {
   /**
    * Return String
    * <p>
-   *   Read XMLDomElement and read the value from key name
+   * Read XMLDomElement and read the value from key name
    * </p>
-   * @param ele XMLDOMElement
+   *
+   * @param ele     XMLDOMElement
    * @param tagName XMLDOMElement tag name
    * @return Strnig value related to tag name
    */
@@ -385,12 +388,13 @@ public class BlastService {
   /**
    * Return JSONObject
    * <p>
-   *   Reads BLAST parameter from ajax call
-   *   Creates a FASTA file for query
-   *   call method sendMessage with parameters
+   * Reads BLAST parameter from ajax call
+   * Creates a FASTA file for query
+   * call method sendMessage with parameters
    * </p>
+   *
    * @param session an HTTPSession comes from ajax call
-   * @param json json object with key parameters sent from ajax call
+   * @param json    json object with key parameters sent from ajax call
    * @return
    * @throws IOException
    */
@@ -441,10 +445,11 @@ public class BlastService {
   /**
    * Return Socket
    * <p>
-   *   create new Socket from information
+   * create new Socket from information
    * </p>
-   * @param host  String with host name
-   * @param port  int with port number
+   *
+   * @param host String with host name
+   * @param port int with port number
    * @return Socket
    * @throws IOException
    */
@@ -455,10 +460,11 @@ public class BlastService {
   /**
    * Return String
    * <p>
-   *
+   * <p/>
    * </p>
+   *
    * @param socket Socket information
-   * @param query String with parameters
+   * @param query  String with parameters
    * @return String
    * @throws IOException
    */
@@ -469,7 +475,7 @@ public class BlastService {
       // Send data
       wr.write(query + "\r\n");
       wr.flush();
-      log.info("send Message "+query);
+      log.info("send Message " + query);
       // Get response
       BufferedReader rd = new BufferedReader(new InputStreamReader(socket.getInputStream()));
       String line;
@@ -505,7 +511,6 @@ public class BlastService {
   }
 
   /**
-   *
    * @param taskId
    * @return
    * @throws IOException
@@ -539,8 +544,9 @@ public class BlastService {
   /**
    * Return String
    * <p>
-   *   check State of a taskId got from argument and return
+   * check State of a taskId got from argument and return
    * </p>
+   *
    * @param taskId String
    * @return String with state
    * @throws Exception
@@ -563,11 +569,12 @@ public class BlastService {
   /**
    * Return JSONObject
    * <p>
-   *   call method taskSQL with taskId received from ajax call
-   *   IF task is completed it returns true for stopUpdater
+   * call method taskSQL with taskId received from ajax call
+   * IF task is completed it returns true for stopUpdater
    * </p>
-   * @param session  an HTTPSession comes from ajax call
-   * @param json json object with key parameters sent from ajax call
+   *
+   * @param session an HTTPSession comes from ajax call
+   * @param json    json object with key parameters sent from ajax call
    * @return JSONObject with stopUpdater
    * @throws IOException
    */
