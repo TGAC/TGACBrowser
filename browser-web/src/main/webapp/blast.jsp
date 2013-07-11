@@ -11,7 +11,7 @@
 
     </select> Blast DB
     <div id="blastdbs" position: style="position: absolute; display: none">
-        <select name="blastdb" id="blastdb" multiple>
+        <select name="blastdb" id="blastdb">
 
             <c:set var="databases">${initParam.blastdblink} </c:set>
 
@@ -103,28 +103,13 @@
 </div>
 
 <div id="blastresult" style="display: none">
-    <table class='list' id='blasttable'>
-        <thead>
-        <tr>
-            <th class="header"> Query id </th>
-            <th class="header"> Subject id </th>
-            <th class="header"> % identity </th>
-            <th class="header"> alignment length </th>
-            <th class="header"> mismatches </th>
-            <th class="header"> gap openings </th>
-            <th class="header"> q.start </th>
-            <th class="header"> q.end </th>
-            <th class="header"> s.start </th>
-            <th class="header"> s.end </th>
-            <th class="header"> e-value </th>
-            <th class="header"> bit score </th>
-            <th class="header"> Subject db </th>
-        </tr>
-        </thead>
-        <tbody>
+</div>
 
-        </tbody>
-    </table>
+<div id="blast_list">
+    <div style="position: relative; background: none repeat scroll 0% 0% gray; font-size: 14px; margin-left: -5px; margin-right: -5px; margin-top: -5px;">
+    <center>
+    <b>BLAST History</b>
+    </center></div>
 </div>
 
 <script type="text/javascript">
@@ -132,11 +117,9 @@
     function blastFilter(){
 
         var dbs = jQuery('#blastdb').val()
-        if(dbs ==  null){
-            alert("Select a database")
-        } else{
-            for(var i=0; i<dbs.length; i++){
-                var params = jQuery('#blast_type').val();
+
+        var type = jQuery('#blast_type').val();
+                var params = "-num_threads  4 ";
                 if(jQuery("#filter").attr('checked'))
                 {
                     if(jQuery('#blast_type').val().indexOf('tblastn') >= 0){
@@ -146,10 +129,7 @@
                         params += " -dust no";
                     }
                 }
-                blastSearch(jQuery('#blastsearch').val(),dbs[i],params);
-            }
-        }
-
+                blastSearch(jQuery('#blastsearch').val(),dbs,type,params);
     }
     jQuery(document).ready(function () {
         getUrlVars();

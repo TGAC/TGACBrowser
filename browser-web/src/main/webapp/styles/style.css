@@ -2631,3 +2631,22 @@ span.deleteicon input {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+#blast_list{
+    background: none repeat scroll 0 0 lightgray;
+    border: 1px solid gray;
+    border-radius: 5px 5px 5px 5px;
+    bottom: 0;
+    max-height: 80%;
+    overflow-y: scroll;
+    padding: 5px;
+    position: fixed;
+    right: 10px;
+    width: 250px;
+}
+
+.blast_list_node {
+border: 1px solid gray;
+    border-radius: 5px 5px 5px 5px;
+    margin: 5px;
+}

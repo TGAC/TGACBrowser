@@ -374,14 +374,30 @@ function backup_tracks_removed(track, i) {
 }
 
 function parseBLAST(json){
+console.log("parse blast")
     jQuery('#blastresult').fadeIn();
+
+  jQuery('#blastresult').append("<table style=\"display: none;\" class='list' id='blasttable"+json.id+"'> <thead>        <tr>            <th class=\"header\"> Query id </th>            <th class=\"header\"> Subject id </th>            <th class=\"header\"> % identity </th>            <th class=\"header\"> alignment length </th>            <th class=\"header\"> mismatches </th>            <th class=\"header\"> gap openings </th>            <th class=\"header\"> q.start </th>            <th class=\"header\"> q.end </th>            <th class=\"header\"> s.start </th>            <th class=\"header\"> s.end </th>            <th class=\"header\"> e-value </th>            <th class=\"header\"> bit score </th>            <th class=\"header\"> Subject db </th>        </tr>        </thead>        <tbody>        </tbody>    </table>")
+
     for(var i=0; json.html.length; i++){
-        jQuery('#blasttable tbody').append("<tr><td>"+json.html[i].q_id+"</td><td>"+json.html[i].s_id+"</td><td>"+json.html[i].identity+"</td><td>"+json.html[i].aln_length+"</td><td>"+json.html[i].mismatch+"</td><td>"+json.html[i].gap_open+"</td><td>"+json.html[i].q_start+"</td><td>"+json.html[i].q_end+"</td><td>"+json.html[i].s_start+"</td><td>"+json.html[i].s_end+"</td><td>"+json.html[i].e_value+"</td><td>"+json.html[i].bit_score+"</td><td>"+json.html[i].s_db+"</td></tr>");
+        jQuery("#blasttable"+json.id+" tbody").append("<tr><td>"+json.html[i].q_id+"</td><td>"+json.html[i].s_id+"</td><td>"+json.html[i].identity+"</td><td>"+json.html[i].aln_length+"</td><td>"+json.html[i].mismatch+"</td><td>"+json.html[i].gap_open+"</td><td>"+json.html[i].q_start+"</td><td>"+json.html[i].q_end+"</td><td>"+json.html[i].s_start+"</td><td>"+json.html[i].s_end+"</td><td>"+json.html[i].e_value+"</td><td>"+json.html[i].bit_score+"</td><td>"+json.html[i].s_db+"</td></tr>");
     }
-    jQuery("#blasttable").tablesorter();
+    jQuery("#blasttable"+json.id).tablesorter();
+
 }
 
 function resetBLAST(){
     jQuery('#blasttable tbody').html("");
     jQuery('#blastresult').fadeOut();
+}
+
+function toogleTable(id){
+     jQuery("th.header").closest("table").hide();
+  jQuery("#blasttable"+id).show()
+}
+
+function deleteTable(id){
+
+  jQuery("#blasttable"+id).remove()
+  jQuery("#"+id).remove()
 }
