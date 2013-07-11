@@ -43,7 +43,7 @@ import java.util.Map;
  * @since 0.1.6
  */
 public abstract class AbstractTgacLsfProcess extends AbstractLSFProcess {
-  private String bsubPath = "/export/lsf/7.0/linux2.6-glibc2.3-x86_64/bin/bsub";// -R 'select[pg<1.0 && ut < 5]'";
+  private String bsubPath = "/export/lsf/7.0/linux2.6-glibc2.3-x86_64/bin/bsub -o out";// -R 'select[pg<1.0 && ut < 5]'";
 
   @Override
   protected String getLSFOutputFilePath(Map<ConanParameter, String> parameters) throws IllegalArgumentException {

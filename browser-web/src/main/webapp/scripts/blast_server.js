@@ -1,26 +1,26 @@
 /*
-*
-* Copyright (c) 2013. The Genome Analysis Centre, Norwich, UK
-* TGAC Browser project contacts: Anil Thanki, Xingdong Bian, Robert Davey, Mario Caccamo @ TGAC
-* **********************************************************************
-*
-* This file is part of TGAC Browser.
-*
-* TGAC Browser is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* TGAC Browser is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with TGAC Browser.  If not, see <http://www.gnu.org/licenses/>.
-*
-* ***********************************************************************
-*
+ *
+ * Copyright (c) 2013. The Genome Analysis Centre, Norwich, UK
+ * TGAC Browser project contacts: Anil Thanki, Xingdong Bian, Robert Davey, Mario Caccamo @ TGAC
+ * **********************************************************************
+ *
+ * This file is part of TGAC Browser.
+ *
+ * TGAC Browser is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * TGAC Browser is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with TGAC Browser.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * ***********************************************************************
+ *
  */
 
 /**
@@ -32,16 +32,31 @@
  */
 
 
-function blastSearch(query, blastdb, type) {
-  jQuery('#blastresult').html("<span style=\"position:relative; left:50%;\"> Submitting &nbsp; <img alt=\"Loading\" src=\"./images/browser/loading_big.gif\" style=\"position: relative;\"> </span> </div>");
-  submitBlastTask(query, blastdb, 6, type);
-  jQuery('#main').animate({"height": "0px"}, { duration: 300, queue: false});
-  jQuery('#main').fadeOut();
+function blastSearch(query, blastdb, type, params) {
+  if (jQuery('#blast_list img').length < 2) {
+    submitBlastTask(query, blastdb, 6, type, 0, 0, 0, params);
+    jQuery('#main').animate({"height": "0px"}, { duration: 300, queue: false});
+    jQuery('#main').fadeOut();
+  }
+  else {
+    alert("You can submit 3 running jobs at a time.")
+  }
 }
 
 
 function blastTrackSearch(query, start, end, hit, blastdb, type) {
   if (!window['blasttrack']) {
+
+    window['track_listblasttrack'] = {
+         name: "blasttrack",
+         id: 0,
+         display_label: "blasttrack",
+         desc: "blast from browser",
+         disp: 1,
+         merge: 0,
+         label: 0,
+         graph: false
+       }
 
     jQuery("#tracklist").append("<p title='blast' id=blastcheck><input type=\"checkbox\" checked id='blasttrackCheckbox' name='blasttrackCheckbox' onClick=loadTrackAjax(\"blasttrack\",\"blasttrack\");\>  Blasttrack\  </p>");
 
@@ -58,13 +73,13 @@ function blastTrackSearch(query, start, end, hit, blastdb, type) {
     window['blasttrack'] = "running";
   }
 
-  submitBlastTask(query, blastdb, 5, type, start, end, hit);
+  submitBlastTask(query, blastdb, 5, type, start, end, hit, " -num_threads  4 ");
   start_global = start;
   end_global = end;
   hit_global = hit;
 }
 
-function submitBlastTask(query, db, format, type, start, end, hit) {
+function submitBlastTask(query, db, format, type, start, end, hit, params) {
   // format 5 for plain text, 6 for xml
   var id = randomString(8);
   var database = db.split(":");
@@ -86,21 +101,30 @@ function submitBlastTask(query, db, format, type, start, end, hit) {
             hit: hit,
             link: link,
             format: format,
-            type: type
+            type: type,
+            params: params
           });
-
   ajaxurl = '/' + jQuery('#title').text() + '/' + jQuery('#title').text() + '/fluxion.ajax';
-
+  jQuery("#blast_list").append("<div id='" + id + "' class='blast_list_node'> <b>BLAST job " + id + " </b> <img style='position: relative;' src='./images/browser/loading_big.gif' height=15px alt='Loading'></div>")
   Fluxion.doAjax(
           'blastservice',
           'submitBlastTask',
-          {'url': ajaxurl, 'querystring': query, 'blastdb': db, 'location': link, 'BlastAccession': id, 'format': format, "type": type},
-          {'doOnSuccess': processTaskSubmission,
+          {'url': ajaxurl, 'querystring': query, 'blastdb': db, 'location': link, 'BlastAccession': id, 'format': format, "type": type, "params": params},
+          {'doOnSuccess': function (json) {
+            if (json.id) {
+              console.log(id + ":" + json.id);
+//              id = json.id;
+              checkTask(id, db, format, start, end, hit, link, json.id, type);
+            }
+            else {
+              checkTask(id, db, format, start, end, hit, link, id, type);
+            }
+          },
             'doOnError': function (json) {
               alert(json.error);
             }
           });
-  checkTask(id, db, format, start, end, hit, link);
+
 }
 
 var processTaskSubmission = function (json) {
@@ -109,13 +133,13 @@ var processTaskSubmission = function (json) {
   }
 };
 
-function checkTask(task, db, format, start, end, hit, link) {
+function checkTask(task, db, format, start, end, hit, link, old_id, type) {
   jQuery("#notifier").html("<img src='images/browser/loading2.gif' height='10px'> BLAST running ");
   jQuery("#notifier").show();
   Fluxion.doAjax(
           'blastservice',
           'checkTask',
-          {'url': ajaxurl, 'taskid': task},
+          {'url': ajaxurl, 'taskid': task, 'old_taskid': old_id},
           {'ajaxType': 'periodical', 'updateFrequency': 5, 'doOnSuccess': function (json) {
             if (json.result == 'FAILED') {
               alert('Blast search: ' + json.result);
@@ -123,18 +147,32 @@ function checkTask(task, db, format, start, end, hit, link) {
               jQuery("#notifier").html("");
             }
             else if (json.result == 'RUNNING') {
-              jQuery('#blastresult').html("<span style=\"position:relative; left:50%;\"> BLASTing &nbsp; <img alt=\"Loading\" src=\"./images/browser/loading_big.gif\" style=\"position: relative;\"> </span> </div>");
+//              jQuery('#blastresult').html("<span style=\"position:relative; left:50%;\"> BLASTing &nbsp; <img alt=\"Loading\" src=\"./images/browser/loading_big.gif\" style=\"position: relative;\"> </span> </div>");
             }
             else if (json.result == 'COMPLETED') {
-              jQuery('#blastresult').html("<span style=\"position:relative; left:50%;\"> Completed Processing &nbsp; <img alt=\"Loading\" src=\"./images/browser/loading_big.gif\" style=\"position: relative;\"> </span> </div>");
+//              jQuery('#blastresult').html("<span style=\"position:relative; left:50%;\"> Completed Processing &nbsp; <img alt=\"Loading\" src=\"./images/browser/loading_big.gif\" style=\"position: relative;\"> </span> </div>");
               if (format == 6) {
                 Fluxion.doAjax(
                         'blastservice',
                         'blastSearchSequence',
-                        {'accession': task, 'db': db, 'location': link, 'url': ajaxurl},
+                        {'accession': task, 'db': db, 'location': link, 'url': ajaxurl, 'old_taskid': json.old_id, 'type': type},
                         {'doOnSuccess': function (json) {
+                          if (json.html == "No hits found.") {
+                            jQuery("#" + json.id).html("<b>BLAST job " + json.id + "</b><br> No hits found. <span onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
+                          }
+                          else if (json.html == "FAILED") {
+                            jQuery("#" + json.id).html("<b>BLAST job " + json.id + "</b><br> Failed. <span onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
+                          }
+                          else if (json.error == "error") {
+                            jQuery("#" + json.id).html("<b>BLAST job " + json.id + "</b><br> Failed. <span onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
+                          }
+                          else {
+                            jQuery("#" + json.id).html("BLAST job " + json.id + " <span title=\"Finished\" class=\"ui-button ui-icon ui-icon-check\"></span> <br>  <span onclick=toogleTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-zoomin\" > </span> <span onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
+                            jQuery('#main').animate({"height": "0px"}, { duration: 300, queue: false});
+                            jQuery('#main').fadeOut();
                             parseBLAST(json);
-                            jQuery("#blasttable").tablesorter();
+                          }
+                          //                          jQuery("#blasttable").tablesorter();
                           jQuery("#notifier").hide()
                           jQuery("#notifier").html("");
                         }
@@ -144,7 +182,7 @@ function checkTask(task, db, format, start, end, hit, link) {
                 Fluxion.doAjax(
                         'blastservice',
                         'blastSearchTrack',
-                        {'start': start, 'end': end, 'hit': hit, 'accession': task, 'location': link, 'db': db, 'url': ajaxurl},
+                        {'start': start, 'end': end, 'hit': hit, 'accession': task, 'location': link, 'db': db, 'url': ajaxurl, 'old_taskid': json.old_id},
                         {'doOnSuccess': function (json) {
                           jQuery("#notifier").hide()
                           jQuery("#notifier").html("");

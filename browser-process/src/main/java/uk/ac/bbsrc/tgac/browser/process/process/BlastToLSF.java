@@ -33,7 +33,9 @@ import uk.ac.bbsrc.tgac.browser.process.parameter.PathParameter;
 import uk.ac.ebi.fgpt.conan.model.ConanParameter;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -56,6 +58,8 @@ public class BlastToLSF extends AbstractTgacLsfProcess {
   private final FlagParameter blastDB;
   private final FlagParameter format;
   private final FlagParameter type;
+  private final FlagParameter params;
+
 
 
   public BlastToLSF() {
@@ -66,6 +70,7 @@ public class BlastToLSF extends AbstractTgacLsfProcess {
     blastDB = new FlagParameter("blastdb");
     format = new FlagParameter("format");
     type = new FlagParameter("type");
+    params = new FlagParameter("params");
 
     parameters = new ArrayList<ConanParameter>();
 
@@ -74,6 +79,7 @@ public class BlastToLSF extends AbstractTgacLsfProcess {
     parameters.add(blastDB);
     parameters.add(format);
     parameters.add(type);
+    parameters.add(params);
   }
 
   protected Logger getLog() {
@@ -94,11 +100,24 @@ public class BlastToLSF extends AbstractTgacLsfProcess {
   protected String getCommand(Map<ConanParameter, String> parameters) {
     try {
       String blast_type = "";
+      String misc_params = "";
       blast_type = parameters.get(type);
+      misc_params = parameters.get(params);
       String blastBinary = "/data/workarea/bianx/blast+/" + blast_type + " ";
-      getLog().debug("Executing " + getName() + " with the following parameters: " + parameters.toString());
+      getLog().debug("Executing " + getName() + " with the following parameters: " + parameters.toString()+ " "+misc_params);
 
       StringBuilder sb = new StringBuilder();
+//      File file = new File("/scratch/tgacbrowser/" + parameters.get(blastAccession).toString() + ".fa");
+    //
+    //      FileWriter writer = new FileWriter(file, true);
+    //
+    //      PrintWriter output = new PrintWriter(writer);
+    //
+    //      output.print(getSeq(parameters.get(blastAccession).toString()));
+    //
+    //      output.close();
+//          sb.append("perl BLASTCommand.pl '"+parameters.get(type)+"' '"+parameters.get(blastDB)+"' '"+parameters.get(blastAccession)+"' '"+parameters.get(params)+"' '"+parameters.get(format)+"' > new.txt");
+//          return sb.toString();
 
       sb.append(blastBinary);
       sb.append(" -db " + parameters.get(blastDB));
@@ -121,4 +140,36 @@ public class BlastToLSF extends AbstractTgacLsfProcess {
   public Collection<ConanParameter> getParameters() {
     return parameters;
   }
+
+  public String getSeq(String id) throws ClassNotFoundException {
+      log.info("\n\ngetSeq "+id);
+        String fasta = "";
+        try {
+          Class.forName("com.mysql.jdbc.Driver").newInstance();
+
+          Connection conn = DriverManager.getConnection("jdbc:mysql://n78048.nbi.ac.uk:3306/thankia_blast_manager", "tgacbrowser", "tgac_bioinf");
+          Statement stmt = conn.createStatement();
+          ResultSet rs = stmt.executeQuery("select blast_seq from blast_params where id_blast=\"" + id + "\"");
+
+          while (rs.next()) {
+            fasta += rs.getString("blast_seq");
+          }
+
+          rs.close();
+          stmt.close();
+          conn.close();
+        }
+        catch (InstantiationException e) {
+          e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        catch (IllegalAccessException e) {
+          e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        catch (SQLException e) {
+          e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+        return fasta;
+      }
+
 }

@@ -501,7 +501,13 @@ function randomString(length) {
     length = Math.floor(Math.random() * chars.length);
   }
 
+
   var str = '';
+
+  var now = new Date();
+    if (randomnumber == null) {
+      str = now.getDate() + "-" + (parseInt(now.getMonth()) + 1) + "" + now.getFullYear() + "" + now.getHours() + "" + now.getMinutes();
+    }
   for (var i = 0; i < length; i++) {
     str += chars[Math.floor(Math.random() * chars.length)];
   }
@@ -540,6 +546,16 @@ function loadPreBlast(jsonid, refid) {
           'blastEntry',
           {'accession': jsonid, 'seqregion': refid, 'url': ajaxurl},
           {'doOnSuccess': function (json) {
+            window['track_listblasttrack'] = {
+                    name: "blasttrack",
+                    id: 0,
+                    display_label: "blasttrack",
+                    desc: "blast from browser",
+                    disp: 1,
+                    merge: 0,
+                    label: 0,
+                    graph: false
+                  }
             track_list.push(
                     {name: "blasttrack", id: 0, desc: "blast from browser", disp: 1, merge: 0}
             );
