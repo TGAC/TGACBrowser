@@ -163,6 +163,8 @@ public class BlastServiceLocal {
             } else {
                 blasts.add("No hits found.");
             }
+
+            html.put("id", json.getString("BlastAccession"));
             html.put("html", blasts);
             return html;
         } catch (Exception e) {

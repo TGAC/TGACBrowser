@@ -52,7 +52,24 @@ function blastSearch(query, db, type) {
         {'doOnSuccess': function (json) {
             jQuery('#main').animate({"height": "0px"}, { duration: 300, queue: false});
             jQuery('#main').fadeOut();
-            parseBLAST(json);
+            //            parseBLAST(json);
+
+
+            if (json.html == "No hits found.") {
+                jQuery("#" + json.id).html("<b>BLAST job " + json.id + "</b><br> No hits found. <span onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
+            }
+            else if (json.html == "FAILED") {
+                jQuery("#" + json.id).html("<b>BLAST job " + json.id + "</b><br> Failed. <span onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
+            }
+            else if (json.error == "error") {
+                jQuery("#" + json.id).html("<b>BLAST job " + json.id + "</b><br> Failed. <span onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
+            }
+            else {
+                jQuery("#" + json.id).html("BLAST job " + json.id + " <span title=\"Finished\" class=\"ui-button ui-icon ui-icon-check\"></span> <br>  <span onclick=toogleTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-zoomin\" > </span> <span onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
+                jQuery('#main').animate({"height": "0px"}, { duration: 300, queue: false});
+                jQuery('#main').fadeOut();
+                parseBLAST(json);
+            }
             //jQuery('#blastresult').html(json.html);
             jQuery("#notifier").hide()
             jQuery("#notifier").html("");
@@ -80,6 +97,17 @@ function blastTrackSearch(query, start, end, hit, db, type) {
             {name: "blasttrack", display_label: "blasttrack", id: 0, desc: "blast from browser", disp: 1, merge: 0}
         );
         window['blasttrack'] = "running";
+
+        window['track_listblasttrack'] = {
+            name: "blasttrack",
+            id: 0,
+            display_label: "blasttrack",
+            desc: "blast from browser",
+            disp: 1,
+            merge: 0,
+            label: 0,
+            graph: false
+        }
     }
 
     ajaxurl = '/' + jQuery('#title').text() + '/' + jQuery('#title').text() + '/fluxion.ajax';

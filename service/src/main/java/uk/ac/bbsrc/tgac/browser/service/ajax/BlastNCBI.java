@@ -146,37 +146,39 @@ public class BlastNCBI {
       String str;
       int i = 0;
 
-      sb.append("<table class='list' id='blasttable'> <thead><tr>  " +
-                "<th class=\"header\"> Query id </th>" +
-                "<th class=\"header\"> Subject id </th> " +
-                "<th class=\"header\"> % identity </th> " +
-                "<th class=\"header\"> alignment length </th> " +
-                "<th class=\"header\"> mismatches </th> " +
-                "<th class=\"header\"> gap openings </th> " +
-                "<th class=\"header\"> q.start </th> " +
-                "<th class=\"header\"> q.end </th> " +
-                "<th class=\"header\"> s.start </th> " +
-                "<th class=\"header\"> s.end </th> " +
-                "<th class=\"header\"> e-value </th> " +
-                "<th class=\"header\"> bit score </th></tr></thead><tbody>");
+//      sb.append("<table class='list' id='blasttable'> <thead><tr>  " +
+//                "<th class=\"header\"> Query id </th>" +
+//                "<th class=\"header\"> Subject id </th> " +
+//                "<th class=\"header\"> % identity </th> " +
+//                "<th class=\"header\"> alignment length </th> " +
+//                "<th class=\"header\"> mismatches </th> " +
+//                "<th class=\"header\"> gap openings </th> " +
+//                "<th class=\"header\"> q.start </th> " +
+//                "<th class=\"header\"> q.end </th> " +
+//                "<th class=\"header\"> s.start </th> " +
+//                "<th class=\"header\"> s.end </th> " +
+//                "<th class=\"header\"> e-value </th> " +
+//                "<th class=\"header\"> bit score </th></tr></thead><tbody>");
 
       sb.append(connectNCBI(urlParameters));//;new DataInputStream(connection.getInputStream());
       str = connectNCBI(urlParameters);
       while (str == "running") {
         str = connectNCBI(urlParameters);
         if (str == "finished") {
-          sb.append(parseNCBI(urlParameters));
+//          sb.append(parseNCBI(urlParameters));
+            jsonArray = parseNCBI(urlParameters);
           break;
         }
       }
 
-      sb.append("</tbody></table");
+//      sb.append("</tbody></table");
 
 
       String result = null;
-      result = sb.toString();
+        jsonObject.put("id", blastAccession);
+        jsonObject.put("html", jsonArray);
 
-      return JSONUtils.JSONObjectResponse("html", result);
+      return jsonObject;
     }
     catch (Exception e) {
       e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -246,10 +248,12 @@ public class BlastNCBI {
    * @param urlParameters String with URL Parameters
    * @return StringBuffer BLAST converted to tabular
    */
-  private StringBuffer parseNCBI(String urlParameters) {
+  private JSONArray parseNCBI(String urlParameters) {
     log.info("parse");
 
     try {
+
+        JSONArray blasts = new JSONArray();
       StringBuffer sb = new StringBuffer();
       String str, str1 = "";
       URL url = new URL("http://www.ncbi.nlm.nih.gov/blast/Blast.cgi?CMD=Get&");
@@ -271,6 +275,7 @@ public class BlastNCBI {
       DataInputStream in = new DataInputStream(connection.getInputStream());
 
       while (null != (str = in.readLine())) {
+          JSONObject eachBlast = new JSONObject();
         Pattern p = Pattern.compile("<!DOCTYPE html.*");
         Matcher matcher_comment = p.matcher(str);
         if (matcher_comment.find()) {
@@ -284,18 +289,38 @@ public class BlastNCBI {
           }
           else {
             str1 = str.replaceAll("\\s+", "<td>");
+
           }
           if (str1.split("<td>").length > 10) {
             sb.append("<tr> <td> " + str1 + "</td></tr>");
+              String[] id;
+              id = str1.split("<td>");
+              eachBlast.put("identity", id[2]);
+              eachBlast.put("aln_length", id[3]);
+              eachBlast.put("mismatch", id[4]);
+              eachBlast.put("gap_open", id[5]);
+              eachBlast.put("q_start", id[6]);
+              eachBlast.put("q_end", id[7]);
+              eachBlast.put("s_start", id[8]);
+              eachBlast.put("s_end", id[9]);
+              eachBlast.put("e_value", id[10]);
+              eachBlast.put("bit_score", id[11]);
+              blasts.add(eachBlast);
+//              eachBlast.put("s_db", blastdb.substring(blastdb.lastIndexOf("/") + 1));
           }
+          else{
+              blasts.add("No hits found.");
+          }
+
+
         }
       }
-      return sb;
+      return blasts;
     }
     catch (Exception e) {
       e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
       StringBuffer sb = new StringBuffer(e.toString());
-      return sb;
+        return JSONArray.fromObject(sb);
     }
   }
 
