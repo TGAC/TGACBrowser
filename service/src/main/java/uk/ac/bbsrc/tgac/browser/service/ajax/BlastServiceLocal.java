@@ -139,7 +139,7 @@ public class BlastServiceLocal {
             String hsp_to = id[9];
             String str2 = "";
             if (location.length() > 0) {
-              str2 = str1.replaceAll(id[1], " <a target='_blank' href='../" + location + "/index.jsp?query=" + seqregionName + "&from=" + hsp_from + "&to=" + hsp_to + "&blasttrack=" + blastAccession + "'>"
+              str2 = str1.replace(id[1], " <a target='_blank' href='../" + location + "/index.jsp?query=" + seqregionName + "&from=" + hsp_from + "&to=" + hsp_to + "&blasttrack=" + blastAccession + "'>"
                                             + seqregionName + "</a>");
             }
             else {

@@ -193,7 +193,6 @@ function translate(sequence) {
     var i = 0;
     for (i; i <= seq.length - 3; i = i + 3) {
       var chunk = seq.substring(i, i + 3);
-//        console.log(i+":"+j+":"+chunk);
       ptn_seq += "&nbsp;";
       if (chunk.indexOf("N") > -1) {
         ptn_seq += "X";
@@ -290,15 +289,11 @@ function translate(sequence) {
 
     ptn_seq += "<br>";
   }
-//  maxLen - visualLength(ptn_seq.length)
-
 
   if (space >= 0) {
     jQuery("#translation_div").show();
-//        jQuery("#wrapper").css('top', '230px');
     jQuery("#tracks").css('top', '70px');
     jQuery("#sequence").css('height', '70px');
-//      jQuery("#translation_div").css('letter-spacing', space);
     jQuery("#translation_div").html("<br>" + ptn_seq);
   }
   else {
@@ -306,7 +301,6 @@ function translate(sequence) {
     jQuery("#translation_div").hide;
     jQuery("#sequence").css('height', '20px');
     jQuery("#tracks").css('top', '20px');
-//        jQuery("#wrapper").css('top', '190px');
   }
 
 

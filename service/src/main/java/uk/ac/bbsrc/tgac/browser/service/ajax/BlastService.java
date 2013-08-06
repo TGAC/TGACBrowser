@@ -178,7 +178,7 @@ public class BlastService {
 
         try {
 
-            FileInputStream fstream = new FileInputStream("/net/tgac-cfs3/ifs/TGAC/browser/jobs/" + blastAccession + ".xml");
+            FileInputStream fstream = new FileInputStream("<path-to-shared-drive>" + blastAccession + ".xml");
             DataInputStream input = new DataInputStream(fstream);
             int in = 0;
             int findHits = 1;
@@ -229,7 +229,7 @@ public class BlastService {
                             eachBlast.put("reverse", "");
 
                             String hsp_midline = getTextValue(ell, "Hsp_midline");
-//              if indels present
+                            //              if indels present
                             if (hsp_midline.split(" ").length > 1) {
                                 String hsp_query_seq = getTextValue(ell, "Hsp_qseq");
                                 String hsp_hit_seq = getTextValue(ell, "Hsp_hseq");
@@ -239,7 +239,7 @@ public class BlastService {
 
                                     ins = ins + ((newtemp[x].length() + 1));
                                     eachIndel.put("position", ins + in);
-//                  put 3 bases before and after of indel if starting or ending position then most possible
+                                    //                  put 3 bases before and after of indel if starting or ending position then most possible
                                     eachIndel.put("query", hsp_query_seq.substring((ins - 3) > -1 ? (ins - 3) : 0, (ins + 2) <= hsp_query_seq.length() ? (ins + 2) : hsp_query_seq.length()));
                                     eachIndel.put("hit", hsp_hit_seq.substring((ins - 3) > -1 ? (ins - 3) : 0, (ins + 2) <= hsp_hit_seq.length() ? (ins + 2) : hsp_hit_seq.length()));
                                     indels.add(eachIndel);
@@ -288,7 +288,7 @@ public class BlastService {
 
             JSONObject jsonObject = new JSONObject();
             JSONArray jsonArray = new JSONArray();
-            FileInputStream fstream = new FileInputStream("/net/tgac-cfs3/ifs/TGAC/browser/jobs/" + blastAccession + ".xml");
+            FileInputStream fstream = new FileInputStream("<path-to-shared-drive>" + blastAccession + ".xml");
             DataInputStream in = new DataInputStream(fstream);
             String str;
             while (null != (str = in.readLine())) {
@@ -372,7 +372,7 @@ public class BlastService {
             String accession = json.getString("BlastAccession");
             String type = json.getString("type");
             log.info("submitted" + accession);
-            File file = new File("/net/tgac-cfs3/ifs/TGAC/browser/jobs/" + accession + ".fa");
+            File file = new File("<path-to-shared-drive>" + accession + ".fa");
             FileWriter writer = new FileWriter(file, true);
             PrintWriter output = new PrintWriter(writer);
             output.print(fasta);
@@ -490,7 +490,7 @@ public class BlastService {
             q1.put("params", params);
             String query = q1.toString();
             log.info(">>>>>" + query);
-            String response = sendMessage(prepareSocket("norwich.nbi.bbsrc.ac.uk", 7899), query);
+            String response = sendMessage(prepareSocket("<server-path>", 7899), query);
             log.info("\n\n\n<<<<" + response);
             if (!"".equals(response)) {
                 JSONArray r = JSONArray.fromObject(response);
@@ -518,7 +518,7 @@ public class BlastService {
     public String getTaskSQL(String taskId) throws Exception {
         String result = null;
         Class.forName("com.mysql.jdbc.Driver").newInstance();
-        Connection conn = DriverManager.getConnection("jdbc:mysql://london.nbi.bbsrc.ac.uk:3306/conan", "conan", "conan");
+        Connection conn = DriverManager.getConnection("jdbc:mysql://<database-url>:3306/conan", "<user-name>", "<password>");
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery("select STATE from CONAN_TASKS where NAME=\"" + taskId + "\"");
         while (rs.next()) {

@@ -124,19 +124,12 @@ function removeTrack(div, track) {
     jQuery(div).fadeOut();
     jQuery("#" + track + "_wrapper").fadeOut();
     window['track_list' + track].disp = 0
-
-//  jQuery(track_list).each(function (index) {
-//    if (track_list[index].name == track) {
-//      track_list[index].disp = 0;
-//    }
-//  });
 }
 
 function removeMergedTrack() {
 
     jQuery(track_list).each(function (index) {
         if (jQuery("#" + track_list[index].name + "mergedCheckbox").attr('checked')) {
-//      this.disp = 0;
             window['track_list' + track_list[index].name].disp = 0
 
             jQuery('input[name=' + track_list[index].name + 'mergedCheckbox]').attr('checked', false);
@@ -152,14 +145,11 @@ function removeMergedTrack() {
 function toogleLabelMerged() {
     jQuery(track_list).each(function (index) {
         if (jQuery("#" + track_list[index].name + "mergedCheckbox").attr('checked')) {
-//      this.disp = 0;
             if (this.label == 1) {
                 window['track_list' + track_list[index].name].label = 0
-//        this.label = 0;
             }
             else {
                 window['track_list' + track_list[index].name].label = 1
-//        this.label = 1;
             }
 
         }
@@ -614,7 +604,6 @@ function dispGeneExon(track, genestrand, className, div) {
                         last = current;
                     }
                     else if (exon_start < transcript_start && exon_stop < transcript_start) {
-                        console.log("2")
                         startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                         stopposition = (exon_stop - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
@@ -626,7 +615,6 @@ function dispGeneExon(track, genestrand, className, div) {
                         last = current;
                     }
                     else if (exon_start < transcript_start && exon_stop > transcript_end) {
-                        console.log("3")
 
                         startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                         stopposition = (transcript_start - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
@@ -733,7 +721,6 @@ function dispGeneExon(track, genestrand, className, div) {
                         }
                         else {
                             marker_pos = parseInt(marker_pos) + parseInt(startposition) - 8;
-                            console.log("here span" + top + ":" + marker_pos)
                         }
                         jQuery("<span>").attr({
                             'class': spanclass,
@@ -1126,17 +1113,7 @@ function dispGraph(div, trackName, className) {
                 'title': track_start + ":" + track_stop + "->" + track[track_len].graph,
                 'onClick': "setBegin(" + track[track_len].start + ");setEnd(" + track[track_len].end + ");jumpToSeq();"
             }).appendTo(div);
-
-//            track_html += "<div class= \"graph " + className + "_graph\" onclick=\"setBegin(" + track[track_len].start + ");setEnd(" + track[track_len].end + ");jumpToSeq();\"STYLE=\"bottom:0px; height: " + (track[track_len].graph * 45 / max) + "px;" +
-//                "LEFT:" + startposition + "px;" +
-//                "width:" + (stopposition - 1) + "px \" title=\"" + track_start + ":" + track_stop + "->" + track[track_len].graph + "\" ></div>";
-
         }
-//  jQuery(div).css('height', '70px');
-//        jQuery(div).fadeIn();
-//        jQuery("#" + trackName + "_wrapper").fadeIn();
-//
-//        jQuery(div).html(track_html);
     }
 }
 
@@ -1185,7 +1162,6 @@ function dispGraphBed(div, trackName, trackId, className) {
                 "width:" + (stopposition - 1) + "px \" title=\"" + track_start + ":" + track_stop + "->" + track[track_len].value + "\" ></div>";
 
         }
-//  jQuery(div).css('height', '70px');
         jQuery(div).fadeIn();
         jQuery("#" + trackName + "_wrapper").fadeIn();
 
@@ -1275,14 +1251,6 @@ function dispGraphWig(div, trackName, trackId, className) {
                 }
                 var tempy = height - (data[i].value * height / max); //(parseInt(max)*(41-parseInt(patharray[i]))/41);
                 pathinfo.push({ x: tempx, y: tempy});
-
-
-//        if (data.length < 400) {
-                i++;
-//        }
-//        else {
-//          i = parseInt(i + (data.length / 400));
-//        }
 
                 if (last_start < data[i].start - diff) {
                     if (start > 0) {

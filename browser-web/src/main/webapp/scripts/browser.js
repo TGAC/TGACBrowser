@@ -94,9 +94,7 @@ function jumpToHere(e) {
 
 function jumpToOther(e, length, name) {
     var top = parseFloat(e.pageY - jQuery('#' + name).offset().top);
-    //if (top > parseFloat(getMapMarkerTop())) {
     top = top - parseFloat(getMapMarkerHeight()) / 2;
-    //}
     var diff = parseInt(getEnd() - getBegin());
     var begin, end;
     if (diff) {
@@ -262,7 +260,6 @@ function setNavPanel() {
     var height = parseFloat(jQuery("#wrapper").position().top) - (parseFloat(jQuery("#draggable").position().top) + parseFloat(jQuery("#draggable").css("height"))) + "px solid #cccccc";
     var border_left = parseFloat(jQuery("#draggable").css("left")) - left + "px solid transparent";
     var width = jQuery("#draggable").css("width");
-//  var border_right = parseFloat(maxLen)/2 - parseFloat(left) - (parseFloat(jQuery("#draggable").css("width")) + parseFloat(jQuery("#draggable").css("left"))) + "px solid transparent";
     var diff = (parseFloat(maxLen) - (parseFloat(jQuery("#draggable").css("width")) + parseFloat(jQuery("#draggable").css("left"))))
     if (diff < 0) {
         diff = 0;
@@ -312,49 +309,37 @@ function updateJSON() {
     for (var j = 0; j < track_list.length; j++) {
 
         if (window["track_list" + track_list[j].name].graph == "true") {
-//      if (parseInt(lastStart) < parseInt(getBegin()) && parseInt(lastEnd) > parseInt(getEnd())) {
             from = Math.ceil(parseInt(getBegin()) - partial);
             to = Math.ceil(parseInt(getEnd()) + partial);
             addJSON(from, to, track_list[j].name, track_list[j].id);
-//      }
         }
     }
 
 
     if (lastStart >= 0 || lastEnd >= 0) {
-
-//      console.log("right");
         if (parseInt(lastStart) < parseInt(getBegin()) || parseInt(lastEnd) < parseInt(newEnd)) {
             from = Math.ceil(parseInt(getBegin()) - partial);
             to = Math.ceil(parseInt(getEnd()) + partial);
-
             addJSON(from, to);
-//      removeJSON(parseInt((parseInt(getBegin()) - parseInt(partial)) - (getEnd() - getBegin())), "");
 
             lastEnd = getEnd();
             lastStart = getBegin();
         }
-        //      console.log("left");
         else if (parseInt(lastStart) > parseInt(getBegin()) || parseInt(lastEnd) > parseInt(getEnd())) {
             from = Math.floor((parseInt(getBegin()) - parseInt(partial)));
             to = Math.ceil(parseInt(getEnd()) + partial);
 
             addJSON(from, to);
-//      removeJSON("", parseInt((parseInt(getEnd()) + parseInt(partial) + parseInt((getEnd() - getBegin())))));
             lastEnd = getEnd();
             lastStart = getBegin();
         }
-//       console.log("zoomout");
         else if (parseInt(lastStart) > parseInt(getBegin()) || parseInt(lastEnd) < parseInt(getEnd())) {
             from = Math.floor((getBegin() - partial));
             to = Math.ceil(parseInt(getEnd()) + parseInt(partial));
-
             addJSON(from, to);
-
             lastEnd = getEnd();
             lastStart = getBegin();
         }
-//      console.log("zoomin");
         else if (parseInt(lastStart) < parseInt(getBegin()) && parseInt(lastEnd) > parseInt(getEnd())) {
             partial = (parseInt((getEnd() - getBegin() ) + parseInt(partial)));
             removeJSON(null, parseInt((parseInt(getEnd()) + parseInt(partial))));
@@ -488,58 +473,6 @@ function addJSON(from, to, trackName, trackId) {
 
 }
 
-/*
- this can be modified to use for edited and removed tracks
- var obj1 = [
- {id:2, comment:"comment22",edited:"new"}
- ] ;
-
- var obj2 =  [
- {id:1, comment:"comment2"},
- {id:2, comment:"comment2"},
- {id:3, comment:"comment33"},
- {id:4, comment:"comment4"}
- ];
-
- function merge(one, two){
-
- var final = one;
- // merge
- for(var i = 0 ; i < two.length;i++){
- var item = two[i];
- insert(item, final);
- }
- return final;
- }
-
-
- function insert(item, obj){
- var data = obj;
- var insertIndex = data.length;
- for(var i = 0; i < data.length; i++){
- if(item.id == data[i].id){
- $('#o').append( item.id +"=="+ data[i].id +"\n");
- // ignore duplicates
- insertIndex = -1;
- break;
- } else if(item.id < data[i].id){
- $('#o').append( item.id +"<"+ data[i].id  +"\n");
- insertIndex = i;
- break;
- }
- }
- if(insertIndex == data.length){
- data.push(item);
- } else if(insertIndex != -1) {
- data.splice(insertIndex,0,item);
- }
- }
-
- var final = merge(obj1, obj2);
-
- $('#o').append("\n\n\nUsing merge()\n");
- $('#o').append( JSON.stringify(final) );
- */
 
 function removeJSON(from, to) {
     if (from < 0) {
@@ -595,6 +528,4 @@ function removeJSON(from, to) {
             }
         }
     }
-
-
 }

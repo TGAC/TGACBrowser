@@ -47,33 +47,21 @@
             if (key == "blasttrack") {
                 showBlast = true;
             }
-
         });
 
         if (vars.length > 0) {
-
             jQuery("#search").val(vars[0]);
-
             seqregionSearchPopup(jQuery("#search").val(), vars[1], vars[2], vars[3])
-
         }
         else if (jQuery('#search').val().length >= 1) {
             var now = new Date();
-
-
             search(jQuery('#search').val(), oldTracklist);
-        <%--vars[1] for blast and so on --%>
         }
         else if(chr == true){
              getReferences(true)
         }
         else {
-          console.log("else")
         }
-
-//        if(showBlast){
-//            loadPreBlast(vars[3], vars[0]);
-//        }
     }
 
 

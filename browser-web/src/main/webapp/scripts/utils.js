@@ -111,15 +111,6 @@ function trackToggle(trackname) {
   var trackid = "";
 
 
-//    for (var i = 0; i < track_list.length; i++) {
-//        if (track_list[i].name == trackname) {
-//            index = i;
-//            trackid = track_list[i].id;
-//        }
-//        if (track_list[i].name == trackname && track_list[i].graph == "true") {
-//            graph = "true";
-//        }
-//    }
   if (trackname == "all") {
     jQuery("#mergedtrack").html("<div id= \"mergelabel\" align='left' class='handle'></div>");
     for (var i = 0; i < track_list.length; i++) {
@@ -219,10 +210,7 @@ function removeTrackslist(trackList) {
   }
   jQuery("#mergetracklist").html("");
 }
-//
-//function controls() {
-////  jQuery("#slider").fadeIn();
-//}
+
 
 function toggleLeftInfo(div, id) {
   if (jQuery(div).hasClass("toggleLeft")) {
@@ -350,25 +338,4 @@ function backup_tracks_removed(track, i) {
     window[track + "_removed"] = [];
   }
   window[track + "_removed"].push(add);
-
-//
-//  can be used if removed tracks need to be add again new feature
-//
-// else {
-//    jQuery.each(window[track + "_removed"], function (b, w) {
-//      if (w.id == add.id) {
-//        index = b;
-//        add.edited = parseInt(add.edited) + 1;
-//        console.log("if");
-//        window[track + "_removed"].splice(b, 1, add)
-//        return;
-//      }
-//    });
-//
-//    if (index == -1) {
-//      add.edited = 1;
-//      console.log("else");
-//      window[track + "_removed"].push(add);
-//    }
-//  }
 }

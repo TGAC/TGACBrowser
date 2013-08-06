@@ -246,12 +246,7 @@ function preBlast(begin, end, popup) {
                        "<option value=\"9\">9</option>   " +
                        "<option value=\"10\">10</option>  " +
                        "</select> </td>" +
-//                       "<td>" +
-//                       "Select BLAST Type<select name=\"blasttype\" id=\"blasttype\">  " +
-//                                              "<option value=\"blastn\">blastn</option>  " +
-//                                              "<option value=\"tblastn\">tblastn</option> " +
                        "</select> " +
-//                       "</td></tr>"
                        "<td><span class=\"fg-button ui-icon ui-widget ui-state-default ui-corner-all ui-icon-close\" id=\"dontblast\"></span>" +
                        "<span class=\"fg-button ui-icon ui-widget ui-state-default ui-corner-all ui-icon-check\" id=\"doblast\"></span> </td></tr></table>";
 
@@ -768,7 +763,6 @@ function fetchFasta(begin, end, track, i, j) {
 
 
 function blast(begin, end, hit, blastdb, type) {
-//  if (end - begin < 10000) {
   Fluxion.doAjax(
           'dnaSequenceService',
           'loadSequence',
@@ -778,14 +772,6 @@ function blast(begin, end, hit, blastdb, type) {
             blastTrackSearch(seq, begin, end, hit, blastdb, type);
           }
           });
-
-
-//    blastTrackSearch(seq.substring(begin, end), begin, end, hit, blastdb);
-//  }
-//  else {
-//    alert("BLAST limit applies less than 10kb");
-//  }
-
   removeMenu();
 }
 
@@ -798,8 +784,6 @@ function convertFasta(string) {
   while (oldString.length > 70) {
     newString = newString + '<br/>' + oldString.substring(start, end);
     oldString = oldString.substring(end, oldString.length);
-//    start = start + 70;
-//    end = end + 70;
   }
   newString += "<br />" + oldString;
 

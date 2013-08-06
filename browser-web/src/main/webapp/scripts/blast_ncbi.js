@@ -30,7 +30,6 @@
  * To change this template use File | Settings | File Templates.
  */
 function blastSearch(query, db, type) {
-//        ncbiBLAST(query, db) {
   ajaxurl = '/' + jQuery('#title').text() + '/' + jQuery('#title').text() + '/fluxion.ajax';
   var link = "";
   var id = randomString(8);

@@ -44,12 +44,9 @@ var chromosome = false;
 
 function setBlast() {
     if (jQuery("#blastType").text().indexOf('local') >= 0) {
-
-
         jQuery.getScript("scripts/blast_local.js", function (data, textStatus, jqxhr) {
             console.log('Load was performed.');
         });
-
         jQuery("#blastdbs").show();
     }
     else if (jQuery("#blastType").text().indexOf('ncbi') >= 0) {
@@ -806,34 +803,11 @@ function dragToogle() {
                 start: function () {
                 },
                 drag: function () {
-
                     jQuery(".handle").each(function (i) {
                         jQuery(this).css("left", '1%');
                         jQuery(this).css("top", (jQuery(this).parent().position().top) - parseInt(jQuery(window).scrollTop()) + (parseInt(jQuery("#wrapper").position().top)) + (parseInt(jQuery("#canvas").position().top)));
                         jQuery(this).css("position", 'fixed');
                     });
-//              var temp = parseFloat(jQuery('#canvas').css("left")) - parseFloat(jQuery('#wrapper').css("left"));
-//
-//              console.log(temp+" "+parseFloat(jQuery('#wrapper').css("left")));
-//              var beginnew = parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * temp / parseFloat(maxLen));
-//              var endnew = parseFloat(getEnd()) + parseFloat((getEnd() - getBegin()) * temp / parseFloat(maxLen));
-//
-//              if (beginnew <= 0) {
-//                beginnew = 1;
-//              } else  if (endnew >= parseFloat(sequencelength)) {
-//                endnew = sequencelength;
-//              }
-//              else{
-//
-//                 var seqStart = parseInt(beginnew) * parseInt(maxLen) / sequencelength;
-//              removeAllPopup();
-//              setDragableLeft(seqStart);
-//              setbglayerLeft(seqStart, false);
-//                setBegin(beginnew);
-//              setEnd(endnew);
-//              }
-//
-//
                 },
                 stop: function () {
                     jQuery(".handle").css("position", 'absolute');
@@ -954,18 +928,8 @@ function selectAllCheckbox() {
                 eval(jQuery(this).attr('onClick'));
             }
         })
-//    trackToggle("all")
     }
     else {
-//     jQuery("#tracklist input").each(function () {
-//     if (jQuery(this).is(':checked')) {
-//       jQuery(this).attr('checked', false);
-//       eval(jQuery(this).attr('onClick'));
-//     }
-//     else {
-//       //    do nothing
-//     }
-//   })
     }
 
 }

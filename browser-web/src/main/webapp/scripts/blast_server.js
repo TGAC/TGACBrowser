@@ -156,11 +156,9 @@ function checkTask(task, db, format, start, end, hit, link) {
                             window['blasttrack'] = json.blast;//(decodeURIComponent(json.blast.replace(/\s+/g, ""))).replace(/>/g, "");
                           }
                           else {
-//                          window['blasttrack'].push(json.blast);
                             jQuery.merge(window['blasttrack'], json.blast);
                           }
                           jQuery('input[name=blasttrackCheckbox]').attr('checked', true);
-//                          jQuery("#mergetracklist").append("<span id=blastcheckmerge> <input type=\"checkbox\" id='blasttrackmergedCheckbox' name='blasttrackmergedCheckbox' onClick=mergeTrack(\"blasttrack\"); value=blasttrack >Blast Track</span>");
                           trackToggle("blasttrack");
                         }
                         });

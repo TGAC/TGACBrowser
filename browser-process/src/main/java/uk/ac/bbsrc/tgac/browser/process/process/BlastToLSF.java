@@ -81,7 +81,7 @@ public class BlastToLSF extends AbstractTgacLsfProcess {
     }
 
     protected String getBLastPath() {
-        return "path-to-BLAST+";///data/workarea/bianx/blast+/";
+        return "path-to-BLAST+";
     }
 
     protected String getFilestPath() {
