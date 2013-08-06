@@ -68,26 +68,26 @@
                 </configuration>
             </plugin>
 
-            <plugin>
-                <groupId>org.dstovall</groupId>
-                <artifactId>onejar-maven-plugin</artifactId>
-                <version>1.4.4</version>
-                <executions>
-                    <execution>
-                        <configuration>
-                            <!-- Optional -->
-                            <onejarVersion>0.97</onejarVersion>
-                            <!-- Optional, default is false -->
-                            <attachToBuild>true</attachToBuild>
-                            <!-- Optional, default is "onejar" -->
-                            <classifier>onejar</classifier>
-                        </configuration>
-                        <goals>
-                            <goal>one-jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.dstovall</groupId>-->
+                <!--<artifactId>onejar-maven-plugin</artifactId>-->
+                <!--<version>1.4.4</version>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<configuration>-->
+                            <!--&lt;!&ndash; Optional &ndash;&gt;-->
+                            <!--<onejarVersion>0.97</onejarVersion>-->
+                            <!--&lt;!&ndash; Optional, default is false &ndash;&gt;-->
+                            <!--<attachToBuild>true</attachToBuild>-->
+                            <!--&lt;!&ndash; Optional, default is "onejar" &ndash;&gt;-->
+                            <!--<classifier>onejar</classifier>-->
+                        <!--</configuration>-->
+                        <!--<goals>-->
+                            <!--<goal>one-jar</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
         </plugins>
     </build>
 
