@@ -1,27 +1,3 @@
-/*
- *
- * Copyright (c) 2013. The Genome Analysis Centre, Norwich, UK
- * TGAC Browser project contacts: Anil Thanki, Xingdong Bian, Robert Davey, Mario Caccamo @ TGAC
- * **********************************************************************
- *
- * This file is part of TGAC Browser.
- *
- * TGAC Browser is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * TGAC Browser is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with TGAC Browser.  If not, see <http://www.gnu.org/licenses/>.
- *
- * ***********************************************************************
- *
- */
 var layers, mergedTracklist;
 
 function trackStatement(trackClass, track, startposition, stopposition, a, top, j) {
@@ -35,8 +11,6 @@ function getStart(track_start) {
 }
 
 function toogleLabel(trackName) {
-<<<<<<< HEAD
-<<<<<<< HEAD
     jQuery(track_list).each(function (index) {
         if (track_list[index].name == trackName) {
             if (track_list[index].label == 1) {
@@ -48,38 +22,11 @@ function toogleLabel(trackName) {
         }
 
     });
-=======
-  console.log(window['track_list' + trackName].label)
-=======
->>>>>>> 803b040... Preloadtrack bug fixed and unwanted scripts removed
-  if (window['track_list' + trackName].label == 1) {
-    window['track_list' + trackName].label = 0
-  }
-  else {
-    window['track_list' + trackName].label = 1
-
-  }
-<<<<<<< HEAD
-//  jQuery(track_list).each(function (index) {
-//    if (track_list[index].name == trackName) {
-//      if (track_list[index].label == 1) {
-////        track_list[index].label = 0;
-//
-//      }
-//      else {
-//        track_list[index].label = 1;
-//
-//      }
-//    }
-//
-//  });
->>>>>>> d095b59... vars created for tracks so most of the loops on track_list eliminated
 
     jQuery(".label" + trackName).toggle();
 }
 
 function toogleTrackView(trackName) {
-<<<<<<< HEAD
     jQuery(track_list).each(function (index) {
         if (track_list[index].name == trackName) {
             if (track_list[index].expand == 1) {
@@ -89,50 +36,11 @@ function toogleTrackView(trackName) {
                 track_list[index].expand = 1;
             }
         }
-=======
-  console.log(window['track_list' + trackName].expand)
-=======
-  jQuery(".label" + trackName).toggle();
-}
 
-function toogleTrackView(trackName) {
->>>>>>> 803b040... Preloadtrack bug fixed and unwanted scripts removed
-  if (window['track_list' + trackName].expand == 1) {
-    window['track_list' + trackName].expand = 0
-  }
-  else {
-    window['track_list' + trackName].expand = 1
-<<<<<<< HEAD
->>>>>>> d095b59... vars created for tracks so most of the loops on track_list eliminated
 
-  }
-
-<<<<<<< HEAD
     });
-=======
-//  jQuery(track_list).each(function (index) {
-//    if (track_list[index].name == trackName) {
-//      if (track_list[index].expand == 1) {
-//        window['track_list' + trackName].expand = 0
-////        track_list[index].expand = 0;
-//      }
-//      else {
-//        track_list[index].expand = 1;
-//        window['track_list' + trackName].expand = 1
-//
-//      }
-//    }
-//
-//
-//  });
->>>>>>> d095b59... vars created for tracks so most of the loops on track_list eliminated
 
     trackToggle(trackName);
-=======
-  }
-
-  trackToggle(trackName);
->>>>>>> 803b040... Preloadtrack bug fixed and unwanted scripts removed
 }
 
 function showObject(start, end, objStart, objEnd) {
@@ -198,7 +106,6 @@ function indelClick(query, hit) {
 function removeTrack(div, track) {
     jQuery('#' + track + 'Checkbox').attr('checked', false);
 //  jQuery("#" + track + "span").remove();
-<<<<<<< HEAD
     jQuery("#" + track + "mergedCheckbox").attr("disabled", true);
     jQuery(div).html();
     jQuery(div).fadeOut();
@@ -221,40 +128,10 @@ function removeMergedTrack() {
     jQuery("#mergedtrack").html("<div id= \"mergelabel\" align='left' class='handle'></div>");
     jQuery("#mergedtrack").fadeOut();
     jQuery("#mergedtrack_wrapper").fadeOut();
-=======
-  jQuery("#" + track + "mergedCheckbox").attr("disabled", true);
-  jQuery(div).html();
-  jQuery(div).fadeOut();
-  jQuery("#" + track + "_wrapper").fadeOut();
-  window['track_list' + track].disp = 0
-
-//  jQuery(track_list).each(function (index) {
-//    if (track_list[index].name == track) {
-//      track_list[index].disp = 0;
-//    }
-//  });
-}
-
-function removeMergedTrack() {
-
-  jQuery(track_list).each(function (index) {
-    if (jQuery("#" + track_list[index].name + "mergedCheckbox").attr('checked')) {
-//      this.disp = 0;
-      window['track_list' + track_list[index].name].disp = 0
-
-      jQuery('input[name=' + track_list[index].name + 'mergedCheckbox]').attr('checked', false);
-      trackToggle(track_list[index].name);
-    }
-  });
-  jQuery("#mergedtrack").html("<div id= \"mergelabel\" align='left' class='handle'></div>");
-  jQuery("#mergedtrack").fadeOut();
-  jQuery("#mergedtrack_wrapper").fadeOut();
->>>>>>> d095b59... vars created for tracks so most of the loops on track_list eliminated
 
 }
 
 function toogleLabelMerged() {
-<<<<<<< HEAD
     jQuery(track_list).each(function (index) {
         if (jQuery("#" + track_list[index].name + "mergedCheckbox").attr('checked')) {
             this.disp = 0;
@@ -264,19 +141,6 @@ function toogleLabelMerged() {
             else {
                 this.label = 1;
             }
-=======
-  jQuery(track_list).each(function (index) {
-    if (jQuery("#" + track_list[index].name + "mergedCheckbox").attr('checked')) {
-//      this.disp = 0;
-      if (this.label == 1) {
-        window['track_list' + track_list[index].name].label = 0
-//        this.label = 0;
-      }
-      else {
-        window['track_list' + track_list[index].name].label = 1
-//        this.label = 1;
-      }
->>>>>>> d095b59... vars created for tracks so most of the loops on track_list eliminated
 
         }
     });
@@ -312,7 +176,7 @@ function dispBLAST(div, track) {
 
 
             var layers = blasts.length + 1;
-            var maxLen_temp = jQuery("#canvas").css("width");
+
             for (var i = 0; i < blasts.length; i++) {
                 var blast_start = blasts[i].start;
                 var blast_stop = blasts[i].end;
@@ -349,8 +213,8 @@ function dispBLAST(div, track) {
                 if (show) {
                     var top = ((i + 1) % layers) * 15 + 10;
                     jQuery(div).fadeIn();
-                    var startposition = (blast_start - getBegin()) * parseFloat(maxLen_temp) / (getEnd() - getBegin()) + parseFloat(maxLen_temp) / 2;
-                    var stopposition = (blast_stop - blast_start) * parseFloat(maxLen_temp) / (getEnd() - getBegin());
+                    var startposition = (blast_start - getBegin()) * parseFloat(maxLen) / (getEnd() - getBegin()) + parseFloat(maxLen) / 2;
+                    var stopposition = (blast_stop - blast_start) * parseFloat(maxLen) / (getEnd() - getBegin());
                     if (stopposition < 2) {
                         stopposition = 2;
                     }
@@ -397,8 +261,6 @@ function dispBLASTindel(j, blast_start) {
     if (blastindel.length > 0) {
         var track_html = "";
         var layers = window["blasttrack"].length + 1;
-        var maxLen_temp = jQuery("#canvas").css("width");
-
         for (var i = 0; i < blastindel.length; i++) {
             var indel_start = parseInt(blastindel[i].position) + parseInt(blast_start) - 1;
             var indel_stop = (parseInt(indel_start) + 1);
@@ -412,8 +274,8 @@ function dispBLASTindel(j, blast_start) {
 
             if (show) {
                 var top = ((j + 1) % layers) * 15 + 10;
-                var startposition = (indel_start - getBegin()) * parseFloat(maxLen_temp) / (getEnd() - getBegin()) + parseFloat(maxLen_temp) / 2;
-                var stopposition = (indel_stop - indel_start) * parseFloat(maxLen_temp) / (getEnd() - getBegin());
+                var startposition = (indel_start - getBegin()) * parseFloat(maxLen) / (getEnd() - getBegin()) + parseFloat(maxLen) / 2;
+                var stopposition = (indel_stop - indel_start) * parseFloat(maxLen) / (getEnd() - getBegin());
                 track_html += "<div class='tracks_image' onclick=indelClick(\"" + blastindel[i].query + "\",\"" + blastindel[i].hit + "\"); " +
                     "STYLE=\"position:absolute; z-index: 999; TOP:" + top + "px; LEFT:" + startposition + "px \"> " +
                     "<img class='tracks_image' \" STYLE=\"WIDTH:" + stopposition + "px; height: 10px; cursor: pointer \" " +
@@ -428,8 +290,7 @@ function dispBLASTindel(j, blast_start) {
 }
 
 
-function dispGenes(div, track, expand, className) {
-<<<<<<< HEAD
+function dispGenes(div, track, expand) {
     var labeltoogle = "display : in-line;";
     var labelclass = "label" + track;
 
@@ -450,37 +311,13 @@ function dispGenes(div, track, expand, className) {
             }
         }
     });
-=======
-  var labeltoogle = "display : in-line;";
-  var labelclass = "label" + track;
-
-    trackClass = "exon";
-
-  if (window['track_list' + track].label == 0) {
-    labeltoogle = "display : none;";
-  }
-
-<<<<<<< HEAD
-//  jQuery(track_list).each(function (index) {
-//    if (track_list[index].name == track) {
-//      if (track_list[index].label == 0) {
-//        labeltoogle = "display : none;";
-//      }
-//    }
-//  });
->>>>>>> d095b59... vars created for tracks so most of the loops on track_list eliminated
 
 //  var genes_old = window[track];
     var genes = window[track];
-=======
-  var genes = window[track];
->>>>>>> 803b040... Preloadtrack bug fixed and unwanted scripts removed
 
     var newStart_temp = getBegin();
     var newEnd_temp = getEnd();
-    var maxLentemp = jQuery("#canvas").css("width");
-
-<<<<<<< HEAD
+    var maxLentemp = maxLen;
     var partial = (newEnd_temp - newStart_temp) / 2;
     var start = newStart_temp - partial;
     var label = "";
@@ -491,13 +328,6 @@ function dispGenes(div, track, expand, className) {
 //      genes.push(this);
 //    }
 //  })
-=======
-  var partial = (newEnd_temp - newStart_temp) / 2;
-  var start = newStart_temp - partial;
-  var label = "";
-  var end = parseInt(getEnd()) + partial;
-
->>>>>>> 803b040... Preloadtrack bug fixed and unwanted scripts removed
 
     var trackClass;
     if (!window[track] || window[track] == "loading") {
@@ -537,18 +367,12 @@ function dispGenes(div, track, expand, className) {
         var j = 0;
         var len = genes.length;
 
-<<<<<<< HEAD
 
         var now = new Date();
 //    console.log(now.getMinutes() + ":" + now.getSeconds() + ":" + now.getMilliseconds());
         if (genes[0] == null) {
             track_html = [];
             track_html.push("<font size=4><center>No data available for selected region</center></font>");
-=======
-    if (genes[0] == null) {
-      track_html = [];
-      track_html.push("<font size=4><center>No data available for selected region</center></font>");
->>>>>>> 803b040... Preloadtrack bug fixed and unwanted scripts removed
 
             jQuery(div).html(track_html.join(""));
 //      jQuery(div).css('height', 50)
@@ -592,24 +416,14 @@ function dispGenes(div, track, expand, className) {
 
                 var startposition = (gene_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                 var stopposition = (gene_stop - gene_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
-                track_html.push("<div class='" + trackClass + " " + className + "_exon' STYLE=\"position:absolute;  cursor:pointer; TOP:" + top + "px; " +
+                track_html.push("<div class='" + trackClass + "' STYLE=\"position:absolute;  cursor:pointer; TOP:" + top + "px; " +
                     "LEFT:" + startposition + "px; width :" + stopposition + "px; \" " +
                     "onclick=trackClick(\"" + track + "\",\"" + len + "\"); onmouseover=trackmouseover(\"" + track + "\",\"" + len + "\"); onmouseout=trackmouseout(); > " +
-                    "<div style='" + labeltoogle + " z-index: 999; overflow: hidden;text-overflow: ellipsis;' class = \"tracklabel " + labelclass + "\"> <p class='track_label'>" + label + "</p></div></div>");
+                    "<div style='" + labeltoogle + " z-index: 999;' class = \"" + labelclass + "\"> <p class='track_label'>" + label + "</p></div></div>");
 
-<<<<<<< HEAD
 //            console.log(track_html);
                 //}
             }
-=======
-        //  if (show) {
-        var gene_desc = genes[len].desc;
-        var border = " border-left: 1px solid #000000; border-right: 1px solid #000000;";
-        if (genes[len].flag) {
-          if (trackClass.indexOf("geneflag") < 0) {
-            trackClass += " geneflag";
-          }
->>>>>>> 803b040... Preloadtrack bug fixed and unwanted scripts removed
         }
         else {
             var len = genes.length;
@@ -648,39 +462,12 @@ function dispGenes(div, track, expand, className) {
                     var top = genes[len].transcript[transcript_len].layer * 20 + 15;
                     var startposition = (gene_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                     var stopposition = (gene_stop - gene_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
-                    track_html.push("<div class='" + trackClass + " " + className + "' STYLE=\"height: 10px; TOP:" + top + "px; " +
+                    track_html.push("<div class='" + trackClass + "' STYLE=\"height: 10px; TOP:" + top + "px; " +
                         "LEFT:" + startposition + "px; width :" + stopposition + "px; \" " +
-<<<<<<< HEAD
-                        " > <div style='overflow: hidden;text-overflow: ellipsis; " + labeltoogle + "' class = \"tracklabel " + labelclass + "\"> <p>" + label + "</p></div></div>");
-=======
-                        "onclick=trackClick(\"" + track + "\",\"" + len + "\"); onmouseover=trackmouseover(\"" + track + "\",\"" + len + "\"); onmouseout=trackmouseout(); > " +
-                        "<div style='" + labeltoogle + " z-index: 999; overflow: hidden;text-overflow: ellipsis;' class = \"tracklabel " + labelclass + "\"> <p class='track_label'>" + label + "</p></div></div>");
-
-      }
-    }
-    else {
-      var len = genes.length;
-      var template = "<div STYLE=\"position:absolute;  cursor:pointer; height: 10px;  \">";
-      var template_label = "<div style=' z-index: 999;' class = \"label\"> <p></p></div></div>";
-      while (len--) {
-        trackClass = "gene track";
-        var transcript_len = genes[len].transcript.length;
-        while (transcript_len--) {
-
-          var gene_start;
-          var gene_stop;
-          if (genes[len].transcript[transcript_len].start < genes[len].transcript[transcript_len].end) {
-            gene_start = genes[len].transcript[transcript_len].start;
-            gene_stop = genes[len].transcript[transcript_len].end;
-          }
-          else {
-            gene_start = genes[len].transcript[transcript_len].end;
-            gene_stop = genes[len].transcript[transcript_len].start;
-          }
->>>>>>> 803b040... Preloadtrack bug fixed and unwanted scripts removed
+                        " > <div style='" + labeltoogle + "' class = \"" + labelclass + "\"> <p>" + label + "</p></div></div>");
 
                     if (stopposition > 10) {
-                        track_html.push(dispGeneExon(genes[len].transcript[transcript_len], genes[len].strand, className));
+                        track_html.push(dispGeneExon(genes[len].transcript[transcript_len], genes[len].strand));
                     }
                     else {
                         track_html.push("<div class='exon' STYLE=\"TOP:" + top + "px; " +
@@ -697,35 +484,20 @@ function dispGenes(div, track, expand, className) {
                 }
             }
         }
-<<<<<<< HEAD
         var now = new Date();
 //    console.log(now.getMinutes() + ":" + now.getSeconds() + ":" + now.getMilliseconds());
 
         if (jQuery('input[name=' + track + 'mergedCheckbox]').is(':checked')) {
             jQuery(div).fadeOut();
             jQuery("#" + track + "_wrapper").fadeOut();
-=======
-      }
-    }
-    if (jQuery('input[name=' + track + 'mergedCheckbox]').is(':checked')) {
-      jQuery(div).fadeOut();
-      jQuery("#" + track + "_wrapper").fadeOut();
->>>>>>> 803b040... Preloadtrack bug fixed and unwanted scripts removed
 
             jQuery(div).html();
 
-<<<<<<< HEAD
             //  track_html = track_html.replace(/tracks_image/g, 'merged_tracks_image')
             jQuery("#mergedtrack").css('height', (j * 20) + parseInt(50));
             jQuery("#mergedtrack").append(track_html.join(''));
             jQuery("#mergedtrack").fadeIn();
             jQuery("#mergedtrack_wrapper").fadeIn();
-=======
-      jQuery("#mergedtrack").css('height', (j * 20) + parseInt(50));
-      jQuery("#mergedtrack").append(track_html.join(''));
-      jQuery("#mergedtrack").fadeIn();
-      jQuery("#mergedtrack_wrapper").fadeIn();
->>>>>>> 803b040... Preloadtrack bug fixed and unwanted scripts removed
 
 
         }
@@ -744,9 +516,9 @@ function dispGenes(div, track, expand, className) {
     }
 }
 
-function dispGeneExon(track, genestrand, className) {
-    var trackClass = "exon "+className + "_exon";
-    var utrtrackClass = "utr "+className + "_utr";
+function dispGeneExon(track, genestrand) {
+    var trackClass = "exon";
+    var utrtrackClass = "utr";
 
 
     var geneexons = track.Exons;
@@ -766,15 +538,11 @@ function dispGeneExon(track, genestrand, className) {
 
         var newStart_temp = getBegin();
         var newEnd_temp = getEnd();
-        var maxLentemp = jQuery("#canvas").css("width");
-
+        var maxLentemp = maxLen;
         var partial = (newEnd_temp - newStart_temp) / 2;
         var start = newStart_temp - partial;
         var end = newEnd_temp + partial;
         var exon_len = geneexons.length;
-        var last_exon = 0;
-        var startposition = 0;
-        var stopposition = 0;
         while (exon_len--) {
 
 
@@ -806,8 +574,8 @@ function dispGeneExon(track, genestrand, className) {
 
             if (exon_len - 1 >= 0 && geneexons[exon_len - 1].end < newStart_temp && exon_len + 1 < geneexons.length && geneexons[exon_len + 1].start > newEnd_temp) {
 
-                startposition = (newStart_temp - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                stopposition = (getEnd() - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                var startposition = (newStart_temp - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                var stopposition = (getEnd() - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                 track_html += "<div style=\"position:absolute; z-index; 999; TOP:" + (top - 3) + "px; left:" + (startposition + 20) + "px; \" class=\"" + spanclass + "\"></div>";
                 track_html += "<div style=\"position:absolute; z-index; 999; TOP:" + (top - 3) + "px; left:" + (stopposition - 20) + "px; \" class=\"" + spanclass + "\"></div>";
             }
@@ -815,8 +583,8 @@ function dispGeneExon(track, genestrand, className) {
 
                 if (transcript_start && transcript_end) {
                     if (exon_start > transcript_end && exon_stop > transcript_end) {
-                        startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                        stopposition = (exon_stop - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                        var startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                        var stopposition = (exon_stop - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
                         if (last != null) {
                             track_html += "<span style=\"cursor:pointer; position:absolute; z-index; 999; TOP:" + (top - 3) + "px; left:" + (startposition - 20) + "px; \" class= \"" + spanclass + "\"></span>";
                         }
@@ -830,8 +598,8 @@ function dispGeneExon(track, genestrand, className) {
                         last = current;
                     }
                     else if (exon_start < transcript_start && exon_stop < transcript_start) {
-                        startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                        stopposition = (exon_stop - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                        var startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                        var stopposition = (exon_stop - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
                         track_html += "<div class='" + utrtrackClass + "'  " +
                             "STYLE=\"position:absolute; cursor:pointer; height: 10px; z-index: 100; TOP:" + top + "px; LEFT:" + startposition + "px; " +
@@ -842,8 +610,8 @@ function dispGeneExon(track, genestrand, className) {
                     }
                     else if (exon_start < transcript_start && exon_stop > transcript_end) {
 
-                        startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                        stopposition = (transcript_start - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                        var startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                        var stopposition = (transcript_start - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
                         track_html += "<div class='" + utrtrackClass + "'  " +
@@ -851,8 +619,8 @@ function dispGeneExon(track, genestrand, className) {
                             "width:" + (stopposition) + "px \" > </div>";
                         //trackStatement(utrtrackClass, track, startposition, stopposition, a, top, j);
 
-                        startposition = ( transcript_end - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                        stopposition = (exon_stop - transcript_end + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                        var startposition = ( transcript_end - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                        var stopposition = (exon_stop - transcript_end + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
                         track_html += "<div class='" + utrtrackClass + "'  " +
@@ -860,8 +628,8 @@ function dispGeneExon(track, genestrand, className) {
                             "width:" + (stopposition) + "px \" > </div>";
                         //trackStatement(utrtrackClass, track, startposition, stopposition, a, top, j);
 
-                        startposition = (transcript_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                        stopposition = (transcript_end - transcript_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                        var startposition = (transcript_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                        var stopposition = (transcript_end - transcript_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
                         track_html += "<div class='" + trackClass + "'  " +
@@ -872,8 +640,8 @@ function dispGeneExon(track, genestrand, className) {
                         last = current;
                     }
                     else if (exon_stop > transcript_start && exon_start < transcript_start) {
-                        startposition = ( exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                        stopposition = (transcript_start - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                        var startposition = ( exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                        var stopposition = (transcript_start - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
                         track_html += "<div class='" + utrtrackClass + "'  " +
@@ -882,8 +650,8 @@ function dispGeneExon(track, genestrand, className) {
                         //trackStatement(utrtrackClass, track, startposition, stopposition, a, top, j);
 
 
-                        startposition = (transcript_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                        stopposition = (exon_stop - transcript_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                        var startposition = (transcript_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                        var stopposition = (exon_stop - transcript_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
                         track_html += "<div class='" + trackClass + "'  " +
@@ -897,8 +665,8 @@ function dispGeneExon(track, genestrand, className) {
                     }
                     else if (exon_stop > transcript_end && exon_start < transcript_end) {
 
-                        startposition = ( transcript_end - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                        stopposition = (exon_stop - transcript_end + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                        var startposition = ( transcript_end - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                        var stopposition = (exon_stop - transcript_end + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
                         track_html += "<div class='" + utrtrackClass + "'  " +
@@ -907,8 +675,8 @@ function dispGeneExon(track, genestrand, className) {
 
                         //trackStatement(utrtrackClass, track, startposition, stopposition, a, top, j);
 
-                        startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                        stopposition = (transcript_end - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                        var startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                        var stopposition = (transcript_end - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
                         track_html += "<div class='" + trackClass + "'  " +
                             "STYLE=\"position:absolute; cursor:pointer; height: 10px; z-index: 100; TOP:" + top + "px; LEFT:" + startposition + "px; " +
@@ -919,8 +687,8 @@ function dispGeneExon(track, genestrand, className) {
                     }
                     else {
 
-                        startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                        stopposition = (exon_stop - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                        var startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                        var stopposition = (exon_stop - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
                         track_html += "<div class='" + trackClass + "'  " +
@@ -938,27 +706,21 @@ function dispGeneExon(track, genestrand, className) {
                     }
                 }
                 else {
-                    startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                    stopposition = (exon_stop - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                    var startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                    var stopposition = (exon_stop - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
                     track_html += "<div class='" + trackClass + "'  " +
                         "STYLE=\"height: 10px; z-index: 100; TOP:" + top + "px; LEFT:" + startposition + "px; " +
                         "width:" + (stopposition) + "px \" > </div>";
+                    last = current;
 
-                    if (last_exon > 0 && exon_len > 1) {
-                        var marker_pos = (startposition - last_exon) / 2;
-                        if (startposition < last_exon) {
-                            marker_pos = (last_exon - startposition) / 2;
-                            marker_pos = parseInt(startposition) - parseInt(marker_pos);
-                        }
-                        else {
-                            marker_pos = parseInt(marker_pos) + parseInt(startposition) - 8;
-                        }
-                        track_html += "<span style=\"cursor:pointer; position:absolute; TOP:" + (top - 3) + "px; left:" + (marker_pos) + "px; opacity:0.6;  \" class= \"" + spanclass + "\"></span>";
+                    if (exon_len != geneexons.length && exon_len > 1) {
+                        // if ((startposition - 20) > (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2) {
+                        track_html += "<span style=\"cursor:pointer; position:absolute; TOP:" + (top - 3) + "px; left:" + (startposition - 20) + "px; \" class= \"" + spanclass + "\"></span>";
+                        // }
                     }
                 }
-                last_exon = parseInt(startposition) + parseInt(stopposition);
             }
 
 
@@ -969,13 +731,11 @@ function dispGeneExon(track, genestrand, className) {
     }
 }
 
-function dispTrack(div, trackName, className) {
-<<<<<<< HEAD
+function dispTrack(div, trackName) {
     var labelclass = "label" + trackName;
-    var modi_style;
+
     var now = new Date();
 //  console.log(now.getMinutes() + ":" + now.getSeconds() + ":" + now.getMilliseconds());
-<<<<<<< HEAD
     var labeltoogle = "display : none;";
     var trackId;
     jQuery(track_list).each(function (index) {
@@ -986,39 +746,11 @@ function dispTrack(div, trackName, className) {
             }
         }
     });
-=======
-=======
-  var labelclass = "label" + trackName;
-  var modi_style;
->>>>>>> 803b040... Preloadtrack bug fixed and unwanted scripts removed
-  var labeltoogle = "display : none;";
-  var trackId;
-
-  if (window['track_list' + trackName].label == 0) {
-    labeltoogle = "display : none;";
-  }
-
-<<<<<<< HEAD
-//  jQuery(track_list).each(function (index) {
-//    if (track_list[index].name == trackName) {
-//      trackId = track_list[index].id;
-//      if (track_list[index].label == 1) {
-//        labeltoogle = "display : in-line;";
-//      }
-//    }
-//  });
->>>>>>> d095b59... vars created for tracks so most of the loops on track_list eliminated
 
     if (!window[trackName] || window[trackName] == "loading") {
         jQuery(div).html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
         jQuery(div).fadeIn();
         jQuery("#" + trackName + "_wrapper").fadeIn();
-=======
-  if (!window[trackName] || window[trackName] == "loading") {
-    jQuery(div).html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
-    jQuery(div).fadeIn();
-    jQuery("#" + trackName + "_wrapper").fadeIn();
->>>>>>> 803b040... Preloadtrack bug fixed and unwanted scripts removed
 
     }
     else if (window[trackName][0] == "getHit no result found") {
@@ -1036,9 +768,7 @@ function dispTrack(div, trackName, className) {
         var diff = getEnd() - getBegin();
         var newStart_temp = getBegin();
         var newEnd_temp = getEnd();
-        var maxLen_temp = jQuery("#canvas").css("width");
 
-<<<<<<< HEAD
 //    var track_old = window[trackName];
         var track = window[trackName];
         var now = new Date();
@@ -1060,20 +790,11 @@ function dispTrack(div, trackName, className) {
 
 
             jQuery(div).html(track_html.join(""));
-=======
-    var track = window[trackName];
-
-    if (track[0] == null) {
-      track_html = [];
-      track_html.push("<font size=4><center>No data available for selected region</center></font>");
-      jQuery(div).html(track_html.join(""));
->>>>>>> 803b040... Preloadtrack bug fixed and unwanted scripts removed
 //      jQuery(div).css('height', 50)
 
             jQuery(div).fadeIn();
             jQuery("#" + trackName + "_wrapper").fadeIn();
 
-<<<<<<< HEAD
         }
         else if (track.length > 0 && (track.length < 10000 || diff <= minWidth)) {
             var track_html = [];
@@ -1090,108 +811,7 @@ function dispTrack(div, trackName, className) {
             else {
                 jQuery(div).html(track_html.join(""));
 //        track_html = "";
-<<<<<<< HEAD
             }
-=======
-=======
-    }
-    else if (track.length > 0 && (track.length < 10000 || diff <= minWidth)) {
-      var track_html = [];
-      var coord;
-      if (jQuery('input[name=' + trackName + 'mergedCheckbox]').is(':checked')) {
-        jQuery(div).fadeOut();
-        jQuery(div).html("");
-        track_html.push("(" + merged_track_list + ")");
-        jQuery("#mergelabel").html(track_html.join(""));
-        trackClass += " mergedtrack";
-        labelclass = "Merged_Track";
-      }
-      else {
-        jQuery(div).html(track_html.join(""));
->>>>>>> 803b040... Preloadtrack bug fixed and unwanted scripts removed
-      }
-
-      if (window['track_list' + trackName].id.toString().indexOf('cs') > -1) {
-        coord = true;
-      }
-      else {
-        coord = false;
-      }
-
-      track_html = [];
-
-      var j = 0;
-      if (trackName.toLowerCase().indexOf("contig") >= 0) {
-        trackClass = "contigs track";
-      }
-      else if (trackName.toLowerCase().indexOf("est") >= 0) {
-        trackClass = "est track";
-      }
-      else if (trackName.toLowerCase().indexOf("clone") >= 0) {
-        trackClass = "clone track";
-      }
-      else if (trackName.toLowerCase().indexOf("align") >= 0) {
-        trackClass = "align track";
-      }
-      else if (trackName.toLowerCase().indexOf("sam") >= 0 || trackName.toLowerCase().indexOf("bam") >= 0) {
-        trackClass = "sam track";
-      }
-      else if (trackName.toLowerCase().indexOf("repeat") >= 0) {
-        trackClass = "repeat track";
-      }
-      else {
-        trackClass = "unknown track";
-      }
-
-
-      var track_len = track.length;
-      while (track_len--) {
-
-        var strand = track[track_len].strand;
-
-        var spanclass = "ui-icon ui-icon-carat-1-e";
-        if (strand == -1 || strand == false) {
-          spanclass = "ui-icon ui-icon-carat-1-w";
-        }
-
-        var track_start = track[track_len].start;
-        var track_stop = track[track_len].end ? track[track_len].end : parseInt(track[track_len].start) + 1;
-
-        var border = "";
-        if (track[track_len].flag) {
-          border = "border: 1px solid black;";
-        }
-        var track_desc = track[track_len].desc;
-        var top;
-        if (coord || track[track_len].layer) {
-          top = (track[track_len].layer) * 10 + 10;
-          if (track[track_len].layer > j) {
-            j = track[track_len].layer;
-          }
-        }
-        else {
-          top = ((track_len) % (layers) + 1) * 20 + 15;
-        }
-        if (track[track_len].colour) {
-          modi_style = 'background:' + track[track_len].colour + "; ";
-        }
-        else {
-          modi_style = '';
-        }
-        var startposition = (track_start - newStart_temp) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen_temp) / 2;
-        var stopposition = (track_stop - track_start + 1) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp);
-        if (stopposition < 2) {
-          stopposition = 2;
-        }
-        var trackClass, label;
-
-        if (trackName.toLowerCase().indexOf("snp") >= 0) {
-          spanclass = "";
-          if (stopposition < 2) {
-            stopposition = 2;
-          }
-          trackClass = 'snp' + track[track_len].cigarline + ' track';
->>>>>>> d095b59... vars created for tracks so most of the loops on track_list eliminated
 
             jQuery(track_list).each(function (index) {
                 if (this.name == trackName && this.id.toString().indexOf('cs') > -1) {
@@ -1259,18 +879,12 @@ function dispTrack(div, trackName, className) {
                     if (track[track_len].layer > j) {
                         j = track[track_len].layer;
                     }
-
-                    if (track[track_len].colour) {
-                        modi_style = 'background:' + track[track_len].colour + "; ";
-                    } else {
-                        modi_style = '';
-                    }
                 }
                 else {
                     top = ((track_len) % (layers) + 1) * 20 + 15;
                 }
-                var startposition = (track_start - newStart_temp) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen_temp) / 2;
-                var stopposition = (track_stop - track_start + 1) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp);
+                var startposition = (track_start - newStart_temp) * parseFloat(maxLen) / (newEnd_temp - newStart_temp) + parseFloat(maxLen) / 2;
+                var stopposition = (track_stop - track_start + 1) * parseFloat(maxLen) / (newEnd_temp - newStart_temp);
                 if (stopposition < 2) {
                     stopposition = 2;
                 }
@@ -1290,13 +904,13 @@ function dispTrack(div, trackName, className) {
 
                 }
 
-                track_html.push("<div class='" + trackClass + " " + className + "' STYLE=\"" + border + "" + modi_style + "TOP:" + top + "px; LEFT:" + (startposition) + "px; " +
+                track_html.push("<div class='" + trackClass + "' STYLE=\"" + border + "TOP:" + top + "px; LEFT:" + (startposition) + "px; " +
                     "width:" + (stopposition) + "px \" " +
                     "onclick=trackClick(\"" + trackName + "\",\"" + track_len + "\"); " +
                     "title=" + label + ">" +
-                    "<div style='" + labeltoogle + " z-index: 999; overflow: hidden;text-overflow: ellipsis;' class = \"tracklabel " + labelclass + "\">" + label + "</div></div>")
+                    "<div style='" + labeltoogle + " z-index: 999;' class = \"" + labelclass + "\">" + label + "</div></div>")
                 if (stopposition > 10) {
-                    track_html.push("<span style=\"cursor:pointer; position:absolute; TOP:" + (top - 6) + "px; left:" + (parseInt(startposition) + parseInt(stopposition / 2) - 8) + "px; opacity:0.6; \" class= \"" + spanclass + "\"></span>");
+                    track_html.push("<span style=\"cursor:pointer; position:absolute; TOP:" + (top - 5) + "px; left:" + (parseInt(startposition) + parseInt(stopposition / 2) ) + "px; \" class= \"" + spanclass + "\"></span>");
                 }
                 if (track[track_len].cigars && stopposition > 50) {
                     track_html.push(dispCigar(track[track_len].cigars, track[track_len].start, top));
@@ -1346,14 +960,11 @@ function dispTrack(div, trackName, className) {
     var now = new Date();
 }
 function dispCigarLine(cigars, start, top) {
-<<<<<<< HEAD
     var track_html = "";
     var trackClass = "";
     var newStart_temp = getBegin();
     var newEnd_temp = getEnd();
-    var maxLentemp = jQuery("#canvas").css("width");
-
-
+    var maxLentemp = maxLen;
     var cigar_pos = start;
     var startposition;
     var stopposition;
@@ -1378,21 +989,21 @@ function dispCigarLine(cigars, start, top) {
             }
             else if (key == "I") {
                 trackClass = "insert";
-                startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen) / 2;
                 stopposition = (length) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
                 track_html += trackHTML(startposition, stopposition, top, trackClass);
                 cigar_pos = parseInt(cigar_pos) + parseInt(length)
             }
             else if (key == "D") {
                 trackClass = "delete";
-                startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen) / 2;
                 stopposition = 1
                 track_html += trackHTML(startposition, stopposition, top, trackClass);
             }
 
             else if (key == "X") {
                 trackClass = "mismatch";
-                startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen) / 2;
                 stopposition = (length) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
                 track_html += trackHTML(startposition, stopposition, top, trackClass);
                 cigar_pos = parseInt(cigar_pos) + parseInt(length)
@@ -1407,53 +1018,6 @@ function dispCigarLine(cigars, start, top) {
 //        console.log(startposition + "," + stopposition + "," + top + "," + trackClass)
             }
         }
-=======
-  var track_html = "";
-  var trackClass = "";
-  var newStart_temp = getBegin();
-  var newEnd_temp = getEnd();
-  var maxLentemp = jQuery("#canvas").css("width");
-
-
-  var cigar_pos = start;
-  var startposition;
-  var stopposition;
-  if (cigars != '*') {
-    cigars = cigars.replace(/([SIXMND])/g, ":$1,");
-    var cigars_array = cigars.split(',');
-    for (var i = 0; i < cigars_array.length - 1; i++) {
-      var cigar = cigars_array[i].split(":");
-
-      var key = cigar[1];
-      var length = cigar[0];
-      if (key == "M") {
-        cigar_pos = parseInt(cigar_pos) + parseInt(length);
-      }
-      else if (key == "I") {
-        trackClass = "insert";
-        startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-        stopposition = (length) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
-        track_html += trackHTML(startposition, stopposition, top, trackClass);
-        cigar_pos = parseInt(cigar_pos) + parseInt(length)
-      }
-      else if (key == "D") {
-        trackClass = "delete";
-        startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-        stopposition = 1
-        track_html += trackHTML(startposition, stopposition, top, trackClass);
-      }
-
-      else if (key == "X") {
-        trackClass = "mismatch";
-        startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-        stopposition = (length) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
-        track_html += trackHTML(startposition, stopposition, top, trackClass);
-        cigar_pos = parseInt(cigar_pos) + parseInt(length)
-      }
-      else if (key == "=") {
-        cigar_pos = parseInt(cigar_pos) + parseInt(length)
-      }
->>>>>>> 803b040... Preloadtrack bug fixed and unwanted scripts removed
     }
 
     function trackHTML(startposition, stopposition, top, trackClass) {
@@ -1469,14 +1033,12 @@ function dispCigarLine(cigars, start, top) {
     return track_html;
 }
 function dispCigar(cigars, start, top) {
-<<<<<<< HEAD
 //  console.log("cigars")
     var track_html = "";
     var trackClass = "";
     var newStart_temp = getBegin();
     var newEnd_temp = getEnd();
-    var maxLentemp = jQuery("#canvas").css("width");
-
+    var maxLentemp = maxLen;
     for (var key in cigars) {
         if (key == "M") {
             trackClass = "match";
@@ -1501,7 +1063,7 @@ function dispCigar(cigars, start, top) {
 //(track_start - newStart_temp) * parseFloat(maxLen) / (newEnd_temp - newStart_temp) + parseFloat(maxLen) / 2;
             var cigar_start = parseInt(cigar[i].split(":")[0]) + parseInt(start);
             var cigar_stop = cigar[i].split(":")[1];
-            var startposition = (cigar_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+            var startposition = (cigar_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen) / 2;
 
 
             //  var startposition =parseInt( (parseInt(parseInt(start)+ parseInt(cigar[i].split(":")[0]) - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2));
@@ -1517,196 +1079,62 @@ function dispCigar(cigars, start, top) {
                 "STYLE=\"height: 5px; z-index: 100; TOP:" + top + "px; LEFT:" + startposition + "px; " +
                 "width:" + (stopposition) + "px \" > </div>";
         }
-=======
-  var track_html = "";
-  var trackClass = "";
-  var newStart_temp = getBegin();
-  var newEnd_temp = getEnd();
-  var maxLentemp = jQuery("#canvas").css("width");
-
-  for (var key in cigars) {
-    if (key == "M") {
-      trackClass = "match";
-    }
-    else if (key == "I") {
-      trackClass = "insert";
-    }
-    else if (key == "D") {
-      trackClass = "delete";
-    }
-    else if (key == "D") {
-      trackClass = "skip";
-    }
-    else if (key == "X") {
-      trackClass = "mismatch";
-    }
-    else if (key == "=") {
-      trackClass = "match";
-    }
-    var cigar = cigars[key].split(",");
-    for (var i = 0; i < cigar.length; i++) {
-      var cigar_start = parseInt(cigar[i].split(":")[0]) + parseInt(start);
-      var cigar_stop = cigar[i].split(":")[1];
-      var startposition = (cigar_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-
-
-      var stopposition;
-      if (key == "M" || key == "I" || key == "X" || key == "=") {
-        stopposition = (cigar_stop) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
-      }
-      else {
-        stopposition = 1;
-      }
-      track_html += "<div class='" + trackClass + "'  " +
-                    "STYLE=\"height: 5px; z-index: 100; TOP:" + top + "px; LEFT:" + startposition + "px; " +
-                    "width:" + (stopposition) + "px \" > </div>";
-    }
->>>>>>> 803b040... Preloadtrack bug fixed and unwanted scripts removed
 
     }
     return track_html;
 }
 
 
-function dispGraph(div, trackName,  className) {
+function dispGraph(div, trackName, trackId) {
     var track_html = "";
 
-     if (jQuery('input[name=' + trackName + 'mergedCheckbox]').is(':checked')) {
-        jQuery(div).fadeOut();
-        jQuery("#" + trackName + "_wrapper").fadeOut();
-        div = "#mergedtrack";
-        jQuery("#mergedtrack").fadeIn();
-        jQuery("#mergedtrack_wrapper").fadeIn();
+    jQuery(div).html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
+    jQuery(div).fadeIn();
+    jQuery("#" + trackName + "_wrapper").fadeIn();
 
-        track_html.push("(" + merged_track_list + ")");
-        jQuery("#mergelabel").html(track_html.join(""));
 
-        className = " mergedtrack "+className;
-        labelclass = "Merged_Track";
+    var track = window[trackName];
+    var partial = (parseInt(getEnd()) - parseInt(getBegin())) / 2;
+    var start = parseInt(getBegin()) - parseInt(partial)
+    var end = parseInt(getEnd()) + parseInt(partial);
+
+    var newStart_temp = getBegin();
+    var newEnd_temp = getEnd();
+
+    if (track[0]) {
+        track = jQuery.grep(track, function (element, index) {
+            return element.start >= start && element.start <= end; // retain appropriate elements
+        });
     }
-    else {
-        jQuery(div).fadeIn();
-        jQuery("#" + track + "_wrapper").fadeIn();
+
+
+    var total = 0;
+    var max = Math.max.apply(Math, track.map(function (o) {
+        return o.graph;
+    }));
+
+    var track_len = track.length;
+
+    while (track_len--) {
+        var track_start = track[track_len].start;
+        var track_stop = track[track_len].end;
+
+        var startposition = (track_start - newStart_temp) * parseFloat(maxLen) / (newEnd_temp - newStart_temp) + parseFloat(maxLen) / 2;
+        var stopposition = (track_stop - track_start ) * parseFloat(maxLen) / (newEnd_temp - newStart_temp);
+
+        track_html += "<div class= \"graph\" onclick=\"setBegin(" + track[track_len].start + ");setEnd(" + track[track_len].end + ");jumpToSeq();\"STYLE=\"bottom:0px; height: " + (track[track_len].graph * 45 / max) + "px;" +
+            "LEFT:" + startposition + "px;" +
+            "width:" + (stopposition - 1) + "px \" title=\"" + track_start + ":" + track_stop + "->" + track[track_len].graph + "\" ></div>";
+
     }
-
-    if (!window[trackName] || window[trackName] == "loading") {
-        jQuery(div).html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
-        jQuery(div).fadeIn();
-        jQuery("#" + trackName + "_wrapper").fadeIn();
-
-    }
-    else {
-        var track = window[trackName];
-        var partial = (parseInt(getEnd()) - parseInt(getBegin())) / 2;
-        var start = parseInt(getBegin()) - parseInt(partial)
-        var end = parseInt(getEnd()) + parseInt(partial);
-        var maxLen_temp = jQuery("#canvas").css("width");
-
-        var newStart_temp = getBegin();
-        var newEnd_temp = getEnd();
-
-        if (track[0]) {
-            track = jQuery.grep(track, function (element, index) {
-                return element.start >= start && element.start <= end; // retain appropriate elements
-            });
-        }
-
-
-        var total = 0;
-        var max = Math.max.apply(Math, track.map(function (o) {
-            return o.graph;
-        }));
-
-        var track_len = track.length;
-
-        while (track_len--) {
-            var track_start = track[track_len].start;
-            var track_stop = track[track_len].end;
-
-            var startposition = (track_start - newStart_temp) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen_temp) / 2;
-            var stopposition = (track_stop - track_start ) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp);
-
-<<<<<<< HEAD
-            track_html += "<div class= \"graph "+className+"_graph\" onclick=\"setBegin(" + track[track_len].start + ");setEnd(" + track[track_len].end + ");jumpToSeq();\"STYLE=\"bottom:0px; height: " + (track[track_len].graph * 45 / max) + "px;" +
-                "LEFT:" + startposition + "px;" +
-                "width:" + (stopposition - 1) + "px \" title=\"" + track_start + ":" + track_stop + "->" + track[track_len].graph + "\" ></div>";
-=======
-             jQuery("<div>").attr({
-                        'id': trackName + "" + track_len,
-                        'class': "graph " + className+"_graph",
-                        'style': "bottom:0px; height: " + (track[track_len].graph * 45 / max) + "px; LEFT:" + startposition + "px; width:" + (stopposition - 1) + "px",
-                        'title': track_start + ":" + track_stop + "->" + track[track_len].graph,
-                        'onClick': "setBegin(" + track[track_len].start + ");setEnd(" + track[track_len].end + ");jumpToSeq();"
-                    }).appendTo(div);
-
-//            track_html += "<div class= \"graph " + className + "_graph\" onclick=\"setBegin(" + track[track_len].start + ");setEnd(" + track[track_len].end + ");jumpToSeq();\"STYLE=\"bottom:0px; height: " + (track[track_len].graph * 45 / max) + "px;" +
-//                "LEFT:" + startposition + "px;" +
-//                "width:" + (stopposition - 1) + "px \" title=\"" + track_start + ":" + track_stop + "->" + track[track_len].graph + "\" ></div>";
->>>>>>> cb8bc12... track controller more generic doms
-
-        }
 //  jQuery(div).css('height', '70px');
-//        jQuery(div).fadeIn();
-//        jQuery("#" + trackName + "_wrapper").fadeIn();
-//
-//        jQuery(div).html(track_html);
-    }
+    jQuery(div).fadeIn();
+    jQuery("#" + trackName + "_wrapper").fadeIn();
+
+    jQuery(div).html(track_html);
 }
 
-function dispGraphBed(div, trackName, trackId, className) {
-    var track_html = "";
-
-    if (!window[trackName] || window[trackName] == "loading") {
-        jQuery(div).html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
-        jQuery(div).fadeIn();
-        jQuery("#" + trackName + "_wrapper").fadeIn();
-
-    }
-    else {
-        var track = window[trackName];
-        var partial = (parseInt(getEnd()) - parseInt(getBegin())) / 2;
-        var start = parseInt(getBegin()) - parseInt(partial)
-        var end = parseInt(getEnd()) + parseInt(partial);
-        var maxLen_temp = jQuery("#canvas").css("width");
-
-        var newStart_temp = getBegin();
-        var newEnd_temp = getEnd();
-
-        if (track[0]) {
-            track = jQuery.grep(track, function (element, index) {
-                return element.start >= start && element.start <= end; // retain appropriate elements
-            });
-        }
-
-
-        var total = 0;
-        var max = Math.max.apply(Math, track.map(function (o) {
-            return o.value;
-        }));
-
-        var track_len = track.length;
-
-        while (track_len--) {
-            var track_start = track[track_len].start;
-            var track_stop = track[track_len].end;
-
-            var startposition = (track_start - newStart_temp) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen_temp) / 2;
-            var stopposition = (track_stop - track_start ) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp);
-
-            track_html += "<div class= \"graph "+className+"graph\" onclick=\"setBegin(" + track[track_len].start + ");setEnd(" + track[track_len].end + ");jumpToSeq();\"STYLE=\"bottom:0px; height: " + (track[track_len].value * 45 / max) + "px;" +
-                "LEFT:" + startposition + "px;" +
-                "width:" + (stopposition - 1) + "px \" title=\"" + track_start + ":" + track_stop + "->" + track[track_len].value + "\" ></div>";
-
-        }
-//  jQuery(div).css('height', '70px');
-        jQuery(div).fadeIn();
-        jQuery("#" + trackName + "_wrapper").fadeIn();
-
-        jQuery(div).html(track_html);
-    }
-}
-
-function dispGraphWig(div, trackName, trackId, className) {
+function dispGraphWig(div, trackName, trackId) {
 
     var track_html = "";
 
@@ -1737,19 +1165,20 @@ function dispGraphWig(div, trackName, trackId, className) {
         }));
 
         var width = jQuery("#wrapper").width(),
-            height = 80;
+            height = 100;
 
 
         var left = 0;
         if (start < 0) {
             left = (1 - start) * parseInt(width) / end * 3 / 4;
+
         }
 
-        var top = 20;
+        var top = 0;
 
         var svg = d3.select(div).append("svg")
             .attr("width", width)
-            .attr("height", height + 20)
+            .attr("height", height + 10)
             .append("g")
             .attr("transform", "translate(" + left + "," + top + ")");
 
@@ -1764,20 +1193,16 @@ function dispGraphWig(div, trackName, trackId, className) {
 
         d3.json(track, function () {
             data = track;
+
+            data.splice(0, 0, {start: "1", value: '0'});
             var length = data.length - 1;
-            var end_val = parseInt(data[length].start) + parseInt(data[1].start - data[0].start);
-            var start_val = parseInt(data[0].start) - (parseInt(data[1].start - data[0].start));
-
-            data.splice(0, 0, {start: start_val, value: '0'});
-
+            var end_val = parseInt(data[length].start) + parseInt(1);
+            console.log(data[length].start + ":" + end_val)
             data.splice(data.length, 0, {start: end_val, value: '0'});
+            console.log(data[length])
             var space = parseInt(width) / (end - start);
 
             var pathinfo = [];
-
-            var last_start = 0;
-            var diff = parseInt(data[1].start - data[0].start);
-
             for (var i = 0; i < data.length - 1;) {
                 var tempx;
                 if (start > 0) {
@@ -1788,40 +1213,13 @@ function dispGraphWig(div, trackName, trackId, className) {
                 }
                 var tempy = height - (data[i].value * height / max); //(parseInt(max)*(41-parseInt(patharray[i]))/41);
                 pathinfo.push({ x: tempx, y: tempy});
-
-
-//        if (data.length < 400) {
-                i++;
-//        }
-//        else {
-//          i = parseInt(i + (data.length / 400));
-//        }
-
-                if (last_start < data[i].start - diff) {
-                    if (start > 0) {
-                        tempx = ((parseInt(last_start) + parseInt(diff)) - start) * space;
-                    }
-                    else {
-                        tempx = ((parseInt(last_start) + parseInt(diff))) * space;
-                    }
-                    var tempy = height; //(parseInt(max)*(41-parseInt(patharray[i]))/41);
-                    pathinfo.push({ x: tempx, y: tempy});
-
-                    if (start > 0) {
-                        tempx = ((parseInt(data[i].start) - parseInt(diff)) - start) * space;
-                    }
-                    else {
-                        tempx = ((parseInt(data[i].start) - parseInt(diff))) * space;
-                    }
-                    var tempy = height; //(parseInt(max)*(41-parseInt(patharray[i]))/41);
-                    pathinfo.push({ x: tempx, y: tempy});
-
+                if (data.length < 400) {
+                    i++;
                 }
-
-                last_start = data[i].start;
+                else {
+                    i = parseInt(i + (data.length / 400));
+                }
             }
-
-
             if (start > 0) {
                 tempx = (data[data.length - 1].start - start) * space;
             }
@@ -1837,12 +1235,8 @@ function dispGraphWig(div, trackName, trackId, className) {
                 .attr("width", 200)
                 .attr("height", 200)
                 .attr("class", "path")
-
                 .attr('stroke', function () {
                     return "blue";
-                })
-                .attr('stroke-width', function () {
-                    return "2px";
                 })
                 .attr("fill", function () {
                     return "lightblue";

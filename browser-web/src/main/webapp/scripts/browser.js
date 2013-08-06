@@ -488,116 +488,60 @@ function addJSON(from, to, trackName, trackId) {
 
 }
 
-<<<<<<< HEAD
-=======
-/*
- this can be modified to use for edited and removed tracks
- var obj1 = [
- {id:2, comment:"comment22",edited:"new"}
- ] ;
-
- var obj2 =  [
- {id:1, comment:"comment2"},
- {id:2, comment:"comment2"},
- {id:3, comment:"comment33"},
- {id:4, comment:"comment4"}
- ];
-
- function merge(one, two){
-
- var final = one;
- // merge
- for(var i = 0 ; i < two.length;i++){
- var item = two[i];
- insert(item, final);
- }
- return final;
- }
-
-
- function insert(item, obj){
- var data = obj;
- var insertIndex = data.length;
- for(var i = 0; i < data.length; i++){
- if(item.id == data[i].id){
- $('#o').append( item.id +"=="+ data[i].id +"\n");
- // ignore duplicates
- insertIndex = -1;
- break;
- } else if(item.id < data[i].id){
- $('#o').append( item.id +"<"+ data[i].id  +"\n");
- insertIndex = i;
- break;
- }
- }
- if(insertIndex == data.length){
- data.push(item);
- } else if(insertIndex != -1) {
- data.splice(insertIndex,0,item);
- }
- }
-
- var final = merge(obj1, obj2);
-
- $('#o').append("\n\n\nUsing merge()\n");
- $('#o').append( JSON.stringify(final) );
- */
->>>>>>> 803b040... Preloadtrack bug fixed and unwanted scripts removed
-
 function removeJSON(from, to) {
-  if (from < 0) {
-    from = 0;
-  }
-  else if (from > sequencelength) {
-    from = sequencelength;
-  }
-  if (to < 0) {
-    to = 0;
-  }
-  else if (to > sequencelength) {
-    to = sequencelength;
-  }
+    if (from < 0) {
+        from = 0;
+    }
+    else if (from > sequencelength) {
+        from = sequencelength;
+    }
+    if (to < 0) {
+        to = 0;
+    }
+    else if (to > sequencelength) {
+        to = sequencelength;
+    }
 
-  var Tracklist = track_list;
-  var query = jQuery('#search').val();
-  if (from == null) {
-    var count = 0;
-    for (var i = 0; i < Tracklist.length; i++) {
-      if (window[Tracklist[i].name]) {
-        for (var j = 0; j < window[Tracklist[i].name].length;) {
-          if (window[Tracklist[i].name][j].start > to) {
-            count++;
-            delete window[Tracklist[i].name].splice(j, 1);
-          }
-          else {
-            j++;
-          }
+    var Tracklist = track_list;
+    var query = jQuery('#search').val();
+    if (from == null) {
+        var count = 0;
+        for (var i = 0; i < Tracklist.length; i++) {
+            if (window[Tracklist[i].name]) {
+                for (var j = 0; j < window[Tracklist[i].name].length;) {
+                    if (window[Tracklist[i].name][j].start > to) {
+                        count++;
+                        delete window[Tracklist[i].name].splice(j, 1);
+                    }
+                    else {
+                        j++;
+                    }
+                }
+                if (jQuery("#" + Tracklist[i].name + "Checkbox").is(':checked')) {
+                    trackToggle(Tracklist[i].name)
+                }
+            }
         }
-        if (jQuery("#" + Tracklist[i].name + "Checkbox").is(':checked')) {
-          trackToggle(Tracklist[i].name)
-        }
-      }
     }
-  }
-  else {
-    var count = 0;
-    for (var i = 0; i < Tracklist.length; i++) {
-      if (window[Tracklist[i].name]) {
-        for (var j = 0; j < window[Tracklist[i].name].length;) {
-          if (window[Tracklist[i].name][j].start < from) {
-            count++;
-            delete window[Tracklist[i].name].splice(j, 1);
-          }
-          else {
-            j++;
-          }
+    else {
+        var count = 0;
+        for (var i = 0; i < Tracklist.length; i++) {
+            if (window[Tracklist[i].name]) {
+                for (var j = 0; j < window[Tracklist[i].name].length;) {
+                    if (window[Tracklist[i].name][j].start < from) {
+                        count++;
+                        delete window[Tracklist[i].name].splice(j, 1);
+                    }
+                    else {
+                        j++;
+                    }
+                }
+                if (jQuery("#" + Tracklist[i].name + "Checkbox").is(':checked')) {
+                    trackToggle(Tracklist[i].name)
+                }
+            }
         }
-        if (jQuery("#" + Tracklist[i].name + "Checkbox").is(':checked')) {
-          trackToggle(Tracklist[i].name)
-        }
-      }
     }
-  }
 
 
 }

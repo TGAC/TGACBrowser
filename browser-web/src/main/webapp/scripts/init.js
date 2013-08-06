@@ -494,42 +494,20 @@ function dispCoord(seqStart, seqEnd) {
 
 function trackList(tracklist) {
 
-  var Tracklist = tracklist;
-  for (var i = 0; i < Tracklist.length; i++) {
-    window['track_list' + Tracklist[i].name] = {
-      name: Tracklist[i].name,
-      id: Tracklist[i].id,
-      display_label: Tracklist[i].display_label,
-      desc: Tracklist[i].desc,
-      disp: Tracklist[i].disp,
-      merge: Tracklist[i].merge,
-      label: Tracklist[i].label,
-      graph: Tracklist[i].graph
-    }
-  }
-  var tracks = "<table> <tr>";
-  var mergeTrack = "<table> <tr>";
+    var tracks = "<table> <tr>";
+    var mergeTrack = "<table> <tr>";
 
+    var Tracklist = tracklist;
 
-  for (var i = 0; i < Tracklist.length; i++) {
-
-    tracks += "<td> <span title='" + Tracklist[i].desc + "'><input type=\"checkbox\" id='" + Tracklist[i].name + "Checkbox' name='" + Tracklist[i].name + "-" + Tracklist[i].id + "'  onClick=loadTrackAjax(\"" + Tracklist[i].id + "\",\"" + Tracklist[i].name + "\"); />  " + Tracklist[i].display_label + " </span> </td>";
-    mergeTrack += "<td><span id='" + Tracklist[i].name + "span'> <input type=\"checkbox\" disabled id='" + Tracklist[i].name + "mergedCheckbox' name='" + Tracklist[i].name + "mergedCheckbox' onClick=mergeTrack(\"" + Tracklist[i].name + "\"); value=" + Tracklist[i].name + " >" + Tracklist[i].display_label + "  </span> </td>";
-
-    if ((i + 1) % 3 == 0) {
-      tracks += "</tr> <tr>";
-      mergeTrack += "</tr> <tr>";
+    for (var i = 0; i < Tracklist.length; i++) {
+        tracks += "<td> <span title='" + Tracklist[i].desc + "'><input type=\"checkbox\" id='" + Tracklist[i].name + "Checkbox' name='" + Tracklist[i].name + "-" + Tracklist[i].id + "'  onClick=loadTrackAjax(\"" + Tracklist[i].id + "\",\"" + Tracklist[i].name + "\"); />  " + Tracklist[i].display_label + " </span> </td>";
+        if ((i + 1) % 3 == 0) {
+            tracks += "</tr> <tr>";
+            mergeTrack += "</tr> <tr>";
+        }
+        mergeTrack += "<td><span id='" + Tracklist[i].name + "span'> <input type=\"checkbox\" disabled id='" + Tracklist[i].name + "mergedCheckbox' name='" + Tracklist[i].name + "mergedCheckbox' onClick=mergeTrack(\"" + Tracklist[i].name + "\"); value=" + Tracklist[i].name + " >" + Tracklist[i].display_label + "  </span> </td>";
     }
 
-    if (Tracklist[i].name.toLowerCase().indexOf("snp") >= 0) {
-
-    }
-    else if (Tracklist[i].name.toLowerCase().indexOf("gene") >= 0) {
-      jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_exon" + "{ background:" + Tracklist[i].colour + ";border: 1px solid " + Tracklist[i].colour + ";} </style>").appendTo("head");
-      jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_utr" + "{ border: 1px solid " + Tracklist[i].colour + "; background:none repeat scroll 0 0 white;} </style>").appendTo("head");
-      jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_graph{ border:1px solid black; background:" + Tracklist[i].colour + ";} </style>").appendTo("head");
-
-<<<<<<< HEAD
     jQuery("#mergetracklist").html(mergeTrack);
     jQuery("#tracklist").html(tracks);
     jQuery("#tracks").html("<div id='mergedtrack_wrapper' class='feature_tracks' style=\"display:none\">  " +
@@ -553,17 +531,8 @@ function trackList(tracklist) {
     });
     for (i = 0; i < Tracklist.length; i++) {
         jQuery("#tracks").append("<div id='" + Tracklist[i].name + "_wrapper' class='feature_tracks' style=\"display:none\">" +
-            "<div align='left' class='handle'>" +
-            "<table>" +
-            "<tr>" +
-            "<td><b>" + Tracklist[i].display_label + "</b></td>" +
-            "<td><div class=\"ui-icon ui-icon-comment\" onclick=toogleLabel(\"" + Tracklist[i].name + "\");> </div></td>" + checkGene(Tracklist[i].name) +
-            "<td><div class='closehandle ui-icon ui-icon-close' onclick=removeTrack(\"" + Tracklist[i].name + "_div\",\"" + Tracklist[i].name + "\");></div></td>" +
-            "</tr>" +
-            "</table>" +
-            "</div>" +
-            "<div id='" + Tracklist[i].name + "_div' class='feature_tracks' style=\"display:none; top:10px;\" > " + Tracklist[i].name + "</div>" +
-            "</div>");
+            "<div align='left' class='handle'><table><tr><td><b>" + Tracklist[i].display_label + "</b></td><td><div class=\"ui-icon ui-icon-comment\" onclick=toogleLabel(\"" + Tracklist[i].name + "\");> </div></td>" + checkGene(Tracklist[i].name) +
+            "<td><div class='closehandle ui-icon ui-icon-close' onclick=removeTrack(\"" + Tracklist[i].name + "_div\",\"" + Tracklist[i].name + "\");></div></td></tr></table></div> <div id='" + Tracklist[i].name + "_div' class='feature_tracks' style=\"display:none\" > " + Tracklist[i].name + "</div></div>");
         jQuery(function () {
             jQuery("#" + Tracklist[i].name + "_wrapper").resizable({
                 handles: "s",
@@ -573,218 +542,119 @@ function trackList(tracklist) {
             });
         });
     }
-=======
-    }
-    else {
-      jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "{ background:" + Tracklist[i].colour + ";} </style>").appendTo("head");
-      jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_graph{ border:1px solid black; background:" + Tracklist[i].colour + ";} </style>").appendTo("head");
 
+    function checkGene(track) {
+        if (track.toLowerCase().indexOf('gene') >= 0) {
+            return "<td><div title='Expand/Shrink' class=\"closehandle ui-icon ui-icon-carat-2-n-s\" onclick=toogleTrackView(\"" + track + "\");> </div></td>"
+        }
+        else {
+            return "";
+        }
     }
-  }
-  jQuery("#mergetracklist").html(mergeTrack);
-  jQuery("#tracklist").html(tracks);
-  jQuery("#tracks").html("<div id='mergedtrack_wrapper' class='feature_tracks' style=\"display:none\">  " +
-                         "<div align='left' class='handle'>" +
-                         "<table>" +
-                         "<tr>" +
-                         "<td><b>Merged Track  </b></td>" +
-                         "<td><div class=\"ui-icon ui-icon-comment\" onclick=toogleLabelMerged();> </div></td>" +
-                         "<td><div class='closehandle ui-icon ui-icon-close' onclick=removeMergedTrack()></div></td>" +
-                         "<td><div id= \"mergelabel\" align='left'></div></td>" +
-                         "</tr>" +
-                         "</table>" +
-                         "</div>" +
-                         "<div id=\"mergedtrack\" style=\"display:none\" > </div>" +
-                         "</div>");
-  jQuery("#mergedtrack_wrapper").resizable({
-                                             handles: "s",
-                                             alsoResize: "#mergedtrack",
-                                             minHeight: "50px",
-                                             borderBottom: '1px solid black'
-                                           });
-  for (i = 0; i < Tracklist.length; i++) {
-    jQuery("#tracks").append("<div id='" + Tracklist[i].name + "_wrapper' class='feature_tracks' style=\"display:none\">" +
-                             "<div align='left' class='handle'>" +
-                             "<table>" +
-                             "<tr>" +
-//                             "<td><div onclick=\"toggleLeftInfo(jQuery('" + Tracklist[i].display_label + "_arrowclick'), '" + Tracklist[i].display_label + "_div');\"> " +
-//                             "<div id='" + Tracklist[i].display_label + "_arrowclick' class=\"toggleRight\"></div> " +
-//                             "</div></td>" +
-                             "<td><b>" + Tracklist[i].display_label + "</b></td>" +
-                             "<td><div class=\"ui-icon ui-icon-comment\" onclick=toogleLabel(\"" + Tracklist[i].name + "\");> </div></td>" + checkGene(Tracklist[i].name) +
-                             "<td><div class='closehandle ui-icon ui-icon-close' onclick=removeTrack(\"" + Tracklist[i].name + "_div\",\"" + Tracklist[i].name + "\");></div></td>" +
-                             "</tr>" +
-                             "</table>" +
-                             "</div>" +
-                             "<div id='" + Tracklist[i].name + "_div' class='feature_tracks' style=\"display:none; top:10px;\" > " + Tracklist[i].name + "</div>" +
-                             "</div>");
-    jQuery(function () {
-      jQuery("#" + Tracklist[i].name + "_wrapper").resizable({
-                                                               handles: "s",
-                                                               alsoResize: "#" + Tracklist[i].name + "_div",
-                                                               minHeight: "50px",
-                                                               borderBottom: '1px solid black'
-                                                             });
-    });
-  }
-<<<<<<< HEAD
->>>>>>> d095b59... vars created for tracks so most of the loops on track_list eliminated
-
-=======
->>>>>>> 0cad888... track name dot and spaces skipping and scripts factoring
-  function checkGene(track) {
-    if (track.toLowerCase().indexOf('gene') >= 0) {
-      return "<td><div title='Expand/Shrink' class=\"closehandle ui-icon ui-icon-carat-2-n-s\" onclick=toogleTrackView(\"" + track + "\");> </div></td>"
-    }
-    else {
-      return "";
-    }
-  }
 }
-
-
-function toggleLeftInfo(div, id) {
-  if (jQuery(div).hasClass("toggleRight")) {
-    jQuery(div).removeClass("toggleRight").addClass("toggleRightDown");
-  }
-  else {
-    jQuery(div).removeClass("toggleRightDown").addClass("toggleRight");
-  }
-  jQuery("#" + id).toggle("blind", {}, 500);
-}
-
-
 function loadDefaultTrack(tracklist) {
-  console.log("loadDefaultTrack")
-  var Tracklist = tracklist;
-  var cookietest = []
-  if (jQuery.cookie('trackslist')) {
-    cookietest = JSON.parse(jQuery.cookie('trackslist'));
-  }
-  else {
+
+    var Tracklist = tracklist;
+//  var cookietest = []
+//  if (jQuery.cookie('trackslist')) {
+//    cookietest = JSON.parse(jQuery.cookie('trackslist'));
+//  }
+
     for (var i = 0; i < Tracklist.length; i++) {
-      if (Tracklist[i].disp == "1") {
-        jQuery('#' + Tracklist[i].name + 'Checkbox').attr('checked', true);
-        mergeTrackList(Tracklist[i].name);
+        if (Tracklist[i].disp == "1") {
+            jQuery('#' + Tracklist[i].name + 'Checkbox').attr('checked', true);
+            mergeTrackList(Tracklist[i].name);
 
-        var partial = (getEnd() - getBegin()) + ((getEnd() - getBegin()) / 2);
-        var start = (getBegin() - partial);
-        var end = parseInt(getEnd()) + parseFloat(partial);
-        if (start < 0) {
-          start = 0;
-        }
-        if (end > sequencelength) {
-          end = sequencelength;
-        }
-        deltaWidth = parseInt(end - start) * 2 / parseInt(maxLen);
-        window[Tracklist[i].name] == "loading";
-        trackToggle(Tracklist[i].name);
-        Fluxion.doAjax(
+            var partial = (getEnd() - getBegin()) + ((getEnd() - getBegin()) / 2);
+            var start = (getBegin() - partial);
+            var end = parseInt(getEnd()) + parseFloat(partial);
+            if (start < 0) {
+                start = 0;
+            }
+            if (end > sequencelength) {
+                end = sequencelength;
+            }
+            deltaWidth = parseInt(end - start) * 2 / parseInt(maxLen);
+            window[Tracklist[i].name] == "loading";
+            trackToggle(Tracklist[i].name);
+            Fluxion.doAjax(
                 'dnaSequenceService',
                 'loadTrack',
                 {'query': seqregname, 'name': Tracklist[i].name, 'trackid': Tracklist[i].id, 'start': start, 'end': end, 'delta': deltaWidth, 'url': ajaxurl},
                 {'doOnSuccess': function (json) {
-                  var trackname = json.name;
+                    var trackname = json.name;
 
-                  if (json.type == "graph") {
-                    window['track_list' + json.name].graph = "true";
-                  }
-                  else {
-                    window['track_list' + json.name].graph = "false";
-                  }
-                  window[trackname] = json[trackname];
-                  trackToggle(trackname);
+                    if (json.type == "graph") {
+                        for (var j = 0; j < track_list.length; j++) {
+                            if (track_list[j].name == trackname) {
+                                track_list[j].graph = "true";
+                            }
+                        }
+                    }
+                    else {
+                        for (var j = 0; j < track_list.length; j++) {
+                            if (track_list[j].name == trackname) {
+                                track_list[j].graph = "false";
+                            }
+                        }
+                    }
+                    window[trackname] = json[trackname];
+                    trackToggle(trackname);
                 }
                 });
-      }
+        }
+//    else {
+//      jQuery.each(cookietest, function (j, v) {
+//        if (v.name == Tracklist[i].name && v.disp == 1) {
+//          jQuery('#' + Tracklist[i].name + 'Checkbox').attr('checked', true);
+//          loadTrackAjax(Tracklist[i].id, Tracklist[i].name);
+//          return false; // stops the loop
+//        }
+//      });
+//
+//      continue;
+//
+//    }
     }
-  }
 
-  for (var i = 0; i < Tracklist.length; i++) {
-
-    jQuery.each(cookietest, function (j, v) {
-      if (v.name == Tracklist[i].name && v.disp == 1) {
-        jQuery('#' + Tracklist[i].name + 'Checkbox').attr('checked', true);
-        mergeTrackList(Tracklist[i].name);
-        var partial = (getEnd() - getBegin()) + ((getEnd() - getBegin()) / 2);
-        var start = (getBegin() - partial);
-        var end = parseInt(getEnd()) + parseFloat(partial);
-        if (start < 0) {
-          start = 0;
-        }
-        if (end > sequencelength) {
-          end = sequencelength;
-        }
-        deltaWidth = parseInt(end - start) * 2 / parseInt(maxLen);
-        window[Tracklist[i].name] == "loading";
-        trackToggle(Tracklist[i].name);
-        Fluxion.doAjax(
-                'dnaSequenceService',
-                'loadTrack',
-                {'query': seqregname, 'name': Tracklist[i].name, 'trackid': Tracklist[i].id, 'start': start, 'end': end, 'delta': deltaWidth, 'url': ajaxurl},
-                {'doOnSuccess': function (json) {
-                  var trackname = json.name;
-
-                  if (json.type == "graph") {
-                    window['track_list' + json.name].graph = "true";
-                  }
-                  else {
-                    window['track_list' + json.name].graph = "false";
-                  }
-                  window[trackname] = json[trackname];
-                  trackToggle(trackname);
-                }
-                });
-
-
-        jQuery('#' + Tracklist[i].name + 'Checkbox').attr('checked', true);
-        loadTrackAjax(Tracklist[i].id, Tracklist[i].name);
-        return false; // stops the loop
-      }
-      else if (v.name == Tracklist[i].name && v.disp == 0) {
-
-        window["track_list" + Tracklist[i].name].disp = 0;
-
-      }
-    });
-    continue;
-  }
 }
 
 function mergeTrackList(trackName) {
 
-  if (jQuery("#" + trackName + "Checkbox").is(':checked')) {
-    jQuery("#" + trackName + "mergedCheckbox").removeAttr("disabled");
-  }
-  else {
-    jQuery("#" + trackName + "mergedCheckbox").attr("disabled", true);
+    if (jQuery("#" + trackName + "Checkbox").is(':checked')) {
+        jQuery("#" + trackName + "mergedCheckbox").removeAttr("disabled");
+    }
+    else {
+        jQuery("#" + trackName + "mergedCheckbox").attr("disabled", true);
 
-    mergeTrack(trackName);
-  }
+        mergeTrack(trackName);
+    }
 }
 
 function checkSession() {
-  var track_list_cookie = [];
-  jQuery(track_list).each(function (index) {
-    track_list_cookie.push(
-            {name: track_list[index].name, disp: window["track_list" + track_list[index].name].disp}
-    );
-  });
-  var now = new Date();
-  if (randomnumber == null) {
-    randomnumber = seqregname + now.getDate() + "-" + now.getMonth() + 1 + "" + now.getFullYear() + "" + now.getHours() + "" + now.getMinutes() + "" + Math.ceil(Math.random() * 5);
-  }
-  jQuery("#sessionid").html("<b>Session Id: </b><a  href='./session.jsp?query=" + randomnumber + "' target='_blank'>" + randomnumber + "</a> Saved at " + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds());
-  jQuery("#sessionid").show("blind", {}, 500);
-  saveSession();
+    var now = new Date();
+    if (randomnumber == null) {
+        randomnumber = seqregname + now.getDate() + "-" + now.getMonth() + 1 + "" + now.getFullYear() + "" + now.getHours() + "" + now.getMinutes() + "" + Math.ceil(Math.random() * 5);
+    }
+    jQuery("#sessionid").html("<b>Session Id: </b><a  href='./session.jsp?query=" + randomnumber + "' target='_blank'>" + randomnumber + "</a> Saved at " + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds());
+    saveSession();
 }
 
 function getTracks() {
 
-<<<<<<< HEAD
     var tracks = [];
     var eachTrack = {};
-    if (jQuery("#notifier").text().indexOf("BLAST") >= 0) {
+//  for (var i = 0; i < track_list.length; i++) {
+//    if (jQuery("#" + track_list[i].name + "Checkbox").is(':checked')) {
+//      var track = window[track_list[i].name];
+//      var trackId = track_list[i].id;
+//      if (window[track_list[i].name] && window[track_list[i].name] != 'running') {
+//        eachTrack = { "trackId": trackId, "child": track}
+//      }
+//      tracks.push(eachTrack);
+//    }
+//  }
+    if (jQuery("#alertDiv").text().indexOf("BLAST")) {
         eachTrack = { "trackId": "running", "child": blastsdata}
         tracks.push(eachTrack);
     }
@@ -796,91 +666,64 @@ function getTracks() {
     }
 
     return tracks;
-=======
-  var tracks = [];
-  var eachTrack = {};
-  if (jQuery("#notifier").text().indexOf("BLAST") >= 0) {
-    eachTrack = { "trackId": "running", "child": blastsdata}
-    tracks.push(eachTrack);
-  }
-  if ((window['blasttrack']))// && !jQuery("#blasttrackCheckbox").is(':checked'))
-  {
-    var track = window['blasttrack'];
-    eachTrack = { "trackId": 0, "child": track}
-    tracks.push(eachTrack);
-  }
-
-  return tracks;
->>>>>>> d095b59... vars created for tracks so most of the loops on track_list eliminated
-}
-
-function getTracklist() {
-
-  var tracks = [];
-  for (var i = 0; i < track_list.length; i++) {
-
-    tracks.push(window["track_list" + track_list[i].name]);
-  }
-
-  return tracks;
 }
 
 function getEditedTracks() {
-  var tracks = [];
-  var eachTrack = {};
-  for (var i = 0; i < track_list.length; i++) {
-    if (window[track_list[i].name + "_edited"]) {
-      eachTrack = { "trackName": track_list[i].name + "_edited", "child": window[track_list[i].name + "_edited"]};
-      tracks.push(eachTrack);
+    var tracks = [];
+    var eachTrack = {};
+    for (var i = 0; i < track_list.length; i++) {
+        if (window[track_list[i].name+ "_edited"]) {
+            eachTrack = { "trackName": track_list[i].name + "_edited", "child": window[track_list[i].name+"_edited"]};
+            tracks.push(eachTrack);
+        }
     }
-  }
-  return tracks;
+    return tracks;
 }
 
 function getRemovedTracks() {
-  var tracks = [];
-  var eachTrack = {};
-  for (var i = 0; i < track_list.length; i++) {
-    if (window[track_list[i].name + "_removed"]) {
-      eachTrack = { "trackName": track_list[i].name + "_removed", "child": window[track_list[i].name + "_removed"]};
-      tracks.push(eachTrack);
+    var tracks = [];
+    var eachTrack = {};
+    for (var i = 0; i < track_list.length; i++) {
+        if (window[track_list[i].name+ "_removed"]) {
+            eachTrack = { "trackName": track_list[i].name + "_removed", "child": window[track_list[i].name+"_removed"]};
+            tracks.push(eachTrack);
+        }
     }
-  }
-  return tracks;
+    return tracks;
 }
 
 function loadEditedTracks(tracks) {
-  for (var i = 0; i < tracks.length; i++) {
-    window[tracks[i].trackName] = tracks[i].child;
-  }
+    for (var i = 0; i < tracks.length; i++) {
+        window[tracks[i].trackName] = tracks[i].child;
+        console.log(window[tracks[i].trackName])
+    }
 }
 
 function loadRemovedTracks(tracks) {
-  for (var i = 0; i < tracks.length; i++) {
-    window[tracks[i].trackName] = tracks[i].child;
-  }
+    for (var i = 0; i < tracks.length; i++) {
+        window[tracks[i].trackName] = tracks[i].child;
+        console.log(window[tracks[i].trackName])
+    }
 }
 
-<<<<<<< HEAD
-=======
 function dragToogle() {
-  if (jQuery("#dragRadio").is(':checked')) {
-    jQuery('#wrapper').css('cursor', 'default');
-    jQuery('#wrapper').unbind('mousedown');
-    var dragstart = 0;
-    jQuery("#wrapper").draggable(
+    if (jQuery("#dragRadio").is(':checked')) {
+        jQuery('#wrapper').css('cursor', 'default');
+        jQuery('#wrapper').unbind('mousedown');
+        var dragstart = 0;
+        jQuery("#wrapper").draggable(
             {
 
-              axis: "x",
-              start: function () {
-              },
-              drag: function () {
+                axis: "x",
+                start: function () {
+                },
+                drag: function () {
 
-                jQuery(".handle").each(function (i) {
-                  jQuery(this).css("left", '1%');
-                  jQuery(this).css("top", (jQuery(this).parent().position().top) - parseInt(jQuery(window).scrollTop()) + (parseInt(jQuery("#wrapper").position().top)) + (parseInt(jQuery("#canvas").position().top)));
-                  jQuery(this).css("position", 'fixed');
-                });
+                    jQuery(".handle").each(function (i) {
+                        jQuery(this).css("left", '1%');
+                        jQuery(this).css("top", (jQuery(this).parent().position().top) - parseInt(jQuery(window).scrollTop()) + (parseInt(jQuery("#wrapper").position().top)) + (parseInt(jQuery("#canvas").position().top)));
+                        jQuery(this).css("position", 'fixed');
+                    });
 //              var temp = parseFloat(jQuery('#canvas').css("left")) - parseFloat(jQuery('#wrapper').css("left"));
 //
 //              console.log(temp+" "+parseFloat(jQuery('#wrapper').css("left")));
@@ -903,117 +746,115 @@ function dragToogle() {
 //              }
 //
 //
-              },
-              stop: function () {
-                jQuery(".handle").css("position", 'absolute');
-                jQuery(".handle").css("left", '25%');
-                jQuery(".handle").css("top", '0px');
-                trackDrag();
-              }
+                },
+                stop: function () {
+                    jQuery(".handle").css("position", 'absolute');
+                    jQuery(".handle").css("left", '25%');
+                    jQuery(".handle").css("top", '0px');
+                    trackDrag();
+                }
             });
 
-    jQuery("#tracks").sortable(
+        jQuery("#tracks").sortable(
             {
-              axis: 'y',
-              handle: '.handle',
-              cursor: 'move',
-              start: function () {
-                removeAllPopup()
-              }
+                axis: 'y',
+                handle: '.handle',
+                cursor: 'move',
+                start: function () {
+                    removeAllPopup()
+                }
 
             });
 
-  }
-  else {
-    var seqX = 0;
-    jQuery('#wrapper').draggable("destroy");
-    jQuery('#wrapper').css('cursor', 'crosshair');
+    }
+    else {
+        var seqX = 0;
+        jQuery('#wrapper').draggable("destroy");
+        jQuery('#wrapper').css('cursor', 'crosshair');
 //
 //  Drag popup codes
-    jQuery('#wrapper').mousedown(function (e) {
-      e.preventDefault();
-      removeDragPopup();
-      seqX = mouseX;
-      var begin, end
-      jQuery("#seqdrag").css("top", jQuery('#sequence').offset().top);
-      jQuery("#seqdrag").css("left", seqX);
-      jQuery("#seqdrag").css("width", "1px");
-      jQuery("#seqdrag").css('height', Math.round(jQuery('#canvas').height() - (jQuery('#sequence').offset().top - jQuery('#canvas').offset().top)));
-      jQuery("#seqdrag").show();
-      jQuery(window).bind('mousemove', function () {
-        if (mouseX > seqX) {
-          var seqWidth = parseFloat(mouseX) - parseFloat(seqX);
-          jQuery("#seqdrag").css("width", seqWidth);
-        }
-        else {
-          var seqWidth = parseFloat(seqX) - parseFloat(mouseX);
-          jQuery("#seqdrag").css("width", seqWidth);
-          jQuery("#seqdrag").css("left", mouseX);
-        }
+        jQuery('#wrapper').mousedown(function (e) {
+            e.preventDefault();
+            removeDragPopup();
+            seqX = mouseX;
+            var begin, end
+            jQuery("#seqdrag").css("top", jQuery('#sequence').offset().top);
+            jQuery("#seqdrag").css("left", seqX);
+            jQuery("#seqdrag").css("width", "1px");
+            jQuery("#seqdrag").css('height', Math.round(jQuery('#canvas').height() - (jQuery('#sequence').offset().top - jQuery('#canvas').offset().top)));
+            jQuery("#seqdrag").show();
+            jQuery(window).bind('mousemove', function () {
+                if (mouseX > seqX) {
+                    var seqWidth = parseFloat(mouseX) - parseFloat(seqX);
+                    jQuery("#seqdrag").css("width", seqWidth);
+                }
+                else {
+                    var seqWidth = parseFloat(seqX) - parseFloat(mouseX);
+                    jQuery("#seqdrag").css("width", seqWidth);
+                    jQuery("#seqdrag").css("left", mouseX);
+                }
 
-        begin = parseInt(getBegin()) - 1 + Math.round((getEnd() - getBegin()) * (seqX) / parseFloat(maxLen) + getBegin());
-        end = parseInt(getBegin()) + Math.round((getEnd() - getBegin()) * (mouseX) / parseFloat(maxLen) + getBegin());
-        var bp = "bp";
-        var diff;
-        if (parseInt(begin) < parseInt(end)) {
-          diff = parseInt(end) - parseInt(begin);
+                begin = parseInt(getBegin()) - 1 + Math.round((getEnd() - getBegin()) * (seqX - jQuery('#canvas').offset().left) / parseFloat(maxLen) + getBegin());
+                end = parseInt(getBegin()) + Math.round((getEnd() - getBegin()) * (mouseX - jQuery('#canvas').offset().left) / parseFloat(maxLen) + getBegin());
+                var bp = "bp";
+                var diff;
+                if (parseInt(begin) < parseInt(end)) {
+                    diff = parseInt(end) - parseInt(begin);
 
-        }
-        else {
-          diff = parseInt(begin) - parseInt(end);
-        }
-        if (diff > 100000000) {
-          diff = (diff / 1000000);
-          bp = "Gbp";
-        }
-        else if (diff > 1000000) {
-          diff = (diff / 1000000);
-          bp = "Mbp";
-        }
-        else if (diff > 1000) {
-          diff = diff / 1000;
-          bp = "Kbp";
-        }
+                }
+                else {
+                    diff = parseInt(begin) - parseInt(end);
+                }
+                if (diff > 100000000) {
+                    diff = (diff / 1000000);
+                    bp = "Gbp";
+                }
+                else if (diff > 1000000) {
+                    diff = (diff / 1000000);
+                    bp = "Mbp";
+                }
+                else if (diff > 1000) {
+                    diff = diff / 1000;
+                    bp = "Kbp";
+                }
 
-        jQuery("#dragLabel").html(diff + bp);
+                jQuery("#dragLabel").html(diff + bp);
 
-      });
+            });
 
-      jQuery(window).bind('mouseup', function () {
+            jQuery(window).bind('mouseup', function () {
 
-        if (parseInt(begin) < parseInt(end) && parseInt(end) - parseInt(begin) > 3) {
-          jQuery(window).unbind('mousemove mouseleave');
-          newDragpopup(begin, end, "true");
-          jQuery(window).unbind('mouseup');
-        }
-        else if (parseInt(begin) - parseInt(end) > 3) {
-          jQuery(window).unbind('mousemove mouseleave');
-          newDragpopup(end, begin, "false");
-          jQuery(window).unbind('mouseup');
-        }
-        else {
-          jQuery(window).unbind('mousemove mouseleave');
-          jQuery("#seqdrag").hide();
-          jQuery(window).unbind('mouseup');
-        }
-      });
-    });
+                if (parseInt(begin) < parseInt(end) && parseInt(end) - parseInt(begin) > 3) {
+                    jQuery(window).unbind('mousemove mouseleave');
+                    newDragpopup(begin, end, "true");
+                    jQuery(window).unbind('mouseup');
+                }
+                else if (parseInt(begin) - parseInt(end) > 3) {
+                    jQuery(window).unbind('mousemove mouseleave');
+                    newDragpopup(end, begin, "false");
+                    jQuery(window).unbind('mouseup');
+                }
+                else {
+                    jQuery(window).unbind('mousemove mouseleave');
+                    jQuery("#seqdrag").hide();
+                    jQuery(window).unbind('mouseup');
+                }
+            });
+        });
 
 
-  }
+    }
 }
 
->>>>>>> d095b59... vars created for tracks so most of the loops on track_list eliminated
 function tooglehangingmenu() {
 
-  jQuery("#popup_hanging").css('left', mouseX + 5);
-  jQuery("#popup_hanging").css('top', mouseY + 5);
+    jQuery("#popup_hanging").css('left', mouseX + 5);
+    jQuery("#popup_hanging").css('top', mouseY + 5);
 
-  jQuery("#popup_hanging").toggle();
+    jQuery("#popup_hanging").toggle();
 }
 
 function selectAllCheckbox() {
-<<<<<<< HEAD
     if (jQuery("#selectAllCheckbox").is(':checked')) {
         jQuery("#tracklist input").each(function () {
             if (jQuery(this).is(':checked')) {
@@ -1025,25 +866,9 @@ function selectAllCheckbox() {
                 eval(jQuery(this).attr('onClick'));
             }
         })
+//    trackToggle("all")
     }
     else {
-
-    }
-=======
-  if (jQuery("#selectAllCheckbox").is(':checked')) {
-    jQuery("#tracklist input").each(function () {
-      if (jQuery(this).is(':checked')) {
-        //    do nothing
-      }
-      else {
-        var name_splitter = jQuery(this).attr('name');
-        jQuery(this).attr('checked', 'checked');
-        eval(jQuery(this).attr('onClick'));
-      }
-    })
-//    trackToggle("all")
-  }
-  else {
 //     jQuery("#tracklist input").each(function () {
 //     if (jQuery(this).is(':checked')) {
 //       jQuery(this).attr('checked', false);
@@ -1053,23 +878,22 @@ function selectAllCheckbox() {
 //       //    do nothing
 //     }
 //   })
-  }
->>>>>>> d095b59... vars created for tracks so most of the loops on track_list eliminated
+    }
 
 }
 
 function unSelectAllCheckbox() {
-  if (jQuery("#unSelectAllCheckbox").is(':checked')) {
-    jQuery("#tracklist input").each(function () {
-      if (jQuery(this).is(':checked')) {
-        jQuery(this).attr('checked', false);
-        window['track_list' + this.id.replace("Checkbox", "")].disp = 0
-      }
-      else {
-        //    do nothing
-      }
-    })
-  }
-  trackToggle("all")
+    if (jQuery("#unSelectAllCheckbox").is(':checked')) {
+        jQuery("#tracklist input").each(function () {
+            if (jQuery(this).is(':checked')) {
+                jQuery(this).attr('checked', false);
+//        eval(jQuery(this).attr('onClick'));
+            }
+            else {
+                //    do nothing
+            }
+        })
+    }
+    trackToggle("all")
 
 }
