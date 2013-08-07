@@ -559,9 +559,6 @@ function trackList(tracklist) {
             "<div align='left' class='handle'>" +
             "<table>" +
             "<tr>" +
-//                             "<td><div onclick=\"toggleLeftInfo(jQuery('" + Tracklist[i].display_label + "_arrowclick'), '" + Tracklist[i].display_label + "_div');\"> " +
-//                             "<div id='" + Tracklist[i].display_label + "_arrowclick' class=\"toggleRight\"></div> " +
-//                             "</div></td>" +
             "<td><b>" + Tracklist[i].display_label + "</b></td>" +
             "<td><div class=\"ui-icon ui-icon-comment\" onclick=toogleLabel(\"" + Tracklist[i].name + "\");> </div></td>" + checkGene(Tracklist[i].name) +
             "<td><div class='closehandle ui-icon ui-icon-close' onclick=removeTrack(\"" + Tracklist[i].name + "_div\",\"" + Tracklist[i].name + "\");></div></td>" +

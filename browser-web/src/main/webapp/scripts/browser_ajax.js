@@ -628,7 +628,7 @@ function dispOnMap(json, maximumLengthname, maximumsequencelength) {
             if (mapheight < 1) {
                 mapheight = 1;
             }
-            jQuery("#refmap").append("<div  title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' class='refmapsearchmarkerseqregion'  style='left:" + left + "px; bottom:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick='window.location.replace(\"index.jsp?query=" + markers[i].parent + "&from=" + markers[i].start + "&to=" + markers[i].end + "\");' ></div>");
+            jQuery("#refmap").append("<div parent=" + markers[i].parent + " start=" + markers[i].start + " end=" + markers[i].end + " id='" + markers[i].name + "' title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' class='refmapsearchmarkerseqregion'  style='left:" + left + "px; bottom:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick=clicked_func('" + markers[i].name + "'); ></div>");
         }
 
     }
@@ -647,7 +647,8 @@ function dispOnMap(json, maximumLengthname, maximumsequencelength) {
             if (mapheight < 1) {
                 mapheight = 1;
             }
-            jQuery("#refmap").append("<div  title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' class='refmapsearchmarkergene'  style='left:" + left + "px; bottom:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick='window.location.replace(\"index.jsp?query=" + markers[i].parent + "&from=" + markers[i].start + "&to=" + markers[i].end + "\");' ></div>");
+            jQuery("#refmap").append("<div parent=" + markers[i].parent + " start=" + markers[i].start + " end=" + markers[i].end + " id='" + markers[i].name + "' title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' class='refmapsearchmarkergene'  style='left:" + left + "px; bottom:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick=clicked_func('" + markers[i].name + "'); ></div>");
+
         }
 
         var markers = json.transcript;
@@ -660,7 +661,7 @@ function dispOnMap(json, maximumLengthname, maximumsequencelength) {
             if (mapheight < 1) {
                 mapheight = 1;
             }
-            jQuery("#refmap").append("<div  title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' class='refmapsearchmarkertranscript'  style='left:" + left + "px; bottom:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick='window.location.replace(\"index.jsp?query=" + markers[i].parent + "&from=" + markers[i].start + "&to=" + markers[i].end + "\");' ></div>");
+            jQuery("#refmap").append("<div  parent=" + markers[i].parent + " start=" + markers[i].start + " end=" + markers[i].end + " id='" + markers[i].name + "' title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' class='refmapsearchmarkertranscript'  style='left:" + left + "px; bottom:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick=clicked_func('" + markers[i].name + "'); ></div>");
         }
 
         var markers = json.GO;
@@ -673,11 +674,84 @@ function dispOnMap(json, maximumLengthname, maximumsequencelength) {
             if (mapheight < 1) {
                 mapheight = 1;
             }
-            jQuery("#refmap").append("<div  title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' class='refmapsearchmarkergo'  style='left:" + left + "px; bottom:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick='window.location.replace(\"index.jsp?query=" + markers[i].parent + "&from=" + markers[i].start + "&to=" + markers[i].end + "\");' ></div>");
+            jQuery("#refmap").append("<div parent=" + markers[i].parent + " start=" + markers[i].start + " end=" + markers[i].end + " id='" + markers[i].name + "' title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' class='refmapsearchmarkergo'  style='left:" + left + "px; bottom:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick=clicked_func('" + markers[i].name + "'); ></div>");
         }
     }
 
 }
+
+function clicked_func(element) {
+
+    element = element.replace(/\./g,'\\.')
+    var seqregioncontent = "";
+
+
+    var parent_main = jQuery("#" + element).attr("parent");
+    element = jQuery("#" + element);
+
+
+
+    var temp_element = element;
+    var class_clicked = "." + jQuery("#" + temp_element.attr('id').replace(/\./g,'\\.')).attr('class');
+    var temp = jQuery("#" + temp_element.attr('id').replace(/\./g,'\\.')).prevAll(class_clicked);
+
+    for (var i = 0; i < temp.length; i++) {
+        var temp_id = temp[i].id.replace(/\./g,'\\.');
+        var parent = jQuery("#" + temp_id).attr("parent");
+        var start = jQuery("#" + temp_id).attr("start");
+        var end = jQuery("#" + temp_id).attr("end");
+        var name = jQuery("#" + temp_id).attr("title").split(":")[0];
+        var link = "<a target='_blank' href='index.jsp?query=" + parent + "&&from=" + start + "&&to=" + end + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span><a/>"
+
+        seqregioncontent = "<tr><td>" + parent + "</td><td>" + name + "</td><td>"+start+":"+end+"</td><td>" + link + "</td>"+seqregioncontent;
+
+        if (i >= 4) {
+            break;
+        }
+
+    }
+
+    seqregioncontent = "<table class='list' id='search_hit' ><thead><tr><th>Parent</th><th>Name</th><th>Position</th><th>Link</th></tr> </thead>"+seqregioncontent;
+    temp_element = element;
+
+    var temp_id = temp_element.attr('id').replace(/\./g,'\\.');
+    var parent = jQuery("#" + temp_id).attr("parent");
+    var start = jQuery("#" + temp_id).attr("start");
+    var end = jQuery("#" + temp_id).attr("end");
+    var name = jQuery("#" + temp_id).attr("title").split(":")[0];
+
+
+    var link = "<a target='_blank' href='index.jsp?query=" + parent + "&&from=" + start + "&&to=" + end + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span><a/>"
+    seqregioncontent += "<tr><td><b><u>" + parent + "</b></u></td><td><b><u>" + name + "</b></u></td><td><u><b>"+start+":"+end+"</u></b></td><td>" + link + "</td>";
+
+    var temp = jQuery("#" + temp_element.attr('id').replace(/\./g,'\\.')).nextAll(class_clicked);
+
+    for (var i = 0; i < temp.length; i++) {
+        var temp_id = temp[i].id.replace(/\./g,'\\.');
+
+        var parent = jQuery("#" + temp_id).attr("parent");
+        var start = jQuery("#" + temp_id).attr("start");
+        var end = jQuery("#" + temp_id).attr("end");
+        var name = jQuery("#" + temp_id).attr("title").split(":")[0];
+        var link = "<a target='_blank' href='index.jsp?query=" + parent + "&&from=" + start + "&&to=" + end + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span><a/>"
+
+        seqregioncontent += "<tr><td>" + parent + "</td><td>" + name + "</td><td>"+start+":"+end+"</td><td>" + link + "</td>";
+
+        if (i >= 4) {
+            break;
+        }
+
+    }
+
+    jQuery("#searchresult").html(seqregioncontent)
+    jQuery("#searchresult").fadeIn()
+    jQuery("#searchresult").css('top', '225px')
+    console.log(parent_main)
+    jQuery("#searchresult").css('left', jQuery("#"+parent_main).css('left'))
+
+
+}
+
 function getMarkers() {
     Fluxion.doAjax(
         'dnaSequenceService',
