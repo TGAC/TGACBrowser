@@ -17,12 +17,21 @@ You can follow TGAC Browser development on Twitter: @TGACBrowser (https://twitte
 
 Version 0.1.2
 
+
+Release Notes
+--------------
+
+Here is a link for release notes
+
+https://documentation.tgac.ac.uk/display/TB/TGAC+Browser+0.1.2+release
+
+
 Documentation
 --------------
 
 Here is a link to TGAC Browser documentation: How To Setup, How to use, etc 
 
-https://documentation.tgac.ac.uk/display/TB/TGAC+Browser+0.1.2+release
+https://documentation.tgac.ac.uk/display/TB/TGAC+Browser+-+Installation+Guide+v0.1.2
 
 
 
