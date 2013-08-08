@@ -92,13 +92,13 @@
 
     <center>
 
-        <a class="headerlink" href="<c:url value="/"/>"> <font color=white> <b>TGAC Browser
+        <a class="headerlink" href="<c:url value="/"/>"> <font color=white> TGAC Browser
             - ${initParam.header} </font></a>
         </td>
         <td>
             <font color=white>
                 <span id="seqnameh1"></span>
-            </font> </b>
+            </font>
         </td>
         </tr>
         </table>
