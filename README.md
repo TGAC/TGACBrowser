@@ -22,7 +22,7 @@ Documentation
 
 Here is a link to TGAC Browser documentation: How To Setup, How to use, etc 
 
-https://documentation.tgac.ac.uk/display/TB/TGAC+Browser
+https://documentation.tgac.ac.uk/pages/viewpage.action?pageId=3112964
 
 
 
