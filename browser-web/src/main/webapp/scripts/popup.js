@@ -70,7 +70,7 @@ function newpopup(track, i, j) {
     }
   }
 
-  if (j) {
+  if (j >=0) {
     position = window[track][i].transcript[j].start + position_func(window[track][i].transcript[j]);
     jQuery("#makemetop").html('<span title="Make Me Top" class="ui-button ui-icon ui-icon-arrowthick-1-n" onclick=makeMeTop(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
     jQuery("#peptides").html('<span title="peptides" class="ui-button ui-icon ui-icon-comment" onclick=showPeptides(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
