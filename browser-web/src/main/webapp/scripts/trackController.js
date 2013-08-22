@@ -1063,8 +1063,9 @@ function dispCigar(cigars, start, top) {
 
 function dispGraph(div, trackName, className) {
     var track_html = "";
+    jQuery(div).html("");
 
-     if (jQuery('input[name=' + trackName + 'mergedCheckbox]').is(':checked')) {
+    if (jQuery('input[name=' + trackName + 'mergedCheckbox]').is(':checked')) {
         jQuery(div).fadeOut();
         jQuery("#" + trackName + "_wrapper").fadeOut();
         div = "#mergedtrack";
