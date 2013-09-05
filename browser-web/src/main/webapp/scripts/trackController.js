@@ -931,7 +931,7 @@ function dispTrack(div, trackName, className) {
                 if (stopposition > 10) {
                     jQuery("<span>").attr({
                         'class': spanclass,
-                        'style': "cursor:pointer; position:absolute; TOP:" + (top - 6) + "px; left:" + (parseInt(startposition) + parseInt(stopposition / 2) - 8) + "px; opacity:0.6; "
+                        'style': "cursor:pointer; position:absolute; TOP:" + (- 6) + "px; left:" + ( parseInt(stopposition / 2) ) + "px; opacity:0.6; "
                     }).appendTo("#" + trackName + "" + track_len);
                 }
 
