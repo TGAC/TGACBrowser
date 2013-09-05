@@ -33,7 +33,7 @@
 
 
 function blastSearch(query, blastdb, type, params) {
-  if (jQuery('#blast_list img').length < 2) {
+  if (jQuery('#blast_list img').length < 3) {
     submitBlastTask(query, blastdb, 6, type, 0, 0, 0, params);
     jQuery('#main').animate({"height": "0px"}, { duration: 300, queue: false});
     jQuery('#main').fadeOut();
