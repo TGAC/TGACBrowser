@@ -399,13 +399,27 @@ function parseBLAST(json){
 console.log("parse blast")
     jQuery('#blastresult').fadeIn();
 
-  jQuery('#blastresult').append("<table style=\"display: none;\" class='list' id='blasttable"+json.id+"'> <thead>        <tr>            <th class=\"header\"> Query id </th>            <th class=\"header\"> Subject id </th>            <th class=\"header\"> % identity </th>            <th class=\"header\"> alignment length </th>            <th class=\"header\"> mismatches </th>            <th class=\"header\"> gap openings </th>            <th class=\"header\"> q.start </th>            <th class=\"header\"> q.end </th>            <th class=\"header\"> s.start </th>            <th class=\"header\"> s.end </th>            <th class=\"header\"> e-value </th>            <th class=\"header\"> bit score </th>            <th class=\"header\"> Subject db </th>        </tr>        </thead>        <tbody>        </tbody>    </table>")
+  jQuery('#blastresult').append("<table style=\"display: none;\" class='list' id='blasttable"+json.id+"'> <thead> " +
+      "<tr><th class=\"header\"> Query id </th> <th class=\"header\"> Subject id </th>  <th class=\"header\"> % identity </th>   <th class=\"header\"> alignment length </th>  <th class=\"header\"> mismatches </th>  <th class=\"header\"> gap openings </th>  <th class=\"header\"> q.start </th>  <th class=\"header\"> q.end </th>  <th class=\"header\"> s.start </th>  <th class=\"header\"> s.end </th> <th class=\"header\"> e-value </th> <th class=\"header\"> bit score </th> <th class=\"header\"> Subject db </th><th class=\"header\"> Download Sequence </th>        </tr>        </thead>        <tbody>        </tbody>    </table>")
 
     for(var i=0; json.html.length; i++){
-        jQuery("#blasttable"+json.id+" tbody").append("<tr><td>"+json.html[i].q_id+"</td><td>"+json.html[i].s_id+"</td><td>"+json.html[i].identity+"</td><td>"+json.html[i].aln_length+"</td><td>"+json.html[i].mismatch+"</td><td>"+json.html[i].gap_open+"</td><td>"+json.html[i].q_start+"</td><td>"+json.html[i].q_end+"</td><td>"+json.html[i].s_start+"</td><td>"+json.html[i].s_end+"</td><td>"+json.html[i].e_value+"</td><td>"+json.html[i].bit_score+"</td><td>"+json.html[i].s_db+"</td></tr>");
+        jQuery("#blasttable"+json.id+" tbody").append("<tr><td>"+json.html[i].q_id+"</td><td>"+json.html[i].s_id+"</td><td>"+json.html[i].identity+"</td><td>"+json.html[i].aln_length+"</td><td>"+json.html[i].mismatch+"</td><td>"+json.html[i].gap_open+"</td><td>"+json.html[i].q_start+"</td><td>"+json.html[i].q_end+"</td><td>"+json.html[i].s_start+"</td><td>"+json.html[i].s_end+"</td><td>"+json.html[i].e_value+"</td><td>"+json.html[i].bit_score+"</td><td>"+json.html[i].s_db+"</td><td><div class=\"ui-widget ui-state-default ui-corner-all ui-button ui-icon ui-icon-arrow-1-s\" id=\"openmenu\" onclick=\"sub_seq('"+json.html[i].sequence+"')\" title=\"More Option\"> </div></td></tr>");
     }
     jQuery("#blasttable"+json.id).tablesorter();
 
+}
+
+function sub_seq(seq){
+    var id = seq.split("<br>")[0];
+    seq =  seq.split("<br>")[1];
+    jQuery.colorbox({
+        width: "90%",
+        height: "100%",
+        html: "<table><tr><td><button class='ui-state-default ui-corner-all' " +
+            "onclick=\"selectText('sub_output');\"')\">Select Sequence</button><br/>" +
+            "<td><div id=fastadownload></div></td></td></tr></table><br/>" +
+            "<br/><b>Subject Sequence:</b> <br/>" +
+            "<div id=\"sub_output\" style=' font-family: Courier, \"Courier New\", monospace'> "+id+"<br>"+convertFasta(seq)+"</div>"});
 }
 
 function resetBLAST(){
