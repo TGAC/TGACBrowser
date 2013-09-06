@@ -208,13 +208,19 @@ function newDragpopup(begin, end, binary) {
 
 // centaralised view to track
 function zoomHere(begin, end) {
+    if(begin > end){
+        var temp = end;
+        end =  begin;
+        begin =  temp;
+    }
 //  setBegin(begin - 1);
 //  setEnd(end + 1);
-
+   console.log(begin+":"+end)
   var tempBegin = (begin - 1);
   var tempEnd = (end + 1);
 
   if ((tempEnd - tempBegin) <= minWidth) {
+      console.log("if")
     var diff = minWidth - (tempEnd - tempBegin);
 
     setBegin(parseInt(tempBegin - parseInt((diff / 2))));
@@ -222,6 +228,7 @@ function zoomHere(begin, end) {
 
   }
   else {
+      console.log("else")
     setBegin(tempBegin);
     setEnd(tempEnd);
   }
@@ -232,6 +239,13 @@ function zoomHere(begin, end) {
 
 // set blast parameters and call blast
 function preBlast(begin, end, popup) {
+
+    if(begin > end){
+        var temp = end;
+        end =  begin;
+        begin =  temp;
+    }
+
   jQuery('#EditTrack').hide();
   var blast_selector = "<table width='100%'>" +
                        "<tr><td>Number of Hits<select name=\"blasthit\" id=\"blasthit\">  " +
@@ -699,6 +713,13 @@ function convertPeptide(cdnaseq) {
 }
 
 function fetchFasta(begin, end, track, i, j) {
+
+    if(begin > end){
+        var temp = end;
+        end =  begin;
+        begin =  temp;
+    }
+
   var reverseText = "";
 
   if (i && window[track][i].transcript[j].start > window[track][i].transcript[j].end) {
