@@ -123,25 +123,47 @@ function trackToggle(trackname) {
     if (trackname == "all") {
         jQuery("#mergedtrack").html("<div id= \"mergelabel\" align='left' class='handle'></div>");
         for (var i = 0; i < track_list.length; i++) {
+            var trackName = track_list[i].name;
+            trackid = window['track_list' + trackName].id;
+            graph = window['track_list' + trackName].graph;
             if (jQuery("#" + track_list[i].name + "Checkbox").is(':checked')) {
-                if (window['track_list' + track_list[i].name].graph == "true") {
-                    dispGraph("#" + track_list[i].name + "_div", track_list[i].name, track_list[i].display_label)
+                if (graph == "true") {
+                    dispGraph("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
                 }
-                else if (track_list[i].name.toLowerCase().indexOf("blasttrack") >= 0) {
-                    dispBLAST("#" + track_list[i].name + "_div", 'blasttrack');
+                else if (trackName.toLowerCase().indexOf("blasttrack") >= 0) {
+                    dispBLAST("#" + trackName + "_div", 'blasttrack');
                 }
-                else if (track_list[i].name.toLowerCase().indexOf("gene") >= 0) {
-                    dispGenes("#" + track_list[i].name + "_div", track_list[i].name, track_list[i].expand, track_list[i].display_label);
+                else if (trackName.toLowerCase().indexOf("gene") >= 0) {
+                    dispGenes("#" + trackName + "_div", trackName, window['track_list' + trackName].expand, window['track_list' + trackName].display_label);
                 }
-                else if (track_list[i].name.toLowerCase().indexOf("wig") >= 0) {
-                    dispGraphWig("#" + track_list[i].name + "_div", track_list[i].name, trackid, track_list[i].display_label);
+                else if (trackName.toLowerCase().indexOf("wig") >= 0) {
+                    dispGraphWig("#" + trackName + "_div", trackName, trackid, window['track_list' + trackName].display_label);
                 }
-                else if (track_list[i].name.toLowerCase().indexOf("bed") >= 0) {
-                    dispGraphBed("#" + track_list[i].name + "_div", track_list[i].name, track_list[i].display_label);
+                else if (trackName.toLowerCase().indexOf("bed") >= 0) {
+                    dispGraphBed("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
                 }
                 else {
-                    dispTrack("#" + track_list[i].name + "_div", track_list[i].name, track_list[i].display_label);
+                    dispTrack("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
                 }
+
+//                if (window['track_list' + track_list[i].name].graph == "true") {
+//                    dispGraph("#" + track_list[i].name + "_div", track_list[i].name, track_list[i].display_label)
+//                }
+//                else if (track_list[i].name.toLowerCase().indexOf("blasttrack") >= 0) {
+//                    dispBLAST("#" + track_list[i].name + "_div", 'blasttrack');
+//                }
+//                else if (track_list[i].name.toLowerCase().indexOf("gene") >= 0) {
+//                    dispGenes("#" + track_list[i].name + "_div", track_list[i].name, track_list[i].expand, track_list[i].display_label);
+//                }
+//                else if (track_list[i].name.toLowerCase().indexOf("wig") >= 0) {
+//                    dispGraphWig("#" + track_list[i].name + "_div", track_list[i].name, trackid, track_list[i].display_label);
+//                }
+//                else if (track_list[i].name.toLowerCase().indexOf("bed") >= 0) {
+//                    dispGraphBed("#" + track_list[i].name + "_div", track_list[i].name, track_list[i].display_label);
+//                }
+//                else {
+//                    dispTrack("#" + track_list[i].name + "_div", track_list[i].name, track_list[i].display_label);
+//                }
             }
             else {
                 jQuery("#" + track_list[i].name + "_wrapper").fadeOut();
