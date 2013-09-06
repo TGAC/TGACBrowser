@@ -137,6 +137,7 @@ public class BlastService {
               eachBlast.put("s_end", id[9]);
               eachBlast.put("e_value", id[10]);
               eachBlast.put("bit_score", id[11]);
+              eachBlast.put("sequence", ">"+id[1]+"<br>"+id[12]);
               eachBlast.put("s_db", blastdb.substring(blastdb.lastIndexOf("/") + 1));
               i++;
             }

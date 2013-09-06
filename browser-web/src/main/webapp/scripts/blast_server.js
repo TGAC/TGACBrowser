@@ -34,7 +34,7 @@
 
 function blastSearch(query, blastdb, type, params) {
   if (jQuery('#blast_list img').length < 3) {
-    submitBlastTask(query, blastdb, "6 qseqid sseqid sseq length mismatch gapopen qstart qend sstart send bitscore pident evalue", type, 0, 0, 0, params);
+    submitBlastTask(query, blastdb, "6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore sseq", type, 0, 0, 0, params);
     jQuery('#main').animate({"height": "0px"}, { duration: 300, queue: false});
     jQuery('#main').fadeOut();
   }
@@ -151,34 +151,7 @@ function checkTask(task, db, format, start, end, hit, link, old_id, type) {
             }
             else if (json.result == 'COMPLETED') {
 //              jQuery('#blastresult').html("<span style=\"position:relative; left:50%;\"> Completed Processing &nbsp; <img alt=\"Loading\" src=\"./images/browser/loading_big.gif\" style=\"position: relative;\"> </span> </div>");
-              if (format == 6) {
-                Fluxion.doAjax(
-                        'blastservice',
-                        'blastSearchSequence',
-                        {'accession': task, 'db': db, 'location': link, 'url': ajaxurl, 'old_taskid': json.old_id, 'type': type},
-                        {'doOnSuccess': function (json) {
-                          if (json.html == "No hits found.") {
-                            jQuery("#" + json.id).html("<b>BLAST job " + json.id + "</b><br> No hits found. <span onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
-                          }
-                          else if (json.html == "FAILED") {
-                            jQuery("#" + json.id).html("<b>BLAST job " + json.id + "</b><br> Failed. <span onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
-                          }
-                          else if (json.error == "error") {
-                            jQuery("#" + json.id).html("<b>BLAST job " + json.id + "</b><br> Failed. <span onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
-                          }
-                          else {
-                            jQuery("#" + json.id).html("BLAST job " + json.id + " <span title=\"Finished\" class=\"ui-button ui-icon ui-icon-check\"></span> <br>  <span onclick=toogleTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-zoomin\" > </span> <span onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
-                            jQuery('#main').animate({"height": "0px"}, { duration: 300, queue: false});
-                            jQuery('#main').fadeOut();
-                            parseBLAST(json);
-                          }
-                          //                          jQuery("#blasttable").tablesorter();
-                          jQuery("#notifier").hide()
-                          jQuery("#notifier").html("");
-                        }
-                        });
-              }
-              else if (format == 5) {
+              if (format == 5) {
                 Fluxion.doAjax(
                         'blastservice',
                         'blastSearchTrack',
@@ -202,7 +175,35 @@ function checkTask(task, db, format, start, end, hit, link, old_id, type) {
                           trackToggle("blasttrack");
                         }
                         });
-              }
+              }    else{
+
+                      Fluxion.doAjax(
+                          'blastservice',
+                          'blastSearchSequence',
+                          {'accession': task, 'db': db, 'location': link, 'url': ajaxurl, 'old_taskid': json.old_id, 'type': type},
+                          {'doOnSuccess': function (json) {
+                              if (json.html == "No hits found.") {
+                                  jQuery("#" + json.id).html("<b>BLAST job " + json.id + "</b><br> No hits found. <span onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
+                              }
+                              else if (json.html == "FAILED") {
+                                  jQuery("#" + json.id).html("<b>BLAST job " + json.id + "</b><br> Failed. <span onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
+                              }
+                              else if (json.error == "error") {
+                                  jQuery("#" + json.id).html("<b>BLAST job " + json.id + "</b><br> Failed. <span onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
+                              }
+                              else {
+                                  jQuery("#" + json.id).html("BLAST job " + json.id + " <span title=\"Finished\" class=\"ui-button ui-icon ui-icon-check\"></span> <br>  <span onclick=toogleTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-zoomin\" > </span> <span onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
+                                  jQuery('#main').animate({"height": "0px"}, { duration: 300, queue: false});
+                                  jQuery('#main').fadeOut();
+                                  parseBLAST(json);
+                              }
+                              //                          jQuery("#blasttable").tablesorter();
+                              jQuery("#notifier").hide()
+                              jQuery("#notifier").html("");
+                          }
+                          });
+                  }
+
             }
           },
             'doOnError': function (json) {

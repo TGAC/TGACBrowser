@@ -29,7 +29,9 @@ public class BlastManagerServices {
 
   protected static boolean checkDatabase(String query, String db, String link, String type, String filter, String format) throws Exception {
     boolean check = false;
-
+    if(format.indexOf("\"") >= 0){
+       format = format.replaceAll("\"","");
+    }
     Class.forName("com.mysql.jdbc.Driver").newInstance();
     Connection conn = DriverManager.getConnection("jdbc:mysql://n78048.nbi.ac.uk:3306/thankia_blast_manager", "tgacbrowser", "tgac_bioinf");
     Statement stmt = conn.createStatement();
@@ -93,6 +95,9 @@ public class BlastManagerServices {
 
   protected static String getIDFromDatabase(String query, String db, String link, String type, String filter, String format) throws Exception {
     String id = "";
+      if(format.indexOf("\"") >= 0){
+          format = format.replaceAll("\"","");
+      }
     Class.forName("com.mysql.jdbc.Driver").newInstance();
     Connection conn = DriverManager.getConnection("jdbc:mysql://n78048.nbi.ac.uk:3306/thankia_blast_manager", "tgacbrowser", "tgac_bioinf");
     Statement stmt = conn.createStatement();
@@ -157,6 +162,7 @@ public class BlastManagerServices {
           eachBlast.put("e_value", explrObject.get("e_value"));
           eachBlast.put("bit_score", explrObject.get("bit_score"));
           eachBlast.put("s_db", explrObject.get("s_db"));
+          eachBlast.put("sequence", explrObject.get("sequence"));
           blasts.add(eachBlast);
         }
       }
@@ -250,7 +256,10 @@ public class BlastManagerServices {
   }
 
   protected static void insertintoDatabase(String taskId, String query, String db, String link, String type, String filter, String format) throws Exception {
-    Class.forName("com.mysql.jdbc.Driver").newInstance();
+      if(format.indexOf("\"") >= 0){
+          format = format.replaceAll("\"","");
+      }
+      Class.forName("com.mysql.jdbc.Driver").newInstance();
     Connection conn = DriverManager.getConnection("jdbc:mysql://n78048.nbi.ac.uk:3306/thankia_blast_manager", "tgacbrowser", "tgac_bioinf");
     Statement stmt = conn.createStatement();
     stmt.execute("insert into blast_status values (\"" + taskId + "\",\"RUNNING\")");
