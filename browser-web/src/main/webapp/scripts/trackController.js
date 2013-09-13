@@ -753,34 +753,44 @@ function dispTrack(div, trackName, className) {
 
     if (window['track_list' + trackName].id.toString().indexOf('cs') > -1) {
         coord = true;
+        if (trackName.toLowerCase().indexOf("contig") >= 0) {
+            trackClass = "contigs track";
+        }
+        else if (trackName.toLowerCase().indexOf("clone") >= 0) {
+            trackClass = "clone track";
+        }
+        else {
+            trackClass = "unknown track";
+        }
     }
     else {
         coord = false;
+        trackClass = "track";
     }
 
 
     var j = 0;
-    if (trackName.toLowerCase().indexOf("contig") >= 0) {
-        trackClass = "contigs track";
-    }
-    else if (trackName.toLowerCase().indexOf("est") >= 0) {
-        trackClass = "est track";
-    }
-    else if (trackName.toLowerCase().indexOf("clone") >= 0) {
-        trackClass = "clone track";
-    }
-    else if (trackName.toLowerCase().indexOf("align") >= 0) {
-        trackClass = "align track";
-    }
-    else if (trackName.toLowerCase().indexOf("sam") >= 0 || trackName.toLowerCase().indexOf("bam") >= 0) {
-        trackClass = "sam track";
-    }
-    else if (trackName.toLowerCase().indexOf("repeat") >= 0) {
-        trackClass = "repeat track";
-    }
-    else {
-        trackClass = "unknown track";
-    }
+//    if (trackName.toLowerCase().indexOf("contig") >= 0) {
+//        trackClass = "contigs track";
+//    }
+//    else if (trackName.toLowerCase().indexOf("est") >= 0) {
+//        trackClass = "est track";
+//    }
+//    else if (trackName.toLowerCase().indexOf("clone") >= 0) {
+//        trackClass = "clone track";
+//    }
+//    else if (trackName.toLowerCase().indexOf("align") >= 0) {
+//        trackClass = "align track";
+//    }
+//    else if (trackName.toLowerCase().indexOf("sam") >= 0 || trackName.toLowerCase().indexOf("bam") >= 0) {
+//        trackClass = "sam track";
+//    }
+//    else if (trackName.toLowerCase().indexOf("repeat") >= 0) {
+//        trackClass = "repeat track";
+//    }
+//    else {
+//        trackClass = "unknown track";
+//    }
 
     if (window['track_list' + trackName].label == 0) {
         labeltoogle = "display : none;";
@@ -846,11 +856,13 @@ function dispTrack(div, trackName, className) {
             var coord;
 
             var track_len = track.length;
+            var spanclass = "ui-icon ui-icon-carat-1-e";
+            var border = "";
+
             while (track_len--) {
 
                 var strand = track[track_len].strand;
 
-                var spanclass = "ui-icon ui-icon-carat-1-e";
 
                 if (strand == -1 || strand == false) {
                     spanclass = "ui-icon ui-icon-carat-1-w";
@@ -859,7 +871,6 @@ function dispTrack(div, trackName, className) {
                 var track_start = track[track_len].start;
                 var track_stop = track[track_len].end ? track[track_len].end : parseInt(track[track_len].start) + 1;
 
-                var border = "";
                 if (track[track_len].flag) {
                     border = "border: 1px solid black;";
                 }
