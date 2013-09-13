@@ -54,7 +54,7 @@ function newpopup(track, i, j) {
   removePopup()
   var width = jQuery("#popup").width();
   jQuery('#blastselector').hide();
-  jQuery("#popuptrack").html(window['track_list' + track].display_label);
+  jQuery("#popuptrack").html(stringTrim(window['track_list' + track].display_label, 180));
 
   var position = window[track][i].start + position_func(window[track][i]);
   var endposition;

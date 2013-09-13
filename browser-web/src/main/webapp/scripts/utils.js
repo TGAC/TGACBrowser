@@ -400,6 +400,7 @@ console.log("parse blast")
     jQuery('#blastresult').fadeIn();
 
   jQuery('#blastresult').append("<table style=\"display: none;\" class='list' id='blasttable"+json.id+"'> <thead> " +
+      "<tr><th colspan='14'>Showing result for Id: "+json.id+"</th></tr>" +
       "<tr><th class=\"header\"> Query id </th> <th class=\"header\"> Subject id </th>  <th class=\"header\"> % identity </th>   <th class=\"header\"> alignment length </th>  <th class=\"header\"> mismatches </th>  <th class=\"header\"> gap openings </th>  <th class=\"header\"> q.start </th>  <th class=\"header\"> q.end </th>  <th class=\"header\"> s.start </th>  <th class=\"header\"> s.end </th> <th class=\"header\"> e-value </th> <th class=\"header\"> bit score </th> <th class=\"header\"> Subject db </th><th class=\"header\"> Download Sequence </th>        </tr>        </thead>        <tbody>        </tbody>    </table>")
 
     for(var i=0; json.html.length; i++){

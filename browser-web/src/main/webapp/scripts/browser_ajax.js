@@ -38,6 +38,12 @@ function seqregionSearchPopup(query, from, to, blast) {
     jQuery("#searchresult").fadeOut();
     jQuery("#searchresultMap").fadeOut();
     jQuery('#sessioninput').fadeOut();
+    jQuery('#tabGenes').html('');
+    jQuery('#tabGO').html('');
+    jQuery('#tabTranscripts').html('');
+    jQuery("#searchresultHead").html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>");
+    jQuery("#searchresult").fadeIn();
+
     jQuery("#sessionid").html("");
     minWidth = null;
     removeAllPopup();
@@ -62,6 +68,7 @@ function seqregionSearchPopup(query, from, to, blast) {
                 jQuery("#searchresult").html(content)
             }
             else {
+                jQuery("#searchresult").fadeOut();
                 seq = json.html;
                 sequencelength = json.seqlength;
                 if (!track_list) {
@@ -146,6 +153,7 @@ function search(query, from, to, jsonid, oldtracks) {
     jQuery('#tabTranscripts').html('');
 
     jQuery("#searchresultHead").html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>");
+    jQuery("#searchresult").fadeIn();
 
     Fluxion.doAjax(
         'dnaSequenceService',
@@ -156,12 +164,12 @@ function search(query, from, to, jsonid, oldtracks) {
             jQuery('#currentposition').hide();
 
             if (json.chromosome == true) {
+                jQuery("#searchresult").fadeOut();
                 getReferences(json);
                 jQuery("#searchresultMap").fadeIn();
             }
             else if (json.html == "seqregion") {
                 jQuery("#searchresult").fadeIn();
-
                 var seqregioncontent = "<h1>Search Results: </h1><br>";
                 var content = "<h1>Search Results: </h1><br>";
                 for (var i = 0; i < json.seqregion.length; i++) {
