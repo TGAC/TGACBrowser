@@ -1686,7 +1686,6 @@ public class SQLSequenceDAO implements SequenceStore {
     }
 
     public JSONArray getGeneLevel(int start_add, List<Map<String, Object>> genes, long start, long end, int delta) throws IOException {
-
         JSONArray GeneList = new JSONArray();
         JSONObject eachGene = new JSONObject();
         JSONObject eachTrack = new JSONObject();
@@ -1699,6 +1698,8 @@ public class SQLSequenceDAO implements SequenceStore {
         int lastsize = 0;
         int thissize = 0;
         List<Integer> ends = new ArrayList<Integer>();
+        ends.add(0, 0);
+
         List<Integer> ends_gene = new ArrayList<Integer>();
         ends_gene.add(0, 0);
 
@@ -1751,7 +1752,8 @@ public class SQLSequenceDAO implements SequenceStore {
                 }
 
                 for (int a = 0; a < ends.size(); a++) {
-                    if (start_pos - ends.get(i) > delta) {
+
+                    if (start_pos - ends.get(a) > delta) {
                         ends.remove(a);
                         ends.add(a, end_pos);
                         eachTrack.put("layer", a + 1);
@@ -1765,8 +1767,6 @@ public class SQLSequenceDAO implements SequenceStore {
                             ends.add(ends.size(), end_pos);
                             eachTrack.put("layer", ends.size());
                         }
-
-
                         break;
                     } else {
                         continue;
@@ -1801,6 +1801,7 @@ public class SQLSequenceDAO implements SequenceStore {
                 }
 
                 for (int a = 0; a < ends_gene.size(); a++) {
+
                     if (start_pos - ends_gene.get(a) > delta) {
                         ends_gene.remove(a);
                         ends_gene.add(a, end_pos);
@@ -1965,17 +1966,12 @@ public class SQLSequenceDAO implements SequenceStore {
                 }
 
 //          eachTrack.put("layer", layer);
-                log.info("\n\n\n\nends gene size" + ends_gene.size());
 
                 for (int a = 0; a < ends_gene.size(); a++) {
-                    log.info(start_pos + "-" + end_pos + "loop " + a + " " + ends_gene.get(a));
 
                     if (start_pos - ends_gene.get(a) > delta) {
                         ends_gene.remove(a);
                         ends_gene.add(a, end_pos);
-                        eachGene.put("layer", a + 1);
-                        log.info("if layer" + a + 1);
-
                         break;
                     } else if ((start_pos - ends_gene.get(a) <= delta && (a + 1) == ends_gene.size()) || start_pos == ends_gene.get(a)) {
 
@@ -1987,11 +1983,11 @@ public class SQLSequenceDAO implements SequenceStore {
                             ends_gene.add(ends_gene.size(), end_pos);
                             eachGene.put("layer", ends_gene.size());
                         }
-                        log.info("else layer" + ends_gene.size());
 
 
                         break;
                     } else {
+                        log.info("else......");
                         continue;
                     }
                 }
