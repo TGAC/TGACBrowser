@@ -495,7 +495,6 @@ function dispGenes(div, track, expand, className) {
                         'class': "tracklabel " + labelclass,
                         'style': labeltoogle + " z-index: 999; overflow: hidden;text-overflow: ellipsis;",
                         'title': label
-
                     }).html("<p>" + label + "</p>").appendTo("#" + track + "" + len);
 
 
@@ -505,8 +504,8 @@ function dispGenes(div, track, expand, className) {
                     else {
                         jQuery("<div>").attr({
                             'id': track + "" + len,
-                            'class': "exon",
-                            'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width :" + stopposition + "px; "
+                            'class': "exon "+className+"_exon",
+                            'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width :" + stopposition + "px; height:10px; "
                         }).appendTo(div);
                     }
 
@@ -556,8 +555,6 @@ function dispGeneExon(track, genestrand, className, div) {
         var startposition = 0;
         var stopposition = 0;
         while (exon_len--) {
-
-
             var exon_start;
             var exon_stop;
             if (geneexons[exon_len].start < geneexons[exon_len].end) {
@@ -569,7 +566,6 @@ function dispGeneExon(track, genestrand, className, div) {
                 exon_stop = geneexons[exon_len].start;
             }
 
-            var show = showObject(start, end, exon_start, exon_stop);
             var top = genetranscript.layer * 20 + 15;
             current = exon_start;
             var transcript_start;
@@ -591,7 +587,6 @@ function dispGeneExon(track, genestrand, className, div) {
                 track_html += "<div style=\"position:absolute; z-index; 999; TOP:" + (top - 3) + "px; left:" + (startposition + 20) + "px; \" class=\"" + spanclass + "\"></div>";
                 track_html += "<div style=\"position:absolute; z-index; 999; TOP:" + (top - 3) + "px; left:" + (stopposition - 20) + "px; \" class=\"" + spanclass + "\"></div>";
             }
-            if (show) {
 
                 if (transcript_start && transcript_end) {
                     if (exon_start > transcript_end && exon_stop > transcript_end) {
@@ -740,7 +735,6 @@ function dispGeneExon(track, genestrand, className, div) {
                 last_exon = parseInt(startposition) + parseInt(stopposition);
             }
 
-        }
         return track_html;
     }
     else {
