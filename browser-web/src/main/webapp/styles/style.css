@@ -2089,12 +2089,10 @@ span.counter {
 
 .exon {
     position: absolute;
-    /*background: url("../images/browser/tempexon.png") repeat-x left top;*/
-    background-position: center center;
-    background: #556b2f;
-    border: 1px solid transparent;
-    height: 5px;
     cursor: pointer;
+    height: 10px;
+    position: absolute;
+    z-index: 100;
 }
 
 .track_label {
@@ -2114,12 +2112,10 @@ span.counter {
 
 .utr {
     position: absolute;
-    /*background: url("../images/browser/tempexon.png") repeat-x left top;*/
-    background-position: center center;
-    background: white;
-    border: 1px solid #556b2f;
-    height: 5px;
-    cursor: pointer
+    cursor: pointer;
+    height: 10px;
+    position: absolute;
+    z-index: 999;
 }
 
 .rnaseq {
