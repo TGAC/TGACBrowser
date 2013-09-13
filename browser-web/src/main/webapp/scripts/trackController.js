@@ -386,6 +386,7 @@ function dispGenes(div, track, expand, className) {
             }
         }
         else if (expand == 0) {
+            trackClass = "exon track"
             if (div.indexOf("mergedtrack") <= 0) {
                 track_html = [];
                 jQuery(div).html(track_html.join(""));
@@ -426,8 +427,8 @@ function dispGenes(div, track, expand, className) {
 
                 jQuery("<div>").attr({
                     'id': track + "" + len,
-                    'class': trackClass + " " + className,
-                    'style': "position:absolute;  cursor:pointer; TOP:" + top + "px; LEFT:" + startposition + "px; width :" + stopposition + "px;",
+                    'class': trackClass + " " + className+"_exon",
+                    'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width :" + stopposition + "px;",
                     'title': label,
                     'onClick': "trackClick(\"" + track + "\",\"" + len + "\")",
                     'onmouseOver': "trackmouseover(\"" + track + "\",\"" + len + "\")",
@@ -504,7 +505,7 @@ function dispGenes(div, track, expand, className) {
                     else {
                         jQuery("<div>").attr({
                             'id': track + "" + len,
-                            'class': "exon "+className+"_exon",
+                            'class': "exon " + className + "_exon",
                             'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width :" + stopposition + "px; height:10px; "
                         }).appendTo(div);
                     }
@@ -520,7 +521,7 @@ function dispGenes(div, track, expand, className) {
                 }
             }
         }
-     }
+    }
 }
 
 function dispGeneExon(track, genestrand, className, div) {
@@ -545,7 +546,7 @@ function dispGeneExon(track, genestrand, className, div) {
 
         var newStart_temp = getBegin();
         var newEnd_temp = getEnd();
-        var maxLentemp = jQuery("#canvas").css("width");
+        var maxLentemp = parseFloat(jQuery("#canvas").css("width"));
 
         var partial = (newEnd_temp - newStart_temp) / 2;
         var start = newStart_temp - partial;
@@ -588,123 +589,102 @@ function dispGeneExon(track, genestrand, className, div) {
                 track_html += "<div style=\"position:absolute; z-index; 999; TOP:" + (top - 3) + "px; left:" + (stopposition - 20) + "px; \" class=\"" + spanclass + "\"></div>";
             }
 
-                if (transcript_start && transcript_end) {
-                    if (exon_start > transcript_end && exon_stop > transcript_end) {
-                        startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                        stopposition = (exon_stop - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
-                        if (last != null) {
-                            jQuery("<span>").attr({
-                                'class': spanclass,
-                                'style': "cursor:pointer; position:absolute; z-index; 999; TOP:" + (top - 3) + "px; left:" + (startposition - 20) + "px "
-                            }).appendTo(div);
-
-                        }
-
-                        jQuery("<div>").attr({
-                            'class': utrtrackClass,
-                            'style': "position:absolute; cursor:pointer; height: 10px; z-index: 100; TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
+            if (transcript_start && transcript_end) {
+                if (exon_start > transcript_end && exon_stop > transcript_end) {
+                    startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                    stopposition = (exon_stop - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                    if (last != null) {
+                        jQuery("<span>").attr({
+                            'class': spanclass,
+                            'style': "TOP:" + (top - 3) + "px; left:" + (startposition - 20) + "px "
                         }).appendTo(div);
 
-                        last = current;
                     }
-                    else if (exon_start < transcript_start && exon_stop < transcript_start) {
-                        startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                        stopposition = (exon_stop - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
-                        jQuery("<div>").attr({
-                            'class': utrtrackClass,
-                            'style': "position:absolute; cursor:pointer; height: 10px; z-index: 100; TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
-                        }).appendTo(div);
+                    jQuery("<div>").attr({
+                        'class': utrtrackClass,
+                        'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
+                    }).appendTo(div);
 
-                        last = current;
-                    }
-                    else if (exon_start < transcript_start && exon_stop > transcript_end) {
-                        startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                        stopposition = (transcript_start - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                    last = current;
+                }
+                else if (exon_start < transcript_start && exon_stop < transcript_start) {
+                    startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                    stopposition = (exon_stop - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
-                        jQuery("<div>").attr({
-                            'class': utrtrackClass,
-                            'style': "position:absolute; cursor:pointer; height: 10px; z-index: 100; TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
-                        }).appendTo(div);
+                    jQuery("<div>").attr({
+                        'class': utrtrackClass,
+                        'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
+                    }).appendTo(div);
 
-                        startposition = ( transcript_end - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                        stopposition = (exon_stop - transcript_end + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                    last = current;
+                }
+                else if (exon_start < transcript_start && exon_stop > transcript_end) {
+                    startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                    stopposition = (transcript_start - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
+                    jQuery("<div>").attr({
+                        'class': utrtrackClass,
+                        'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
+                    }).appendTo(div);
 
-                        jQuery("<div>").attr({
-                            'class': utrtrackClass,
-                            'style': "position:absolute; cursor:pointer; height: 10px; z-index: 100; TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
-                        }).appendTo(div);
-
-                        startposition = (transcript_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                        stopposition = (transcript_end - transcript_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
-                        jQuery("<div>").attr({
-                            'class': trackClass,
-                            'style': "position:absolute; cursor:pointer; height: 10px; z-index: 100; TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
-                        }).appendTo(div);
-
-                        last = current;
-                    }
-                    else if (exon_stop > transcript_start && exon_start < transcript_start) {
-                        startposition = ( exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                        stopposition = (transcript_start - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
-
-                        jQuery("<div>").attr({
-                            'class': utrtrackClass,
-                            'style': "position:absolute; cursor:pointer; height: 10px; z-index: 100; TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
-                        }).appendTo(div);
-
-                        startposition = (transcript_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                        stopposition = (exon_stop - transcript_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                    startposition = ( transcript_end - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                    stopposition = (exon_stop - transcript_end + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
-                        jQuery("<div>").attr({
-                            'class': trackClass,
-                            'style': "position:absolute; cursor:pointer; height: 10px; z-index: 100; TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
-                        }).appendTo(div);
+                    jQuery("<div>").attr({
+                        'class': utrtrackClass,
+                        'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
+                    }).appendTo(div);
 
-                        last = current;
-                    }
-                    else if (exon_stop > transcript_end && exon_start < transcript_end) {
-                        startposition = ( transcript_end - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                        stopposition = (exon_stop - transcript_end + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                    startposition = (transcript_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                    stopposition = (transcript_end - transcript_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                    jQuery("<div>").attr({
+                        'class': trackClass,
+                        'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
+                    }).appendTo(div);
 
+                    last = current;
+                }
+                else if (exon_stop > transcript_start && exon_start < transcript_start) {
+                    startposition = ( exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                    stopposition = (transcript_start - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
-                        jQuery("<div>").attr({
-                            'class': utrtrackClass,
-                            'style': "position:absolute; cursor:pointer; height: 10px; z-index: 100; TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
-                        }).appendTo(div);
+                    jQuery("<div>").attr({
+                        'class': utrtrackClass,
+                        'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
+                    }).appendTo(div);
 
-                        startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                        stopposition = (transcript_end - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
-
-                        jQuery("<div>").attr({
-                            'class': trackClass,
-                            'style': "position:absolute; cursor:pointer; height: 10px; z-index: 100; TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
-                        }).appendTo(div);
-
-                        last = current;
-                    }
-                    else {
-                        startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                        stopposition = (exon_stop - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                    startposition = (transcript_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                    stopposition = (exon_stop - transcript_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
-                        jQuery("<div>").attr({
-                            'class': trackClass,
-                            'style': "position:absolute; cursor:pointer; height: 10px; z-index: 100; TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
-                        }).appendTo(div);
+                    jQuery("<div>").attr({
+                        'class': trackClass,
+                        'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
+                    }).appendTo(div);
 
-                        last = current;
-                    }
-                    if (last != null || geneexons.length == 1) {
-                        if ((startposition - 20) > (transcript_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2) {
-                            jQuery("<span>").attr({
-                                'class': spanclass,
-                                'style': "cursor:pointer; position:absolute; z-index; 999; TOP:" + (top - 3) + "px; left:" + (startposition - 20) + "px "
-                            }).appendTo(div);
-                        }
-                    }
+                    last = current;
+                }
+                else if (exon_stop > transcript_end && exon_start < transcript_end) {
+                    startposition = ( transcript_end - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                    stopposition = (exon_stop - transcript_end + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+
+
+                    jQuery("<div>").attr({
+                        'class': utrtrackClass,
+                        'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
+                    }).appendTo(div);
+
+                    startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                    stopposition = (transcript_end - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+
+                    jQuery("<div>").attr({
+                        'class': trackClass,
+                        'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
+                    }).appendTo(div);
+
+                    last = current;
                 }
                 else {
                     startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
@@ -713,27 +693,48 @@ function dispGeneExon(track, genestrand, className, div) {
 
                     jQuery("<div>").attr({
                         'class': trackClass,
-                        'style': "position:absolute; cursor:pointer; height: 10px; z-index: 100; TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
+                        'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
                     }).appendTo(div);
 
-                    if (last_exon > 0 && exon_len > 1) {
-                        var marker_pos = (startposition - last_exon) / 2;
-                        if (startposition < last_exon) {
-                            marker_pos = (last_exon - startposition) / 2;
-                            marker_pos = parseInt(startposition) - parseInt(marker_pos);
-                        }
-                        else {
-                            marker_pos = parseInt(marker_pos) + parseInt(startposition) - 8;
-                        }
+                    last = current;
+                }
+                if (last != null || geneexons.length == 1) {
+                    if ((startposition - 20) > (transcript_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2) {
                         jQuery("<span>").attr({
                             'class': spanclass,
-                            'style': "cursor:pointer; position:absolute; z-index; 999; TOP:" + (top - 3) + "px; left:" + (marker_pos) + "px "
+                            'style': "cursor:pointer; position:absolute; z-index; 999; TOP:" + (top - 3) + "px; left:" + (startposition - 20) + "px "
                         }).appendTo(div);
-
                     }
                 }
-                last_exon = parseInt(startposition) + parseInt(stopposition);
             }
+            else {
+                startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                stopposition = (exon_stop - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+
+
+                jQuery("<div>").attr({
+                    'class': trackClass,
+                    'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
+                }).appendTo(div);
+
+                if (last_exon > 0 && exon_len > 1) {
+                    var marker_pos = (startposition - last_exon) / 2;
+                    if (startposition < last_exon) {
+                        marker_pos = (last_exon - startposition) / 2;
+                        marker_pos = parseInt(startposition) - parseInt(marker_pos);
+                    }
+                    else {
+                        marker_pos = parseInt(marker_pos) + parseInt(startposition) - 8;
+                    }
+                    jQuery("<span>").attr({
+                        'class': spanclass,
+                        'style': "cursor:pointer; position:absolute; z-index; 999; TOP:" + (top - 3) + "px; left:" + (marker_pos) + "px "
+                    }).appendTo(div);
+
+                }
+            }
+            last_exon = parseInt(startposition) + parseInt(stopposition);
+        }
 
         return track_html;
     }
@@ -920,7 +921,7 @@ function dispTrack(div, trackName, className) {
                 if (stopposition > 10) {
                     jQuery("<span>").attr({
                         'class': spanclass,
-                        'style': "cursor:pointer; position:absolute; TOP:" + (- 6) + "px; left:" + ( parseInt(stopposition / 2) ) + "px; opacity:0.6; "
+                        'style': "cursor:pointer; position:absolute; TOP:" + (-6) + "px; left:" + ( parseInt(stopposition / 2) ) + "px; opacity:0.6; "
                     }).appendTo("#" + trackName + "" + track_len);
                 }
 
@@ -1064,7 +1065,7 @@ function dispGraph(div, trackName, className) {
         track_html.push("(" + merged_track_list + ")");
         jQuery("#mergelabel").html(track_html.join(""));
 
-        className = " mergedtrack "+className;
+        className = " mergedtrack " + className;
         labelclass = "Merged_Track";
     }
     else {
@@ -1109,24 +1110,15 @@ function dispGraph(div, trackName, className) {
             var startposition = (track_start - newStart_temp) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen_temp) / 2;
             var stopposition = (track_stop - track_start ) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp);
 
-             jQuery("<div>").attr({
-                        'id': trackName + "" + track_len,
-                        'class': "graph " + className+"_graph",
-                        'style': "bottom:0px; height: " + (track[track_len].graph * 45 / max) + "px; LEFT:" + startposition + "px; width:" + (stopposition - 1) + "px",
-                        'title': track_start + ":" + track_stop + "->" + track[track_len].graph,
-                        'onClick': "setBegin(" + track[track_len].start + ");setEnd(" + track[track_len].end + ");jumpToSeq();"
-                    }).appendTo(div);
-
-//            track_html += "<div class= \"graph " + className + "_graph\" onclick=\"setBegin(" + track[track_len].start + ");setEnd(" + track[track_len].end + ");jumpToSeq();\"STYLE=\"bottom:0px; height: " + (track[track_len].graph * 45 / max) + "px;" +
-//                "LEFT:" + startposition + "px;" +
-//                "width:" + (stopposition - 1) + "px \" title=\"" + track_start + ":" + track_stop + "->" + track[track_len].graph + "\" ></div>";
+            jQuery("<div>").attr({
+                'id': trackName + "" + track_len,
+                'class': "graph " + className + "_graph",
+                'style': "bottom:0px; height: " + (track[track_len].graph * 45 / max) + "px; LEFT:" + startposition + "px; width:" + (stopposition - 1) + "px",
+                'title': track_start + ":" + track_stop + "->" + track[track_len].graph,
+                'onClick': "setBegin(" + track[track_len].start + ");setEnd(" + track[track_len].end + ");jumpToSeq();"
+            }).appendTo(div);
 
         }
-//  jQuery(div).css('height', '70px');
-//        jQuery(div).fadeIn();
-//        jQuery("#" + trackName + "_wrapper").fadeIn();
-//
-//        jQuery(div).html(track_html);
     }
 }
 
@@ -1175,10 +1167,8 @@ function dispGraphBed(div, trackName, trackId, className) {
                 "width:" + (stopposition - 1) + "px \" title=\"" + track_start + ":" + track_stop + "->" + track[track_len].value + "\" ></div>";
 
         }
-//  jQuery(div).css('height', '70px');
         jQuery(div).fadeIn();
         jQuery("#" + trackName + "_wrapper").fadeIn();
-
         jQuery(div).html(track_html);
     }
 }
@@ -1186,8 +1176,7 @@ function dispGraphBed(div, trackName, trackId, className) {
 function dispGraphWig(div, trackName, trackId, className) {
 
     var track_html = "";
-
-    jQuery(div).html("");//<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
+    jQuery(div).html("");
     jQuery(div).fadeIn();
     jQuery(trackName + "_wrapper").fadeIn();
 
@@ -1255,6 +1244,15 @@ function dispGraphWig(div, trackName, trackId, className) {
             var last_start = 0;
             var diff = parseInt(data[1].start - data[0].start);
 
+            if (diff > parseInt(data[2].start - data[1].start) || diff > parseInt(data[3].start - data[2].start)) {
+                if (diff > parseInt(data[2].start - data[1].start)) {
+                    diff = parseInt(data[2].start - data[1].start)
+                }
+                else {
+                    diff = parseInt(data[3].start - data[2].start)
+                }
+            }
+
             for (var i = 0; i < data.length - 1;) {
                 var tempx;
                 if (start > 0) {
@@ -1263,16 +1261,11 @@ function dispGraphWig(div, trackName, trackId, className) {
                 else {
                     tempx = (data[i].start) * space;
                 }
-                var tempy = height - (data[i].value * height / max); //(parseInt(max)*(41-parseInt(patharray[i]))/41);
+                var tempy = height - (data[i].value * height / max);
                 pathinfo.push({ x: tempx, y: tempy});
 
 
-//        if (data.length < 400) {
                 i++;
-//        }
-//        else {
-//          i = parseInt(i + (data.length / 400));
-//        }
 
                 if (last_start < data[i].start - diff) {
                     if (start > 0) {
@@ -1314,13 +1307,6 @@ function dispGraphWig(div, trackName, trackId, className) {
                 .attr("width", 200)
                 .attr("height", 200)
                 .attr("class", "path")
-
-                .attr('stroke', function () {
-                    return "blue";
-                })
-                .attr('stroke-width', function () {
-                    return "2px";
-                })
                 .attr("fill", function () {
                     return "lightblue";
                 })
@@ -1335,8 +1321,6 @@ function dispGraphWig(div, trackName, trackId, className) {
     jQuery(div).css('height', '70px');
     jQuery(div).fadeIn();
     jQuery("#" + trackName + "_wrapper").fadeIn();
-//
-    // jQuery(div).html(track_html);
 }
 
 function sortResults(prop, asc, array) {
