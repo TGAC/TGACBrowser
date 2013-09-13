@@ -2285,6 +2285,7 @@ span.counter {
 .track {
     position: absolute;
     cursor: pointer;
+    height: 5px;
 }
 
 /*.track:hover {*/
