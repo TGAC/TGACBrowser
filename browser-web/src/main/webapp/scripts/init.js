@@ -432,47 +432,108 @@ function displayCursorPosition() {
 }
 
 //Display cordinates as percentage
+//Display cordinates as percentage
 function dispSeqCoord() {
-  var diff = parseInt(parseInt(sequencelength) / 20);
-  var bp = "bp";
-  if (diff > 100000000) {
-    diff = (diff / 1000000);
-    bp = "Gbp";
-  }
-  else if (diff > 1000000) {
-    diff = (diff / 1000000);
-    bp = "Mbp";
-  }
-  else if (diff > 1000) {
-    diff = diff / 1000;
-    bp = "Kbp";
-  }
-  jQuery("#zoomoutbig").attr('title', "Zoom Out(" + diff + "" + bp + ")");
-  jQuery("#zoominbig").attr('title', "Zoom In(" + +diff + "" + bp + ")");
-  var diff = parseInt(parseInt(sequencelength) / 40);
-  var bp = "bp";
-  if (diff > 100000000) {
-    diff = (diff / 1000000);
-    bp = "Gbp";
-  }
-  else if (diff > 1000000) {
-    diff = (diff / 1000000);
-    bp = "Mbp";
-  }
-  else if (diff > 1000) {
-    diff = diff / 1000;
-    bp = "Kbp";
-  }
-  jQuery("#zoomoutsmall").attr('title', "Zoom Out(" + diff + "" + bp + ")");
-  jQuery("#zoominsmall").attr('title', "Zoom In(" + +diff + "" + bp + ")");
-  var len = sequencelength;
-  jQuery('#SeqLenStart').html(0);
-  jQuery('#SeqLen25').html(parseInt(parseInt(len) / 4));
+    var diff = parseInt(parseInt(sequencelength) / 20);
+    var bp = "";
+    if (diff > 100000000) {
+        diff = (diff / 1000000);
+        bp = "G";
+    }
+    else if (diff > 1000000) {
+        diff = (diff / 1000000);
+        bp = "M";
+    }
+    else if (diff > 1000) {
+        diff = diff / 1000;
+        bp = "K";
+    }
+    jQuery("#zoomoutbig").attr('title', "Zoom Out(" + diff + "" + bp + ")");
+    jQuery("#zoominbig").attr('title', "Zoom In(" + +diff + "" + bp + ")");
+    var diff = parseInt(parseInt(sequencelength) / 40);
+    var bp = "";
+    if (diff > 100000000) {
+        diff = (diff / 1000000);
+        bp = "G";
+    }
+    else if (diff > 1000000) {
+        diff = (diff / 1000000);
+        bp = "M";
+    }
+    else if (diff > 1000) {
+        diff = diff / 1000;
+        bp = "K";
+    }
+    jQuery("#zoomoutsmall").attr('title', "Zoom Out(" + diff + "" + bp + ")");
+    jQuery("#zoominsmall").attr('title', "Zoom In(" + +diff + "" + bp + ")");
+    var len = sequencelength;
+    jQuery('#SeqLenStart').html(0);
 
-  jQuery('#SeqLenMid').html(parseInt(parseInt(len) / 2));
-  jQuery('#SeqLen75').html(parseInt(parseInt(len) / 4 * 3));
+    var diff =parseInt(parseInt(len) / 4);
+    var bp = "";
+    if (diff > 100000000) {
+        diff = (diff / 1000000);
+        bp = "G";
+    }
+    else if (diff > 1000000) {
+        diff = (diff / 1000000);
+        bp = "M";
+    }
+    else if (diff > 1000) {
+        diff = diff / 1000;
+        bp = "K";
+    }
+    jQuery('#SeqLen25').html(parseFloat(diff).toFixed(2) + "" +  bp );
 
-  jQuery('#SeqLenEnd').html(len);
+    var diff =parseInt(parseInt(len) / 2);
+    var bp = "";
+    if (diff > 100000000) {
+        diff = (diff / 1000000);
+        bp = "G";
+    }
+    else if (diff > 1000000) {
+        diff = (diff / 1000000);
+        bp = "M";
+    }
+    else if (diff > 1000) {
+        diff = diff / 1000;
+        bp = "K";
+    }
+
+    jQuery('#SeqLenMid').html(parseFloat(diff).toFixed(2) + "" +  bp);
+    var diff =parseInt(parseInt(len) / 4 * 3);
+    var bp = "";
+    if (diff > 100000000) {
+        diff = (diff / 1000000);
+        bp = "G";
+    }
+    else if (diff > 1000000) {
+        diff = (diff / 1000000);
+        bp = "M";
+    }
+    else if (diff > 1000) {
+        diff = diff / 1000;
+        bp = "K";
+    }
+
+    jQuery('#SeqLen75').html(parseFloat(diff).toFixed(2) + "" +  bp );
+
+    var diff =parseInt(parseInt(len));
+    var bp = "";
+    if (diff > 100000000) {
+        diff = (diff / 1000000);
+
+        bp = "G";
+    }
+    else if (diff > 1000000) {
+        diff = (diff / 1000000);
+        bp = "M";
+    }
+    else if (diff > 1000) {
+        diff = diff / 1000;
+        bp = "K";
+    }
+    jQuery('#SeqLenEnd').html(parseFloat(diff).toFixed(2) + "" +  bp );
 
 }
 

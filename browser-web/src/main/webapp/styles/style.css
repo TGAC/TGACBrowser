@@ -1388,8 +1388,8 @@ span.counter {
     border-left: 1px solid black;
     border-right: 1px solid black;
     /*border-top: 1px solid black;*/
-    z-index: 999;
-    box-shadow: inset 0px -5px 5px #888;
+    z-index: 1999;
+    box-shadow: 0 3px 5px 0 #888888;
 }
 
 #controlbox {
@@ -1661,6 +1661,8 @@ span.counter {
     border: 1;
     -moz-user-select: -moz-none;
     -webkit-user-select: none;
+    font-family: Arial;
+    font-size: x-small;
 }
 
 #SeqLen25 {
@@ -1671,6 +1673,8 @@ span.counter {
     border: 1;
     -moz-user-select: -moz-none;
     -webkit-user-select: none;
+    font-family: Arial;
+    font-size: x-small;
 }
 
 #SeqLenMid {
@@ -1681,6 +1685,8 @@ span.counter {
     border: 1;
     -moz-user-select: -moz-none;
     -webkit-user-select: none;
+    font-family: Arial;
+    font-size: x-small;
 }
 
 #SeqLen75 {
@@ -1691,6 +1697,8 @@ span.counter {
     border: 1;
     -moz-user-select: -moz-none;
     -webkit-user-select: none;
+    font-family: Arial;
+    font-size: x-small;
 }
 
 #SeqLenEnd {
@@ -1701,6 +1709,8 @@ span.counter {
     border: 1;
     -moz-user-select: -moz-none;
     -webkit-user-select: none;
+    font-family: Arial;
+    font-size: x-small;
 }
 
 #ruler {

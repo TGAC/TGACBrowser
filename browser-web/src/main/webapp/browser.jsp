@@ -51,9 +51,8 @@
                                         <div onclick="jumpToSeq()" class="divbutton"> Go</div>
                                     </td>
                                     <td>
-                                        <div class="divbutton"
-                                             onClick="parent.location='mailto:tgac.browser@tgac.ac.uk?Subject=TGAC Browser - Feedback'; ">
-                                            Feedback
+                                        <div class="divbutton" style="padding: 0px 5px;" onClick="parent.location='mailto:tgac.browser@tgac.ac.uk?Subject=TGAC Browser - Feedback';">
+                                            <span  class="ui-button ui-icon ui-icon-mail-closed"></span>
                                         </div>
 
                                     </td>
