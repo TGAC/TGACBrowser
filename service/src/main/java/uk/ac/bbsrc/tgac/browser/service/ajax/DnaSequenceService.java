@@ -88,8 +88,8 @@ public class DnaSequenceService {
 //      if more than one results
             if (queryid > 1) {
                 response.put("html", "seqregion");
-                response.put("seqregion", sequenceStore.getSeqRegionSearch(seqName));
                 response.put("chromosome", sequenceStore.checkChromosome());
+                response.put("seqregion", sequenceStore.getSeqRegionSearch(seqName));
             }
 //      if no result from seq_region
             else if (queryid == 0) {
