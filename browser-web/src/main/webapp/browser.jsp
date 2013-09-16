@@ -315,7 +315,7 @@
 
         <tr>
             <td>
-                <div id="popuptrack" style="font:bold 15px Arial; color: blue;"></div>
+                <div id="popuptrack" class="popuptrack" ></div>
             </td>
             <td align="right">
                 <span class="ui-button ui-icon ui-icon-close" onclick=removePopup();></span>
