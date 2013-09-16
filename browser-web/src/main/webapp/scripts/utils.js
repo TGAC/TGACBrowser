@@ -413,18 +413,15 @@ function backup_tracks_removed(track, i) {
 }
 
 function parseBLAST(json){
-    console.log("parse blast")
     jQuery('#blastresult').fadeIn();
-
     jQuery('#blastresult').append("<table style=\"display: none;\" class='list' id='blasttable"+json.id+"'> <thead> " +
-        "<tr><th colspan='14'>Showing result for Id: "+json.id+"</th></tr>" +
-        "<tr><th class=\"header\"> Query id </th> <th class=\"header\"> Subject id </th>  <th class=\"header\"> % identity </th>   <th class=\"header\"> alignment length </th>  <th class=\"header\"> mismatches </th>  <th class=\"header\"> gap openings </th>  <th class=\"header\"> q.start </th>  <th class=\"header\"> q.end </th>  <th class=\"header\"> s.start </th>  <th class=\"header\"> s.end </th> <th class=\"header\"> e-value </th> <th class=\"header\"> bit score </th> <th class=\"header\"> Subject db </th><th class=\"header\"> Download Sequence </th>        </tr>        </thead>        <tbody>        </tbody>    </table>")
+        "<tr><th> Query id </th> <th> Subject id </th>  <th> % identity </th>   <th> alignment length </th>  <th> mismatches </th>  <th> gap openings </th>  <th> q.start </th>  <th> q.end </th>  <th> s.start </th>  <th> s.end </th> <th> e-value </th> <th> bit score </th> <th> Subject db </th><th> Download Sequence </th>        </tr>        </thead>        <tbody>        </tbody>    </table>")
 
-    for(var i=0; json.html.length; i++){
+    for(var i=0; i<json.html.length; i++){
         jQuery("#blasttable"+json.id+" tbody").append("<tr><td>"+json.html[i].q_id+"</td><td>"+json.html[i].s_id+"</td><td>"+json.html[i].identity+"</td><td>"+json.html[i].aln_length+"</td><td>"+json.html[i].mismatch+"</td><td>"+json.html[i].gap_open+"</td><td>"+json.html[i].q_start+"</td><td>"+json.html[i].q_end+"</td><td>"+json.html[i].s_start+"</td><td>"+json.html[i].s_end+"</td><td>"+json.html[i].e_value+"</td><td>"+json.html[i].bit_score+"</td><td>"+json.html[i].s_db+"</td><td><div class=\"ui-widget ui-state-default ui-corner-all ui-button ui-icon ui-icon-arrow-1-s\" id=\"openmenu\" onclick=\"sub_seq('"+json.html[i].sequence+"')\" title=\"More Option\"> </div></td></tr>");
     }
     jQuery("#blasttable"+json.id).tablesorter();
-
+    jQuery("'#blasttable"+json.id+"'").trigger("update");
 }
 
 function sub_seq(seq){
