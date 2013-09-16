@@ -31,6 +31,7 @@ body {
     left: 0px;
     position: fixed;
     width: 100%;
+    box-shadow: 0 3px 5px 0 #888888;
 }
 
 .headerbar a:link {
@@ -1716,9 +1717,10 @@ span.counter {
 #ruler {
     visibility: hidden;
     white-space: nowrap;
-    font-family: Courier;
-    font-size: 13px;
     width: auto;
+}
+.ruler{
+    font:13px Courier;
 }
 
 .jump {
@@ -1939,7 +1941,7 @@ span.counter {
     margin: auto;
     top: 50%;
     left: 40%;
-    z-index: 999;
+    z-index: 1999;
     box-shadow: 10px 10px 25px #888888;
     /*border-radius: 0em 2em 2em 2em;*/
     border: 1px solid gray;
@@ -2327,7 +2329,7 @@ span.counter {
     text-shadow: 0 1px 1px hsla(0, 0%, 100%, .5);
     border: 1px solid #888888;
     width: 200px;
-    z-index: 999;
+    z-index: 1999;
 }
 
 #popup_hanging {
@@ -2358,6 +2360,10 @@ span.counter {
     bottom: -28px;
     left: 22px;
 }
+.popuptrack{
+    font:bold 15px Arial;
+    color: blue;
+}
 
 .bubbleright {
     position: absolute;
@@ -2376,7 +2382,7 @@ span.counter {
     text-shadow: 0 1px 1px hsla(0, 0%, 100%, .5);
     border: 1px solid #888888;
     width: 200px;
-    z-index: 999;
+    z-index: 1999;
 }
 
 .bubbleright:after {
