@@ -287,7 +287,7 @@ function loadTrackAjax(trackId, trackname) {
 //    need to think abt it
     }
 
-    if (jQuery("#" + trackname + "Checkbox").attr('checked')) {
+    if (jQuery("#" + trackname + "Checkbox").attr('checked') && trackId.indexOf('noid') < 0) {
         var partial = (getEnd() - getBegin()) + ((getEnd() - getBegin()) / 2);
         var start = (getBegin() - partial);
         var end = parseInt(getEnd()) + parseFloat(partial);
@@ -411,7 +411,7 @@ function reloadTracks(tracks, tracklist, blast) {
 
             trackToggle('blasttrack');
         }
-        else if (tracklist[i].disp == 1) {
+        else if (tracklist[i].disp == 1 && tracklist[i].id.indexOf('noid') < 0) {
             jQuery('#' + tracklist[i].name + 'Checkbox').attr('checked', true);
             if (tracklist[i].merge == "1") {
                 mergeTrackList(tracklist[i].name);
@@ -510,7 +510,7 @@ function loadPreBlast(jsonid, refid) {
     if (!window['blasttrack']) {
         window['track_listblasttrack'] = {
             name: "blasttrack",
-            id: 0,
+            id: "noid",
             display_label: "blasttrack",
             desc: "blast from browser",
             disp: 1,
@@ -529,7 +529,7 @@ function loadPreBlast(jsonid, refid) {
         jQuery("#blasttrack_div").fadeIn();
 
         track_list.push(
-            {name: "blasttrack", display_label: "blasttrack", id: 0, desc: "blast from browser", disp: 1, merge: 0}
+            {name: "blasttrack", display_label: "blasttrack", id: "noid", desc: "blast from browser", disp: 1, merge: 0}
         );
         window['blasttrack'] = "running";
 
@@ -542,7 +542,7 @@ function loadPreBlast(jsonid, refid) {
         {'accession': jsonid, 'seqregion': refid, 'url': ajaxurl},
         {'doOnSuccess': function (json) {
             track_list.push(
-                {name: "blasttrack", id: 0, desc: "blast from browser", disp: 1, merge: 0}
+                {name: "blasttrack", id: "noid", desc: "blast from browser", disp: 1, merge: 0}
             );
 
             window['blasttrack'] = json.entries;//(decodeURIComponent(json.blast.replace(/\s+/g, ""))).replace(/>/g, "");

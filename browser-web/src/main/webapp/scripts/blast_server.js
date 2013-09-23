@@ -49,7 +49,7 @@ function blastTrackSearch(query, start, end, hit, blastdb, type) {
 
     window['track_listblasttrack'] = {
          name: "blasttrack",
-         id: 0,
+         id: "noid",
          display_label: "blasttrack",
          desc: "blast from browser",
          disp: 1,
@@ -68,7 +68,7 @@ function blastTrackSearch(query, start, end, hit, blastdb, type) {
     jQuery("#blasttrack_div").fadeIn();
 
     track_list.push(
-            {name: "blasttrack", display_label: "blasttrack", id: 0, desc: "blast from browser", disp: 1, merge: 0}
+            {name: "blasttrack", display_label: "blasttrack", id: "noid", desc: "blast from browser", disp: 1, merge: 0}
     );
     window['blasttrack'] = "running";
   }
