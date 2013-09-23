@@ -718,7 +718,7 @@ function loadDefaultTrack(tracklist) {
     }
     else {
         for (var i = 0; i < Tracklist.length; i++) {
-            if (Tracklist[i].disp == "1") {
+            if (Tracklist[i].disp == "1" && tracklist[i].id.indexOf("noid") < 0) {
                 jQuery('#' + Tracklist[i].name + 'Checkbox').attr('checked', true);
                 mergeTrackList(Tracklist[i].name);
 
@@ -758,7 +758,7 @@ function loadDefaultTrack(tracklist) {
     for (var i = 0; i < Tracklist.length; i++) {
 
         jQuery.each(cookietest, function (j, v) {
-            if (v.name == Tracklist[i].name && v.disp == 1) {
+            if (v.name == Tracklist[i].name && v.disp == 1 && Tracklist[i].id.indexOf('noid') < 0) {
                 jQuery('#' + Tracklist[i].name + 'Checkbox').attr('checked', true);
                 mergeTrackList(Tracklist[i].name);
                 var partial = (getEnd() - getBegin()) + ((getEnd() - getBegin()) / 2);

@@ -94,13 +94,13 @@ function blastTrackSearch(query, start, end, hit, db, type) {
         jQuery("#blasttrack_div").fadeIn();
 
         track_list.push(
-            {name: "blasttrack", display_label: "blasttrack", id: 0, desc: "blast from browser", disp: 1, merge: 0}
+            {name: "blasttrack", display_label: "blasttrack", id: "noid", desc: "blast from browser", disp: 1, merge: 0}
         );
         window['blasttrack'] = "running";
 
         window['track_listblasttrack'] = {
             name: "blasttrack",
-            id: 0,
+            id: "noid",
             display_label: "blasttrack",
             desc: "blast from browser",
             disp: 1,
@@ -171,7 +171,7 @@ function checkTask(task, db, format, start, end, hit, link) {
         jQuery("#blasttrack_div").fadeIn();
 
         track_list.push(
-            {name: "blasttrack", display_label: "blasttrack", id: 0, desc: "blast from browser", disp: 1, merge: 0}
+            {name: "blasttrack", display_label: "blasttrack", id: "noid", desc: "blast from browser", disp: 1, merge: 0}
         );
         window['blasttrack'] = "running";
     }
