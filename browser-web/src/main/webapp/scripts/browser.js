@@ -258,32 +258,16 @@ function auto_drag() {
 
 
 function setNavPanel() {
-//  var left = 0;
-//  var height = parseFloat(jQuery("#wrapper").position().top) - (parseFloat(jQuery("#draggable").position().top) + parseFloat(jQuery("#draggable").css("height"))) + "px solid #cccccc";
-//  var border_left = parseFloat(jQuery("#draggable").css("left")) - left + "px solid transparent";
-//  var width = jQuery("#draggable").css("width");
-////  var border_right = parseFloat(maxLen)/2 - parseFloat(left) - (parseFloat(jQuery("#draggable").css("width")) + parseFloat(jQuery("#draggable").css("left"))) + "px solid transparent";
-//  var diff = (parseFloat(maxLen) - (parseFloat(jQuery("#draggable").css("width")) + parseFloat(jQuery("#draggable").css("left"))))
-//  if (diff < 0) {
-//    diff = 0;
-//  }
-//  var border_right = (diff) + "px solid transparent";
-//  jQuery("#nav_panel").animate({left: left}, { duration: 300, queue: false});
-//  jQuery("#nav_panel").animate({width: width}, { duration: 300, queue: false});
-//  jQuery("#nav_panel").animate({borderBottom: height}, { duration: 300, queue: false});
-//  jQuery("#nav_panel").animate({borderLeft: border_left}, { duration: 300, queue: false});
-//  jQuery("#nav_panel").animate({borderRight: (border_right)}, { duration: 300, queue: false});
-
     var x1, y1, x2, y2;
-
     x1 = jQuery("#draggable").offset().left;
     x2 = parseInt(x1) + +parseFloat(jQuery("#draggable").css("width"));
-    y1 = y2 = (parseFloat(jQuery("#draggable").position().top));
+    y1 = y2 = 0;
 
-    var y3 = jQuery("#wrapper").position().top;
+    var y3 = jQuery("#wrapper").position().top - jQuery("#nav_panel").position().top;
     var y4 = y3;
     var x3 = 0;
     var x4 = parseInt(jQuery("#nav_panel").width());
+
     jQuery('#nav_panel').svg();
 
     var svg = jQuery('#nav_panel').svg('get');
@@ -296,7 +280,7 @@ function setNavPanel() {
         [x3, y3],
         [x4, y4]
     ],
-        {fill: '#cccccc', stroke: 'blue', strokeWidth: 0, opacity: 0.4});
+        {fill: '#cccccc', stroke: 'blue', strokeWidth: 0});
 
 }
 
