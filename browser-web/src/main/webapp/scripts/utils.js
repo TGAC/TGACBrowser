@@ -425,8 +425,8 @@ function parseBLAST(json){
 }
 
 function sub_seq(seq){
-    var id = seq.split("<br>")[0];
-    seq =  seq.split("<br>")[1];
+    var id = "";//seq.split("<br>")[0];
+  //  seq =  seq.split("<br>")[1];
     jQuery.colorbox({
         width: "90%",
         height: "100%",

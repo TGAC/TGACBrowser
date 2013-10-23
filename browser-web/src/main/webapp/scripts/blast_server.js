@@ -73,7 +73,7 @@ function blastTrackSearch(query, start, end, hit, blastdb, type) {
     window['blasttrack'] = "running";
   }
 
-  submitBlastTask(query, blastdb, 5, type, start, end, hit, " -num_threads  4 ");
+  submitBlastTask(query, blastdb, "6 qseqid sseqid qstart qend bitscore qseq sseq btop", type, start, end, hit, " -num_threads  4 ");
   start_global = start;
   end_global = end;
   hit_global = hit;
@@ -151,7 +151,7 @@ function checkTask(task, db, format, start, end, hit, link, old_id, type) {
             }
             else if (json.result == 'COMPLETED') {
 //              jQuery('#blastresult').html("<span style=\"position:relative; left:50%;\"> Completed Processing &nbsp; <img alt=\"Loading\" src=\"./images/browser/loading_big.gif\" style=\"position: relative;\"> </span> </div>");
-              if (format == 5) {
+              if (format == "6 qseqid sseqid qstart qend bitscore qseq sseq btop") {
                 Fluxion.doAjax(
                         'blastservice',
                         'blastSearchTrack',

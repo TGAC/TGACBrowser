@@ -254,6 +254,10 @@
             </snapshots>
             -->
         </pluginRepository>
+        <pluginRepository>
+            <id>onejar-maven-plugin.googlecode.com</id>
+            <url>http://onejar-maven-plugin.googlecode.com/svn/mavenrepo</url>
+        </pluginRepository>
 
         <pluginRepository>
             <id>apache-snapshots</id>

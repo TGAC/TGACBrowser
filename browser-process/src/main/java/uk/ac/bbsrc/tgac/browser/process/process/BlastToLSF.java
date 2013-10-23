@@ -50,126 +50,121 @@ import java.util.Map;
 @ServiceProvider
 public class BlastToLSF extends AbstractTgacLsfProcess {
 
-  private Logger log = LoggerFactory.getLogger(getClass());
+    private Logger log = LoggerFactory.getLogger(getClass());
 
-  private final Collection<ConanParameter> parameters;
-  private final FlagParameter blastAccession;
-  // private final FlagParameter blastQuery;
-  private final FlagParameter blastDB;
-  private final FlagParameter format;
-  private final FlagParameter type;
-  private final FlagParameter params;
+    private final Collection<ConanParameter> parameters;
+    private final FlagParameter blastAccession;
+    // private final FlagParameter blastQuery;
+    private final FlagParameter blastDB;
+    private final FlagParameter format;
+    private final FlagParameter type;
+    private final FlagParameter params;
 
 
+    public BlastToLSF() {
+        setQueueName("cho_blast");
 
-  public BlastToLSF() {
-    setQueueName("cho_blast");
+        blastAccession = new FlagParameter("BlastAccession");
+        // blastQuery = new FlagParameter("querystring");
+        blastDB = new FlagParameter("blastdb");
+        format = new FlagParameter("format");
+        type = new FlagParameter("type");
+        params = new FlagParameter("params");
 
-    blastAccession = new FlagParameter("BlastAccession");
-    // blastQuery = new FlagParameter("querystring");
-    blastDB = new FlagParameter("blastdb");
-    format = new FlagParameter("format");
-    type = new FlagParameter("type");
-    params = new FlagParameter("params");
+        parameters = new ArrayList<ConanParameter>();
 
-    parameters = new ArrayList<ConanParameter>();
-
-    parameters.add(blastAccession);
-    // parameters.add(blastQuery);
-    parameters.add(blastDB);
-    parameters.add(format);
-    parameters.add(type);
-    parameters.add(params);
-  }
-
-  protected Logger getLog() {
-    return log;
-  }
-
-  @Override
-  protected String getComponentName() {
-    return "blastn";
-  }
-
-  @Override
-  protected String getLSFOptions(Map<ConanParameter, String> parameters) {
-    return "-J " + parameters.get(blastAccession) + "_blast";
-  }
-
-  @Override
-  protected String getCommand(Map<ConanParameter, String> parameters) {
-    try {
-      String blast_type = "";
-      String misc_params = "";
-      blast_type = parameters.get(type);
-      misc_params = parameters.get(params);
-      String blastBinary = "/data/workarea/bianx/blast+/" + blast_type + " ";
-      getLog().debug("Executing " + getName() + " with the following parameters: " + parameters.toString()+ " "+misc_params);
-
-      StringBuilder sb = new StringBuilder();
-//      File file = new File("/scratch/tgacbrowser/" + parameters.get(blastAccession).toString() + ".fa");
-    //
-    //      FileWriter writer = new FileWriter(file, true);
-    //
-    //      PrintWriter output = new PrintWriter(writer);
-    //
-    //      output.print(getSeq(parameters.get(blastAccession).toString()));
-    //
-    //      output.close();
-//          sb.append("perl BLASTCommand.pl '"+parameters.get(type)+"' '"+parameters.get(blastDB)+"' '"+parameters.get(blastAccession)+"' '"+parameters.get(params)+"' '"+parameters.get(format)+"' > new.txt");
-//          return sb.toString();
-
-      sb.append(blastBinary);
-      sb.append(" -db " + parameters.get(blastDB));
-      sb.append(" -query /net/tgac-cfs3.tgaccluster/ifs/TGAC/browser/jobs/" + parameters.get(blastAccession) + ".fa ");
-      sb.append(" -out /net/tgac-cfs3.tgaccluster/ifs/TGAC/browser/jobs/" + parameters.get(blastAccession) + ".xml ");
-      sb.append(" -outfmt " + parameters.get(format) + " -max_target_seqs 10");
-      return sb.toString();
+        parameters.add(blastAccession);
+        // parameters.add(blastQuery);
+        parameters.add(blastDB);
+        parameters.add(format);
+        parameters.add(type);
+        parameters.add(params);
     }
-    catch (Exception e) {
-      return ("Exception: " + e.getMessage());
+
+    protected Logger getLog() {
+        return log;
     }
-  }
 
-  @Override
-  public String getName() {
-    return "blast_to_lsf";
-  }
+    @Override
+    protected String getComponentName() {
+        return "blastn";
+    }
 
-  @Override
-  public Collection<ConanParameter> getParameters() {
-    return parameters;
-  }
+    @Override
+    protected String getLSFOptions(Map<ConanParameter, String> parameters) {
+        return "-J " + parameters.get(blastAccession) + "_blast";
+    }
 
-  public String getSeq(String id) throws ClassNotFoundException {
-      log.info("\n\ngetSeq "+id);
+    @Override
+    protected String getCommand(Map<ConanParameter, String> parameters) {
+        try {
+            log.info("\n\nget command\n");
+
+            String blast_type = "";
+            String misc_params = "";
+            blast_type = parameters.get(type);
+            misc_params = parameters.get(params);
+            String blastBinary = "/data/workarea/bianx/blast+/" + blast_type + " ";
+            getLog().debug("Executing " + getName() + " with the following parameters: " + parameters.toString() + " " + misc_params);
+
+            StringBuilder sb = new StringBuilder();
+            File file = new File("/scratch/tgacbrowser/" + parameters.get(blastAccession).toString() + ".fa");
+
+            FileWriter writer = new FileWriter(file, true);
+
+            PrintWriter output = new PrintWriter(writer);
+
+            output.print(getSeq(parameters.get(blastAccession).toString()));
+
+            output.close();
+            sb.append("perl BLASTCommand.pl " +
+                    "'" + parameters.get(type) + "' " +
+                    "'" + parameters.get(blastDB) + "' " +
+                    "'" + parameters.get(blastAccession) + "' " +
+                    "'" + parameters.get(params) + "' " +
+                    "'" + parameters.get(format) + "' " +
+                    "> /scratch/tgacbrowser/" + parameters.get(blastAccession) + ".txt");
+            return sb.toString();
+        } catch (Exception e) {
+            return ("Exception: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public String getName() {
+        return "blast_to_lsf";
+    }
+
+    @Override
+    public Collection<ConanParameter> getParameters() {
+        return parameters;
+    }
+
+    public String getSeq(String id) throws ClassNotFoundException {
         String fasta = "";
         try {
-          Class.forName("com.mysql.jdbc.Driver").newInstance();
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
 
-          Connection conn = DriverManager.getConnection("jdbc:mysql://n78048.nbi.ac.uk:3306/thankia_blast_manager", "tgacbrowser", "tgac_bioinf");
-          Statement stmt = conn.createStatement();
-          ResultSet rs = stmt.executeQuery("select blast_seq from blast_params where id_blast=\"" + id + "\"");
+            Connection conn = DriverManager.getConnection("jdbc:mysql://tgac-db1.nbi.ac.uk:3306/thankia_blast_manager", "tgacbrowser", "tgac_bioinf");
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("select blast_seq from blast_params where id_blast=\"" + id + "\"");
 
-          while (rs.next()) {
-            fasta += rs.getString("blast_seq");
-          }
+            while (rs.next()) {
+                fasta += rs.getString("blast_seq");
+            }
 
-          rs.close();
-          stmt.close();
-          conn.close();
-        }
-        catch (InstantiationException e) {
-          e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        catch (IllegalAccessException e) {
-          e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        catch (SQLException e) {
-          e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            rs.close();
+            stmt.close();
+            conn.close();
+        } catch (InstantiationException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (SQLException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
         return fasta;
-      }
+    }
 
 }
