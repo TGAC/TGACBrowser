@@ -149,8 +149,18 @@ public class BlastManagerServices {
       if (rs.getString("result_json").toString().indexOf("No hits found") < 0) {
         for (int i = 0; i < jsonArray.size(); i++) {
           JSONObject explrObject = jsonArray.getJSONObject(i);
+            String seqregionName = explrObject.get("s_id").toString();
+            int hsp_from = Integer.parseInt(explrObject.get("s_start").toString());
+            int hsp_to = Integer.parseInt(explrObject.get("s_end").toString());
           eachBlast.put("q_id", explrObject.get("q_id"));
-          eachBlast.put("s_id", explrObject.get("s_id"));
+          if(link.length() > 0){
+              eachBlast.put("s_id","<a target=\\\"_blank\\\" href=../" + link + "/index.jsp?query=" + seqregionName + "&from=" + hsp_from + "&to=" + hsp_to + "&blasttrack=" + id + ">"
+                      + seqregionName + "</a>");
+          }else{
+              eachBlast.put("s_id", explrObject.get("s_id"));
+          }
+
+
           eachBlast.put("identity", explrObject.get("identity"));
           eachBlast.put("aln_length", explrObject.get("aln_length"));
           eachBlast.put("mismatch", explrObject.get("mismatch"));
@@ -177,7 +187,7 @@ public class BlastManagerServices {
     return blasts;
   }
 
-  protected static JSONArray getBLASTEntryFromDatabase(String id) throws Exception {
+  protected static JSONArray getBLASTEntryFromDatabase(String id, String seqRegion) throws Exception {
     JSONArray blasts = new JSONArray();
     Class.forName("com.mysql.jdbc.Driver").newInstance();
     Connection conn = DriverManager.getConnection("jdbc:mysql://n78048.nbi.ac.uk:3306/thankia_blast_manager", "tgacbrowser", "tgac_bioinf");
@@ -194,7 +204,9 @@ public class BlastManagerServices {
 
       if (rs.getString("result_json").toString().indexOf("No hits found") < 0) {
         for (int i = 0; i < jsonArray.size(); i++) {
-          JSONObject explrObject = jsonArray.getJSONObject(i);
+            JSONObject explrObject = jsonArray.getJSONObject(i);
+            String s_id = explrObject.get("s_id").toString();
+            if(s_id.matches(seqRegion)){
           eachBlast.put("start", explrObject.get("s_start"));
           eachBlast.put("end", explrObject.get("s_end"));
           eachBlast.put("desc", explrObject.get("s_id"));
@@ -202,7 +214,7 @@ public class BlastManagerServices {
           eachBlast.put("reverse", " ");
           eachBlast.put("indels", " ");
           eachBlast.put("score", " ");
-          blasts.add(eachBlast);
+          blasts.add(eachBlast);}
         }
       }
       else {
@@ -216,8 +228,9 @@ public class BlastManagerServices {
     return blasts;
   }
 
-  protected static JSONArray getTrackFromDatabase(String id) throws Exception {
-    JSONArray blasts = new JSONArray();
+  public static JSONArray getTrackFromDatabase(String id, int query_start) throws Exception {
+//      log.info("\n\n\ngettrackfromdatabase "+id+"\n\n");
+   try{ JSONArray blasts = new JSONArray();
     Class.forName("com.mysql.jdbc.Driver").newInstance();
     Connection conn = DriverManager.getConnection("jdbc:mysql://n78048.nbi.ac.uk:3306/thankia_blast_manager", "tgacbrowser", "tgac_bioinf");
     Statement stmt = conn.createStatement();
@@ -234,8 +247,9 @@ public class BlastManagerServices {
       if (rs.getString("result_json").toString().indexOf("No hits found") < 0) {
         for (int i = 0; i < jsonArray.size(); i++) {
           JSONObject explrObject = jsonArray.getJSONObject(i);
-          eachBlast.put("start", explrObject.get("start"));
-          eachBlast.put("end", explrObject.get("end"));
+//            log.info("\n\nresult "+explrObject.toString());
+          eachBlast.put("start", query_start+ Integer.parseInt(explrObject.get("start").toString()));
+          eachBlast.put("end", query_start+ Integer.parseInt(explrObject.get("end").toString()));
           eachBlast.put("desc", explrObject.get("desc"));
           eachBlast.put("flag", explrObject.get("flag"));
           eachBlast.put("reverse", explrObject.get("reverse"));
@@ -252,7 +266,12 @@ public class BlastManagerServices {
     rs.close();
     stmt.close();
     conn.close();
-    return blasts;
+    return blasts;}
+   catch (Exception e){
+       e.printStackTrace();
+       throw new Exception(e);
+
+   }
   }
 
   protected static void insertintoDatabase(String taskId, String query, String db, String link, String type, String filter, String format) throws Exception {

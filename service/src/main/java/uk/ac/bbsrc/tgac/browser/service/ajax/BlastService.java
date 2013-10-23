@@ -60,587 +60,410 @@ import org.xml.sax.SAXParseException;
 
 @Ajaxified
 public class BlastService {
-  private Logger log = LoggerFactory.getLogger(getClass());
-  private BlastManagerServices blastmanagerservices;
+    private Logger log = LoggerFactory.getLogger(getClass());
+    private BlastManagerServices blastmanagerservices;
 
-  /**
-   * Return JSONObject
-   * <p>
-   * Reads the xml file get ID from ajax call
-   * Format data into table format and sends back
-   * </p>
-   *
-   * @param session an HTTPSession comes from ajax call
-   * @param json    json object with key parameters sent from ajax call
-   * @return JSONObject with BLAST result formatted into table
-   * @throws IOException
-   */
-  public JSONObject blastSearchSequence(HttpSession session, JSONObject json) throws IOException {
-    try {
-      JSONArray blasts = new JSONArray();
-      JSONObject html = new JSONObject();
-      String blastdb = json.getString("db");
+    /**
+     * Return JSONObject
+     * <p>
+     * Reads the xml file get ID from ajax call
+     * Format data into table format and sends back
+     * </p>
+     *
+     * @param session an HTTPSession comes from ajax call
+     * @param json    json object with key parameters sent from ajax call
+     * @return JSONObject with BLAST result formatted into table
+     * @throws IOException
+     */
+    public JSONObject blastSearchSequence(HttpSession session, JSONObject json) throws IOException {
+        try {
+            JSONArray blasts = new JSONArray();
+            JSONObject html = new JSONObject();
+            String blastdb = json.getString("db");
 
-      String blastAccession = json.getString("accession");
-      String location = json.getString("location");
-      String old_blastAccession = json.getString("old_taskid");
+            String blastAccession = json.getString("accession");
+            String location = json.getString("location");
+            String old_blastAccession = json.getString("old_taskid");
 
-      if (blastmanagerservices.checkResultDatabase(old_blastAccession)) {
-        log.info("already in db");
-        blasts = blastmanagerservices.getFromDatabase(old_blastAccession, location);
-        html.put("id", blastAccession);
-        html.put("html", blasts);
-      }
-      else {
-        FileInputStream fstream = new FileInputStream("/net/tgac-cfs3/ifs/TGAC/browser/jobs/" + blastAccession + ".xml");
-        DataInputStream in = new DataInputStream(fstream);
-        String str;
-        int i = 0;
-
-        while (null != (str = in.readLine())) {
-          JSONObject eachBlast = new JSONObject();
-
-
-          Pattern p = Pattern.compile("#");
-          Matcher matcher_comment = p.matcher(str);
-          if (matcher_comment.find()) {
-          }
-          else {
-            Pattern p1 = Pattern.compile("<.*>");
-            Matcher matcher_score = p1.matcher(str);
-            if (matcher_score.find()) {
+            if (blastmanagerservices.checkResultDatabase(old_blastAccession)) {
+                log.info("already in db");
+                blasts = blastmanagerservices.getFromDatabase(old_blastAccession, location);
+                html.put("id", blastAccession);
+                html.put("html", blasts);
+            } else {
+                blasts = blastmanagerservices.getFromDatabase(blastAccession, location);
+                html.put("id", blastAccession);
+                html.put("html", blasts);
             }
-            else {
-              String str1 = str.replaceAll("\\s+", "<td>");
-              String[] id;
-              id = str1.split("<td>");
-              String seqregionName = id[1];
-              String hsp_from = id[8];
-              String hsp_to = id[9];
 
-              eachBlast.put("q_id", id[0]);
-              if (location.length() > 0) {
-                eachBlast.put("s_id", "<a target=\\\"_blank\\\" href=../" + location + "/index.jsp?query=" + seqregionName + "&from=" + hsp_from + "&to=" + hsp_to + "&blasttrack=" + blastAccession + ">"
-                                      + seqregionName + "</a>");
-              }
-              else {
-                eachBlast.put("s_id", id[1]);
-
-              }
-              eachBlast.put("identity", id[2]);
-              eachBlast.put("aln_length", id[3]);
-              eachBlast.put("mismatch", id[4]);
-              eachBlast.put("gap_open", id[5]);
-              eachBlast.put("q_start", id[6]);
-              eachBlast.put("q_end", id[7]);
-              eachBlast.put("s_start", id[8]);
-              eachBlast.put("s_end", id[9]);
-              eachBlast.put("e_value", id[10]);
-              eachBlast.put("bit_score", id[11]);
-              eachBlast.put("sequence", ">"+id[1]+"<br>"+id[12]);
-              eachBlast.put("s_db", blastdb.substring(blastdb.lastIndexOf("/") + 1));
-              i++;
-            }
-          }
-          blasts.add(eachBlast);
+            return html;
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return JSONUtils.SimpleJSONError(e.getMessage());
         }
 
-        in.close();
-
-        String result = null;
-        if (blasts.size() > 0) {
-        }
-        else {
-          blasts.add("No hits found.");
-        }
-        blastmanagerservices.setResultToDatabase(blastAccession, blasts);
-        html.put("id", blastAccession);
-        html.put("html", blasts);
-      }
-
-      return html;
-    }
-    catch (Exception e) {
-      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-      return JSONUtils.SimpleJSONError(e.getMessage());
     }
 
-  }
 
+    /**
+     * Return JSONObject
+     * <p>
+     * Reads file ID from ajax call
+     * </p>
+     *
+     * @param session an HTTPSession comes from ajax call
+     * @param json    json object with key parameters sent from ajax call
+     * @return JSONObject with data formatted into tracks style
+     * @throws IOException
+     */
+    public JSONObject blastSearchTrack(HttpSession session, JSONObject json) throws IOException {
+        String blastAccession = json.getString("accession");
+        JSONArray blasts = new JSONArray();
 
-  /**
-   * Return JSONObject
-   * <p>
-   * Reads file ID from ajax call
-   * </p>
-   *
-   * @param session an HTTPSession comes from ajax call
-   * @param json    json object with key parameters sent from ajax call
-   * @return JSONObject with data formatted into tracks style
-   * @throws IOException
-   */
-  public JSONObject blastSearchTrack(HttpSession session, JSONObject json) throws IOException {
-    String blastAccession = json.getString("accession");
-    JSONArray blasts = new JSONArray();
+        JSONObject blast_response = new JSONObject();
 
-    JSONObject blast_response = new JSONObject();
+        int query_start = json.getInt("start");
+        int query_end = json.getInt("end");
+        int noofhits = json.getInt("hit");
+        String location = json.getString("location");
+        String old_blastAccession = json.getString("old_taskid");
 
-    int query_start = json.getInt("start");
-    int query_end = json.getInt("end");
-    int noofhits = json.getInt("hit");
-    String location = json.getString("location");
-    String old_blastAccession = json.getString("old_taskid");
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        Document dom;
 
-    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-    Document dom;
+        try {
 
-    try {
+            if (blastmanagerservices.checkResultDatabase(old_blastAccession)) {
+                blasts = blastmanagerservices.getTrackFromDatabase(old_blastAccession, query_start);
+                blast_response.put("blast", blasts);
 
-      if (blastmanagerservices.checkResultDatabase(old_blastAccession)) {
-        log.info("already in db");
-        blasts = blastmanagerservices.getTrackFromDatabase(old_blastAccession);
-        blast_response.put("blast", blasts);
+            } else {
 
-      }
-      else {
-        FileInputStream fstream = new FileInputStream("/net/tgac-cfs3/ifs/TGAC/browser/jobs/" + blastAccession + ".xml");
-        DataInputStream input = new DataInputStream(fstream);
-        int in = 0;
-        int findHits = 1;
-        DocumentBuilder db = dbf.newDocumentBuilder();
+                blasts = blastmanagerservices.getTrackFromDatabase(blastAccession, query_start);
+                blast_response.put("blast", blasts);
+            }
+            return blast_response; //JSONUtils.JSONObjectResponse("blast", result);
 
-//      parse file for DOMs
-        dom = db.parse(input);
-        Element docEle = dom.getDocumentElement();
-//      get nodes for Hit
-        NodeList nl = docEle.getElementsByTagName("Hit");
+        } catch (SAXParseException sax) {
+            sax.printStackTrace();
 
+            throw new RuntimeException(sax);
+        } catch (Exception err) {
+            err.printStackTrace();
+            throw new RuntimeException(err);
+        }
+    }
+
+    /**
+     * Return JSONObject
+     * <p>
+     * Reads file with ID from ajax call
+     * Parse file based on space and format to track style
+     * </p>
+     *
+     * @param session an HTTPSession comes from ajax call
+     * @param json    json object with key parameters sent from ajax call
+     * @return JSONObject with blasttrack result
+     * @throws IOException
+     */
+    public JSONObject blastEntry(HttpSession session, JSONObject json) throws IOException {
+        try {
+            String seqRegion = json.getString("seqregion");
+            String blastAccession = json.getString("accession");
+            JSONObject jsonObject = new JSONObject();
+            JSONArray jsonArray = new JSONArray();
+            if (blastmanagerservices.checkResultDatabase(blastAccession)) {
+                jsonArray = blastmanagerservices.getBLASTEntryFromDatabase(blastAccession, seqRegion);
+
+            } else {
+
+                FileInputStream fstream = new FileInputStream("/net/tgac-cfs3/ifs/TGAC/browser/jobs/" + blastAccession + ".xml");
+                DataInputStream in = new DataInputStream(fstream);
+                String str;
+                while (null != (str = in.readLine())) {
+
+                    Pattern p = Pattern.compile("#");
+                    Matcher matcher_comment = p.matcher(str);
+                    if (matcher_comment.find()) {
+                    } else {
+                        Pattern p1 = Pattern.compile("<.*>");
+                        Matcher matcher_score = p1.matcher(str);
+                        if (matcher_score.find()) {
+                        } else {
+                            String[] list = str.split("\\s+");
+                            if (list[1].equals(seqRegion)) {
+                                JSONObject jb = new JSONObject();
+                                if (Long.parseLong(list[8]) < Long.parseLong(list[9])) {
+                                    jb.put("start", list[8]);
+                                    jb.put("end", list[9]);
+                                } else {
+                                    jb.put("start", list[9]);
+                                    jb.put("end", list[8]);
+                                }
+
+                                jb.put("score", " ");
+                                jb.put("desc", " ");
+                                jb.put("indels", "");
+                                jsonArray.add(jb);
+                            }
+                        }
+                    }
+                }
+                in.close();
+            }
+            jsonObject.put("entries", jsonArray);
+
+            return jsonObject;
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return JSONUtils.SimpleJSONError(e.getMessage());
+        }
+
+    }
+
+    /**
+     * Return String
+     * <p>
+     * Read XMLDomElement and read the value from key name
+     * </p>
+     *
+     * @param ele     XMLDOMElement
+     * @param tagName XMLDOMElement tag name
+     * @return Strnig value related to tag name
+     */
+    protected String getTextValue(Element ele, String tagName) {
+        String textVal = null;
+        NodeList nl = ele.getElementsByTagName(tagName);
         if (nl != null && nl.getLength() > 0) {
-          HIT:
-          for (int a = 0; a < nl.getLength(); a++) {
+            Element el = (Element) nl.item(0);
+            textVal = el.getFirstChild().getNodeValue();
+        }
 
-            Element el = (Element) nl.item(a);
-            String hit_id = getTextValue(el, "Hit_def");
+        return textVal;
+    }
 
-            NodeList hsps = el.getElementsByTagName("Hsp");
-            if (hsps != null && hsps.getLength() > 0) {
-              for (int b = 0; b < hsps.getLength(); b++) {
 
-                Element ell = (Element) hsps.item(b);
+    /**
+     * Return JSONObject
+     * <p>
+     * Reads BLAST parameter from ajax call
+     * Creates a FASTA file for query
+     * call method sendMessage with parameters
+     * </p>
+     *
+     * @param session an HTTPSession comes from ajax call
+     * @param json    json object with key parameters sent from ajax call
+     * @return
+     * @throws IOException
+     */
+    public JSONObject submitBlastTask(HttpSession session, JSONObject json) throws IOException {
+        try {
 
-                String hsp_from = getTextValue(ell, "Hsp_query-from");
+            String fasta = json.getString("querystring");
+            String accession = json.getString("BlastAccession");
+            String type = json.getString("type");
+            String location = json.getString("location");
+            String blastdb = json.getString("blastdb");
+            String params = json.getString("params");
+            String format = json.getString("format");
 
-                String hsp_score = getTextValue(ell, "Hsp_score");
 
-                String hsp_to = getTextValue(ell, "Hsp_query-to");
+            if (blastmanagerservices.checkDatabase(fasta, blastdb, location, type, params, format)) {
+                String id = blastmanagerservices.getIDFromDatabase(fasta, blastdb, location, type, params, format).toString();
+                JSONObject r = new JSONObject();
+                r.put("id", id);
+                return r;
+            } else {
+                blastmanagerservices.insertintoDatabase(accession, fasta, blastdb, location, type, params, format);
 
-                JSONObject eachBlast = new JSONObject();
-                JSONArray indels = new JSONArray();
-                JSONObject eachIndel = new JSONObject();
 
-                eachBlast.put("start", query_start + Integer.parseInt(hsp_from));
-                eachBlast.put("end", query_start + Integer.parseInt(hsp_to));
+                JSONObject task = new JSONObject();
 
-//                if (location.length() > 0) {
-//                                eachBlast.put("s_id", "<a target=\\\"_blank\\\" href=\\\"../" + location + "/index.jsp?query=" + seqregionName + "&from=" + hsp_from + "&to=" + hsp_to + "&blasttrack=" + blastAccession + "\\\">"
-//                                                      + seqregionName + "</a>");
-//                              }
-//                              else {
-//                                eachBlast.put("s_id", id[1]);
-//
-//                              }
-//
-                if (location.length() > 0) {
-                  eachBlast.put("desc", " <a target=\\\"_blank\\\" href=\\\"../" + location + "/index.jsp?query=" + hit_id + "&from=" + hsp_from + "&to=" + hsp_to + "\\\">"
-                                        + hit_id + "</a>");
+                JSONObject j = new JSONObject();
+
+                if (json.has("priority")) {
+                    j.put("priority", json.get("priority"));
+                } else {
+                    j.put("priority", "HIGH");
                 }
-                else {
-                  eachBlast.put("desc", hit_id);
+                j.put("pipeline", "browser_blast");//json.get("pipeline"));
+                json.remove("querystring");
+                j.put("params", json);
+
+                task.put("submit", j);
+                String response = sendMessage(prepareSocket("norwich.nbi.bbsrc.ac.uk", 7899), task.toString());
+                if (!"".equals(response)) {
+                    JSONObject r = JSONObject.fromObject(response);
+                    return r;
                 }
-
-                eachBlast.put("score", hsp_score);
-                eachBlast.put("flag", false);
-                eachBlast.put("reverse", "");
-
-                String hsp_midline = getTextValue(ell, "Hsp_midline");
-//              if indels present
-                if (hsp_midline.split(" ").length > 1) {
-                  String hsp_query_seq = getTextValue(ell, "Hsp_qseq");
-                  String hsp_hit_seq = getTextValue(ell, "Hsp_hseq");
-                  String[] newtemp = hsp_midline.split(" ");
-                  int ins = 0;
-                  for (int x = 0; x < newtemp.length - 1; x++) {
-
-                    ins = ins + ((newtemp[x].length() + 1));
-                    eachIndel.put("position", ins + in);
-//                  put 3 bases before and after of indel if starting or ending position then most possible
-                    eachIndel.put("query", hsp_query_seq.substring((ins - 3) > -1 ? (ins - 3) : 0, (ins + 2) <= hsp_query_seq.length() ? (ins + 2) : hsp_query_seq.length()));
-                    eachIndel.put("hit", hsp_hit_seq.substring((ins - 3) > -1 ? (ins - 3) : 0, (ins + 2) <= hsp_hit_seq.length() ? (ins + 2) : hsp_hit_seq.length()));
-                    indels.add(eachIndel);
-                  }
-                }
-                eachBlast.put("indels", indels);
-                blasts.add(eachBlast);
-
-                findHits++;
-                if (findHits > noofhits) {
-                  break HIT;
-                }
-
-              }
             }
-          }
+            JSONObject r = new JSONObject();
+            r.put("error", "empty-response");
+            r.put("id", accession);
+            return r;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return JSONUtils.SimpleJSONError(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return JSONUtils.SimpleJSONError(e.getMessage());
         }
-
-        else {
-          blasts.add("No hits found.");
-        }
-        blastmanagerservices.setResultToDatabase(blastAccession, blasts);
-        blast_response.put("blast", blasts);
-      }
-      return blast_response; //JSONUtils.JSONObjectResponse("blast", result);
-
     }
-    catch (SAXParseException sax) {
-      throw new RuntimeException(sax);
+
+    /**
+     * Return Socket
+     * <p>
+     * create new Socket from information
+     * </p>
+     *
+     * @param host String with host name
+     * @param port int with port number
+     * @return Socket
+     * @throws IOException
+     */
+    public static Socket prepareSocket(String host, int port) throws IOException {
+        return new Socket(host, port);
     }
-    catch (Exception err) {
-      throw new RuntimeException(err);
-    }
-  }
 
-  /**
-   * Return JSONObject
-   * <p>
-   * Reads file with ID from ajax call
-   * Parse file based on space and format to track style
-   * </p>
-   *
-   * @param session an HTTPSession comes from ajax call
-   * @param json    json object with key parameters sent from ajax call
-   * @return JSONObject with blasttrack result
-   * @throws IOException
-   */
-  public JSONObject blastEntry(HttpSession session, JSONObject json) throws IOException {
-    try {
-      String seqRegion = json.getString("seqregion");
-      String blastAccession = json.getString("accession");
-      JSONObject jsonObject = new JSONObject();
-      JSONArray jsonArray = new JSONArray();
-      if (blastmanagerservices.checkResultDatabase(blastAccession)) {
-        log.info("already in db");
-        jsonArray = blastmanagerservices.getBLASTEntryFromDatabase(blastAccession);
-//              blast_response.put("blast", blasts);
+    /**
+     * Return String
+     * <p>
+     * <p/>
+     * </p>
+     *
+     * @param socket Socket information
+     * @param query  String with parameters
+     * @return String
+     * @throws IOException
+     */
+    public String sendMessage(Socket socket, String query) throws IOException {
+        try {
+            BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF8"));
 
-      }
-      else {
-
-        FileInputStream fstream = new FileInputStream("/net/tgac-cfs3/ifs/TGAC/browser/jobs/" + blastAccession + ".xml");
-        DataInputStream in = new DataInputStream(fstream);
-        String str;
-        while (null != (str = in.readLine())) {
-
-          Pattern p = Pattern.compile("#");
-          Matcher matcher_comment = p.matcher(str);
-          if (matcher_comment.find()) {
-          }
-          else {
-            Pattern p1 = Pattern.compile("<.*>");
-            Matcher matcher_score = p1.matcher(str);
-            if (matcher_score.find()) {
+            // Send data
+            wr.write(query + "\r\n");
+            wr.flush();
+            log.info("send Message " + query);
+            // Get response
+            BufferedReader rd = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            String line;
+            StringBuilder sb = new StringBuilder();
+            while ((line = rd.readLine()) != null) {
+                sb.append(line);
             }
-            else {
-              String[] list = str.split("\\s+");
-              if (list[1].equals(seqRegion)) {
-                JSONObject jb = new JSONObject();
-                if (Long.parseLong(list[8]) < Long.parseLong(list[9])) {
-                  jb.put("start", list[8]);
-                  jb.put("end", list[9]);
-                }
-                else {
-                  jb.put("start", list[9]);
-                  jb.put("end", list[8]);
-                }
+            wr.close();
+            rd.close();
 
-                jb.put("score", " ");
-                jb.put("desc", " ");
-                jb.put("indels", "");
-                jsonArray.add(jb);
-              }
+            String dirty = sb.toString();
+            StringBuilder response = new StringBuilder();
+            int codePoint;
+            int i = 0;
+            while (i < dirty.length()) {
+                codePoint = dirty.codePointAt(i);
+                if ((codePoint == 0x9) ||
+                        (codePoint == 0xA) ||
+                        (codePoint == 0xD) ||
+                        ((codePoint >= 0x20) && (codePoint <= 0xD7FF)) ||
+                        ((codePoint >= 0xE000) && (codePoint <= 0xFFFD)) ||
+                        ((codePoint >= 0x10000) && (codePoint <= 0x10FFFF))) {
+                    response.append(Character.toChars(codePoint));
+                }
+                i += Character.charCount(codePoint);
             }
-          }
+
+            return response.toString().replace("\\\n", "").replace("\\\t", "");
+        } catch (UnknownHostException e) {
+            throw new IOException(e.getMessage());
         }
-        in.close();
-      }
-      jsonObject.put("entries", jsonArray);
-
-      return jsonObject;
-    }
-    catch (Exception e) {
-      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-      return JSONUtils.SimpleJSONError(e.getMessage());
     }
 
-  }
-
-  /**
-   * Return String
-   * <p>
-   * Read XMLDomElement and read the value from key name
-   * </p>
-   *
-   * @param ele     XMLDOMElement
-   * @param tagName XMLDOMElement tag name
-   * @return Strnig value related to tag name
-   */
-  protected String getTextValue(Element ele, String tagName) {
-    String textVal = null;
-    NodeList nl = ele.getElementsByTagName(tagName);
-    if (nl != null && nl.getLength() > 0) {
-      Element el = (Element) nl.item(0);
-      textVal = el.getFirstChild().getNodeValue();
-    }
-
-    return textVal;
-  }
-
-
-  /**
-   * Return JSONObject
-   * <p>
-   * Reads BLAST parameter from ajax call
-   * Creates a FASTA file for query
-   * call method sendMessage with parameters
-   * </p>
-   *
-   * @param session an HTTPSession comes from ajax call
-   * @param json    json object with key parameters sent from ajax call
-   * @return
-   * @throws IOException
-   */
-  public JSONObject submitBlastTask(HttpSession session, JSONObject json) throws IOException {
-    try {
-
-      String fasta = json.getString("querystring");
-      String accession = json.getString("BlastAccession");
-      String type = json.getString("type");
-      String location = json.getString("location");
-      String blastdb = json.getString("blastdb");
-      String params = json.getString("params");
-      String format = json.getString("format");
-
-
-      log.info("submitted" + accession);
-      if (blastmanagerservices.checkDatabase(fasta, blastdb, location, type, params, format)) {
-        String id = blastmanagerservices.getIDFromDatabase(fasta, blastdb, location, type, params, format).toString();
-        JSONObject r = new JSONObject();
-        r.put("id", id);
-        return r;
-      }
-      else {
-        blastmanagerservices.insertintoDatabase(accession, fasta, blastdb, location, type, params, format);
-        File file = new File("/net/tgac-cfs3/ifs/TGAC/browser/jobs/" + accession + ".fa");
-        FileWriter writer = new FileWriter(file, true);
-        PrintWriter output = new PrintWriter(writer);
-        output.print(fasta);
-        output.close();
-
-        JSONObject task = new JSONObject();
-
-        JSONObject j = new JSONObject();
-
-        if (json.has("priority")) {
-          j.put("priority", json.get("priority"));
+    /**
+     * @param taskId
+     * @return
+     * @throws IOException
+     */
+    public JSONArray getTask(String taskId) throws IOException {
+        JSONArray er = new JSONArray();
+        try {
+            JSONObject q1 = new JSONObject();
+            q1.put("query", "getTask");
+            JSONObject params = new JSONObject();
+            params.put("name", taskId);
+            q1.put("params", params);
+            String query = q1.toString();
+            log.info(">>>>>" + query);
+            String response = sendMessage(prepareSocket("norwich.nbi.bbsrc.ac.uk", 7899), query);
+            log.info("\n\n\n<<<<" + response);
+            if (!"".equals(response)) {
+                JSONArray r = JSONArray.fromObject(response);
+                return r;
+            }
+            er.add(JSONUtils.SimpleJSONError("empty response"));
+            return er;
+        } catch (IOException e) {
+            e.printStackTrace();
+            er.add(JSONUtils.SimpleJSONError(e.getMessage()));
+            return er;
         }
-        else {
-          j.put("priority", "HIGH");
+    }
+
+    /**
+     * Return String
+     * <p>
+     * check State of a taskId got from argument and return
+     * </p>
+     *
+     * @param taskId String
+     * @return String with state
+     * @throws Exception
+     */
+    public String getTaskSQL(String taskId) throws Exception {
+        String result = null;
+        Class.forName("com.mysql.jdbc.Driver").newInstance();
+        Connection conn = DriverManager.getConnection("jdbc:mysql://london.nbi.bbsrc.ac.uk:3306/conan", "conan", "conan");
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery("select STATE from CONAN_TASKS where NAME=\"" + taskId + "\"");
+        while (rs.next()) {
+            result = rs.getString(1);
         }
+        rs.close();
+        stmt.close();
+        conn.close();
+        return result;
+    }
 
-        j.put("pipeline", "browser_blast");//json.get("pipeline"));
-        json.remove("querystring");
-        j.put("params", json);
+    /**
+     * Return JSONObject
+     * <p>
+     * call method taskSQL with taskId received from ajax call
+     * IF task is completed it returns true for stopUpdater
+     * </p>
+     *
+     * @param session an HTTPSession comes from ajax call
+     * @param json    json object with key parameters sent from ajax call
+     * @return JSONObject with stopUpdater
+     * @throws IOException
+     */
+    public JSONObject checkTask(HttpSession session, JSONObject json) throws IOException {
+        JSONObject q1 = new JSONObject();
+        String taskId = json.getString("taskid");
+        String old_taskId = json.getString("old_taskid");
 
+        try {
 
-        task.put("submit", j);
-
-        String response = sendMessage(prepareSocket("norwich.nbi.bbsrc.ac.uk", 7899), task.toString());
-        if (!"".equals(response)) {
-          JSONObject r = JSONObject.fromObject(response);
-          return r;
+            if (getTaskSQL(old_taskId) != null) {
+                if (getTaskSQL(old_taskId).equals("COMPLETED") || getTaskSQL(old_taskId).equals("FAILED")) {
+                    blastmanagerservices.updateDatabase(old_taskId, getTaskSQL(old_taskId).toString());
+                    q1.put("stopUpdater", "true");
+                }
+            }
+            q1.put("result", getTaskSQL(old_taskId));
+            q1.put("old_id", old_taskId);
+            return q1;
+        } catch (Exception e) {
+            return JSONUtils.SimpleJSONError(e.getMessage());
         }
-      }
-      JSONObject r = new JSONObject();
-      r.put("error", "empty-response");
-      r.put("id", accession);
-      return r;
     }
-    catch (IOException e) {
-      e.printStackTrace();
-      return JSONUtils.SimpleJSONError(e.getMessage());
-    }
-    catch (Exception e) {
-      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-      return JSONUtils.SimpleJSONError(e.getMessage());
-    }
-  }
-
-  /**
-   * Return Socket
-   * <p>
-   * create new Socket from information
-   * </p>
-   *
-   * @param host String with host name
-   * @param port int with port number
-   * @return Socket
-   * @throws IOException
-   */
-  public static Socket prepareSocket(String host, int port) throws IOException {
-    return new Socket(host, port);
-  }
-
-  /**
-   * Return String
-   * <p>
-   * <p/>
-   * </p>
-   *
-   * @param socket Socket information
-   * @param query  String with parameters
-   * @return String
-   * @throws IOException
-   */
-  public String sendMessage(Socket socket, String query) throws IOException {
-    try {
-      BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF8"));
-
-      // Send data
-      wr.write(query + "\r\n");
-      wr.flush();
-      log.info("send Message " + query);
-      // Get response
-      BufferedReader rd = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-      String line;
-      StringBuilder sb = new StringBuilder();
-      while ((line = rd.readLine()) != null) {
-        sb.append(line);
-      }
-      wr.close();
-      rd.close();
-
-      String dirty = sb.toString();
-      StringBuilder response = new StringBuilder();
-      int codePoint;
-      int i = 0;
-      while (i < dirty.length()) {
-        codePoint = dirty.codePointAt(i);
-        if ((codePoint == 0x9) ||
-            (codePoint == 0xA) ||
-            (codePoint == 0xD) ||
-            ((codePoint >= 0x20) && (codePoint <= 0xD7FF)) ||
-            ((codePoint >= 0xE000) && (codePoint <= 0xFFFD)) ||
-            ((codePoint >= 0x10000) && (codePoint <= 0x10FFFF))) {
-          response.append(Character.toChars(codePoint));
-        }
-        i += Character.charCount(codePoint);
-      }
-
-      return response.toString().replace("\\\n", "").replace("\\\t", "");
-    }
-    catch (UnknownHostException e) {
-      throw new IOException(e.getMessage());
-    }
-  }
-
-  /**
-   * @param taskId
-   * @return
-   * @throws IOException
-   */
-  public JSONArray getTask(String taskId) throws IOException {
-    JSONArray er = new JSONArray();
-    try {
-      JSONObject q1 = new JSONObject();
-      q1.put("query", "getTask");
-      JSONObject params = new JSONObject();
-      params.put("name", taskId);
-      q1.put("params", params);
-      String query = q1.toString();
-      log.info(">>>>>" + query);
-      String response = sendMessage(prepareSocket("norwich.nbi.bbsrc.ac.uk", 7899), query);
-      log.info("\n\n\n<<<<" + response);
-      if (!"".equals(response)) {
-        JSONArray r = JSONArray.fromObject(response);
-        return r;
-      }
-      er.add(JSONUtils.SimpleJSONError("empty response"));
-      return er;
-    }
-    catch (IOException e) {
-      e.printStackTrace();
-      er.add(JSONUtils.SimpleJSONError(e.getMessage()));
-      return er;
-    }
-  }
-
-  /**
-   * Return String
-   * <p>
-   * check State of a taskId got from argument and return
-   * </p>
-   *
-   * @param taskId String
-   * @return String with state
-   * @throws Exception
-   */
-  public String getTaskSQL(String taskId) throws Exception {
-    String result = null;
-    Class.forName("com.mysql.jdbc.Driver").newInstance();
-    Connection conn = DriverManager.getConnection("jdbc:mysql://london.nbi.bbsrc.ac.uk:3306/conan", "conan", "conan");
-    Statement stmt = conn.createStatement();
-    ResultSet rs = stmt.executeQuery("select STATE from CONAN_TASKS where NAME=\"" + taskId + "\"");
-    while (rs.next()) {
-      result = rs.getString(1);
-    }
-    rs.close();
-    stmt.close();
-    conn.close();
-    return result;
-  }
-
-  /**
-   * Return JSONObject
-   * <p>
-   * call method taskSQL with taskId received from ajax call
-   * IF task is completed it returns true for stopUpdater
-   * </p>
-   *
-   * @param session an HTTPSession comes from ajax call
-   * @param json    json object with key parameters sent from ajax call
-   * @return JSONObject with stopUpdater
-   * @throws IOException
-   */
-  public JSONObject checkTask(HttpSession session, JSONObject json) throws IOException {
-    JSONObject q1 = new JSONObject();
-    String taskId = json.getString("taskid");
-    String old_taskId = json.getString("old_taskid");
-
-    try {
-
-      if (getTaskSQL(old_taskId) != null) {
-        if (getTaskSQL(old_taskId).equals("COMPLETED") || getTaskSQL(old_taskId).equals("FAILED")) {
-          blastmanagerservices.updateDatabase(old_taskId, getTaskSQL(old_taskId).toString());
-          q1.put("stopUpdater", "true");
-        }
-      }
-      q1.put("result", getTaskSQL(old_taskId));
-      q1.put("old_id", old_taskId);
-      return q1;
-    }
-    catch (Exception e) {
-      return JSONUtils.SimpleJSONError(e.getMessage());
-    }
-  }
 }
 
 
