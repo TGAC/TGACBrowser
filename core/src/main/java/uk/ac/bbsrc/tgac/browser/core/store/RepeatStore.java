@@ -25,36 +25,24 @@
 
 package uk.ac.bbsrc.tgac.browser.core.store;
 
-import javax.sound.sampled.Line;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-import com.sun.corba.se.spi.orbutil.fsm.Guard;
-import net.sf.json.JSON;
 import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-import org.apache.commons.collections.set.SynchronizedSortedSet;
-import uk.ac.bbsrc.tgac.browser.core.store.*;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
-import java.util.Iterator;
-
 
 /**
  * Created by IntelliJ IDEA.
- * User: bianx
- * Date: 15-Sep-2011
- * Time: 11:03:11
+ * User: thankia
+ * Date: 25-Oct-2013
+ * Time: 11:00:38
  * To change this template use File | Settings | File Templates.
  */
-public interface Store<T> {
+public interface RepeatStore extends Store<String> {
+    public int countRepeat(int id, String trackId, long start, long end);
+    public List<Map<String, Object>> getRepeat(int query, String trackId, long start, long end) throws IOException;
+    public JSONArray processRepeat(List<Map<String, Object>> maps, long start, long end, int delta, int id, String trackId) throws IOException;
+    public JSONArray getRepeatGraph(int id, String trackId, long start, long end) throws IOException;
+
 
 }
