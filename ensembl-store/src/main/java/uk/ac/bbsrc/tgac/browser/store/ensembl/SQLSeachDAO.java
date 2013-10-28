@@ -29,29 +29,22 @@ package uk.ac.bbsrc.tgac.browser.store.ensembl;
 import com.googlecode.ehcache.annotations.Cacheable;
 import com.googlecode.ehcache.annotations.KeyGenerator;
 import com.googlecode.ehcache.annotations.Property;
-import com.sun.corba.se.spi.orbutil.fsm.Guard;
-import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
-import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.apache.commons.collections.set.SynchronizedSortedSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import uk.ac.bbsrc.tgac.browser.core.store.*;
+import uk.ac.bbsrc.tgac.browser.core.store.GeneStore;
+import uk.ac.bbsrc.tgac.browser.core.store.SearchStore;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.EmptyStackException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -61,8 +54,8 @@ import java.util.regex.Pattern;
  * To change this template use File | Settings | File Templates.
  */
 
-public class SQLSequenceDAO implements SequenceStore {
-    protected static final Logger log = LoggerFactory.getLogger(SQLSequenceDAO.class);
+public class SQLSeachDAO implements SearchStore {
+    protected static final Logger log = LoggerFactory.getLogger(SQLSeachDAO.class);
 
     @Autowired
     private CacheManager cacheManager;
@@ -162,49 +155,94 @@ public class SQLSequenceDAO implements SequenceStore {
 
     public static final String GET_Tables_with_analysis_id_column = "SELECT DISTINCT TABLE_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE COLUMN_NAME IN ('analysis_id') AND TABLE_SCHEMA='wrightj_brachypodium_distachyon_core_10_63_12'";
     public static final String Check_feature_available = "SELECT DISTINCT analysis_id from ";// + var1;
-
     private JdbcTemplate template;
 
     public void setJdbcTemplate(JdbcTemplate template) {
         this.template = template;
     }
 
-
-
-
-
-
-
-    public String getSeqBySeqRegionId(int searchQuery) throws IOException {
+    public JSONArray getGenesSearch(String searchQuery) throws IOException {
         try {
-            String str = template.queryForObject(GET_SEQ_FROM_SEQ_REGION_ID, new Object[]{searchQuery}, String.class);
+            JSONArray genes = new JSONArray();
+            List<Map<String, Object>> maps = template.queryForList(GET_GENE_SEARCH, new Object[]{'%' + searchQuery + '%'});
+            for (Map map : maps) {
+                JSONObject eachGene = new JSONObject();
+                eachGene.put("Type", getLogicNameByAnalysisId(Integer.parseInt(map.get("analysis_id").toString())));
+                eachGene.put("name", map.get("description"));
+                if (checkChromosome()) {
+                    int pos = getPositionOnReference(Integer.parseInt(map.get("seq_region_id").toString()), 0);
+                    eachGene.put("start", pos + Integer.parseInt(map.get("seq_region_start").toString()));
+                    eachGene.put("end", pos + Integer.parseInt(map.get("seq_region_end").toString()));
+                    eachGene.put("parent", getSeqRegionName(getAssemblyReference(Integer.parseInt(map.get("seq_region_id").toString()))));
+                } else {
+                    eachGene.put("start", map.get("seq_region_start"));
+                    eachGene.put("end", map.get("seq_region_end"));
+                    eachGene.put("parent", getSeqRegionName(Integer.parseInt(map.get("seq_region_id").toString())));
+                }
+                eachGene.put("analysis_id", template.queryForObject(GET_LOGIC_NAME_FROM_ANALYSIS_ID, new Object[]{map.get("analysis_id")}, String.class));
+                genes.add(eachGene);
+            }
+            return genes;
+        } catch (EmptyResultDataAccessException e) {
+//     return getGOSearch(searchQuery);
+            e.printStackTrace();
+            throw new IOException("Get gene search empty resposnse"+e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new IOException("Get gene search result not found"+e.getMessage());  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
+
+    public JSONArray getSeqRegionSearch(String searchQuery) throws IOException {
+        try {
+            JSONArray names = new JSONArray();
+            List<Map<String, Object>> maps = template.queryForList(GET_SEQ_REGION_ID_SEARCH, new Object[]{'%' + searchQuery + '%'});
+
+            boolean chr = checkChromosome();
+            int i = 1;
+            if(chr){
+                for (Map map : maps) {
+                    if (chr) {
+                        int pos = getPositionOnReference(Integer.parseInt(map.get("seq_region_id").toString()), 0);
+                        map.put("start", pos);
+                        map.put("end", pos + Integer.parseInt(map.get("length").toString()));
+                        map.put("parent", getSeqRegionName(getAssemblyReference(Integer.parseInt(map.get("seq_region_id").toString()))));
+                    }
+                    names.add(map);
+                    i++;
+                    if(i > 100)
+                    {
+                        break;
+                    }
+                }
+            }else{
+                for (Map map : maps) {
+                    names.add(map);
+                    i++;
+                    if(i > 100)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            return names;
+        } catch (EmptyResultDataAccessException e) {
+
+
+            throw new IOException("result not found");
+        } catch (Exception e) {
+            throw new IOException("result not found");  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
+
+    public String getSeqRegionName(int searchQuery) throws IOException {
+        try {
+            String str = template.queryForObject(GET_SEQ_REGION_NAME_FROM_ID, new Object[]{searchQuery}, String.class);
             return str;
         } catch (EmptyResultDataAccessException e) {
-            e.printStackTrace();
-            throw new IOException(" getSeqBySeqRegionId no result found"+e.getMessage());
+            throw new IOException(" getSeqRegionName no result found");
 
-        }
-    }
-
-    private boolean checkCoord(int id, String str) {
-        boolean check = false;
-        int cood_sys_id = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{id}, Integer.class);
-        List<Map<String, Object>> maps = template.queryForList(CHECK_Coord_sys_attr, new Object[]{cood_sys_id, '%' + str + '%', '%' + str + '%'});
-        if (maps.size() > 0) {
-            check = true;
-        }
-        return check;
-    }
-
-
-    public Integer getSeqRegionCoordId(String query) throws IOException {
-        try {
-            int coord_id = Integer.parseInt(template.queryForObject(GET_coord_sys_id_by_name, new Object[]{query}, String.class));
-            return coord_id;
-        } catch (EmptyResultDataAccessException e) {
-            e.printStackTrace();
-            throw new IOException(" getSeqRegionCoordId"+e.getMessage());
-//            return 0;
         }
     }
 
@@ -223,6 +261,33 @@ public class SQLSequenceDAO implements SequenceStore {
             }
         }
         return pos;
+    }
+
+    private boolean checkCoord(int id, String str) {
+        boolean check = false;
+        int cood_sys_id = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{id}, Integer.class);
+        List<Map<String, Object>> maps = template.queryForList(CHECK_Coord_sys_attr, new Object[]{cood_sys_id, '%' + str + '%', '%' + str + '%'});
+        if (maps.size() > 0) {
+            check = true;
+        }
+        return check;
+    }
+
+    public boolean checkChromosome() throws Exception {
+        log.info("\n\n\ncheckchromosome");
+        try {
+            Boolean check;
+            List<Map<String, Object>> attrib_temp = template.queryForList(GET_coord_attrib_chr, new Object[]{"%chr%", "%chr%"});
+            if (attrib_temp.size() > 0) {
+                check = true;
+            } else {
+                check = false;
+            }
+            return check;
+        } catch (EmptyStackException e) {
+            e.printStackTrace();
+            throw new Exception("Chromosome not found");
+        }
     }
 
     public int getAssemblyReference(int id) {
@@ -246,378 +311,101 @@ public class SQLSequenceDAO implements SequenceStore {
         return ref_id;
     }
 
-
-
-    public JSONArray getSeqRegionSearchMap(String searchQuery) throws IOException {
+    public String getLogicNameByAnalysisId(int id) throws IOException {
         try {
-            JSONArray names = new JSONArray();
-            List<Map<String, Object>> attrib_temp = template.queryForList(GET_coord_attrib_chr, new Object[]{"%chr%", "%chr%"});
-            JSONObject eachName = new JSONObject();
-            if (attrib_temp.size() > 0) {
-                List<Map<String, Object>> maps = template.queryForList(GET_SEQ_REGION_ID_SEARCH_all, new Object[]{attrib_temp.get(0).get("coord_system_id").toString()});
-                for (Map map : maps) {
-                    eachName.put("name", map.get("name"));
-                    eachName.put("seq_region_id", map.get("seq_region_id"));
-                    eachName.put("length", map.get("length"));
-                    names.add(eachName);
-                }
-            }
-            return names;
-        } catch (EmptyResultDataAccessException e) {
-            //     return getGOSearch(searchQuery);
-            e.printStackTrace();
-
-            throw new IOException("Seq region search map result not found"+e.getMessage());
-        }
-    }
-
-    public JSONArray getSeqRegionIdSearch(String searchQuery) throws IOException {
-        try {
-            JSONArray names = new JSONArray();
-            List<Map<String, Object>> maps = template.queryForList(GET_SEQ_REGION_ID_SEARCH, new Object[]{'%' + searchQuery + '%'});
-            for (Map map : maps) {
-                names.add(map.get("seq_region_id"));
-            }
-            return names;
-        } catch (EmptyResultDataAccessException e) {
-//     return getGOSearch(searchQuery);
-            e.printStackTrace();
-            throw new IOException("seqregion id search result not found"+e.getMessage());
-        }
-    }
-
-
-    public int getSeqRegionearchsize(String searchQuery) throws IOException {
-        try {
-            int maps = template.queryForObject(GET_SIZE_SEQ_REGION_ID_SEARCH, new Object[]{'%' + searchQuery + '%'}, Integer.class);
-            return maps;
-        } catch (EmptyResultDataAccessException e) {
-            e.printStackTrace();
-            throw new IOException("seqregion search size result not found"+e.getMessage());
-        }
-    }
-
-
-
-    public Integer getSeqRegion(String searchQuery) throws IOException {
-        try {
-            int i = template.queryForObject(GET_SEQ_REGION_ID_FROM_NAME, new Object[]{searchQuery}, Integer.class);
-            return i;
-        } catch (EmptyResultDataAccessException e) {
-            return 0;
-        }
-    }
-
-    public String getSeqRegionName(int searchQuery) throws IOException {
-        try {
-            String str = template.queryForObject(GET_SEQ_REGION_NAME_FROM_ID, new Object[]{searchQuery}, String.class);
+            String str = template.queryForObject(GET_LOGIC_NAME_FROM_ANALYSIS_ID, new Object[]{id}, String.class);
             return str;
         } catch (EmptyResultDataAccessException e) {
-            throw new IOException(" getSeqRegionName no result found");
+            throw new IOException(" getLogicNameByAnalysisId no result found");
 
         }
     }
 
-
-
-
-
-
-    public Map<String, Object> getStartEndAnalysisIdBySeqRegionId(int id) throws IOException {
+    public JSONArray getTranscriptSearch(String searchQuery) throws IOException {
         try {
-            Map<String, Object> map = template.queryForMap(GET_START_END_ANALYSIS_ID_FROM_SEQ_REGION_ID, new Object[]{id});
-            return map;
-        } catch (EmptyResultDataAccessException e) {
-            throw new IOException(" getStartEndAnalysisIdBySeqRegionI no result found");
-
-        }
-    }
-
-    public String getSeqLengthbyId(int query) throws IOException {
-        try {
-            String i = template.queryForObject(GET_SEQ_LENGTH_FROM_ID, new Object[]{query}, String.class);
-            return i;
-        } catch (EmptyResultDataAccessException e) {
-            throw new IOException(" getSeqlength no result found");
-
-        }
-    }
-
-    public JSONArray getdbinfo() throws IOException {
-        JSONArray metadata = new JSONArray();
-        try {
-            List<Map<String, Object>> maps = template.queryForList(Get_Database_information, new Object[]{});
-            JSONObject eachMeta = new JSONObject();
+            JSONArray genes = new JSONArray();
+            List<Map<String, Object>> maps = template.queryForList(GET_TRANSCRIPT_SEARCH, new Object[]{'%' + searchQuery + '%'});
             for (Map map : maps) {
-
-                String metakey = map.get("meta_key").toString();
-                if (metakey.contains("name")) {
-                    eachMeta.put("name", map.get("meta_value"));
-                }
-                if (metakey.contains("version")) {
-                    eachMeta.put("version", map.get("meta_value"));
-                }
-
-
-            }
-            metadata.add(eachMeta);
-            return metadata;
-        } catch (EmptyResultDataAccessException e) {
-            throw new IOException(" getSeqlength no result found");
-
-        }
-    }
-
-
-
-
-
-    public Integer getSeqRegionforone(String searchQuery) throws IOException {
-        try {
-            int i = template.queryForObject(GET_SEQ_REGION_ID_SEARCH_For_One, new Object[]{searchQuery}, Integer.class);
-            return i;
-        } catch (EmptyResultDataAccessException e) {
-//      throw new IOException(" getSeqRegion no result found");
-
-            return 0;
-        }
-    }
-
-
-    public JSONArray getTableswithanalysis_id() throws IOException {
-        try {
-            JSONArray tableList = new JSONArray();
-
-
-            List<Map<String, Object>> maps = template.queryForList(GET_Tables_with_analysis_id_column);
-
-            for (Map map : maps) {
-                JSONObject eachTable = new JSONObject();
-                eachTable.put("tables", map.get("TABLE_NAME"));
-                var1 = Check_feature_available + map.get("TABLE_NAME").toString();
-                tableList.add(eachTable);
-            }
-            return tableList;
-        } catch (EmptyResultDataAccessException e) {
-            throw new IOException("getHit no result found");
-
-        }
-    }
-
-    public String getTrackDesc(String id) throws IOException {
-        try {
-
-            String description = "";
-
-            List<Map<String, Object>> rows = template.queryForList(Get_Tracks_Desc, new Object[]{id});
-
-            for (Map row : rows) {
-                description = row.get("description").toString();
-            }
-            return description;
-        } catch (EmptyResultDataAccessException e) {
-            throw new IOException("Track Description no result found");
-
-        }
-    }
-
-    public List<Map> getTrackInfo() throws IOException {
-        try {
-            List map = template.queryForList(Get_Tracks_Info);
-            return map;
-        } catch (EmptyResultDataAccessException e) {
-            throw new IOException("Track Info no result found");
-
-        }
-    }
-
-    public String getDomains(String geneid) throws IOException {
-        JSONArray domainlist = new JSONArray();
-        String Domains = "";
-        try {
-            JSONObject eachDomain = new JSONObject();
-            List<Map<String, Object>> domains = template.queryForList(GET_Domain_per_Gene, new Object[]{geneid});
-
-            for (Map domain : domains) {
-                Domains = domain.get("value").toString();
-
-            }
-
-            return Domains;
-        } catch (EmptyResultDataAccessException e) {
-            throw new IOException("Track Description no result found");
-
-        }
-    }
-
-
-    public String getSeqLevel(String query, int from, int to) throws IOException {
-
-        String seq = "";
-        try {
-
-            seq = template.queryForObject(GET_Seq_API, new Object[]{query}, String.class);
-            if (from < 0) {
-                from = 0;
-            }
-            if (to > seq.length()) {
-                to = seq.length();
-            }
-            return seq.substring(from, to);
-        } catch (EmptyResultDataAccessException e) {
-            return "";
-        }
-    }
-
-
-    public String getSeqRecursive(String query, int from, int to, int asm_from, int asm_to) throws IOException {
-
-        try {
-            String seq = "";
-
-            List<Map<String, Object>> maps = template.queryForList(GET_SEQS_LIST_API, new Object[]{query, from, to, from, to, from, to, from, to});
-            for (Map map : maps) {
-                String query_coord_temp = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{map.get("cmp_seq_region_id")}, String.class);
-                String attrib_temp = template.queryForObject(GET_coord_attrib, new Object[]{query_coord_temp}, String.class);
-                if (attrib_temp.indexOf("sequence") >= 0) {
-                    int asm_start = Integer.parseInt(map.get("asm_start").toString());
-                    int asm_end = Integer.parseInt(map.get("asm_end").toString());
-                    int start_cmp = Integer.parseInt(map.get("cmp_start").toString());
-                    int end_cmp = Integer.parseInt(map.get("cmp_end").toString());
-                    int start_temp;
-                    int end_temp;
-                    if (from <= asm_start) {
-                        start_temp = start_cmp;
-                    } else {
-                        start_temp = end_cmp - (asm_end - from) + 1;
-                    }
-                    if (to >= asm_end) {
-                        end_temp = end_cmp;
-                    } else {
-                        end_temp = to - asm_start + 1;
-                    }
-                    seq += getSeqLevel(map.get("cmp_seq_region_id").toString(), start_temp, end_temp);
+                JSONObject eachGene = new JSONObject();
+                eachGene.put("Type", getLogicNameByAnalysisId(Integer.parseInt(map.get("analysis_id").toString())));
+                eachGene.put("name", map.get("description"));
+                if (checkChromosome()) {
+                    int pos = getPositionOnReference(Integer.parseInt(map.get("seq_region_id").toString()), 0);
+                    eachGene.put("start", pos + Integer.parseInt(map.get("seq_region_start").toString()));
+                    eachGene.put("end", pos + Integer.parseInt(map.get("seq_region_end").toString()));
+                    eachGene.put("parent", getSeqRegionName(getAssemblyReference(Integer.parseInt(map.get("seq_region_id").toString()))));
                 } else {
-
-                    maps = template.queryForList(GET_SEQS_LIST_API, new Object[]{map.get("cmp_seq_region_id"), from, to, from, to, from, to, from, to});
-                    int asm_start = Integer.parseInt(map.get("asm_start").toString());
-                    int asm_end = Integer.parseInt(map.get("asm_end").toString());
-                    int start_cmp = Integer.parseInt(map.get("cmp_start").toString());
-                    int end_cmp = Integer.parseInt(map.get("cmp_end").toString());
-
-                    if (from <= asm_start) {
-                        from = start_cmp;
-                    } else {
-                        from = from - start_cmp + 1;
-                    }
-                    if (to >= asm_end) {
-                        to = end_cmp;
-                    } else {
-                        to = (to - from);
-
-                    }
-                    seq += getSeqRecursive(map.get("cmp_seq_region_id").toString(), from, to, asm_from, asm_to);
+                    eachGene.put("start", map.get("seq_region_start"));
+                    eachGene.put("end", map.get("seq_region_end"));
+                    eachGene.put("parent", getSeqRegionName(Integer.parseInt(map.get("seq_region_id").toString())));
                 }
+                eachGene.put("analysis_id", template.queryForObject(GET_LOGIC_NAME_FROM_ANALYSIS_ID, new Object[]{map.get("analysis_id")}, String.class));
+                genes.add(eachGene);
             }
-
-
-            return seq;
+            return genes;
         } catch (EmptyResultDataAccessException e) {
-            return "";
-            //      throw new IOException("Sequence not found");
+//     return getGOSearch(searchQuery);
+            throw new IOException("result not found");
+        } catch (Exception e) {
+            throw new IOException("result not found");  //To change body of catch statement use File | Settings | File Templates.
         }
     }
 
-
-    public String getSeq(String query, int from, int to) throws IOException {
+    public JSONArray getGOSearch(String searchQuery) throws IOException {
         try {
-            String seq = "";
-            String query_coord = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{query}, String.class);
-            String attrib = template.queryForObject(GET_coord_attrib, new Object[]{query_coord}, String.class);
-            if (attrib.indexOf("sequence") >= 0) {
-                seq = getSeqLevel(query, from, to);
-            } else {
-                List<Map<String, Object>> maps = template.queryForList(GET_SEQS_LIST_API, new Object[]{query, from, to, from, to, from, to, from, to});
-                for (Map map : maps) {
-
-                    String query_coord_temp = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{map.get("cmp_seq_region_id")}, String.class);
-                    String attrib_temp = template.queryForObject(GET_coord_attrib, new Object[]{query_coord_temp}, String.class);
-
-                    if (attrib_temp.indexOf("sequence") >= 0) {
-                        int asm_start = Integer.parseInt(map.get("asm_start").toString());
-                        int asm_end = Integer.parseInt(map.get("asm_end").toString());
-                        int start_cmp = Integer.parseInt(map.get("cmp_start").toString());
-                        int end_cmp = Integer.parseInt(map.get("cmp_end").toString());
-                        int start_temp;
-                        int end_temp;
-                        if (from <= asm_start) {
-                            start_temp = start_cmp;
-                        } else {
-                            start_temp = end_cmp - (asm_end - from) + 1;
-                        }
-                        if (to >= asm_end) {
-                            end_temp = end_cmp;
-                        } else {
-                            end_temp = to - asm_start + 1;
-                        }
-
-                        seq = getSeqLevel(map.get("cmp_seq_region_id").toString(), start_temp, end_temp);
-                    } else {
-
-                        maps = template.queryForList(GET_SEQS_LIST_API, new Object[]{map.get("cmp_seq_region_id"), from, to, from, to, from, to, from, to});
-                        int asm_start = Integer.parseInt(map.get("asm_start").toString());
-                        int asm_end = Integer.parseInt(map.get("asm_end").toString());
-                        int start_cmp = Integer.parseInt(map.get("cmp_start").toString());
-                        int end_cmp = Integer.parseInt(map.get("cmp_end").toString());
-
-                        if (from <= asm_start) {
-                            from = start_cmp;
-                        } else {
-                            from = from - start_cmp;
-                        }
-                        if (to >= asm_end) {
-                            to = end_cmp;
-                        }
-                        //          else {
-                        //            to = (to - from);
-                        //          }
-                        seq += getSeqRecursive(map.get("cmp_seq_region_id").toString(), from, to, asm_start, asm_end);
-                    }
-                }
-
-
-            }
-            return seq;
-        } catch (EmptyResultDataAccessException e) {
-            return "";
-//      throw new IOException("Sequence not found");
-        }
-    }
-
-    public JSONArray getMarker() throws IOException {
-        try {
-            JSONArray markerList = new JSONArray();
-            List<Map<String, Object>> maps = template.queryForList(GET_GENOME_MARKER);
+            JSONArray GOs = new JSONArray();
+            List<Map<String, Object>> maps = template.queryForList(GET_GO_Genes, new Object[]{'%' + searchQuery + '%'});
             for (Map map : maps) {
-                markerList.add(map);
+
+                List<Map<String, Object>> genes = template.queryForList(GET_GO_Gene_Details, new Object[]{map.get("gene_id").toString()});
+                for (Map gene : genes) {
+                    JSONObject eachGo = new JSONObject();
+                    eachGo.put("name", gene.get("description"));
+                    if (checkChromosome()) {
+                        int pos = getPositionOnReference(Integer.parseInt(map.get("seq_region_id").toString()), 0);
+                        eachGo.put("start", pos + Integer.parseInt(map.get("seq_region_start").toString()));
+                        eachGo.put("end", pos + Integer.parseInt(map.get("seq_region_end").toString()));
+                        eachGo.put("parent", getSeqRegionName(getAssemblyReference(Integer.parseInt(map.get("seq_region_id").toString()))));
+                    } else {
+                        eachGo.put("start", map.get("seq_region_start"));
+                        eachGo.put("end", map.get("seq_region_end"));
+                        eachGo.put("parent", getSeqRegionName(Integer.parseInt(map.get("seq_region_id").toString())));
+                    }
+                    eachGo.put("Type", "Gene");
+//                    eachGo.put("parent", getSeqRegionName(Integer.parseInt(gene.get("seq_region_id").toString())));
+                    eachGo.put("analysis_id", getLogicNameByAnalysisId(Integer.parseInt(gene.get("analysis_id").toString())));
+                    GOs.add(eachGo);
+                }
             }
-            return markerList;
+
+            List<Map<String, Object>> transcripts = template.queryForList(GET_GO_Transcripts, new Object[]{'%' + searchQuery + '%'});
+            for (Map map : transcripts) {
+
+                List<Map<String, Object>> genes = template.queryForList(GET_GO_Transcript_Details, new Object[]{map.get("transcript_id").toString()});
+                for (Map gene : genes) {
+                    JSONObject eachGo = new JSONObject();
+                    eachGo.put("name", gene.get("description"));
+                    if (checkChromosome()) {
+                        int pos = getPositionOnReference(Integer.parseInt(map.get("seq_region_id").toString()), 0);
+                        eachGo.put("start", pos + Integer.parseInt(map.get("seq_region_start").toString()));
+                        eachGo.put("end", pos + Integer.parseInt(map.get("seq_region_end").toString()));
+                        eachGo.put("parent", getSeqRegionName(getAssemblyReference(Integer.parseInt(map.get("seq_region_id").toString()))));
+                    } else {
+                        eachGo.put("start", map.get("seq_region_start"));
+                        eachGo.put("end", map.get("seq_region_end"));
+                        eachGo.put("parent", getSeqRegionName(Integer.parseInt(map.get("seq_region_id").toString())));
+                    }
+                    eachGo.put("Type", "Transcript");
+//                    eachGo.put("parent", getSeqRegionName(Integer.parseInt(gene.get("seq_region_id").toString())));
+                    eachGo.put("analysis_id", getLogicNameByAnalysisId(Integer.parseInt(gene.get("analysis_id").toString())));
+                    GOs.add(eachGo);
+                }
+            }
+            return GOs;
         } catch (EmptyResultDataAccessException e) {
-            throw new IOException("getMarker no result found");
-
-        }
-    }
-
-
-
-    public String getCoordSys(String query) throws Exception {
-        try {
-            String coordSys = "";
-            int coord_id = Integer.parseInt(template.queryForObject(GET_coord_sys_id_by_name, new Object[]{query}, String.class));
-            coordSys = template.queryForObject(GET_coord_sys_name, new Object[]{coord_id}, String.class);
-            return coordSys;
-        } catch (EmptyStackException e) {
-            throw new Exception("Chromosome not found");
+            throw new IOException("result not found");
+        } catch (Exception e) {
+            throw new IOException("result not found");  //To change body of catch statement use File | Settings | File Templates.
         }
     }
 }
