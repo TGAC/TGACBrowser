@@ -117,7 +117,7 @@ public class BlastToLSF extends AbstractTgacLsfProcess {
             output.print(getSeq(parameters.get(blastAccession).toString()));
 
             output.close();
-            sb.append("perl BLASTCommand.pl " +
+            sb.append("perl /data/workarea/tgacbrowser/BLASTCommand.pl " +
                     "'" + parameters.get(type) + "' " +
                     "'" + parameters.get(blastDB) + "' " +
                     "'" + parameters.get(blastAccession) + "' " +
