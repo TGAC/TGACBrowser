@@ -25,33 +25,18 @@
 
 package uk.ac.bbsrc.tgac.browser.service.ajax;
 
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import net.sf.samtools.CigarElement;
-import net.sf.samtools.SAMFileReader;
-import net.sf.samtools.SAMRecord;
-import net.sf.samtools.*;
-import net.sf.samtools.util.SeekableStream;
 import net.sourceforge.fluxion.ajax.Ajaxified;
 import net.sourceforge.fluxion.ajax.util.JSONUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import uk.ac.bbsrc.tgac.browser.core.store.SequenceStore;
-import uk.ac.bbsrc.tgac.browser.core.store.SearchStore;
-import uk.ac.bbsrc.tgac.browser.core.store.GeneStore;
-import uk.ac.bbsrc.tgac.browser.core.store.RepeatStore;
-import uk.ac.bbsrc.tgac.browser.core.store.DNAAlignFeatureStore;
-import uk.ac.bbsrc.tgac.browser.core.store.AssemblyStore;
-import uk.ac.bbsrc.tgac.browser.core.store.AnalysisStore;
-import uk.ac.bbsrc.tgac.browser.service.ajax.FileService;
-import uk.ac.bbsrc.tgac.browser.service.ajax.SamBamService;
+import uk.ac.bbsrc.tgac.browser.core.store.*;
+import uk.ac.bbsrc.tgac.browser.core.store.DafStore;
 
 
 import javax.servlet.http.HttpSession;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -85,10 +70,10 @@ public class DnaSequenceService {
     }
 
     @Autowired
-    private DNAAlignFeatureStore dnaalignfeatureStore;
+    private DafStore dafStore;
 
-    public void setDNAAlignFeatureStore(DNAAlignFeatureStore dnaalignfeatureStore) {
-        this.dnaalignfeatureStore = dnaalignfeatureStore;
+    public void setDafStore(DafStore dafStore) {
+        this.dafStore = dafStore;
     }
 
     @Autowired
@@ -279,22 +264,29 @@ public class DnaSequenceService {
                     response.put(trackName, geneStore.getGeneGraph(queryid, trackId, start, end));
                 }
             } else {
-                count = dnaalignfeatureStore.countHit(queryid, trackId, start, end);
+                log.info("\n\nloadtrack else");
+                log.info("\n\n"+dafStore.getClass().getName());
+                count = dafStore.countHit(queryid, trackId, start, end);
                 log.info("\n\n\n\nelse"+count);
 
                 if (count < 5000) {
-                    response.put(trackName,dnaalignfeatureStore.processHit(dnaalignfeatureStore.getHit(queryid, trackId, start, end), start, end, delta, queryid, trackId));
+                    response.put(trackName,dafStore.processHit(dafStore.getHit(queryid, trackId, start, end), start, end, delta, queryid, trackId));
                 } else {
                     response.put("type", "graph");
-                    response.put(trackName, dnaalignfeatureStore.getHitGraph(queryid, trackId, start, end));
+                    response.put(trackName, dafStore.getHitGraph(queryid, trackId, start, end));
                 }
             }
 
         } catch (IOException e) {
+
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.getMessage();
+            e.getCause();
             return JSONUtils.SimpleJSONError(e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.getMessage();
+            e.getCause();
         }
 
         return response;
@@ -385,7 +377,7 @@ public class DnaSequenceService {
             } else if (analysisStore.getLogicNameByAnalysisId(Integer.parseInt(trackid)).matches("(?i).*gene.*")) {
                 response.put("name", geneStore.getGeneNamefromId(query));
             } else {
-                response.put("name", dnaalignfeatureStore.getHitNamefromId(query));
+                response.put("name", dafStore.getHitNamefromId(query));
             }
             return response;
         } catch (IOException e) {
