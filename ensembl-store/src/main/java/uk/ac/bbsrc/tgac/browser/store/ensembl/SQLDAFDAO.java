@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import uk.ac.bbsrc.tgac.browser.core.store.DNAAlignFeatureStore;
+import uk.ac.bbsrc.tgac.browser.core.store.DafStore;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -49,8 +49,8 @@ import java.util.Map;
  * To change this template use File | Settings | File Templates.
  */
 
-public class SQLDNAAlignFeatureDAO implements DNAAlignFeatureStore {
-    protected static final Logger log = LoggerFactory.getLogger(SQLDNAAlignFeatureDAO.class);
+public class SQLDafDAO implements DafStore {
+    protected static final Logger log = LoggerFactory.getLogger(SQLDafDAO.class);
 
     @Autowired
     private CacheManager cacheManager;

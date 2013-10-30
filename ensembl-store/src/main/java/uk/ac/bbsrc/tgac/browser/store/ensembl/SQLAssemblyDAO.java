@@ -286,13 +286,19 @@ public class SQLAssemblyDAO implements AssemblyStore {
         return hit_size;
     }
 
-    public int countAssembly(int id, String trackId, long start, long end) {
+    public int countAssembly(int id, String trackId, long start, long end) throws Exception{
+        log.info("countassembly");
+        try{
         int hit_size = template.queryForObject(GET_ASSEMBLY_SIZE_SLICE, new Object[]{id, trackId.replace("cs", ""), start, end}, Integer.class);
 
         if (hit_size == 0) {
             hit_size = countRecursiveAssembly(id, trackId, start, end);
         }
-        return hit_size;
+        return hit_size;}
+        catch (Exception e){
+            e.printStackTrace();
+            throw new Exception("getHit no result found");
+        }
     }
 
 
