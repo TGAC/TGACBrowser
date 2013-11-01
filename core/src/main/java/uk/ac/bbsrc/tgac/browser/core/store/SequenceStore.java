@@ -46,8 +46,6 @@ public interface SequenceStore extends Store<String> {
     public String getSeqRegionName(int query) throws IOException;
     public Map<String, Object> getStartEndAnalysisIdBySeqRegionId(int query) throws IOException;
 
-    public String getTrackDesc(String query) throws IOException;
-    public List<Map> getTrackInfo() throws IOException;
 
     public JSONArray getTableswithanalysis_id() throws IOException;
     public JSONArray getdbinfo() throws IOException;
@@ -58,9 +56,6 @@ public interface SequenceStore extends Store<String> {
     public int getSeqRegionearchsize(String query) throws IOException;
     public Integer getSeqRegionforone(String searchQuery) throws IOException;
     public Integer getSeqRegionCoordId(String query) throws IOException;
-
-
-
 
     public JSONArray getMarker() throws IOException;
     public String getCoordSys(String query) throws Exception;

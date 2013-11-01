@@ -39,12 +39,10 @@ import java.util.Map;
  * To change this template use File | Settings | File Templates.
  */
 public interface DafStore extends Store<String> {
-//  public Map<String,Object> getHit(int query) throws IOException;
-
     public List<Map<String, Object>> getHit(int query, String trackId, long start, long end) throws IOException;
-    public JSONArray processHit(List<Map<String, Object>> maps, long start, long end, int delta, int id, String trackId) throws IOException;
+    public JSONArray processHit(List<Map<String, Object>> maps, long start, long end, int delta, int id, String trackId) throws Exception;
     public JSONArray getHitGraph(int id, String trackId, long start, long end) throws IOException;
     public String getHitNamefromId(int hitID) throws IOException;
-    public int countHit(int id, String trackId, long start, long end);
+    public int countHit(int id, String trackId, long start, long end) throws Exception;
 
 }

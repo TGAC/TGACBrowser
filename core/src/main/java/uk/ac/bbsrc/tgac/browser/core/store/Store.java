@@ -56,5 +56,5 @@ import java.util.Iterator;
  * To change this template use File | Settings | File Templates.
  */
 public interface Store<T> {
-
+//  int count(int id, String track, long start, long end);
 }
