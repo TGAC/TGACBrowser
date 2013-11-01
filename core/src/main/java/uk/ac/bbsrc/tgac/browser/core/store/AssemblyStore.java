@@ -41,7 +41,7 @@ import java.util.Map;
 public interface AssemblyStore extends Store<String> {
     public int countAssembly(int id, String trackId, long start, long end) throws Exception;
     public JSONArray getAssemblyGraph(int id, String trackId, long start, long end) throws IOException;
-    public JSONArray getAssembly(int query, String trackId, int delta) throws IOException;
+    public JSONArray getAssembly(int query, String trackId, int delta) throws Exception;
 
 
 }

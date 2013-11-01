@@ -419,9 +419,7 @@ public class DnaSequenceService {
 
 
     /**
-     * Return result as JSONObject
-     * <p>
-     * this method call getMarker method to get markers for all the markers for the database
+     * This method get markers for all the markers for the database
      * </p>
      *
      * @param session an HTTPSession comes from ajax call

@@ -2,10 +2,8 @@ package uk.ac.bbsrc.tgac.browser.web;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
-import net.sf.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.context.support.XmlWebApplicationContext;
 import uk.ac.bbsrc.tgac.browser.core.store.SequenceStore;
@@ -13,11 +11,7 @@ import uk.ac.bbsrc.tgac.browser.core.store.SequenceStore;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import java.io.IOException;
 import java.util.Date;
-import java.lang.management.*;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
