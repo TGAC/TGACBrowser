@@ -424,57 +424,6 @@ public class SQLDafDAO implements DafStore {
         }
     }
 
-    /**
-     * @param maps
-     * @param ends
-     * @param start
-     * @param end
-     * @param delta
-     * @return
-     * @throws Exception
-     */
-    public JSONArray getHitLevel(List<Map<String, Object>> maps, List<Integer> ends, long start, long end, int delta) throws Exception {
-
-        try {
-            JSONArray hitTracks = new JSONArray();
-
-            for (Map map : maps) {
-                int track_start = Integer.parseInt(map.get("start").toString()) - 1;
-                int track_end = Integer.parseInt(map.get("end").toString()) - 1;
-                if (track_start >= start && track_end <= end || track_start <= start && track_end >= end || track_end >= start && track_end <= end || track_start >= start && track_start <= end) {
-                    if (track_end - track_start > 1) {
-                        for (int i = 0; i < ends.size(); i++) {
-                            if ((Integer.parseInt(map.get("start").toString()) - ends.get(i)) > delta) {
-                                ends.remove(i);
-                                ends.add(i, Integer.parseInt(map.get("end").toString()));
-                                map.put("layer", i + 1);
-                                break;
-
-                            } else if ((Integer.parseInt(map.get("start").toString()) - ends.get(i) <= delta) && (i + 1) == ends.size()) {
-
-                                if (i == 0) {
-
-                                    map.put("layer", ends.size());
-                                    ends.add(i, Integer.parseInt(map.get("end").toString()));
-                                } else {
-                                    ends.add(ends.size(), Integer.parseInt(map.get("end").toString()));
-
-                                    map.put("layer", ends.size());
-                                }
-                                break;
-                            }
-                        }
-                    }
-                    hitTracks.add(map);
-                }
-            }
-            return hitTracks;
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new Exception("gethitLevel " + e.getMessage());
-        }
-    }
-
 
     /**
      * process hits returns from getHit
@@ -498,7 +447,7 @@ public class SQLDafDAO implements DafStore {
 
                 if (maps.size() > 0) {
                     ends.add(0, 0);
-                    trackList = getHitLevel(maps, ends, start, end, delta);
+                    trackList = getHitLevel(0, maps, start, end, delta);
                 } else {
                 }
             } else {

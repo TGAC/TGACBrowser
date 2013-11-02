@@ -400,7 +400,7 @@ function addJSON(from, to, trackName, trackId) {
     if ((to - from) > 0) {
         deltaWidth = parseInt(to - from) * 2 / parseInt(maxLen);
 
-        if (trackName && trackId && trackId.indexOf('noid') < 0) {
+        if (trackName && trackId && trackId.toString().indexOf('noid') < 0) {
             Fluxion.doAjax(
                 'dnaSequenceService',
                 'loadTrack',
@@ -446,7 +446,7 @@ function addJSON(from, to, trackName, trackId) {
                 if (Tracklist[i].name == "blasttrack") {
                     trackToggle(Tracklist[i].name);
                 }
-                else if (jQuery("#" + Tracklist[i].name + "Checkbox").is(':checked') && Tracklist[i].id.indexOf('noid') < 0) {
+                else if (jQuery("#" + Tracklist[i].name + "Checkbox").is(':checked') && Tracklist[i].id.toString().indexOf('noid') < 0) {
                     var trackname = Tracklist[i].name;
                     var trackid = Tracklist[i].id;
                     if (trackid && Tracklist[i].graph == "false") { //because graph == true is already loaded
