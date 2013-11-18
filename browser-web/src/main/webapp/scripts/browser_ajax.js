@@ -593,7 +593,7 @@ function getReferences(show) {
             var distance = (parseInt(maxLen) - (width * referenceLength)) / (referenceLength + 1);
             jQuery("#mapmarker").animate({"width": width}, 100);
             jQuery("#refmap").html("");
-            if (referenceLength > 0 && referenceLength < 25) {
+            if (referenceLength > 0 && referenceLength < 50) {
                 changeCSS();
                 while (referenceLength--) {
                     if (json.seqregion[referenceLength].length == max) {
