@@ -101,12 +101,11 @@ public class BigWigService {
                 JSONArray span = new JSONArray();
                 int bp = (int) start + j;
                    if(values[j] > 0 || values[j] < 0 ){
-                       response.put("start", bp);
-                       response.put("value", values[j]);
-//                       response.put(bp, values[j]);
-//                       span.add(bp);
-//                       span.add(values[j]);
-                       wig.add(response);
+//                       response.put("start", bp);
+//                       response.put("value", values[j]);
+                       span.add(bp);
+                       span.add(values[j]);
+                       wig.add(span);
                 } else {
 
                        log.info("Value at "+bp+" is "+ values[j]);
