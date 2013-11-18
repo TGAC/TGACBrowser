@@ -120,9 +120,13 @@
           <element id="library" level="project" name="Maven: org.springframework.security:spring-security-config:3.0.5.RELEASE" />
           <element id="library" level="project" name="Maven: net.sourceforge.fluxion.ajax:fluxion-ajax-3:1.0-alpha-4" />
           <element id="library" level="project" name="Maven: owlapi:owlapi:2.2.0" />
-          <element id="library" level="project" name="Maven: net.sourceforge.sam:sam:1.84" />
           <element id="library" level="project" name="Maven: net.sourceforge.fluxion.ajax.beans:fluxion-ajax-beans:1.0-alpha-3" />
           <element id="library" level="project" name="Maven: commons-fileupload:commons-fileupload:1.2.1" />
+          <element id="library" level="project" name="Maven: net.sf.sam:sam:1.96" />
+          <element id="library" level="project" name="Maven: java-genomics:java-genomics:0.1.0" />
+          <element id="library" level="project" name="Maven: broad-inst:igv:2.3.23" />
+          <element id="library" level="project" name="Maven: broad-inst.tribble:tribble:1.91" />
+          <element id="library" level="project" name="Maven: org.apache.commons:commons-math3:3.2" />
           <element id="library" level="project" name="Maven: net.sourceforge.fluxion.ajax:fluxion-ajax-js:1.0-alpha-11" />
           <element id="library" level="project" name="Maven: org.jdom:jdom:1.1" />
           <element id="library" level="project" name="Maven: javax.servlet:jstl:1.2" />

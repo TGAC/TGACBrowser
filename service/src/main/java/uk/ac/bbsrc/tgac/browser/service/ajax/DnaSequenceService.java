@@ -31,7 +31,7 @@ import net.sf.samtools.CigarElement;
 import net.sf.samtools.SAMFileReader;
 import net.sf.samtools.SAMRecord;
 import net.sf.samtools.*;
-import net.sf.samtools.util.SeekableStream;
+import net.sf.samtools.seekablestream.SeekableStream;
 import net.sourceforge.fluxion.ajax.Ajaxified;
 import net.sourceforge.fluxion.ajax.util.JSONUtils;
 import org.slf4j.Logger;
@@ -40,6 +40,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.bbsrc.tgac.browser.core.store.SequenceStore;
 import uk.ac.bbsrc.tgac.browser.service.ajax.FileService;
 import uk.ac.bbsrc.tgac.browser.service.ajax.SamBamService;
+import uk.ac.bbsrc.tgac.browser.service.ajax.BigWigService;
+
 
 
 import javax.servlet.http.HttpSession;
@@ -200,7 +202,9 @@ public class DnaSequenceService {
         int count;
         try {
             Integer queryid = sequenceStore.getSeqRegion(seqName);
-            if (trackId.contains(".sam") || trackId.contains(".bam")) {
+            if (trackId.contains(".bw") ) {
+                response.put(trackName, BigWigService.getBigWig(start, end, delta, trackId, seqName));
+            } else if (trackId.contains(".sam") || trackId.contains(".bam")) {
                 response.put(trackName, SamBamService.getSamBam(start, end, delta, trackId, seqName));
             } else if (trackId.contains(".wig")) {
                 response.put(trackName, SamBamService.getWig(start, end, delta, trackId, seqName));
