@@ -58,6 +58,7 @@
     <script type="text/javascript" src="<c:url value='/scripts/browser.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/sequenceController.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/trackController.js'/>"></script>
+    <script type="text/javascript" src="<c:url value='/scripts/expressionTrackController.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/popup.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/getset.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/utils.js'/>"></script>
@@ -107,9 +108,7 @@
 
 
         <input type="text" id="search" class="seachbox" value='${initParam.defaultRef}'/>
-        <%--<button id="searchbutton" class="ui-state-default ui-corner-all"--%>
-        <%--onclick="search(jQuery('#search').val(), oldTracklist);">Search--%>
-        <%--</button>--%>
+
         <c:set var="databases">${initParam.blastdblink} </c:set>
 
         <c:set var="dateParts" value="${fn:split(databases, ',')}"/>
@@ -123,26 +122,6 @@
     </div>
 </div>
 
-<%--<table border="0" width="100%">--%>
-<%--<tr>--%>
-<%--<td class="headertable" align="left" onclick="window.location.href='<c:url value='/'/>'">--%>
-<%--<img src="<c:url value='/images/tgac_new_logo_nosponsers.png'/>" alt="TGAC Logo" name="logo"--%>
-<%--border="0" id="TGAClogo"/>--%>
-<%--</td>--%>
-<%--<td align="right" >--%>
-<%--<div id=dbinfo></div>--%>
-<%--<div id=sessionid></div>--%>
-<%--</td>--%>
-<%--</tr>--%>
-<%--</table>--%>
-
-<%--<div id="navtabs">--%>
-<%--<ul>--%>
-<%--<li><a href="<c:url value="index.jsp"/>"><span>Home</span></a></li>--%>
-<%--<li><a href="<c:url value="blast.jsp"/>"><span>Blast Search</span></a></li>--%>
-<%--<li><a href="<c:url value="session.jsp"/>"><span>Load Session</span></a></li>--%>
-<%--</ul>--%>
-<%--</div>--%>
 <div id="filetrack" style="visibility: hidden; position: fixed;">${initParam.trackfiles}</div>
 <div id="title" style="visibility: hidden; position: fixed;">${initParam.urlpath}</div>
 <div id="linkLocation" style="visibility: hidden; position: fixed;">${initParam.linkLocation}</div>

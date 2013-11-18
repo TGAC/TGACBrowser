@@ -83,13 +83,8 @@ public class BigWigService {
      * @throws Exception
      */
     public static JSONArray getBigWig(long start, long end, int delta, String trackId, String reference) throws Exception {
-        log.info("\n\n\n\ngetbigwig \n\n\n");
-
         JSONArray wig = new JSONArray();
-        boolean found = false;
         JSONObject response = new JSONObject();
-
-
         Path path = Paths.get(trackId);
         try {
             BigWigFileReader bw = new BigWigFileReader(path);
@@ -101,19 +96,12 @@ public class BigWigService {
                 JSONArray span = new JSONArray();
                 int bp = (int) start + j;
                    if(values[j] > 0 || values[j] < 0 ){
-//                       response.put("start", bp);
-//                       response.put("value", values[j]);
                        span.add(bp);
                        span.add(values[j]);
                        wig.add(span);
-                } else {
-
-                       log.info("Value at "+bp+" is "+ values[j]);
                 }
             }
             return wig;
-
-
         }
         catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
