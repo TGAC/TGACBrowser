@@ -25,13 +25,8 @@
 
 package uk.ac.bbsrc.tgac.browser.service.ajax;
 
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import net.sf.samtools.CigarElement;
-import net.sf.samtools.SAMFileReader;
-import net.sf.samtools.SAMRecord;
-import net.sf.samtools.*;
-import net.sf.samtools.seekablestream.SeekableStream;
+
 import net.sourceforge.fluxion.ajax.Ajaxified;
 import net.sourceforge.fluxion.ajax.util.JSONUtils;
 import org.slf4j.Logger;
@@ -41,13 +36,11 @@ import uk.ac.bbsrc.tgac.browser.core.store.SequenceStore;
 import uk.ac.bbsrc.tgac.browser.service.ajax.FileService;
 import uk.ac.bbsrc.tgac.browser.service.ajax.SamBamService;
 import uk.ac.bbsrc.tgac.browser.service.ajax.BigWigService;
-
-
+import uk.ac.bbsrc.tgac.browser.core.store.*;
+import uk.ac.bbsrc.tgac.browser.core.store.DafStore;
 
 import javax.servlet.http.HttpSession;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -63,10 +56,52 @@ public class DnaSequenceService {
     @Autowired
     private SequenceStore sequenceStore;
 
+    @Autowired
+    private SearchStore searchStore;
+
+    @Autowired
+    private GeneStore geneStore;
+
+    public void setGeneStore(GeneStore geneStore) {
+        this.geneStore = geneStore;
+    }
+
+    @Autowired
+    private AnalysisStore analysisStore;
+
+    public void setAnalysisStore(AnalysisStore analysisStore) {
+        this.analysisStore = analysisStore;
+    }
+
+    @Autowired
+    private DafStore dafStore;
+
+    public void setDafStore(DafStore dafStore) {
+        this.dafStore = dafStore;
+    }
+
+    @Autowired
+    private AssemblyStore assemblyStore;
+
+    public void setAssemblyStore(AssemblyStore assemblyStore) {
+        this.assemblyStore = assemblyStore;
+    }
+
+    @Autowired
+    private RepeatStore repeatStore;
+
+    public void setRepeatStore(RepeatStore repeatStore) {
+        this.repeatStore = repeatStore;
+    }
+
+
     public void setSequenceStore(SequenceStore sequenceStore) {
         this.sequenceStore = sequenceStore;
     }
 
+    public void setSearchStore(SearchStore searchStore) {
+        this.searchStore = searchStore;
+    }
     /**
      * Returns a JSONObject that can be read as single reference or a list of results
      * <p/>
@@ -90,16 +125,16 @@ public class DnaSequenceService {
 //      if more than one results
             if (queryid > 1) {
                 response.put("html", "seqregion");
-                response.put("chromosome", sequenceStore.checkChromosome());
-                response.put("seqregion", sequenceStore.getSeqRegionSearch(seqName));
+                response.put("chromosome", searchStore.checkChromosome());
+                response.put("seqregion", searchStore.getSeqRegionSearch(seqName));
             }
 //      if no result from seq_region
             else if (queryid == 0) {
                 response.put("html", "gene");
-                response.put("gene", sequenceStore.getGenesSearch(seqName));
-                response.put("transcript", sequenceStore.getTranscriptSearch(seqName));
-                response.put("GO", sequenceStore.getGOSearch(seqName));
-                response.put("chromosome", sequenceStore.checkChromosome());
+                response.put("gene", searchStore.getGenesSearch(seqName));
+                response.put("transcript", searchStore.getTranscriptSearch(seqName));
+                response.put("GO", searchStore.getGOSearch(seqName));
+                response.put("chromosome", searchStore.checkChromosome());
             }
 //      if only one result from seq_region
             else {
@@ -110,7 +145,7 @@ public class DnaSequenceService {
                 response.put("html", "");
                 response.put("seqname", "<p> <b>Seq Region ID:</b> " + query + ",<b> Name: </b> " + seqRegName);//+", <b>cds:</b> "+cds+"</p>");
                 response.put("seqregname", seqRegName);
-                response.put("tracklists", sequenceStore.getAnnotationId(query));
+                response.put("tracklists", analysisStore.getAnnotationId(query));
                 response.put("coord_sys", sequenceStore.getCoordSys(seqName));
             }
             return response;
@@ -144,7 +179,7 @@ public class DnaSequenceService {
             response.put("html", "");
             response.put("seqname", "<p> <b>Seq Region ID:</b> " + query + ",<b> Name: </b> " + seqRegName);//+", <b>cds:</b> "+cds+"</p>");
             response.put("seqregname", seqRegName);
-            response.put("tracklists", sequenceStore.getAnnotationId(query));
+            response.put("tracklists", analysisStore.getAnnotationId(query));
             response.put("coord_sys", sequenceStore.getCoordSys(seqRegName));
 
             return response;
@@ -211,44 +246,53 @@ public class DnaSequenceService {
             } else if (trackId.contains(".bed")) {
                 response.put(trackName, SamBamService.getBed(start, end, delta, trackId, seqName));
             } else if (trackId.indexOf("cs") >= 0) {
-                count = sequenceStore.countAssembly(queryid, trackId, start, end);
+                count = assemblyStore.countAssembly(queryid, trackId, start, end);
                 if (count < 5000) {
-                    response.put(trackName, sequenceStore.getAssembly(queryid, trackId, delta));
+                    response.put(trackName, assemblyStore.getAssembly(queryid, trackId, delta));
                 } else {
                     response.put("type", "graph");
-                    response.put(trackName, sequenceStore.getAssemblyGraph(queryid, trackId, start, end));
+                    response.put(trackName, assemblyStore.getAssemblyGraph(queryid, trackId, start, end));
                 }
-            } else if (sequenceStore.getLogicNameByAnalysisId(Integer.parseInt(trackId)).matches("(?i).*repeat.*")) {
-                count = sequenceStore.countRepeat(queryid, trackId, start, end);
+            } else if (analysisStore.getLogicNameByAnalysisId(Integer.parseInt(trackId)).matches("(?i).*repeat.*")) {
+                count = repeatStore.countRepeat(queryid, trackId, start, end);
                 if (count < 5000) {
-                    response.put(trackName, sequenceStore.processRepeat(sequenceStore.getRepeat(queryid, trackId, start, end), start, end, delta, queryid, trackId));
+                    response.put(trackName, repeatStore.processRepeat(repeatStore.getRepeat(queryid, trackId, start, end), start, end, delta, queryid, trackId));
                 } else {
                     response.put("type", "graph");
-                    response.put(trackName, sequenceStore.getRepeatGraph(queryid, trackId, start, end));
+                    response.put(trackName, repeatStore.getRepeatGraph(queryid, trackId, start, end));
                 }
-            } else if (sequenceStore.getLogicNameByAnalysisId(Integer.parseInt(trackId)).matches("(?i).*gene.*")) {
-                count = sequenceStore.countGene(queryid, trackId, start, end);
+            } else if (analysisStore.getLogicNameByAnalysisId(Integer.parseInt(trackId)).matches("(?i).*gene.*")) {
+                count = geneStore.countGene(queryid, trackId, start, end);
                 if (count < 1000) {
-                    response.put(trackName, sequenceStore.processGenes(sequenceStore.getGenes(queryid, trackId), start, end, delta, queryid, trackId));
+                    response.put(trackName, geneStore.processGenes(geneStore.getGenes(queryid, trackId), start, end, delta, queryid, trackId));
                 } else {
                     response.put("type", "graph");
-                    response.put(trackName, sequenceStore.getGeneGraph(queryid, trackId, start, end));
+                    response.put(trackName, geneStore.getGeneGraph(queryid, trackId, start, end));
                 }
             } else {
-                count = sequenceStore.countHit(queryid, trackId, start, end);
+                log.info("\n\nloadtrack else");
+                log.info("\n\n"+dafStore.getClass().getName());
+                count = dafStore.countHit(queryid, trackId, start, end);
+                log.info("\n\n\n\nelse"+count);
+
                 if (count < 5000) {
-                    response.put(trackName, sequenceStore.processHit(sequenceStore.getHit(queryid, trackId, start, end), start, end, delta, queryid, trackId));
+                    response.put(trackName,dafStore.processHit(dafStore.getHit(queryid, trackId, start, end), start, end, delta, queryid, trackId));
                 } else {
                     response.put("type", "graph");
-                    response.put(trackName, sequenceStore.getHitGraph(queryid, trackId, start, end));
+                    response.put(trackName, dafStore.getHitGraph(queryid, trackId, start, end));
                 }
             }
 
         } catch (IOException e) {
+
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.getMessage();
+            e.getCause();
             return JSONUtils.SimpleJSONError(e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.getMessage();
+            e.getCause();
         }
 
         return response;
@@ -266,8 +310,13 @@ public class DnaSequenceService {
     public JSONObject metaInfo(HttpSession session, JSONObject json) {
         JSONObject response = new JSONObject();
         try {
+            log.info("\n\nmetainfo\n\n");
             response.put("metainfo", sequenceStore.getdbinfo());
-            response.put("chr", sequenceStore.checkChromosome());
+            log.info("\n\nchr\n\n");
+
+            response.put("chr", searchStore.checkChromosome());
+            log.info("\n\nafter\n\n");
+
             return response;
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -301,7 +350,7 @@ public class DnaSequenceService {
         JSONObject response = new JSONObject();
         int query = json.getInt("id");
         try {
-            response.put("name", sequenceStore.getTranscriptNamefromId(query));
+            response.put("name", geneStore.getTranscriptNamefromId(query));
             return response;
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -325,16 +374,16 @@ public class DnaSequenceService {
         String trackName = json.getString("track");
         int query = json.getInt("id");
         try {
-            String trackid = sequenceStore.getTrackIDfromName(trackName);
+            String trackid = analysisStore.getTrackIDfromName(trackName);
             if (trackid.indexOf("cs") >= 0) {
                 response.put("name", sequenceStore.getSeqRegionName(query));
-            } else if (sequenceStore.getLogicNameByAnalysisId(Integer.parseInt(trackid)).matches("(?i).*repeat.*")) {
+            } else if (analysisStore.getLogicNameByAnalysisId(Integer.parseInt(trackid)).matches("(?i).*repeat.*")) {
 //              as we dont have decided to save repeat name in a table
                 response.put("name", "");
-            } else if (sequenceStore.getLogicNameByAnalysisId(Integer.parseInt(trackid)).matches("(?i).*gene.*")) {
-                response.put("name", sequenceStore.getGeneNamefromId(query));
+            } else if (analysisStore.getLogicNameByAnalysisId(Integer.parseInt(trackid)).matches("(?i).*gene.*")) {
+                response.put("name", geneStore.getGeneNamefromId(query));
             } else {
-                response.put("name", sequenceStore.getHitNamefromId(query));
+                response.put("name", dafStore.getHitNamefromId(query));
             }
             return response;
         } catch (IOException e) {
@@ -376,9 +425,7 @@ public class DnaSequenceService {
 
 
     /**
-     * Return result as JSONObject
-     * <p>
-     * this method call getMarker method to get markers for all the markers for the database
+     * This method get markers for all the markers for the database
      * </p>
      *
      * @param session an HTTPSession comes from ajax call
