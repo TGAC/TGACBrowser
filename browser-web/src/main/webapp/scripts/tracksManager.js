@@ -43,7 +43,6 @@ var tracklocation = [];
 var chromosome = false;
 
 
-
 //toogle side bar codes
 function tracklistopenclose() {
     if (jQuery("#openCloseIdentifier").is(":hidden")) {
@@ -64,7 +63,6 @@ function tracklistopenclose() {
 // Generate automated tracks lists and divs for each track
 
 function trackList(tracklist) {
-
     var Tracklist = tracklist;
     for (var i = 0; i < Tracklist.length; i++) {
         window['track_list' + Tracklist[i].name] = {
@@ -81,9 +79,7 @@ function trackList(tracklist) {
     var tracks = "<table> <tr>";
     var mergeTrack = "<table> <tr>";
 
-
     for (var i = 0; i < Tracklist.length; i++) {
-
         tracks += "<td> <span title='" + Tracklist[i].desc + "'><input type=\"checkbox\" id='" + Tracklist[i].name + "Checkbox' name='" + Tracklist[i].name + "-" + Tracklist[i].id + "'  onClick=loadTrackAjax(\"" + Tracklist[i].id + "\",\"" + Tracklist[i].name + "\"); />  " + Tracklist[i].display_label + " </span> </td>";
         mergeTrack += "<td><span id='" + Tracklist[i].name + "span'> <input type=\"checkbox\" disabled id='" + Tracklist[i].name + "mergedCheckbox' name='" + Tracklist[i].name + "mergedCheckbox' onClick=mergeTrack(\"" + Tracklist[i].name + "\"); value=" + Tracklist[i].name + " >" + Tracklist[i].display_label + "  </span> </td>";
 
@@ -91,20 +87,22 @@ function trackList(tracklist) {
             tracks += "</tr> <tr>";
             mergeTrack += "</tr> <tr>";
         }
-
-        if (Tracklist[i].colour) {
+        if (Tracklist[i].web && Tracklist[i].web.colour) {
             if (Tracklist[i].name.toLowerCase().indexOf("snp") >= 0) {
 
             }
+            else  if (Tracklist[i].web.source == "file") {
+                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "" + "{ fill:" + Tracklist[i].web.colour + "; stroke: " + Tracklist[i].web.colour + ";} </style>").appendTo("head");
+            }
             else if (Tracklist[i].name.toLowerCase().indexOf("gene") >= 0) {
-                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_exon" + "{ background:" + Tracklist[i].colour + ";border: 1px solid " + Tracklist[i].colour + ";} </style>").appendTo("head");
-                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_utr" + "{ border: 1px solid " + Tracklist[i].colour + "; background:none repeat scroll 0 0 white;} </style>").appendTo("head");
-                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_graph{ border:1px solid black; background:" + Tracklist[i].colour + ";} </style>").appendTo("head");
+                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_exon" + "{ background:" + Tracklist[i].web.colour + ";border: 1px solid " + Tracklist[i].web.colour + ";} </style>").appendTo("head");
+                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_utr" + "{ border: 1px solid " + Tracklist[i].web.colour + "; background:none repeat scroll 0 0 white;} </style>").appendTo("head");
+                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_graph{ border:1px solid black; background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
 
             }
             else {
-                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "{ background:" + Tracklist[i].colour + ";} </style>").appendTo("head");
-                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_graph{ border:1px solid black; background:" + Tracklist[i].colour + ";} </style>").appendTo("head");
+                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "{ background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
+                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_graph { border:1px solid black; background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
 
             }
         }
@@ -113,10 +111,9 @@ function trackList(tracklist) {
 
             }
             else if (Tracklist[i].name.toLowerCase().indexOf("gene") >= 0) {
-                console.log("else gene")
                 jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_exon" + "{ background: green; border: 1px solid green;} </style>").appendTo("head");
                 jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_utr" + "{ border: 1px solid green; background:none repeat scroll 0 0 white;} </style>").appendTo("head");
-                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_graph{ border:1px solid black; background:green;} </style>").appendTo("head");
+                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_graph { border:1px solid black; background:green;} </style>").appendTo("head");
 
             }
             else {
@@ -148,7 +145,9 @@ function trackList(tracklist) {
                 jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_graph{ border:1px solid black; background:" + colour + ";} </style>").appendTo("head");
             }
         }
+
     }
+
     jQuery("#mergetracklist").html(mergeTrack);
     jQuery("#tracklist").html(tracks);
     jQuery("#tracks").html("<div id='mergedtrack_wrapper' class='feature_tracks' style=\"display:none\">  " +
@@ -170,6 +169,7 @@ function trackList(tracklist) {
         minHeight: "50px",
         borderBottom: '1px solid black'
     });
+
     for (i = 0; i < Tracklist.length; i++) {
         jQuery("#tracks").append("<div id='" + Tracklist[i].name + "_wrapper' class='feature_tracks' style=\"display:none\">" +
             "<div align='left' class='handle'>" +

@@ -41,7 +41,7 @@
           <element id="library" level="project" name="Maven: org.irods.jargon:jargon-core:3.1.1" />
           <element id="library" level="project" name="Maven: commons-io:commons-io:1.4" />
           <element id="library" level="project" name="Maven: org.codehaus.jackson:jackson-mapper-asl:1.5.3" />
-          <element id="library" level="project" name="Maven: org.codehaus.jackson:jackson-core-asl:1.5.3" />
+          <element id="library" level="project" name="Maven: org.codehaus.jackson:jackson-core-asl:1.9.2" />
           <element id="library" level="project" name="Maven: com.eaglegenomics.simlims:simlims-core:0.0.4-SNAPSHOT" />
           <element id="library" level="project" name="Maven: javax.persistence:persistence-api:1.0" />
           <element id="library" level="project" name="Maven: org.springframework.security:spring-security-core:3.0.5.RELEASE" />

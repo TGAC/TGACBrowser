@@ -137,14 +137,20 @@ public class SQLAnalysisDAO implements AnalysisStore {
             for (Map map : maps) {
                 JSONObject annotationid = new JSONObject();
                 annotationid.put("name", map.get("name").toString().replaceAll("\\s+", "_").replaceAll("[.]", "_"));
-                annotationid.put("id", map.get("id"));
+                JSONObject explrObject = JSONObject.fromObject(map.get("web_data"));
+                log.info("\n\n\n\tsource "+explrObject.get("source").toString());
+                if(explrObject.get("source").toString().equals("file")){
+                    annotationid.put("id", explrObject.get("filepath"));
+                }   else{
+                    annotationid.put("id", map.get("id"));
+                }
                 annotationid.put("desc", map.get("description"));
                 annotationid.put("disp", map.get("displayable"));
                 annotationid.put("display_label", map.get("display_label").toString().replaceAll("\\s+", "_").replaceAll("[.]", "_"));
                 annotationid.put("merge", "0");
                 annotationid.put("label", "0");
                 annotationid.put("graph", "false");
-                annotationid.put("colour", map.get("web_data"));
+                annotationid.put("web", map.get("web_data"));
                 annotationlist.add(annotationid);
             }
             List<Map<String, Object>> coords = template.queryForList(GET_Coords_sys_API, new Object[]{rank});

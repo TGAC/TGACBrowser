@@ -64,9 +64,8 @@
     <script type="text/javascript" src="<c:url value='/scripts/utils.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/browser_ajax.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/uploadTrackController.js'/>"></script>
-    <%--<script type="text/javascript" src="<c:url value='/scripts/blast_local.js'/>"></script>--%>
+    <script type="text/javascript" src="<c:url value='/scripts/tracksManager.js'/>"></script>
 
-    <%--<title>TGAC Browser - BRIC CHO <c:if test="${not empty title}">- ${title}</c:if></title>--%>
     <title>${initParam.pageTitle}</title>
     <script type="text/javascript">
 

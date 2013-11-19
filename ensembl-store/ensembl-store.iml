@@ -36,6 +36,7 @@
     <orderEntry type="library" name="Maven: org.terracotta:terracotta-toolkit-1.4-runtime:4.1.0" level="project" />
     <orderEntry type="library" name="Maven: com.googlecode.ehcache-spring-annotations:ehcache-spring-annotations:1.2.0" level="project" />
     <orderEntry type="library" name="Maven: com.google.guava:guava:r09" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.jackson:jackson-core-asl:1.9.2" level="project" />
   </component>
 </module>
 
