@@ -35,9 +35,7 @@ import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import uk.ac.bbsrc.tgac.browser.core.store.GeneStore;
 import uk.ac.bbsrc.tgac.browser.core.store.RepeatStore;
 
 import java.io.IOException;
@@ -47,9 +45,9 @@ import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
- * User: bianx
- * Date: 15-Sep-2011
- * Time: 11:10:23
+ * User: thankia
+ * Date: 18-Nov-2013
+ * Time: 21:50:13
  * To change this template use File | Settings | File Templates.
  */
 
@@ -80,7 +78,16 @@ public class SQLRepeatDAO implements RepeatStore {
         this.template = template;
     }
 
-    public JSONArray recursiveRepeatGraph(int start_pos, int id, String trackId, long start, long end) throws IOException {
+    /**
+     * @param start_pos
+     * @param id
+     * @param trackId
+     * @param start
+     * @param end
+     * @return
+     * @throws Exception
+     */
+    public JSONArray recursiveRepeatGraph(int start_pos, int id, String trackId, long start, long end) throws Exception {
         try {
             JSONArray assemblyTracks = new JSONArray();
             List<Map<String, Object>> maps_one = template.queryForList(GET_Assembly_for_reference, new Object[]{id});
@@ -106,7 +113,6 @@ public class SQLRepeatDAO implements RepeatStore {
                         if (track_end > Integer.parseInt(maps_one.get(j).get("asm_end").toString())) {
                             track_end = Integer.parseInt(maps_one.get(j).get("asm_end").toString());
                         }
-                        //            start_pos += Integer.parseInt(maps_one.get(j).get("asm_start").toString());
                         assemblyTracks.addAll(getRepeatGraphLevel(Integer.parseInt(maps_one.get(j).get("asm_start").toString()), Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end));
                     } else {
                         track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
@@ -126,13 +132,22 @@ public class SQLRepeatDAO implements RepeatStore {
                 }
             }
             return assemblyTracks;
-        } catch (EmptyResultDataAccessException e) {
-            throw new IOException("getHit no result found");
-
+        } catch (Exception e) {
+            e.getMessage();
+            throw new Exception("recursiveRepeatGraph no result found " + e.getMessage());
         }
     }
 
-    public JSONArray getRepeatGraphLevel(int start_pos, int id, String trackId, long start, long end) throws IOException {
+    /**
+     * @param start_pos
+     * @param id
+     * @param trackId
+     * @param start
+     * @param end
+     * @return
+     * @throws Exception
+     */
+    public JSONArray getRepeatGraphLevel(int start_pos, int id, String trackId, long start, long end) throws Exception {
         try {
             JSONArray trackList = new JSONArray();
             long from = start;
@@ -153,12 +168,20 @@ public class SQLRepeatDAO implements RepeatStore {
                 }
             }
             return trackList;
-        } catch (EmptyResultDataAccessException e) {
-            throw new IOException("getHit no result found");
+        } catch (Exception e) {
+            throw new IOException("getRepeatGraphLevel no result found " + e.getMessage());
         }
     }
 
-    public JSONArray getRepeatGraph(int id, String trackId, long start, long end) throws IOException {
+    /**
+     * @param id
+     * @param trackId
+     * @param start
+     * @param end
+     * @return
+     * @throws Exception
+     */
+    public JSONArray getRepeatGraph(int id, String trackId, long start, long end) throws Exception {
         try {
             JSONArray trackList = new JSONArray();
             long from = start;
@@ -179,11 +202,19 @@ public class SQLRepeatDAO implements RepeatStore {
                 trackList.addAll(recursiveRepeatGraph(0, id, trackId, start, end));
             }
             return trackList;
-        } catch (EmptyResultDataAccessException e) {
-            throw new IOException("getHit no result found");
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new IOException("getRepeat graph no result found " + e.getMessage());
         }
     }
 
+    /**
+     * @param id
+     * @param trackId
+     * @param start
+     * @param end
+     * @return
+     */
     public int countRecursiveRepeat(int id, String trackId, long start, long end) {
         int repeat_size = 0;
         List<Map<String, Object>> maps_one = template.queryForList(GET_Assembly_for_reference, new Object[]{id});
@@ -199,11 +230,16 @@ public class SQLRepeatDAO implements RepeatStore {
                 }
             }
         }
-
-
         return repeat_size;
     }
 
+    /**
+     * @param id
+     * @param trackId
+     * @param start
+     * @param end
+     * @return
+     */
     public int countRepeat(int id, String trackId, long start, long end) {
         int count_size = template.queryForObject(GET_REPEAT_SIZE_SLICE, new Object[]{id, trackId, start, end}, Integer.class);
         if (count_size == 0) {
@@ -221,11 +257,30 @@ public class SQLRepeatDAO implements RepeatStore {
     //                     }
     //             )
     //  )
-    public List<Map<String, Object>> getRepeat(int id, String trackId, long start, long end) throws IOException {
+
+    /**
+     * @param id
+     * @param trackId
+     * @param start
+     * @param end
+     * @return
+     * @throws Exception
+     */
+    public List<Map<String, Object>> getRepeat(int id, String trackId, long start, long end) throws Exception {
         return template.queryForList(GET_REPEAT, new Object[]{id, trackId, start, end, start, end, start, end, start, end});
     }
 
-    public JSONArray recursiveRepeat(int start_pos, int id, String trackId, long start, long end, int delta) throws IOException {
+    /**
+     * @param start_pos
+     * @param id
+     * @param trackId
+     * @param start
+     * @param end
+     * @param delta
+     * @return
+     * @throws Exception
+     */
+    public JSONArray recursiveRepeat(int start_pos, int id, String trackId, long start, long end, int delta) throws Exception {
         try {
             JSONArray assemblyTracks = new JSONArray();
             List<Map<String, Object>> maps_one = template.queryForList(GET_Assembly_for_reference, new Object[]{id});
@@ -251,13 +306,21 @@ public class SQLRepeatDAO implements RepeatStore {
             }
 
             return assemblyTracks;
-        } catch (EmptyResultDataAccessException e) {
-            throw new IOException("getHit no result found");
+        } catch (Exception e) {
+            throw new IOException("recursive repeat no result found " + e.getMessage());
 
         }
 
     }
 
+    /**
+     * @param start_add
+     * @param maps
+     * @param start
+     * @param end
+     * @param delta
+     * @return
+     */
     public JSONArray getRepeatLevel(int start_add, List<Map<String, Object>> maps, long start, long end, int delta) {
         List<Integer> ends = new ArrayList<Integer>();
         JSONObject eachTrack_temp = new JSONObject();
@@ -306,7 +369,17 @@ public class SQLRepeatDAO implements RepeatStore {
     }
 
 
-    public JSONArray processRepeat(List<Map<String, Object>> maps, long start, long end, int delta, int id, String trackId) throws IOException {
+    /**
+     * @param maps
+     * @param start
+     * @param end
+     * @param delta
+     * @param id
+     * @param trackId
+     * @return
+     * @throws Exception
+     */
+    public JSONArray processRepeat(List<Map<String, Object>> maps, long start, long end, int delta, int id, String trackId) throws Exception {
         try {
             JSONArray trackList = new JSONArray();
 
@@ -317,7 +390,6 @@ public class SQLRepeatDAO implements RepeatStore {
                 if (maps.size() > 0) {
                     ends.add(0, 0);
                     trackList = getRepeatLevel(0, maps, start, end, delta);
-
                 }
             } else {
                 trackList = recursiveRepeat(0, id, trackId, start, end, delta);
@@ -328,8 +400,9 @@ public class SQLRepeatDAO implements RepeatStore {
                 trackList.add("getHit no result found");
             }
             return trackList;
-        } catch (EmptyResultDataAccessException e) {
-            throw new IOException("getHit no result found");
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new IOException("process repeat no result found " + e.getMessage());
         }
     }
 }
