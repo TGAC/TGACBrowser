@@ -446,7 +446,7 @@ function addJSON(from, to, trackName, trackId) {
                 if (Tracklist[i].name == "blasttrack") {
                     trackToggle(Tracklist[i].name);
                 }
-                else if (jQuery("#" + Tracklist[i].name + "Checkbox").is(':checked') && temp_id.toString().indexOf("noid") < 0) {
+                else if (jQuery("#" + Tracklist[i].name + "Checkbox").is(':checked') && Tracklist[i].id.toString().indexOf('noid') < 0) {
                     var trackname = Tracklist[i].name;
                     var trackid = Tracklist[i].id;
                     if (trackid && Tracklist[i].graph == "false") { //because graph == true is already loaded
