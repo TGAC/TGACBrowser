@@ -41,15 +41,14 @@ import uk.ac.bbsrc.tgac.browser.core.store.GeneStore;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.EmptyStackException;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
- * User: bianx
- * Date: 15-Sep-2011
- * Time: 11:10:23
+ * User: thankia
+ * Date: 18-Nov-2013
+ * Time: 20:40:20
  * To change this template use File | Settings | File Templates.
  */
 
@@ -69,11 +68,7 @@ public class SQLGeneDAO implements GeneStore {
 
 
     public static final String GET_length_from_seqreg_id = "SELECT length FROM seq_region where seq_region_id =?";
-    public static final String GET_SEQ_REGION_ID_SEARCH_For_One = "SELECT seq_region_id FROM seq_region WHERE name = ?";
-
     public static final String GET_Gene_SIZE_SLICE = "SELECT COUNT(gene_id) FROM gene where seq_region_id =? and analysis_id = ? and seq_region_start >= ? and seq_region_start <= ?";
-    public static final String GET_EXON = "SELECT seq_region_start,seq_region_end,seq_region_strand FROM exon where seq_region_id =?";
-    public static final String GET_Domain_per_Gene = "SELECT * FROM transcript_attrib where transcript_id =?";
     public static final String GET_CDS_start_per_Gene = "SELECT seq_start FROM translation where transcript_id =?";
     public static final String GET_CDS_end_per_Gene = "SELECT seq_end FROM translation where transcript_id =?";
     public static final String GET_GENE_SIZE = "SELECT COUNT(gene_id) FROM gene where seq_region_id =? and analysis_id = ?";
@@ -91,30 +86,52 @@ public class SQLGeneDAO implements GeneStore {
     }
 
 
-
-
-
-
+    /**
+     * gets gene name by id
+     *
+     * @param geneID gene_id
+     * @return Gene name as String format
+     * @throws IOException
+     */
     public String getGeneNamefromId(int geneID) throws IOException {
         try {
             String str = template.queryForObject(GET_Gene_name_from_ID, new Object[]{geneID}, String.class);
             return str;
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
-            throw new IOException(" getGeneNamefromId no result found"+e.getMessage());
+            throw new IOException(" getGeneNamefromId no result found" + e.getMessage());
         }
     }
 
+    /**
+     * get transcript name by id
+     *
+     * @param transcriptID transcript_id
+     * @return transcript name as String
+     * @throws IOException
+     */
     public String getTranscriptNamefromId(int transcriptID) throws IOException {
         try {
             String str = template.queryForObject(GET_Transcript_name_from_ID, new Object[]{transcriptID}, String.class);
             return str;
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
-            throw new IOException(" getTranscriptNamefromId no result found"+e.getMessage());
+            throw new IOException(" getTranscriptNamefromId no result found" + e.getMessage());
         }
     }
 
+    /**
+     * Generates gene Graph information
+     * Calls Gene Graph Level when reaches to the bottom level or recursively call method itself
+     *
+     * @param start_pos to be added because of lower assembly level
+     * @param id        reference id
+     * @param trackId
+     * @param start
+     * @param end
+     * @return JSONArray with gene graph information
+     * @throws IOException
+     */
     public JSONArray recursiveGeneGraph(int start_pos, int id, String trackId, long start, long end) throws IOException {
         try {
             JSONArray assemblyTracks = new JSONArray();
@@ -160,11 +177,22 @@ public class SQLGeneDAO implements GeneStore {
             }
             return assemblyTracks;
         } catch (EmptyResultDataAccessException e) {
+            e.printStackTrace();
             throw new IOException("getHit no result found");
-
         }
     }
 
+    /**
+     * Gets Graphical information for gene level graphs
+     *
+     * @param start_pos to be added because of lower assembly level
+     * @param id        reference id
+     * @param trackId
+     * @param start
+     * @param end
+     * @return JSONArray with gene graph information
+     * @throws IOException
+     */
     public JSONArray getGeneGraphLevel(int start_pos, int id, String trackId, long start, long end) throws IOException {
         try {
             JSONArray trackList = new JSONArray();
@@ -187,10 +215,21 @@ public class SQLGeneDAO implements GeneStore {
             }
             return trackList;
         } catch (EmptyResultDataAccessException e) {
+            e.printStackTrace();
             throw new IOException("getHit no result found");
         }
     }
 
+    /**
+     * Get graphical information for gene or call method recursive for lower level
+     *
+     * @param id      reference id
+     * @param trackId analysis id
+     * @param start
+     * @param end
+     * @return JSONArray with assembly graph information
+     * @throws IOException
+     */
     public JSONArray getGeneGraph(int id, String trackId, long start, long end) throws IOException {
         try {
 
@@ -215,40 +254,77 @@ public class SQLGeneDAO implements GeneStore {
             }
             return trackList;
         } catch (EmptyResultDataAccessException e) {
+            e.printStackTrace();
             throw new IOException("getHit no result found");
         }
     }
 
-    public int countRecursiveGene(int id, String trackId, long start, long end) {
-        int gene_size = 0;
-        JSONArray assemblyTracks = new JSONArray();
-        List<Map<String, Object>> maps_one = template.queryForList(GET_Assembly_for_reference, new Object[]{id});
+    /**
+     * counts gene or call recursive method
+     *
+     * @param id      Reference Id
+     * @param trackId
+     * @param start
+     * @param end
+     * @return number of gene per region
+     * @throws Exception
+     */
+    public int countRecursiveGene(int id, String trackId, long start, long end) throws Exception {
+        try {
+            int gene_size = 0;
+            List<Map<String, Object>> maps_one = template.queryForList(GET_Assembly_for_reference, new Object[]{id});
 
-        if (maps_one.size() > 0) {
-            for (int j = 0; j < maps_one.size(); j++) {
-                long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-                long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-                if (template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end}, Integer.class) > 0) {
-                    gene_size += template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end}, Integer.class);
-                } else {
-                    gene_size += countRecursiveGene(Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end);
+            if (maps_one.size() > 0) {
+                for (int j = 0; j < maps_one.size(); j++) {
+                    long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
+                    long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
+                    if (template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end}, Integer.class) > 0) {
+                        gene_size += template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end}, Integer.class);
+                    } else {
+                        gene_size += countRecursiveGene(Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end);
+                    }
                 }
             }
+
+            return gene_size;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception("count recursive gene " + e.getMessage());
         }
-
-
-        return gene_size;
     }
 
-    public int countGene(int id, String trackId, long start, long end) {
-        int gene_size = template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{id, trackId, start, end}, Integer.class);
-        if (gene_size == 0) {
-            gene_size = countRecursiveGene(id, trackId, start, end);
+    /**
+     * count no of genes present in the region
+     *
+     * @param id
+     * @param trackId
+     * @param start
+     * @param end
+     * @return
+     * @throws Exception
+     */
+    public int countGene(int id, String trackId, long start, long end) throws Exception {
+        try {
+            int gene_size = template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{id, trackId, start, end}, Integer.class);
+            if (gene_size == 0) {
+                gene_size = countRecursiveGene(id, trackId, start, end);
+            }
+            return gene_size;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception("Count Gene " + e.getMessage());
         }
-        return gene_size;
     }
 
 
+    /**
+     * Gets gene information
+     *
+     * @param id
+     * @param trackId
+     * @return
+     * @throws IOException
+     */
     @Cacheable(cacheName = "geneCache",
             keyGenerator = @KeyGenerator(
                     name = "HashCodeCacheKeyGenerator",
@@ -260,7 +336,6 @@ public class SQLGeneDAO implements GeneStore {
     )
 
     public List<Map<String, Object>> getGenes(int id, String trackId) throws IOException {
-
         return template.queryForList(GET_Gene_by_view, new Object[]{id, trackId});
     }
 
@@ -274,6 +349,13 @@ public class SQLGeneDAO implements GeneStore {
 //                  )
 //       )
 
+    /**
+     * Gets transcript information
+     *
+     * @param transcriptId
+     * @return
+     * @throws IOException
+     */
     public List<Map<String, Object>> getTranscriptsGO(String transcriptId) throws IOException {
 
         return template.queryForList(GET_GO_for_Transcripts, new Object[]{transcriptId});//template.queryForList(GET_Gene_by_view, new Object[]{id, trackId});
@@ -290,12 +372,31 @@ public class SQLGeneDAO implements GeneStore {
 //                 )
 //      )
 
-    public List<Map<String, Object>> getGenesGO(String geneId) throws IOException {
-
+    /**
+     * gets gene attrib information by gene id
+     *
+     * @param geneId
+     * @return
+     * @throws IOException
+     */
+    public List<Map<String, Object>> getGenesAttribs(String geneId) throws IOException {
         return template.queryForList(GET_GO_for_Genes, new Object[]{geneId});//template.queryForList(GET_Gene_by_view, new Object[]{id, trackId});
     }
 
 
+    /**
+     * Gets Gene information
+     * Calls Gene Level when reaches to the bottom level or recursively call method itself
+     *
+     * @param start_pos
+     * @param id
+     * @param trackId
+     * @param start
+     * @param end
+     * @param delta
+     * @return JSONArray with Gene information
+     * @throws IOException
+     */
     public JSONArray recursiveGene(int start_pos, int id, String trackId, long start, long end, int delta) throws IOException {
         try {
             JSONArray assemblyTracks = new JSONArray();
@@ -303,7 +404,6 @@ public class SQLGeneDAO implements GeneStore {
             if (maps_one.size() > 0) {
                 for (int j = 0; j < maps_one.size(); j++) {
                     List<Map<String, Object>> maps_two = template.queryForList(GET_GENE_SIZE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId});
-                    JSONObject eachTrack_temp = new JSONObject();
                     if (maps_two.size() > 0) {
                         List<Integer> ends = new ArrayList<Integer>();
                         ends.add(0, 0);
@@ -320,202 +420,227 @@ public class SQLGeneDAO implements GeneStore {
 
             return assemblyTracks;
         } catch (EmptyResultDataAccessException e) {
-            throw new IOException("getHit no result found");
-
+            e.printStackTrace();
+            throw new IOException("getGene no result found " + e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new IOException("getGene exception " + e.getMessage());
         }
-
     }
 
-    public JSONArray getGeneLevel(int start_add, List<Map<String, Object>> genes, long start, long end, int delta) throws IOException {
-        JSONArray GeneList = new JSONArray();
-        JSONObject eachGene = new JSONObject();
-        JSONObject eachTrack = new JSONObject();
-        JSONArray exonList = new JSONArray();
-        JSONArray transcriptList = new JSONArray();
-        JSONArray filteredgenes = new JSONArray();
-        String gene_id = "";
-        String transcript_id = "";
-        int layer = 1;
-        int lastsize = 0;
-        int thissize = 0;
-        List<Integer> ends = new ArrayList<Integer>();
-        ends.add(0, 0);
+    /**
+     * Get gene Level tracks
+     *
+     * @param start_add
+     * @param genes
+     * @param start
+     * @param end
+     * @param delta
+     * @return JSONAray with Assembly information
+     * @throws Exception
+     */
+    public JSONArray getGeneLevel(int start_add, List<Map<String, Object>> genes, long start, long end, int delta) throws Exception {
+        try {
+            JSONArray GeneList = new JSONArray();
+            JSONObject eachGene = new JSONObject();
+            JSONObject eachTrack = new JSONObject();
+            JSONArray exonList = new JSONArray();
+            JSONArray transcriptList = new JSONArray();
+            JSONArray filteredgenes = new JSONArray();
 
-        List<Integer> ends_gene = new ArrayList<Integer>();
-        ends_gene.add(0, 0);
+            String gene_id = "";
+            String transcript_id = "";
 
+            int layer = 1;
+            int lastsize = 0;
+            int thissize = 0;
 
-        List<Map<String, Object>> domains;
-        List<Map<String, Object>> translation_start;
-        List<Map<String, Object>> translation_end;
+            List<Integer> ends = new ArrayList<Integer>();
+            List<Integer> ends_gene = new ArrayList<Integer>();
 
-        for (Map gene : genes) {
-            int start_pos = start_add + Integer.parseInt(gene.get("gene_start").toString());
-            int end_pos = start_add + Integer.parseInt(gene.get("gene_end").toString());
-            if (start_pos >= start && end_pos <= end || start_pos <= start && end_pos >= end || end_pos >= start && end_pos <= end || start_pos >= start && start_pos <= end) {
-                filteredgenes.add(filteredgenes.size(), gene);
+            ends.add(0, 0);
+            ends_gene.add(0, 0);
+
+            List<Map<String, Object>> domains, translation_start, translation_end;
+
+            for (Map gene : genes) {
+                int start_pos = start_add + Integer.parseInt(gene.get("gene_start").toString());
+                int end_pos = start_add + Integer.parseInt(gene.get("gene_end").toString());
+                if (start_pos >= start && end_pos <= end || start_pos <= start && end_pos >= end || end_pos >= start && end_pos <= end || start_pos >= start && start_pos <= end) {
+                    filteredgenes.add(filteredgenes.size(), gene);
+                }
             }
-        }
-        for (int i = 0; i < filteredgenes.size(); i++) {
 
-            if (!transcript_id.equalsIgnoreCase(filteredgenes.getJSONObject(i).get("transcript_id").toString())) {
-                if (!transcript_id.equalsIgnoreCase("")) {
-                    eachTrack.put("Exons", exonList);
-                    transcriptList.add(eachTrack);
-                }
-                transcript_id = filteredgenes.getJSONObject(i).get("transcript_id").toString();
-                exonList = new JSONArray();
+            for (int i = 0; i < filteredgenes.size(); i++) {
 
-                eachTrack = new JSONObject();
+                if (!transcript_id.equalsIgnoreCase(filteredgenes.getJSONObject(i).get("transcript_id").toString())) {
+                    if (!transcript_id.equalsIgnoreCase("")) {
+                        eachTrack.put("Exons", exonList);
+                        transcriptList.add(eachTrack);
+                    }
+                    transcript_id = filteredgenes.getJSONObject(i).get("transcript_id").toString();
+                    exonList = new JSONArray();
 
-                eachTrack.put("id", filteredgenes.getJSONObject(i).get("transcript_id"));
-                eachTrack.put("start", start_add + Integer.parseInt(filteredgenes.getJSONObject(i).get("transcript_start").toString()));
-                eachTrack.put("end", start_add + Integer.parseInt(filteredgenes.getJSONObject(i).get("transcript_end").toString()));
+                    eachTrack = new JSONObject();
 
-                translation_start = template.queryForList(GET_CDS_start_per_Gene, new Object[]{filteredgenes.getJSONObject(i).get("transcript_id").toString()});
-                translation_end = template.queryForList(GET_CDS_end_per_Gene, new Object[]{filteredgenes.getJSONObject(i).get("transcript_id").toString()});
-                for (Map start_seq : translation_start) {
-                    eachTrack.put("transcript_start", start_add + Integer.parseInt(start_seq.get("seq_start").toString()));
+                    eachTrack.put("id", filteredgenes.getJSONObject(i).get("transcript_id"));
+                    eachTrack.put("start", start_add + Integer.parseInt(filteredgenes.getJSONObject(i).get("transcript_start").toString()));
+                    eachTrack.put("end", start_add + Integer.parseInt(filteredgenes.getJSONObject(i).get("transcript_end").toString()));
 
-                }
+                    translation_start = template.queryForList(GET_CDS_start_per_Gene, new Object[]{filteredgenes.getJSONObject(i).get("transcript_id").toString()});
+                    translation_end = template.queryForList(GET_CDS_end_per_Gene, new Object[]{filteredgenes.getJSONObject(i).get("transcript_id").toString()});
+                    for (Map start_seq : translation_start) {
+                        eachTrack.put("transcript_start", start_add + Integer.parseInt(start_seq.get("seq_start").toString()));
 
-                for (Map end_seq : translation_end) {
-                    eachTrack.put("transcript_end", start_add + Integer.parseInt(end_seq.get("seq_end").toString()));
+                    }
 
-                }
-                eachTrack.put("desc", filteredgenes.getJSONObject(i).get("transcript_name"));
-                int start_pos = Integer.parseInt(filteredgenes.getJSONObject(i).get("transcript_start").toString());
-                int end_pos = Integer.parseInt(filteredgenes.getJSONObject(i).get("transcript_end").toString());
-                if (start_pos > end_pos) {
-                    int temp = end_pos;
-                    end_pos = start_pos;
-                    start_pos = temp;
-                }
+                    for (Map end_seq : translation_end) {
+                        eachTrack.put("transcript_end", start_add + Integer.parseInt(end_seq.get("seq_end").toString()));
 
-                for (int a = 0; a < ends.size(); a++) {
+                    }
+                    eachTrack.put("desc", filteredgenes.getJSONObject(i).get("transcript_name"));
+                    int start_pos = Integer.parseInt(filteredgenes.getJSONObject(i).get("transcript_start").toString());
+                    int end_pos = Integer.parseInt(filteredgenes.getJSONObject(i).get("transcript_end").toString());
+                    if (start_pos > end_pos) {
+                        int temp = end_pos;
+                        end_pos = start_pos;
+                        start_pos = temp;
+                    }
 
-                    if (start_pos - ends.get(a) > delta) {
-                        ends.remove(a);
-                        ends.add(a, end_pos);
-                        eachTrack.put("layer", a + 1);
-                        break;
-                    } else if ((start_pos - ends.get(a) <= delta && (a + 1) == ends.size()) || start_pos == ends.get(a)) {
+                    for (int a = 0; a < ends.size(); a++) {
 
-                        if (a == 0) {
-                            eachTrack.put("layer", ends.size());
+                        if (start_pos - ends.get(a) > delta) {
+                            ends.remove(a);
                             ends.add(a, end_pos);
+                            eachTrack.put("layer", a + 1);
+                            break;
+                        } else if ((start_pos - ends.get(a) <= delta && (a + 1) == ends.size()) || start_pos == ends.get(a)) {
+
+                            if (a == 0) {
+                                eachTrack.put("layer", ends.size());
+                                ends.add(a, end_pos);
+                            } else {
+                                ends.add(ends.size(), end_pos);
+                                eachTrack.put("layer", ends.size());
+                            }
+                            break;
                         } else {
-                            ends.add(ends.size(), end_pos);
-                            eachTrack.put("layer", ends.size());
+                            continue;
                         }
-                        break;
-                    } else {
-                        continue;
                     }
+                    eachTrack.put("domain", 0);
+                    domains = getTranscriptsGO(filteredgenes.getJSONObject(i).get("transcript_id").toString());
+                    for (Map domain : domains) {
+                        eachTrack.put("domain", domain.get("value"));
+                    }
+                    eachTrack.put("flag", false);
                 }
-                eachTrack.put("domain", 0);
-                domains = getTranscriptsGO(filteredgenes.getJSONObject(i).get("transcript_id").toString());
-                for (Map domain : domains) {
-                    eachTrack.put("domain", domain.get("value"));
-                }
-                eachTrack.put("flag", false);
-            }
-            if (!gene_id.equalsIgnoreCase(filteredgenes.getJSONObject(i).get("gene_id").toString())) {
-                if (!gene_id.equalsIgnoreCase("")) {
-                    eachGene.put("transcript", transcriptList);
-                    GeneList.add(eachGene);
-                }
-                gene_id = filteredgenes.getJSONObject(i).get("gene_id").toString();
-                transcriptList = new JSONArray();
-                eachGene.put("id", filteredgenes.getJSONObject(i).get("gene_id"));
-                eachGene.put("start", start_add + Integer.parseInt(filteredgenes.getJSONObject(i).get("gene_start").toString()));
-                eachGene.put("end", start_add + Integer.parseInt(filteredgenes.getJSONObject(i).get("gene_end").toString()));
-                eachGene.put("desc", filteredgenes.getJSONObject(i).get("gene_name"));
-                eachGene.put("strand", filteredgenes.getJSONObject(i).get("gene_strand"));
+                if (!gene_id.equalsIgnoreCase(filteredgenes.getJSONObject(i).get("gene_id").toString())) {
+                    if (!gene_id.equalsIgnoreCase("")) {
+                        eachGene.put("transcript", transcriptList);
+                        GeneList.add(eachGene);
+                    }
+                    gene_id = filteredgenes.getJSONObject(i).get("gene_id").toString();
+                    transcriptList = new JSONArray();
+                    eachGene.put("id", filteredgenes.getJSONObject(i).get("gene_id"));
+                    eachGene.put("start", start_add + Integer.parseInt(filteredgenes.getJSONObject(i).get("gene_start").toString()));
+                    eachGene.put("end", start_add + Integer.parseInt(filteredgenes.getJSONObject(i).get("gene_end").toString()));
+                    eachGene.put("desc", filteredgenes.getJSONObject(i).get("gene_name"));
+                    eachGene.put("strand", filteredgenes.getJSONObject(i).get("gene_strand"));
 
-                int start_pos = Integer.parseInt(filteredgenes.getJSONObject(i).get("gene_start").toString());
-                int end_pos = Integer.parseInt(filteredgenes.getJSONObject(i).get("gene_end").toString());
-                if (start_pos > end_pos) {
-                    int temp = end_pos;
-                    end_pos = start_pos;
-                    start_pos = temp;
-                }
+                    int start_pos = Integer.parseInt(filteredgenes.getJSONObject(i).get("gene_start").toString());
+                    int end_pos = Integer.parseInt(filteredgenes.getJSONObject(i).get("gene_end").toString());
+                    if (start_pos > end_pos) {
+                        int temp = end_pos;
+                        end_pos = start_pos;
+                        start_pos = temp;
+                    }
 
-                for (int a = 0; a < ends_gene.size(); a++) {
+                    for (int a = 0; a < ends_gene.size(); a++) {
 
-                    if (start_pos - ends_gene.get(a) > delta) {
-                        ends_gene.remove(a);
-                        ends_gene.add(a, end_pos);
-                        eachGene.put("layer", a + 1);
-                        break;
-                    } else if ((start_pos - ends_gene.get(a) <= delta && (a + 1) == ends_gene.size()) || start_pos == ends_gene.get(a)) {
-
-                        if (a == 0) {
-                            eachGene.put("layer", ends_gene.size());
+                        if (start_pos - ends_gene.get(a) > delta) {
+                            ends_gene.remove(a);
                             ends_gene.add(a, end_pos);
+                            eachGene.put("layer", a + 1);
+                            break;
+                        } else if ((start_pos - ends_gene.get(a) <= delta && (a + 1) == ends_gene.size()) || start_pos == ends_gene.get(a)) {
+
+                            if (a == 0) {
+                                eachGene.put("layer", ends_gene.size());
+                                ends_gene.add(a, end_pos);
+                            } else {
+                                ends_gene.add(ends_gene.size(), end_pos);
+                                eachGene.put("layer", ends_gene.size());
+                            }
+                            break;
                         } else {
-                            ends_gene.add(ends_gene.size(), end_pos);
-                            eachGene.put("layer", ends_gene.size());
+                            continue;
                         }
-                        break;
-                    } else {
-                        continue;
                     }
+
+                    eachGene.put("domain", 0);
+                    domains = getGenesAttribs(filteredgenes.getJSONObject(i).get("gene_id").toString());
+                    for (Map domain : domains) {
+                        eachGene.put("domain", domain.get("value"));
+                    }
+                    if (lastsize < 2 && layer > 2) {
+                        layer = 1;
+                    } else {
+                        layer = layer;
+                    }
+
+                    if (thissize > 1) {
+                        layer = 1;
+                    }
+                    layer++;
                 }
 
-                eachGene.put("domain", 0);
-                domains = getGenesGO(filteredgenes.getJSONObject(i).get("gene_id").toString());
-                for (Map domain : domains) {
-                    eachGene.put("domain", domain.get("value"));
-                }
-                if (lastsize < 2 && layer > 2) {
-                    layer = 1;
-                } else {
-                    layer = layer;
-                }
+                JSONObject eachExon = new JSONObject();
+                eachExon.put("id", filteredgenes.getJSONObject(i).get("exon_id"));
+                eachExon.put("start", start_add + Integer.parseInt(filteredgenes.getJSONObject(i).get("exon_start").toString()));
+                eachExon.put("end", start_add + Integer.parseInt(filteredgenes.getJSONObject(i).get("exon_end").toString()));
+                exonList.add(eachExon);
 
-                if (thissize > 1) {
-                    layer = 1;
-                }
-                layer++;
+                lastsize = thissize;
             }
 
-            JSONObject eachExon = new JSONObject();
-            eachExon.put("id", filteredgenes.getJSONObject(i).get("exon_id"));
-            eachExon.put("start", start_add + Integer.parseInt(filteredgenes.getJSONObject(i).get("exon_start").toString()));
-            eachExon.put("end", start_add + Integer.parseInt(filteredgenes.getJSONObject(i).get("exon_end").toString()));
-            exonList.add(eachExon);
-
-            lastsize = thissize;
+            if (filteredgenes.size() > 0) {
+                eachTrack.put("Exons", exonList);
+                transcriptList.add(eachTrack);
+                eachGene.put("transcript", transcriptList);
+                GeneList.add(eachGene);
+            }
+            return GeneList;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception("getGeneLevel " + e.getMessage());
         }
-
-        if (filteredgenes.size() > 0) {
-            eachTrack.put("Exons", exonList);
-            transcriptList.add(eachTrack);
-            eachGene.put("transcript", transcriptList);
-            GeneList.add(eachGene);
-        }
-        return GeneList;
     }
 
-    public JSONArray processGenes(List<Map<String, Object>> genes, long start, long end, int delta, int id, String trackId) throws IOException {
-        log.info("\n\n\n\n\n process gene");
+    /**
+     * process Genes returns from getGenes
+     *
+     * @param genes   genes returned from getGene
+     * @param start
+     * @param end
+     * @param delta
+     * @param id
+     * @param trackId
+     * @return JSONArray with gene information
+     * @throws Exception
+     */
+    public JSONArray processGenes(List<Map<String, Object>> genes, long start, long end, int delta, int id, String trackId) throws Exception {
 
         try {
             JSONArray GeneList = new JSONArray();
             List<Integer> ends = new ArrayList<Integer>();
             ends.add(0, 0);
             if (template.queryForObject(GET_GENE_SIZE, new Object[]{id, trackId}, Integer.class) > 0) {
-                log.info("\n\n\n\n\n process gene if");
-
                 if (genes.size() > 0) {
                     ends.add(0, 0);
                     GeneList = getGeneLevel(0, genes, start, end, delta);
-                } else {
                 }
             } else {
-                log.info("\n\n\n\n\n process gene else");
-
                 GeneList = recursiveGene(0, id, trackId, start, end, delta);
             }
             if (GeneList.size() == 0) {
@@ -528,58 +653,11 @@ public class SQLGeneDAO implements GeneStore {
 
             return GeneList;
         } catch (EmptyResultDataAccessException e) {
-            throw new IOException("getGene no result found.");
-
-        }
-    }
-
-    public Integer getSeqRegionforone(String searchQuery) throws IOException {
-        try {
-            int i = template.queryForObject(GET_SEQ_REGION_ID_SEARCH_For_One, new Object[]{searchQuery}, Integer.class);
-            return i;
-        } catch (EmptyResultDataAccessException e) {
-            return 0;
-        }
-    }
-
-
-    public JSONArray getFromExon(int id, String trackId) throws IOException {
-        try {
-            JSONArray trackList = new JSONArray();
-
-            List<Map<String, Object>> maps = template.queryForList(GET_EXON, new Object[]{id});
-
-            for (Map map : maps) {
-                JSONObject eachTrack = new JSONObject();
-                eachTrack.put("start", map.get("seq_region_start"));
-                eachTrack.put("end", map.get("seq_region_end"));
-                eachTrack.put("desc", map.get("seq_region_strand"));
-                eachTrack.put("flag", false);
-
-                trackList.add(eachTrack);
-            }
-            return trackList;
-        } catch (EmptyResultDataAccessException e) {
-            throw new IOException("getHit no result found");
-        }
-    }
-
-
-    public String getDomains(String geneid) throws IOException {
-        JSONArray domainlist = new JSONArray();
-        String Domains = "";
-        try {
-            JSONObject eachDomain = new JSONObject();
-            List<Map<String, Object>> domains = template.queryForList(GET_Domain_per_Gene, new Object[]{geneid});
-
-            for (Map domain : domains) {
-                Domains = domain.get("value").toString();
-            }
-
-            return Domains;
-        } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
-            throw new IOException("Track Description no result found");
+            throw new IOException("getGene no result found.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception("processGene no result found " + e.getMessage());
         }
     }
 }

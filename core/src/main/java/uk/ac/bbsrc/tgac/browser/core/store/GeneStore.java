@@ -39,10 +39,10 @@ import java.util.Map;
  * To change this template use File | Settings | File Templates.
  */
 public interface GeneStore extends Store<String> {
-    public JSONArray processGenes(List<Map<String, Object>> maps, long start, long end, int delta, int id, String trackId) throws IOException;
+    public JSONArray processGenes(List<Map<String, Object>> maps, long start, long end, int delta, int id, String trackId) throws Exception;
     public JSONArray getGeneGraph(int id, String trackId, long start, long end) throws IOException;
     public String getGeneNamefromId(int geneID) throws IOException;
-    public int countGene(int id, String trackId, long start, long end);
+    public int countGene(int id, String trackId, long start, long end) throws Exception;
     public List<Map<String, Object>> getGenes(int query, String trackId) throws IOException;
     public String getTranscriptNamefromId(int transcriptID) throws IOException;
 

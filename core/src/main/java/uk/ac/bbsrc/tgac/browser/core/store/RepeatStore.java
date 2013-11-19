@@ -40,9 +40,9 @@ import java.util.Map;
  */
 public interface RepeatStore extends Store<String> {
     public int countRepeat(int id, String trackId, long start, long end);
-    public List<Map<String, Object>> getRepeat(int query, String trackId, long start, long end) throws IOException;
-    public JSONArray processRepeat(List<Map<String, Object>> maps, long start, long end, int delta, int id, String trackId) throws IOException;
-    public JSONArray getRepeatGraph(int id, String trackId, long start, long end) throws IOException;
+    public List<Map<String, Object>> getRepeat(int query, String trackId, long start, long end) throws Exception;
+    public JSONArray processRepeat(List<Map<String, Object>> maps, long start, long end, int delta, int id, String trackId) throws Exception;
+    public JSONArray getRepeatGraph(int id, String trackId, long start, long end) throws Exception;
 
 
 }

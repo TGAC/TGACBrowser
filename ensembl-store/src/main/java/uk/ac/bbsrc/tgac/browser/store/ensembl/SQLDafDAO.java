@@ -44,8 +44,8 @@ import java.util.Map;
 /**
  * Created by IntelliJ IDEA.
  * User: thankia
- * Date: 1-Nov-2013
- * Time: 11:158:55
+ * Date: 01-Nov-2013
+ * Time: 11:58:55
  * To change this template use File | Settings | File Templates.
  */
 
@@ -202,7 +202,7 @@ public class SQLDafDAO implements DafStore {
      * Get graphical information for hit or call method recursive for lower level
      *
      * @param id      Reference Id
-     * @param trackId
+     * @param trackId analysis id
      * @param start
      * @param end
      * @return JSONArray with assembly graph information
@@ -249,7 +249,6 @@ public class SQLDafDAO implements DafStore {
     public int countRecursiveHit(int id, String trackId, long start, long end) throws Exception {
         try {
             int hit_size = 0;
-            JSONArray assemblyTracks = new JSONArray();
             List<Map<String, Object>> maps_one = template.queryForList(GET_Assembly_for_reference, new Object[]{id});
 
             if (maps_one.size() > 0) {
@@ -263,7 +262,6 @@ public class SQLDafDAO implements DafStore {
                     }
                 }
             }
-
 
             return hit_size;
         } catch (Exception e) {
