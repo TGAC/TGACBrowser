@@ -105,7 +105,8 @@ function posGraphWig(div, trackName, trackId, className) {
         }
 
 
-        for (var i = 0; i < data.length - 1;) {
+        var data_len = data.length;
+        for (var i = 0; i < data_len - 1;) {
             var tempx;
             if (start > 0) {
                 tempx = (data[i][0] - start) * space;
@@ -153,18 +154,19 @@ function posGraphWig(div, trackName, trackId, className) {
         }
         var tempy = height - (data[data.length - 1][1] * height / max);
         pathinfo.push({ x: tempx, y: tempy});
-        var path = svg.selectAll("path")
-            .data([1]);
+        setTimeout(function () {
+            var path = svg.selectAll("path")
+                .data([1]);
 
-        path.enter().append("svg:path")
-            .attr("width", 200)
-            .attr("height", 200)
-            .attr("class", "path")
-            .attr("stroke", "blue")
-            .attr("fill", function () {
-                return "lightblue";
-            })
-            .attr("d", d3line2(pathinfo));
+
+            setTimeout(function () {
+                path.enter().append("svg:path")
+                    .attr("width", 200)
+                    .attr("height", 200)
+                    .attr("class", "path " + className)
+                    .attr("d", d3line2(pathinfo));
+            }, 100);
+        }, 100);
     });
 
 
@@ -183,7 +185,6 @@ function negGraphWig(div, trackName, trackId, className) {
     var partial = (parseInt(getEnd()) - parseInt(getBegin())) / 2;
     var start = parseInt(getBegin()) - parseInt(partial)
     var end = parseInt(getEnd()) + parseInt(partial);
-
 
 
     var min = Math.min.apply(Math, track.map(function (o) {
@@ -243,7 +244,8 @@ function negGraphWig(div, trackName, trackId, className) {
         }
 
 
-        for (var i = 0; i < data.length - 1;) {
+        var data_len = data.length;
+        for (var i = 0; i < data_len - 1;) {
             var tempx;
             if (start > 0) {
                 tempx = (data[i][0] - start) * space;
@@ -252,7 +254,7 @@ function negGraphWig(div, trackName, trackId, className) {
                 tempx = (data[i][0]) * space;
             }
 
-            var tempy =  (data[i][1] * height / min);
+            var tempy = (data[i][1] * height / min);
             pathinfo.push({ x: tempx, y: tempy});
 
 
@@ -291,18 +293,19 @@ function negGraphWig(div, trackName, trackId, className) {
         }
         var tempy = 0;
         pathinfo.push({ x: tempx, y: tempy});
-        var path = svg.selectAll("path")
-            .data([1]);
+        setTimeout(function () {
+            var path = svg.selectAll("path")
+                .data([1]);
 
-        path.enter().append("svg:path")
-            .attr("width", 200)
-            .attr("height", 200)
-            .attr("class", "path")
-            .attr("stroke", "blue")
-            .attr("fill", function () {
-                return "lightblue";
-            })
-            .attr("d", d3line2(pathinfo));
+
+            setTimeout(function () {
+                path.enter().append("svg:path")
+                    .attr("width", 200)
+                    .attr("height", 200)
+                    .attr("class", "path " + className)
+                    .attr("d", d3line2(pathinfo));
+            }, 100);
+        }, 100);
     });
 
 

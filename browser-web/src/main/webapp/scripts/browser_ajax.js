@@ -92,6 +92,7 @@ function seqregionSearchPopup(query, from, to, blast) {
                         );
                     }
                 }
+
                 trackList(track_list);
 
                 minWidth = findminwidth();

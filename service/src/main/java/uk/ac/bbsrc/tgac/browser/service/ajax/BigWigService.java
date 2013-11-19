@@ -93,9 +93,9 @@ public class BigWigService {
             float[] values = result.getValues();
 
             for (int j = 0; j < values.length; j++) {
-                JSONArray span = new JSONArray();
                 int bp = (int) start + j;
-                   if(values[j] > 0 || values[j] < 0 ){
+                   if(values[j] > 0 || values[j] < 0 ) {
+                       JSONArray span = new JSONArray();
                        span.add(bp);
                        span.add(values[j]);
                        wig.add(span);

@@ -1,6 +1,23 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib uri='http://java.sun.com/jsp/jstl/core' prefix='c' %>
 <%@ page import="java.util.ArrayList" language="java" %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <script>
+        jQuery(document).ready(function () {
+            metaData();
+            jQuery('input.deletable').wrap('<span class="deleteicon" />').after(jQuery('<span/>').click(function () {
+                jQuery(this).prev('input').val('').focus();
+                jQuery('#searchText').val('Search DNA');
+                jQuery('#searchDiv').html('');
+            }));
+        });
+    </script>
+</head>
+
+<body>
 <div id="main1" style="top : 10px ; height: 1050px; ">
 
     <div id="seqname"></div>
@@ -51,8 +68,9 @@
                                         <div onclick="jumpToSeq()" class="divbutton"> Go</div>
                                     </td>
                                     <td>
-                                        <div class="divbutton" style="padding: 0px 5px;" onClick="parent.location='mailto:tgac.browser@tgac.ac.uk?Subject=TGAC Browser - Feedback';">
-                                            <span  class="ui-button ui-icon ui-icon-mail-closed"></span>
+                                        <div class="divbutton" style="padding: 0px 5px;"
+                                             onClick="parent.location='mailto:tgac.browser@tgac.ac.uk?Subject=TGAC Browser - Feedback';">
+                                            <span class="ui-button ui-icon ui-icon-mail-closed"></span>
                                         </div>
 
                                     </td>
@@ -68,7 +86,8 @@
                             <center>
                                 <img src='images/browser/reset.png' onclick="reset();" class="browserimage" height=50%
                                      alt="Reset" title="Reset"> &nbsp;&nbsp;
-                                <img src='images/browser/backward.png' onclick="dragLeft();" id="leftbig" class="browserimage"
+                                <img src='images/browser/backward.png' onclick="dragLeft();" id="leftbig"
+                                     class="browserimage"
                                      height=70%
                                      alt="Backward" title="Move Left">
                                 <img src='images/browser/backward.png' onclick="seqLeft();"
@@ -77,7 +96,8 @@
                                 <img src='images/browser/forward.png' onclick="seqRight();"
                                      class="browserimage browserimagesmall"
                                      height=40% alt="Right" title="Move Right (1bp)">
-                                <img src='images/browser/forward.png' onclick="dragRight();" id="rightbig" class="browserimage"
+                                <img src='images/browser/forward.png' onclick="dragRight();" id="rightbig"
+                                     class="browserimage"
                                      height=70% alt="Forward" title="Move Right">&nbsp;&nbsp;
                                 <img src='images/browser/zoomin.png' id="zoominbig"
                                      onclick="zoomIn(parseInt(sequencelength/20));"
@@ -133,7 +153,6 @@
         </div>
 
 
-
         <div id="bar_image">
             <div id="searchDiv"></div>
             <div id="SeqLenStart">&nbsp;</div>
@@ -159,7 +178,9 @@
 
 
         <div id="wrapper">
-
+            <canvas id="myCanvas" width="200" height="100"
+                    style="border:1px solid #000000;">
+            </canvas>
             <div id=tracks>
             </div>
             <div class="fakediv">
@@ -315,7 +336,7 @@
 
         <tr>
             <td>
-                <div id="popuptrack" class="popuptrack" ></div>
+                <div id="popuptrack" class="popuptrack"></div>
             </td>
             <td align="right">
                 <span class="ui-button ui-icon ui-icon-close" onclick=removePopup();></span>
@@ -602,13 +623,6 @@
 
 <span id="ruler"></span>
 
-<script>
-    jQuery(document).ready(function () {
-        metaData();
-        jQuery('input.deletable').wrap('<span class="deleteicon" />').after(jQuery('<span/>').click(function () {
-            jQuery(this).prev('input').val('').focus();
-            jQuery('#searchText').val('Search DNA');
-            jQuery('#searchDiv').html('');
-        }));
-    });
-</script>
+
+</body>
+</html>
