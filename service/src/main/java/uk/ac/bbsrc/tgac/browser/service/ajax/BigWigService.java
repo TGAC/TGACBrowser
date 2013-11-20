@@ -88,22 +88,41 @@ public class BigWigService {
         Path path = Paths.get(trackId);
         try {
             BigWigFileReader bw = new BigWigFileReader(path);
-            Contig result = bw.query(reference, (int) start, (int) end);
+//
+            if (bw.query(reference, (int) start, (int) end).length() < 5000) {
+                Contig result = bw.query(reference, (int) start, (int) end);
+                float[] values = result.getValues();
 
-            float[] values = result.getValues();
-
-            for (int j = 0; j < values.length; j++) {
-                int bp = (int) start + j;
-                   if(values[j] > 0 || values[j] < 0 ) {
-                       JSONArray span = new JSONArray();
-                       span.add(bp);
-                       span.add(values[j]);
-                       wig.add(span);
+                for (int j = 0; j < values.length; j++) {
+                    int bp = (int) start + j;
+                    if (values[j] > 0 || values[j] < 0) {
+                        JSONArray span = new JSONArray();
+                        span.add(bp);
+                        span.add(values[j]);
+                        wig.add(span);
+                    }
                 }
+                return wig;
+            } else {
+                long diff = (end - start) / 5000;
+                for (int i = 0; i < 5000; i++) {
+                    long temp_start = start + (i * diff);
+                    long temp_end = temp_start + diff;
+
+                    int bp = (int) temp_start;
+                    float value = bw.query(reference, (int) temp_start, (int) temp_end).mean();
+                    if (value > 0 || value < 0) {
+                        JSONArray span = new JSONArray();
+                        span.add(bp);
+                        span.add(value);
+                        wig.add(span);
+                    }
+                }
+                return wig;
             }
-            return wig;
-        }
-        catch (Exception e) {
+
+
+        } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             response.put("error", e.toString() + " " + e.getMessage());
             wig.add(response);
