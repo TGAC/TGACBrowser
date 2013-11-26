@@ -154,19 +154,14 @@ function posGraphWig(div, trackName, trackId, className) {
         }
         var tempy = height - (data[data.length - 1][1] * height / max);
         pathinfo.push({ x: tempx, y: tempy});
-        setTimeout(function () {
-            var path = svg.selectAll("path")
-                .data([1]);
+        var path = svg.selectAll("path")
+            .data([1]);
 
-
-            setTimeout(function () {
-                path.enter().append("svg:path")
-                    .attr("width", 200)
-                    .attr("height", 200)
-                    .attr("class", "path " + className)
-                    .attr("d", d3line2(pathinfo));
-            }, 100);
-        }, 100);
+        path.enter().append("svg:path")
+            .attr("width", 200)
+            .attr("height", 200)
+            .attr("class", "path " + className)
+            .attr("d", d3line2(pathinfo));
     });
 
 
@@ -293,23 +288,78 @@ function negGraphWig(div, trackName, trackId, className) {
         }
         var tempy = 0;
         pathinfo.push({ x: tempx, y: tempy});
-        setTimeout(function () {
-            var path = svg.selectAll("path")
-                .data([1]);
+        var path = svg.selectAll("path")
+            .data([1]);
 
-
-            setTimeout(function () {
-                path.enter().append("svg:path")
-                    .attr("width", 200)
-                    .attr("height", 200)
-                    .attr("class", "path " + className)
-                    .attr("d", d3line2(pathinfo));
-            }, 100);
-        }, 100);
+        path.enter().append("svg:path")
+            .attr("width", 200)
+            .attr("height", 200)
+            .attr("class", "path " + className)
+            .attr("d", d3line2(pathinfo));
     });
-
 
     jQuery(div).css('height', '70px');
     jQuery(div).fadeIn();
     jQuery("#" + trackName + "_wrapper").fadeIn();
+}
+
+function dispGraphBed(div, trackName, trackId, className) {
+    var track_html = "";
+
+    if (!window[trackName] || window[trackName] == "loading") {
+        jQuery(div).html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
+        jQuery(div).fadeIn();
+        jQuery("#" + trackName + "_wrapper").fadeIn();
+
+    }
+    else {
+        var track = window[trackName];
+        var partial = (parseInt(getEnd()) - parseInt(getBegin())) / 2;
+        var start = parseInt(getBegin()) - parseInt(partial)
+        var end = parseInt(getEnd()) + parseInt(partial);
+        var maxLen_temp = jQuery("#canvas").css("width");
+
+        var newStart_temp = getBegin();
+        var newEnd_temp = getEnd();
+
+        if (track[0]) {
+            track = jQuery.grep(track, function (element, index) {
+                return element.start >= start && element.start <= end; // retain appropriate elements
+            });
+        }
+
+
+        var total = 0;
+        var max = Math.max.apply(Math, track.map(function (o) {
+            return o.value;
+        }));
+
+        var track_len = track.length;
+
+        while (track_len--) {
+            var track_start = track[track_len].start;
+            var track_stop = track[track_len].end;
+
+            var startposition = (track_start - newStart_temp) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen_temp) / 2;
+            var stopposition = (track_stop - track_start ) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp);
+
+            track_html += "<div class= \"graph " + className + "graph\" onclick=\"setBegin(" + track[track_len].start + ");setEnd(" + track[track_len].end + ");jumpToSeq();\"STYLE=\"bottom:0px; height: " + (track[track_len].value * 45 / max) + "px;" +
+                "LEFT:" + startposition + "px;" +
+                "width:" + (stopposition - 1) + "px \" title=\"" + track_start + ":" + track_stop + "->" + track[track_len].value + "\" ></div>";
+
+        }
+        jQuery(div).fadeIn();
+        jQuery("#" + trackName + "_wrapper").fadeIn();
+        jQuery(div).html(track_html);
+    }
+}
+
+
+
+function sortResults(prop, asc, array) {
+    array = array.sort(function (a, b) {
+        if (asc) return (a[prop] > b[prop]);
+        else return (b[prop] > a[prop]);
+    });
+    return array;
 }

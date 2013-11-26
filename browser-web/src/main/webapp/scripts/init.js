@@ -310,15 +310,15 @@ function onLoad() {
             var bp = "bp";
             if (diff > 100000000) {
                 diff = (diff / 1000000);
-                bp = "Gbp";
+                bp = "Gb";
             }
             else if (diff > 1000000) {
                 diff = (diff / 1000000);
-                bp = "Mbp";
+                bp = "Mb";
             }
             else if (diff > 1000) {
                 diff = diff / 1000;
-                bp = "Kbp";
+                bp = "Kb";
             }
             jQuery("#dragLabel").html(diff + bp);
 
@@ -421,8 +421,8 @@ function displayCursorPosition() {
 function dispSeqCoord() {
     var diff = parseInt(parseInt(sequencelength) / 20);
     var bp = "";
-    if (diff > 100000000) {
-        diff = (diff / 1000000);
+    if (diff >100000000) {
+        diff = (diff / 100000000);
         bp = "G";
     }
     else if (diff > 1000000) {

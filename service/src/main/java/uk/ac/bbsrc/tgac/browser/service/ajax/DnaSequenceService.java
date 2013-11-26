@@ -171,15 +171,20 @@ public class DnaSequenceService {
         try {
             JSONObject response = new JSONObject();
             String seqName = json.getString("query");
+
             Integer query = sequenceStore.getSeqRegionforone(seqName);
+
             String seqRegName = sequenceStore.getSeqRegionName(query);
+
             String seqlength = sequenceStore.getSeqLengthbyId(query);
 
             response.put("seqlength", seqlength);
             response.put("html", "");
             response.put("seqname", "<p> <b>Seq Region ID:</b> " + query + ",<b> Name: </b> " + seqRegName);//+", <b>cds:</b> "+cds+"</p>");
             response.put("seqregname", seqRegName);
+
             response.put("tracklists", analysisStore.getAnnotationId(query));
+
             response.put("coord_sys", sequenceStore.getCoordSys(seqRegName));
 
             return response;
@@ -237,10 +242,10 @@ public class DnaSequenceService {
         int count;
         try {
             Integer queryid = sequenceStore.getSeqRegion(seqName);
-            if (trackId.contains(".bw") ) {
+            if (trackId.toLowerCase().contains(".bw") || trackId.toLowerCase().contains(".bigwig") ) {
                 response.put(trackName, BigWigService.getBigWig(start, end, delta, trackId, seqName));
             } else if (trackId.contains(".sam") || trackId.contains(".bam")) {
-                response.put(trackName, SamBamService.getSamBam(start, end, delta, trackId, seqName));
+                response.put(trackName, SamBamService.getBAM(start, end, delta, trackId, seqName));
             } else if (trackId.contains(".wig")) {
                 response.put(trackName, SamBamService.getWig(start, end, delta, trackId, seqName));
             } else if (trackId.contains(".bed")) {

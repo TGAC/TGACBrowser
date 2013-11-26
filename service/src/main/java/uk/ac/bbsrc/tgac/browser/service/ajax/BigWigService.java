@@ -34,6 +34,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.MemoryUsage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -68,11 +71,7 @@ public class BigWigService {
     protected static final Logger log = LoggerFactory.getLogger(BigWigService.class);
 
     /**
-     * Return JSONArray
-     * <p>
-     * Read wig file
-     * loop though each line and parse it to tracks format filtering position and reference
-     * </p>
+     * Read bigWig file
      *
      * @param start     long Start position from where track details to be extracted
      * @param end       long End position to where track details to be extracted
@@ -82,19 +81,79 @@ public class BigWigService {
      * @return JSONArray of tracks
      * @throws Exception
      */
-    public static JSONArray getBigWig(long start, long end, int delta, String trackId, String reference) throws Exception {
+    public static JSONArray getBigWig(long start, long end, int delta, String trackId, String reference) throws Exception, WigFileException {
+        log.info("\n\n\ngetbigwig\n\n\n");
+
         JSONArray wig = new JSONArray();
-        JSONObject response = new JSONObject();
-        Path path = Paths.get(trackId);
+        MemoryMXBean memoryBean = ManagementFactory.getMemoryMXBean();
+        final int MEGABYTE = (1024 * 1024);
+
         try {
+            Path path = Paths.get(trackId);
+            log.info("\n\n1");
             BigWigFileReader bw = new BigWigFileReader(path);
+            log.info("\n\n2");
+
+            Contig result;// = bw.query(reference, (int) start, (int) end);
+            log.info("\n\n3");
+
+//            long span[] = new long[2];
+            log.info("\n\n4");
+
+            int bp;
+//            if (end - start < 15000) {
+//                log.info("\n\n5");
 //
-            if (bw.query(reference, (int) start, (int) end).length() < 5000) {
-                Contig result = bw.query(reference, (int) start, (int) end);
+//                result = bw.query(reference, (int) start, (int) end);
+//                float[] values = result.getValues();
+//                log.info("\n\n6");
+//
+//                for (int j = 0; j < values.length; j++) {
+//                    bp = (int) start + j;
+//
+//                    if (values[j] > 0 || values[j] < 0) {
+//                        span[0] = bp;
+//                        span[1] = (long) values[j];
+//                        wig.add(span);
+//                    }
+//                }
+//                log.info("\n\n7");
+//
+//                return wig;
+//            } else {
+//                log.info("\n\n8");
+//
+//                long diff = (end - start) / 5000;
+//                log.info("\n\n9");
+//
+//                for (int i = 0; i < 5000; i++) {
+//                    log.info("\n\n10");
+//
+//                    long temp_start = start + (i * diff);
+//                    long temp_end = temp_start + diff;
+//                    log.info("\n\n i"+i);
+//                    System.gc();
+//
+//                    bp = (int) temp_start;
+//                    Interval it  = new Interval(reference, (int) temp_start, (int) temp_end);
+//
+//
+//
+//                    double value = bw.queryStats(it).getMean();
+//
+//                    if (value > 0 || value < 0) {
+//                        span[0] = bp;
+//                        span[1] = (long) value;
+//                        wig.add(span);
+//                    }
+//                }
+
+            if (end - start < 5000) {
+                result = bw.query(reference, (int) start, (int) end);
                 float[] values = result.getValues();
 
                 for (int j = 0; j < values.length; j++) {
-                    int bp = (int) start + j;
+                    bp = (int) start + j;
                     if (values[j] > 0 || values[j] < 0) {
                         JSONArray span = new JSONArray();
                         span.add(bp);
@@ -104,29 +163,38 @@ public class BigWigService {
                 }
                 return wig;
             } else {
+
                 long diff = (end - start) / 5000;
+
                 for (int i = 0; i < 5000; i++) {
                     long temp_start = start + (i * diff);
                     long temp_end = temp_start + diff;
+                    Interval it  = new Interval(reference, (int) temp_start, (int) temp_end);
+                    double value = bw.queryStats(it).getMean();
+                    bp = (int) temp_start;
 
-                    int bp = (int) temp_start;
-                    float value = bw.query(reference, (int) temp_start, (int) temp_end).mean();
                     if (value > 0 || value < 0) {
                         JSONArray span = new JSONArray();
                         span.add(bp);
                         span.add(value);
                         wig.add(span);
                     }
+
                 }
                 return wig;
             }
-
-
+        } catch (OutOfMemoryError e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            MemoryUsage heapUsage = memoryBean.getHeapMemoryUsage();
+            long maxMemory = heapUsage.getMax() / MEGABYTE;
+            long usedMemory = heapUsage.getUsed() / MEGABYTE;
+            throw new Exception("Memory Use :" + usedMemory + "M/" + maxMemory + "M");
+        } catch (WigFileException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            throw new Exception("WigFile Exception error" + e.toString() + " " + e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            response.put("error", e.toString() + " " + e.getMessage());
-            wig.add(response);
-            return wig;
+            throw new Exception("getBigWig error" + e.toString() + " " + e.getMessage());
         }
     }
 }
