@@ -83,6 +83,7 @@ public class SQLAnalysisDAO implements AnalysisStore {
 
     /**
      * Get description for tracks
+     *
      * @param id
      * @return String with description information
      * @throws IOException
@@ -105,6 +106,7 @@ public class SQLAnalysisDAO implements AnalysisStore {
 
     /**
      * Get analysis_id from logic_name
+     *
      * @param trackName
      * @return analysis_id
      * @throws IOException
@@ -115,13 +117,14 @@ public class SQLAnalysisDAO implements AnalysisStore {
             return str;
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
-            throw new IOException("Analysis id not found for logic name "+trackName+"-" + e.getMessage());
+            throw new IOException("Analysis id not found for logic name " + trackName + "-" + e.getMessage());
         }
     }
 
 
     /**
      * Get all tracks from analysis and analysis_description table and lower level assembly details from cood_system tab,e
+     *
      * @param query
      * @return JSONArray of track information
      * @throws IOException
@@ -137,11 +140,14 @@ public class SQLAnalysisDAO implements AnalysisStore {
             for (Map map : maps) {
                 JSONObject annotationid = new JSONObject();
                 annotationid.put("name", map.get("name").toString().replaceAll("\\s+", "_").replaceAll("[.]", "_"));
-                JSONObject explrObject = JSONObject.fromObject(map.get("web_data"));
-                log.info("\n\n\n\tsource "+explrObject.get("source").toString());
-                if(explrObject.get("source").toString().equals("file")){
-                    annotationid.put("id", explrObject.get("filepath"));
-                }   else{
+                if (map.get("web_data") != null) {
+                    JSONObject explrObject = JSONObject.fromObject(map.get("web_data"));
+                    if (explrObject.get("source") != null && explrObject.get("source").toString().equals("file")) {
+                        annotationid.put("id", explrObject.get("filepath"));
+                    } else {
+                        annotationid.put("id", map.get("id"));
+                    }
+                } else {
                     annotationid.put("id", map.get("id"));
                 }
                 annotationid.put("desc", map.get("description"));
@@ -171,12 +177,13 @@ public class SQLAnalysisDAO implements AnalysisStore {
             return annotationlist;
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
-            throw new IOException("no result found for tracks for " + query+"-"+e.getMessage());
+            throw new IOException("no result found for tracks for " + query + "-" + e.getMessage());
         }
     }
 
     /**
      * Get logic_name from analysis_id
+     *
      * @param id
      * @return Logic Name
      * @throws IOException
@@ -187,7 +194,7 @@ public class SQLAnalysisDAO implements AnalysisStore {
             return str;
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
-            throw new IOException("Logic name not found for analysis id " + id+"-"+e.getMessage());
+            throw new IOException("Logic name not found for analysis id " + id + "-" + e.getMessage());
         }
     }
 }

@@ -92,7 +92,7 @@ function trackList(tracklist) {
 
             }
             else  if (Tracklist[i].web.source == "file") {
-                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "" + "{ fill:" + Tracklist[i].web.colour + "; stroke: " + Tracklist[i].web.colour + ";} </style>").appendTo("head");
+                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "" + "{ fill:" + Tracklist[i].web.colour + "; stroke: " + Tracklist[i].web.colour + "; background: " + Tracklist[i].web.colour + ";} </style>").appendTo("head");
             }
             else if (Tracklist[i].name.toLowerCase().indexOf("gene") >= 0) {
                 jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_exon" + "{ background:" + Tracklist[i].web.colour + ";border: 1px solid " + Tracklist[i].web.colour + ";} </style>").appendTo("head");

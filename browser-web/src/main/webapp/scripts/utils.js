@@ -136,7 +136,7 @@ function trackToggle(trackname) {
                 else if (trackName.toLowerCase().indexOf("gene") >= 0) {
                     dispGenes("#" + trackName + "_div", trackName, window['track_list' + trackName].expand, window['track_list' + trackName].display_label);
                 }
-                else if (trackid.toString().toLowerCase().indexOf("wig") >= 0 || trackid.toString().toLowerCase().indexOf("bw") >= 0) {
+                else if (trackid.toString().toLowerCase().indexOf("wig") >= 0 || trackid.toString().toLowerCase().indexOf("bw") >= 0 || trackid.toString().toLowerCase().indexOf("bigwig") >= 0) {
                     dispGraphWig("#" + trackName + "_div", trackName, trackid, window['track_list' + trackName].display_label);
                 }
                 else if (trackName.toLowerCase().indexOf("bed") >= 0) {
@@ -165,7 +165,7 @@ function trackToggle(trackname) {
             else if (trackname.toLowerCase().indexOf("gene") >= 0) {
                 dispGenes("#" + trackname + "_div", trackname, window['track_list' + trackname].expand, window['track_list' + trackname].display_label);
             }
-            else if (trackid.toString().toLowerCase().indexOf("wig") >= 0 || trackid.toString().toLowerCase().indexOf("bw") >= 0) {
+            else if (trackid.toString().toLowerCase().indexOf("wig") >= 0 || trackid.toString().toLowerCase().indexOf("bw") >= 0 || trackid.toString().toLowerCase().indexOf("bigwig") >= 0) {
                 dispGraphWig("#" + trackname + "_div", trackname, trackid, window['track_list' + trackname].display_label);
             }
             else if (trackname.toLowerCase().indexOf("bed") >= 0) {
