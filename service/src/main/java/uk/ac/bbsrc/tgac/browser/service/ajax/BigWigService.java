@@ -115,17 +115,18 @@ public class BigWigService {
             } else {
 
                 long diff = (end - start) / 5000;
-                Interval it;
+                Interval it = new Interval(reference, (int) start, (int) end);
+                long temp_start;
+                long temp_end;
+                double value;
                 for (int i = 0; i < 5000; i++) {
-                    long temp_start = start + (i * diff);
-                    long temp_end = temp_start + diff;
+                    temp_start = start + (i * diff);
+                    temp_end = temp_start + diff;
 
-                    IntervalFileReader<? extends Interval> readers = IntervalFileReader.autodetect(path);
-                    int count = readers.load(reference, (int) temp_start, (int) end).size();
+                    it.setStart((int) temp_start);
+                    it.setStop((int) temp_end);
+                    value = bw.queryStats(it).getSum();
 
-                    it = new Interval(reference, (int) temp_start, (int) temp_end);
-                    double value = bw.queryStats(it).getMean();
-                    it = null;
                     bp = (int) temp_start;
 
                     if (value > 0 || value < 0) {
@@ -135,6 +136,7 @@ public class BigWigService {
                     }
 
                 }
+                bw.close();
                 return wig;
             }
         } catch (OutOfMemoryError e) {
