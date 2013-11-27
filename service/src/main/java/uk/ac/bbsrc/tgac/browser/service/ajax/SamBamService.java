@@ -25,16 +25,15 @@
 
 package uk.ac.bbsrc.tgac.browser.service.ajax;
 
-import edu.unc.genomics.Contig;
 import edu.unc.genomics.SAMEntry;
 import edu.unc.genomics.io.BAMFileReader;
+import edu.unc.genomics.io.BedFileWriter;
+import edu.unc.genomics.io.IntervalFileReader;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.samtools.*;
-import net.sf.samtools.util.CloseableIterator;
-//import org.broad.igv.sam.*;
 
-//import org.broad.igv.sam.reader.*;
+import edu.unc.genomics.Interval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,10 +43,8 @@ import java.io.FileReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.Iterator;
 import java.util.List;
-import java.io.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -293,7 +290,31 @@ public class SamBamService {
     }
 
     /**
-     * Read BAM file
+     * Count reads in BAM file
+     *
+     * @param start     long Start position from where track details to be extracted
+     * @param end       long End position to where track details to be extracted
+     * @param delta     int delta for tracks layers
+     * @param trackId   String trackId its the file path and name
+     * @param reference String reference for the tracks
+     * @return int no of reads
+     * @throws Exception
+     */
+    public static int countBAM(long start, long end, int delta, String trackId, String reference) throws Exception {
+        Path path = Paths.get(trackId);
+
+        try {
+            IntervalFileReader<? extends Interval> readers = IntervalFileReader.autodetect(path);
+            int count = readers.load(reference, (int) start, (int) end).size();
+            return count;
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            throw new Exception("count BAM :" + e.getMessage());
+        }
+    }
+
+    /**
+     * Read BAM file to get read information
      *
      * @param start     long Start position from where track details to be extracted
      * @param end       long End position to where track details to be extracted
@@ -303,96 +324,81 @@ public class SamBamService {
      * @return JSONArray of tracks
      * @throws Exception
      */
-    public static JSONArray getBAM(long start, long end, int delta, String trackId, String reference) throws Exception {
-        log.info("\n\nget bam");
+    public static JSONArray getBAMReads(long start, long end, int delta, String trackId, String reference) throws Exception {
         JSONArray wig = new JSONArray();
         JSONObject response = new JSONObject();
         List<Integer> ends = new ArrayList<Integer>();
         ends.add(0, 0);
 
-        log.info("\n\n1");
         Path path = Paths.get(trackId);
 
 
         try {
+
             BAMFileReader reader = new BAMFileReader(path);
-            log.info("\n\n2");
-            log.info("\n\n3");
-
-
 
             Iterator<SAMEntry> result = reader.query(reference, (int) start, (int) end);
             JSONObject read = new JSONObject();
 
-            log.info("\n\n4 " + result.toString());
             int start_pos, end_pos;
-//            int count_break = 0;
-//            boolean detailed = true;
-//            counter :while (result.hasNext()) {
-//                count_break++;
-//                if(count_break > 1000){
-//                    detailed = false ;
-//                    log.info("\n\n if "+detailed);
-//                    break counter;
-//                }
-//            }
-//            if (count_break <= 5000) {
-                SAMEntry record;
-                while (result.hasNext()) {
-                    log.info("\nloop");
-                    record = result.next();
-                    start_pos = record.getAlignmentStart();
-                    end_pos = record.getAlignmentEnd();
-                    read.put("start", start_pos);
-                    read.put("end", end_pos);
-                    read.put("desc", record.getReadName());
-                    read.put("layer", ends.size());
-                    read.put("cigars", record.getCigarString());
-                    for (int i = 0; i < ends.size(); i++) {
-                        if (start_pos - ends.get(i) >= delta) {
-                            ends.remove(i);
-                            ends.add(i, end_pos);
-                            read.put("layer", i + 1);
-                            break;
-                        } else if ((start_pos - ends.get(i) < delta) && (i + 1) == ends.size()) {
-                            if (i == 0) {
-                                read.put("layer", ends.size());
-                                ends.add(i, end_pos);
-                            } else {
-                                read.put("layer", ends.size());
-                                ends.add(ends.size(), end_pos);
-                            }
-                            break;
-                        } else {
-                            continue;
-                        }
+
+            SAMEntry record;
+
+
+            while (result.hasNext()) {
+                record = result.next();
+                start_pos = record.getAlignmentStart();
+                end_pos = record.getAlignmentEnd();
+
+
+                read.put("start", start_pos);
+                read.put("end", end_pos);
+                read.put("desc", record.getReadName());
+                read.put("layer", ends.size());
+                if (record.getProperPairFlag()) {
+                    if (record.getFirstOfPairFlag()) {
+                        read.put("colour", "steelblue");
+                    } else if (record.getSecondOfPairFlag()) {
+                        read.put("colour", "brown");
                     }
-                    wig.add(read);
+                } else {
+                    read.put("colour", "orange");
                 }
-//            } else {
-//                log.info("\n\n here else "+detailed);
-//
-//                long diff = (end - start) / 400;
-//                long temp_start, temp_end;
-//                for (int i = 0; i < 400; i++) {
-//                    log.info("\n\n here loop "+i);
-//
-//                    int count = 0;
-//                    temp_start = start + (i * diff);
-//                    temp_end = temp_start + diff;
-//                    result = reader.query(reference, (int) temp_start, (int) temp_end);
-//
-//                    while (result.hasNext()) {
-//                        count++;
-//                    }
-//
-//                    read.put("start", temp_start);
-//                    read.put("end", temp_end);
-//                    read.put("graph", count);
-//
-//                }
-//                return wig;
-//            }
+//                read.put("flag0", record.getFlags());
+//                read.put("flag1", record.getDuplicateReadFlag());
+//                read.put("flag4", record.getReadPairedFlag());
+//                read.put("flag3", record.getProperPairFlag());
+//                read.put("flag8", record.getSecondOfPairFlag());
+//                read.put("flag7", record.getDuplicateReadFlag());
+//                read.put("flag6", record.getMateNegativeStrandFlag());
+//                read.put("flag9", record.getReadFailsVendorQualityCheckFlag());
+//                read.put("flag10", record.getReadUnmappedFlag());
+//                read.put("flag2", record.getMateUnmappedFlag());
+//                read.put("flag11", record.getNotPrimaryAlignmentFlag());
+//                read.put("flag12", record.getNotPrimaryAlignmentFlag());
+
+                read.put("cigars", record.getCigarString());
+                for (int i = 0; i < ends.size(); i++) {
+                    if (start_pos - ends.get(i) >= delta) {
+                        ends.remove(i);
+                        ends.add(i, end_pos);
+                        read.put("layer", i + 1);
+                        break;
+                    } else if ((start_pos - ends.get(i) < delta) && (i + 1) == ends.size()) {
+                        if (i == 0) {
+                            read.put("layer", ends.size());
+                            ends.add(i, end_pos);
+                        } else {
+                            read.put("layer", ends.size());
+                            ends.add(ends.size(), end_pos);
+                        }
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
+                wig.add(read);
+            }
 
             return wig;
 
@@ -402,6 +408,48 @@ public class SamBamService {
             response.put("error", e.toString() + " " + e.getMessage());
             wig.add(response);
             return wig;
+        }
+    }
+
+    /**
+     * Read BAM file for getting overview information in form of graphs
+     *
+     * @param start     long Start position from where track details to be extracted
+     * @param end       long End position to where track details to be extracted
+     * @param delta     int delta for tracks layers
+     * @param trackId   String trackId its the file path and name
+     * @param reference String reference for the tracks
+     * @return JSONArray of tracks
+     * @throws Exception
+     */
+    public static JSONArray getBAMGraphs(long start, long end, int delta, String trackId, String reference) throws Exception {
+        JSONArray bam = new JSONArray();
+        JSONObject response = new JSONObject();
+
+        Path path = Paths.get(trackId);
+
+        try {
+            JSONObject read = new JSONObject();
+            IntervalFileReader<? extends Interval> readers = IntervalFileReader.autodetect(path);
+
+            long diff = (end - start) / 400;
+            long temp_start, temp_end;
+
+            for (int i = 0; i < 400; i++) {
+                temp_start = start + (i * diff);
+                temp_end = temp_start + diff;
+                int count = readers.load(reference, (int) temp_start, (int) temp_end).size();
+                read.put("start", temp_start);
+                read.put("end", temp_end);
+                read.put("graph", count);
+                bam.add(read);
+            }
+            return bam;
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            response.put("error", e.toString() + " " + e.getMessage());
+            bam.add(response);
+            return bam;
         }
     }
 

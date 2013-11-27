@@ -26,6 +26,7 @@
 package uk.ac.bbsrc.tgac.browser.service.ajax;
 
 import edu.unc.genomics.Contig;
+import edu.unc.genomics.io.IntervalFileReader;
 import edu.unc.genomics.io.WigFileException;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -90,63 +91,13 @@ public class BigWigService {
 
         try {
             Path path = Paths.get(trackId);
-            log.info("\n\n1");
             BigWigFileReader bw = new BigWigFileReader(path);
-            log.info("\n\n2");
 
-            Contig result;// = bw.query(reference, (int) start, (int) end);
-            log.info("\n\n3");
+            Contig result;
 
-//            long span[] = new long[2];
-            log.info("\n\n4");
+            long span[] = new long[2];
 
             int bp;
-//            if (end - start < 15000) {
-//                log.info("\n\n5");
-//
-//                result = bw.query(reference, (int) start, (int) end);
-//                float[] values = result.getValues();
-//                log.info("\n\n6");
-//
-//                for (int j = 0; j < values.length; j++) {
-//                    bp = (int) start + j;
-//
-//                    if (values[j] > 0 || values[j] < 0) {
-//                        span[0] = bp;
-//                        span[1] = (long) values[j];
-//                        wig.add(span);
-//                    }
-//                }
-//                log.info("\n\n7");
-//
-//                return wig;
-//            } else {
-//                log.info("\n\n8");
-//
-//                long diff = (end - start) / 5000;
-//                log.info("\n\n9");
-//
-//                for (int i = 0; i < 5000; i++) {
-//                    log.info("\n\n10");
-//
-//                    long temp_start = start + (i * diff);
-//                    long temp_end = temp_start + diff;
-//                    log.info("\n\n i"+i);
-//                    System.gc();
-//
-//                    bp = (int) temp_start;
-//                    Interval it  = new Interval(reference, (int) temp_start, (int) temp_end);
-//
-//
-//
-//                    double value = bw.queryStats(it).getMean();
-//
-//                    if (value > 0 || value < 0) {
-//                        span[0] = bp;
-//                        span[1] = (long) value;
-//                        wig.add(span);
-//                    }
-//                }
 
             if (end - start < 5000) {
                 result = bw.query(reference, (int) start, (int) end);
@@ -155,9 +106,8 @@ public class BigWigService {
                 for (int j = 0; j < values.length; j++) {
                     bp = (int) start + j;
                     if (values[j] > 0 || values[j] < 0) {
-                        JSONArray span = new JSONArray();
-                        span.add(bp);
-                        span.add(values[j]);
+                        span[0] = bp;
+                        span[1] = (long) values[j];
                         wig.add(span);
                     }
                 }
@@ -165,18 +115,22 @@ public class BigWigService {
             } else {
 
                 long diff = (end - start) / 5000;
-
+                Interval it;
                 for (int i = 0; i < 5000; i++) {
                     long temp_start = start + (i * diff);
                     long temp_end = temp_start + diff;
-                    Interval it  = new Interval(reference, (int) temp_start, (int) temp_end);
+
+                    IntervalFileReader<? extends Interval> readers = IntervalFileReader.autodetect(path);
+                    int count = readers.load(reference, (int) temp_start, (int) end).size();
+
+                    it = new Interval(reference, (int) temp_start, (int) temp_end);
                     double value = bw.queryStats(it).getMean();
+                    it = null;
                     bp = (int) temp_start;
 
                     if (value > 0 || value < 0) {
-                        JSONArray span = new JSONArray();
-                        span.add(bp);
-                        span.add(value);
+                        span[0] = bp;
+                        span[1] = (long) value;
                         wig.add(span);
                     }
 
