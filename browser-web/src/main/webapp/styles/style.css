@@ -2482,7 +2482,9 @@ span.deleteicon input {
 
 .skip {
     position: absolute;
-    background-color: #ffffff;
+    /*background-color: white;*/
+    background: url("../images/browser/gene.png") repeat-x center center;
+
 }
 
 .insert {

@@ -936,9 +936,9 @@ function dispTrack(div, trackName, className) {
                     }).appendTo("#" + trackName + "" + track_len);
                 }
 
-//                if (track[track_len].cigars && stopposition > 50) {
-//                    jQuery(dispCigar(track[track_len].cigars, track[track_len].start, top)).appendTo(div);
-//                }
+                if (track[track_len].cigars && stopposition > 50) {
+                    jQuery(dispCigarLine(track[track_len].cigars, track[track_len].start, top)).appendTo(div);
+                }
 //                else if (track[track_len].cigarline && stopposition > 50) {
 //                    jQuery(dispCigarLine(track[track_len].cigarline, track[track_len].start, top)).appendTo(div);
 //                }
@@ -975,6 +975,12 @@ function dispCigarLine(cigars, start, top) {
             }
             else if (key == "I") {
                 trackClass = "insert";
+                startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                stopposition = (length) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                track_html += trackHTML(startposition, stopposition, top, trackClass);
+                cigar_pos = parseInt(cigar_pos) + parseInt(length)
+            }   else if (key == "N") {
+                trackClass = "skip";
                 startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                 stopposition = (length) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
                 track_html += trackHTML(startposition, stopposition, top, trackClass);
@@ -1029,9 +1035,10 @@ function dispCigar(cigars, start, top) {
         else if (key == "D") {
             trackClass = "delete";
         }
-        else if (key == "D") {
+        else if (key == "D" || key == "N" ) {
             trackClass = "skip";
         }
+
         else if (key == "X") {
             trackClass = "mismatch";
         }

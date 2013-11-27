@@ -421,7 +421,7 @@ function displayCursorPosition() {
 function dispSeqCoord() {
     var diff = parseInt(parseInt(sequencelength) / 20);
     var bp = "";
-    if (diff >100000000) {
+    if (diff > 100000000) {
         diff = (diff / 100000000);
         bp = "G";
     }
@@ -440,7 +440,7 @@ function dispSeqCoord() {
     var diff = parseInt(parseInt(sequencelength) / 40);
     var bp = "";
     if (diff > 100000000) {
-        diff = (diff / 1000000);
+        diff = (diff / 100000000);
         bp = "G";
     }
     else if (diff > 1000000) {
@@ -459,7 +459,7 @@ function dispSeqCoord() {
     var diff = parseInt(parseInt(len) / 4);
     var bp = "";
     if (diff > 100000000) {
-        diff = (diff / 1000000);
+        diff = (diff / 100000000);
         bp = "G";
     }
     else if (diff > 1000000) {
@@ -475,7 +475,7 @@ function dispSeqCoord() {
     var diff = parseInt(parseInt(len) / 2);
     var bp = "";
     if (diff > 100000000) {
-        diff = (diff / 1000000);
+        diff = (diff / 100000000);
         bp = "G";
     }
     else if (diff > 1000000) {
@@ -491,7 +491,7 @@ function dispSeqCoord() {
     var diff = parseInt(parseInt(len) / 4 * 3);
     var bp = "";
     if (diff > 100000000) {
-        diff = (diff / 1000000);
+        diff = (diff / 100000000);
         bp = "G";
     }
     else if (diff > 1000000) {
@@ -508,7 +508,7 @@ function dispSeqCoord() {
     var diff = parseInt(parseInt(len));
     var bp = "";
     if (diff > 100000000) {
-        diff = (diff / 1000000);
+        diff = (diff /100000000);
 
         bp = "G";
     }

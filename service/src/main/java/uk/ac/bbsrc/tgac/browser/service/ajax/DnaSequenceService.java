@@ -102,6 +102,7 @@ public class DnaSequenceService {
     public void setSearchStore(SearchStore searchStore) {
         this.searchStore = searchStore;
     }
+
     /**
      * Returns a JSONObject that can be read as single reference or a list of results
      * <p/>
@@ -242,10 +243,18 @@ public class DnaSequenceService {
         int count;
         try {
             Integer queryid = sequenceStore.getSeqRegion(seqName);
-            if (trackId.toLowerCase().contains(".bw") || trackId.toLowerCase().contains(".bigwig") ) {
+            if (trackId.toLowerCase().contains(".bw") || trackId.toLowerCase().contains(".bigwig")) {
                 response.put(trackName, BigWigService.getBigWig(start, end, delta, trackId, seqName));
             } else if (trackId.contains(".sam") || trackId.contains(".bam")) {
-                response.put(trackName, SamBamService.getBAM(start, end, delta, trackId, seqName));
+                count = SamBamService.countBAM(start, end, delta, trackId, seqName);
+                log.info("\n\n\ncount "+count);
+                if (count < 25000) {
+                    response.put(trackName, SamBamService.getBAMReads(start, end, delta, trackId, seqName));
+                } else {
+                    response.put("type", "graph");
+                    response.put(trackName, SamBamService.getBAMGraphs(start, end, delta, trackId, seqName));
+                }
+
             } else if (trackId.contains(".wig")) {
                 response.put(trackName, SamBamService.getWig(start, end, delta, trackId, seqName));
             } else if (trackId.contains(".bed")) {
@@ -276,25 +285,33 @@ public class DnaSequenceService {
                 }
             } else {
                 log.info("\n\nloadtrack else");
-                log.info("\n\n"+dafStore.getClass().getName());
+                log.info("\n\n" + dafStore.getClass().getName());
                 count = dafStore.countHit(queryid, trackId, start, end);
-                log.info("\n\n\n\nelse"+count);
+                log.info("\n\n\n\nelse" + count);
 
                 if (count < 5000) {
-                    response.put(trackName,dafStore.processHit(dafStore.getHit(queryid, trackId, start, end), start, end, delta, queryid, trackId));
+                    response.put(trackName, dafStore.processHit(dafStore.getHit(queryid, trackId, start, end), start, end, delta, queryid, trackId));
                 } else {
                     response.put("type", "graph");
                     response.put(trackName, dafStore.getHitGraph(queryid, trackId, start, end));
                 }
             }
 
-        } catch (IOException e) {
+        } catch (
+                IOException e
+                )
+
+        {
 
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             e.getMessage();
             e.getCause();
             return JSONUtils.SimpleJSONError(e.getMessage());
-        } catch (Exception e) {
+        } catch (
+                Exception e
+                )
+
+        {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             e.getMessage();
             e.getCause();
