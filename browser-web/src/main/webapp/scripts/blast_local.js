@@ -145,7 +145,7 @@ function blastTrackSearch(query, start, end, hit, db, type) {
                 window['blasttrack'] = "running";
             }
             if (window['blasttrack'] == "running") {
-                window['blasttrack'] = json.blast;//(decodeURIComponent(json.blast.replace(/\s+/g, ""))).replace(/>/g, "");
+                window['blasttrack'] = json.blast;
             }
             else {
                 jQuery.merge(window['blasttrack'], json.blast);
