@@ -198,7 +198,7 @@ function trackList(tracklist) {
 
     for (i = 0; i < Tracklist.length; i++) {
 
-        jQuery("#tracks").append("<div id='" + Tracklist[i].name + "_wrapper' class='feature_tracks' style=\"display:none\">" +
+        jQuery("#tracks").append("<div id='" + Tracklist[i].name + "_wrapper' class='feature_tracks' style=\"display:none; max-height:110px;\">" +
             "</div>");
 
         if (Tracklist[i].web && Tracklist[i].web.label == false) {
@@ -229,9 +229,9 @@ function trackList(tracklist) {
         jQuery(function () {
             jQuery("#" + Tracklist[i].name + "_wrapper").resizable({
                 handles: "s",
-                alsoResize: "#" + Tracklist[i].name + "_div",
                 minHeight: "50px",
-                borderBottom: '1px solid black'
+                borderBottom: '1px solid black',
+                style : "bottom: 0px"
             });
         });
     }

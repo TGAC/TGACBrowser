@@ -33,6 +33,8 @@ function dispGraphWig(div, trackName, trackId, className) {
     jQuery(div).css('height', '70px');
     jQuery(div).fadeIn();
     jQuery("#" + trackName + "_wrapper").fadeIn();
+    jQuery("#" + trackName + "_wrapper").css("max-height", '70px');
+
 }
 
 function posGraphWig(div, trackName, trackId, className) {
