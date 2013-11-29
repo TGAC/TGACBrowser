@@ -161,6 +161,8 @@ public class SQLAnalysisDAO implements AnalysisStore {
             }
             List<Map<String, Object>> coords = template.queryForList(GET_Coords_sys_API, new Object[]{rank});
 
+            JSONObject web = new JSONObject();
+            web.put("trackgroup","Assembly_Tracks");
             for (Map map : coords) {
                 JSONObject annotationid = new JSONObject();
 
@@ -172,6 +174,7 @@ public class SQLAnalysisDAO implements AnalysisStore {
                 annotationid.put("merge", "0");
                 annotationid.put("label", "0");
                 annotationid.put("graph", "false");
+                annotationid.put("web", web);
                 annotationlist.add(annotationid);
             }
             return annotationlist;
