@@ -2073,7 +2073,7 @@ span.counter {
     border-right: 0;
     float: left;
     /*resize: vertical;*/
-    overflow-x: hidden;
+    /*overflow-x: hidden;*/
     /*overflow-y: scroll;*/
 
 }
@@ -2461,6 +2461,16 @@ span.deleteicon input {
 .ui-resizable {
     border-bottom: 1px solid gray;
     min-height: 110px;
+    max-height: 110px;
+
+}
+
+.resize-arrow {
+    background-image: url("../images/browser/asc.gif");
+    background-position: center top;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-color: #F5F5F5;
 
 }
 

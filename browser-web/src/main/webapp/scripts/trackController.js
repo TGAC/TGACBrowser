@@ -316,6 +316,7 @@ function dispGenes(div, track, expand, className) {
     var labeltoogle = "display : in-line;";
     var labelclass = "label" + track;
     var track_html = [];
+    var max = 110;
 
     trackClass = "exon";
 
@@ -421,7 +422,10 @@ function dispGenes(div, track, expand, className) {
                 }
                 var top = genes[len].layer * 20 + 15;
 
-                var startposition = (gene_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                if(max < top){
+                    max = top;
+                }
+                    var startposition = (gene_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                 var stopposition = (gene_stop - gene_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
@@ -479,6 +483,8 @@ function dispGenes(div, track, expand, className) {
                         j = genes[len].transcript[transcript_len].layer;
                     }
                     var top = genes[len].transcript[transcript_len].layer * 20 + 15;
+
+
                     var startposition = (gene_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                     var stopposition = (gene_stop - gene_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
@@ -522,6 +528,16 @@ function dispGenes(div, track, expand, className) {
             }
         }
     }
+    max = parseInt(jQuery(div)[0].scrollHeight) + 50;
+
+    jQuery("#" + track + "_wrapper").css("max-height", max);
+
+    if(max >  parseInt(jQuery("#" + track + "_wrapper").css("height"))){
+        jQuery("#" + track + "_wrapper").children(".ui-resizable-handle").css('background-image','../images/browser/asc.gif')
+    } else{
+        jQuery("#" + track + "_wrapper").children(".ui-resizable-handle").css('background','transparent')
+    }
+
 }
 
 function dispGeneExon(track, genestrand, className, div) {
@@ -750,6 +766,7 @@ function dispTrack(div, trackName, className) {
     var trackId;
     var trackClass, label;
     var track_html = [];
+    var max = 110;
 
     if (window['track_list' + trackName].id.toString().indexOf('cs') > -1) {
         coord = true;
@@ -770,27 +787,6 @@ function dispTrack(div, trackName, className) {
 
 
     var j = 0;
-//    if (trackName.toLowerCase().indexOf("contig") >= 0) {
-//        trackClass = "contigs track";
-//    }
-//    else if (trackName.toLowerCase().indexOf("est") >= 0) {
-//        trackClass = "est track";
-//    }
-//    else if (trackName.toLowerCase().indexOf("clone") >= 0) {
-//        trackClass = "clone track";
-//    }
-//    else if (trackName.toLowerCase().indexOf("align") >= 0) {
-//        trackClass = "align track";
-//    }
-//    else if (trackName.toLowerCase().indexOf("sam") >= 0 || trackName.toLowerCase().indexOf("bam") >= 0) {
-//        trackClass = "sam track";
-//    }
-//    else if (trackName.toLowerCase().indexOf("repeat") >= 0) {
-//        trackClass = "repeat track";
-//    }
-//    else {
-//        trackClass = "unknown track";
-//    }
 
     if (window['track_list' + trackName].label == 0) {
         labeltoogle = "display : none;";
@@ -950,7 +946,19 @@ function dispTrack(div, trackName, className) {
             dispGraph(div, trackName, trackId)
         }
     }
+
+    max = parseInt(jQuery(div)[0].scrollHeight) + 50;
+
+    jQuery("#" + trackName + "_wrapper").css("max-height", max);
+
+    if(max >  parseInt(jQuery("#" + trackName + "_wrapper").css("height"))){
+        jQuery("#" + trackName + "_wrapper").children(".ui-resizable-handle").addClass("resize-arrow")
+    } else{
+        jQuery("#" + trackName + "_wrapper").children(".ui-resizable-handle").removeClass("resize-arrow")
+
+    }
 }
+
 function dispCigarLine(cigars, start, top) {
     var track_html = "";
     var trackClass = "";
