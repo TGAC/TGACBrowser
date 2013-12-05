@@ -1979,6 +1979,9 @@ span.counter {
     /*border-radius: 0em 2em 2em 2em;*/
     border: 1px solid gray;
     /*border-radius: 10px 10px;*/
+    border-radius: 5px;
+    z-index: 999;
+    padding: 5px;
 
 }
 
@@ -2471,6 +2474,7 @@ span.deleteicon input {
     background-repeat: no-repeat;
     background-size: contain;
     background-color: #F5F5F5;
+    bottom: 0px;
 
 }
 
@@ -2674,4 +2678,9 @@ span.deleteicon input {
 border: 1px solid gray;
     border-radius: 5px 5px 5px 5px;
     margin: 5px;
+}
+
+
+.ui-resizable-s{
+    bottom: 0px;
 }

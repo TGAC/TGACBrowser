@@ -558,7 +558,7 @@ public class SQLGeneDAO implements GeneStore {
 
                     for (int a = 0; a < ends_gene.size(); a++) {
 
-                        if (start_pos - ends_gene.get(a) > delta) {
+                        if (start_pos - ends_gene.get(a) >= delta) {
                             ends_gene.remove(a);
                             ends_gene.add(a, end_pos);
                             eachGene.put("layer", a + 1);
