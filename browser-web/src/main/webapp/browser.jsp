@@ -281,24 +281,7 @@
                         <div id="mergetracklist" align="left"></div>
                     </td>
                 </tr>
-                <%--<tr>--%>
-                <%--<td>--%>
-                <%--<form method='post'--%>
-                <%--id='ajax_upload_form'--%>
-                <%--action="<c:url value="/vietnamese_rice/upload/file"/>"--%>
-                <%--enctype="multipart/form-data"--%>
-                <%--target="target_upload"--%>
-                <%--onsubmit="fileUploadProgress('ajax_upload_form', 'statusdiv', fileUploadSuccess);">--%>
-                <%--<input type="file" name="file"/>--%>
-                <%--<button type="submit" class="br-button ui-state-default ui-corner-all">Upload</button>--%>
-                <%--</form>--%>
-                <%--<iframe id='target_upload' name='target_upload' src='' style='display: none'></iframe>--%>
-                <%--<div id="statusdiv"></div>--%>
-                <%--</td>--%>
-                <%--<td>--%>
 
-                <%--</td>--%>
-                <%--</tr>--%>
             </table>
         </div>
         <%--<div id="openCloseWrap" style="display: none; cursor: pointer" onclick="tracklistopenclose();">--%>
@@ -544,7 +527,7 @@
 
 </div>
 
-<div id=blastselector class="popupmenu" style="position: absolute; display: none">
+<div id=blastselector class="popupmenu" style="display: none">
 
     <div id=blastdbs style="position: absolute; display: none">
         Blast DB <select name="blastdb" id="blastdb">

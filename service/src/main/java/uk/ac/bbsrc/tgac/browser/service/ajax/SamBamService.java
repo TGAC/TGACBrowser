@@ -32,6 +32,7 @@ import edu.unc.genomics.io.IntervalFileReader;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.samtools.*;
+import org.broad.tribble.*;
 
 import edu.unc.genomics.Interval;
 import org.slf4j.Logger;
@@ -337,6 +338,7 @@ public class SamBamService {
 
             BAMFileReader reader = new BAMFileReader(path);
 
+
             Iterator<SAMEntry> result = reader.query(reference, (int) start, (int) end);
             JSONObject read = new JSONObject();
 
@@ -347,6 +349,7 @@ public class SamBamService {
 
             while (result.hasNext()) {
                 record = result.next();
+
                 start_pos = record.getAlignmentStart();
                 end_pos = record.getAlignmentEnd();
 

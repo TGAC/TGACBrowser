@@ -62,7 +62,6 @@ public class SQLSequenceDAO implements SequenceStore {
     }
 
 
-
     public static final String GET_SEQ_FROM_SEQ_REGION_ID = "SELECT sequence FROM dna WHERE seq_region_id = ?";
     public static final String GET_SEQ_REGION_ID_FROM_NAME = "SELECT seq_region_id FROM seq_region WHERE name  = ?";
     public static final String GET_SEQ_REGION_ID_SEARCH = "SELECT s.seq_region_id, s.name, s.length, cs.name as Type FROM seq_region s, coord_system cs WHERE s.name like ? and cs.coord_system_id = s.coord_system_id;";
@@ -106,18 +105,13 @@ public class SQLSequenceDAO implements SequenceStore {
     }
 
 
-
-
-
-
-
     public String getSeqBySeqRegionId(int searchQuery) throws IOException {
         try {
             String str = template.queryForObject(GET_SEQ_FROM_SEQ_REGION_ID, new Object[]{searchQuery}, String.class);
             return str;
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
-            throw new IOException(" getSeqBySeqRegionId no result found"+e.getMessage());
+            throw new IOException(" getSeqBySeqRegionId no result found" + e.getMessage());
 
         }
     }
@@ -139,7 +133,7 @@ public class SQLSequenceDAO implements SequenceStore {
             return coord_id;
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
-            throw new IOException(" getSeqRegionCoordId"+e.getMessage());
+            throw new IOException(" getSeqRegionCoordId" + e.getMessage());
 //            return 0;
         }
     }
@@ -183,7 +177,6 @@ public class SQLSequenceDAO implements SequenceStore {
     }
 
 
-
     public JSONArray getSeqRegionSearchMap(String searchQuery) throws IOException {
         try {
             JSONArray names = new JSONArray();
@@ -203,7 +196,7 @@ public class SQLSequenceDAO implements SequenceStore {
             //     return getGOSearch(searchQuery);
             e.printStackTrace();
 
-            throw new IOException("Seq region search map result not found"+e.getMessage());
+            throw new IOException("Seq region search map result not found" + e.getMessage());
         }
     }
 
@@ -218,7 +211,7 @@ public class SQLSequenceDAO implements SequenceStore {
         } catch (EmptyResultDataAccessException e) {
 //     return getGOSearch(searchQuery);
             e.printStackTrace();
-            throw new IOException("seqregion id search result not found"+e.getMessage());
+            throw new IOException("seqregion id search result not found" + e.getMessage());
         }
     }
 
@@ -229,10 +222,9 @@ public class SQLSequenceDAO implements SequenceStore {
             return maps;
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
-            throw new IOException("seqregion search size result not found"+e.getMessage());
+            throw new IOException("seqregion search size result not found" + e.getMessage());
         }
     }
-
 
 
     public Integer getSeqRegion(String searchQuery) throws IOException {
@@ -253,10 +245,6 @@ public class SQLSequenceDAO implements SequenceStore {
 
         }
     }
-
-
-
-
 
 
     public Map<String, Object> getStartEndAnalysisIdBySeqRegionId(int id) throws IOException {
@@ -305,9 +293,6 @@ public class SQLSequenceDAO implements SequenceStore {
     }
 
 
-
-
-
     public Integer getSeqRegionforone(String searchQuery) throws IOException {
         try {
             int i = template.queryForObject(GET_SEQ_REGION_ID_SEARCH_For_One, new Object[]{searchQuery}, Integer.class);
@@ -338,7 +323,6 @@ public class SQLSequenceDAO implements SequenceStore {
 
         }
     }
-
 
 
     public String getDomains(String geneid) throws IOException {
@@ -519,7 +503,6 @@ public class SQLSequenceDAO implements SequenceStore {
     }
 
 
-
     public String getCoordSys(String query) throws Exception {
         try {
             String coordSys = "";
@@ -531,3 +514,5 @@ public class SQLSequenceDAO implements SequenceStore {
         }
     }
 }
+
+

@@ -532,10 +532,13 @@ function dispGenes(div, track, expand, className) {
 
     jQuery("#" + track + "_wrapper").css("max-height", max);
 
+
+
     if(max >  parseInt(jQuery("#" + track + "_wrapper").css("height"))){
-        jQuery("#" + track + "_wrapper").children(".ui-resizable-handle").css('background-image','../images/browser/asc.gif')
+        jQuery("#" + track + "_wrapper").children(".ui-resizable-handle").addClass("resize-arrow")
     } else{
-        jQuery("#" + track + "_wrapper").children(".ui-resizable-handle").css('background','transparent')
+        jQuery("#" + track + "_wrapper").children(".ui-resizable-handle").removeClass("resize-arrow")
+
     }
 
 }
@@ -612,7 +615,7 @@ function dispGeneExon(track, genestrand, className, div) {
                     if (last != null) {
                         jQuery("<span>").attr({
                             'class': spanclass,
-                            'style': "TOP:" + (top - 3) + "px; left:" + (startposition - 20) + "px "
+                            'style': "position: absolute; TOP:" + (top - 3) + "px; left:" + (startposition - 20) + "px "
                         }).appendTo(div);
 
                     }
