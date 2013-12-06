@@ -429,7 +429,7 @@ function dispGenes(div, track, expand, className) {
                 var stopposition = (gene_stop - gene_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
-                jQuery("<div>").attr({
+                var temp = jQuery("<div>").attr({
                     'id': track + "" + len,
                     'class': trackClass + " " + className+"_exon",
                     'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width :" + stopposition + "px;",
@@ -443,7 +443,7 @@ function dispGenes(div, track, expand, className) {
                     'class': "tracklabel " + labelclass,
                     'style': labeltoogle + " z-index: 999; overflow: hidden;text-overflow: ellipsis;",
                     'title': label
-                }).html("<p class='track_label'>" + label + "</p>").appendTo("#" + track + "" + len);
+                }).html("<p class='track_label'>" + label + "</p>").appendTo(temp);
             }
         }
         else {
@@ -489,7 +489,7 @@ function dispGenes(div, track, expand, className) {
                     var stopposition = (gene_stop - gene_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
-                    jQuery("<div>").attr({
+                    var temp = jQuery("<div>").attr({
                         'id': track + "" + len,
                         'class': trackClass + " " + className,
                         'style': "position:absolute;  cursor:pointer; height: 10px; TOP:" + top + "px; LEFT:" + startposition + "px; width :" + stopposition + "px;",
@@ -502,7 +502,7 @@ function dispGenes(div, track, expand, className) {
                         'class': "tracklabel " + labelclass,
                         'style': labeltoogle + " z-index: 999; overflow: hidden;text-overflow: ellipsis;",
                         'title': label
-                    }).html("<p>" + label + "</p>").appendTo("#" + track + "" + len);
+                    }).html("<p>" + label + "</p>").appendTo(temp);
 
 
                     if (stopposition > 10) {
@@ -913,7 +913,7 @@ function dispTrack(div, trackName, className) {
                     label = track_start + "-" + track_stop;
                 }
 
-                jQuery("<div>").attr({
+                var temp = jQuery("<div>").attr({
                     'id': trackName + "" + track_len,
                     'class': trackClass + " " + className,
                     'style': border + "" + modi_style + "TOP:" + top + "px; LEFT:" + (startposition) + "px; width:" + (stopposition) + "px;",
@@ -925,14 +925,13 @@ function dispTrack(div, trackName, className) {
                     'class': "tracklabel " + labelclass,
                     'style': labeltoogle + " z-index: 999; overflow: hidden;text-overflow: ellipsis;",
                     'title': label
-
-                }).html(label).appendTo("#" + trackName + "" + track_len);
+                }).html(label).appendTo(temp);
 
                 if (stopposition > 10) {
                     jQuery("<span>").attr({
                         'class': spanclass,
                         'style': "cursor:pointer; position:absolute; TOP:" + (-6) + "px; left:" + ( parseInt(stopposition / 2) ) + "px; opacity:0.6; "
-                    }).appendTo("#" + trackName + "" + track_len);
+                    }).appendTo(temp);
                 }
 
                 if (track[track_len].cigars && stopposition > 50) {
@@ -942,8 +941,6 @@ function dispTrack(div, trackName, className) {
 //                    jQuery(dispCigarLine(track[track_len].cigarline, track[track_len].start, top)).appendTo(div);
 //                }
             }
-
-
         }
         else if (track.length >= 10000) {
             dispGraph(div, trackName, trackId)
