@@ -68,6 +68,10 @@
         <property name="jdbcTemplate" ref="interfaceTemplate"/>
     </bean>
 
+    <bean id="util" class="uk.ac.bbsrc.tgac.browser.store.ensembl.Util">
+        <property name="jdbcTemplate" ref="interfaceTemplate"/>
+    </bean>
+
     <bean name="sequenceStore" class="org.springframework.aop.framework.ProxyFactoryBean">
         <property name="proxyInterfaces">
             <value>uk.ac.bbsrc.tgac.browser.core.store.SequenceStore</value>
@@ -112,8 +116,6 @@
         </property>
     </bean>
 
-
-
     <bean name="assemblyStore" class="org.springframework.aop.framework.ProxyFactoryBean">
         <property name="proxyInterfaces">
             <value>uk.ac.bbsrc.tgac.browser.core.store.AssemblyStore</value>
@@ -147,5 +149,15 @@
         </property>
     </bean>
 
+    <bean name="utilsStore" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="proxyInterfaces">
+            <value>uk.ac.bbsrc.tgac.browser.core.store.UtilsStore</value>
+        </property>
+        <property name="interceptorNames">
+            <list>
+                <value>util</value>
+            </list>
+        </property>
+    </bean>
 
 </beans>

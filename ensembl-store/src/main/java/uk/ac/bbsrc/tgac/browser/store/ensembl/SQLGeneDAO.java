@@ -38,6 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import uk.ac.bbsrc.tgac.browser.core.store.GeneStore;
+import uk.ac.bbsrc.tgac.browser.core.store.UtilsStore;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -64,6 +65,15 @@ public class SQLGeneDAO implements GeneStore {
 
     public JdbcTemplate getJdbcTemplate() {
         return template;
+    }
+
+
+
+    @Autowired
+    private UtilsStore util;
+
+    public void setUtilsStore(UtilsStore util) {
+        this.util = util;
     }
 
 
@@ -507,27 +517,9 @@ public class SQLGeneDAO implements GeneStore {
                         start_pos = temp;
                     }
 
-                    for (int a = 0; a < ends.size(); a++) {
+                    eachTrack.put("layer", util.stackLayerInt(ends,start_pos, delta, end_pos));
+                    ends = util.stackLayerList(ends,start_pos, delta, end_pos);
 
-                        if (start_pos - ends.get(a) > delta) {
-                            ends.remove(a);
-                            ends.add(a, end_pos);
-                            eachTrack.put("layer", a + 1);
-                            break;
-                        } else if ((start_pos - ends.get(a) <= delta && (a + 1) == ends.size()) || start_pos == ends.get(a)) {
-
-                            if (a == 0) {
-                                eachTrack.put("layer", ends.size());
-                                ends.add(a, end_pos);
-                            } else {
-                                ends.add(ends.size(), end_pos);
-                                eachTrack.put("layer", ends.size());
-                            }
-                            break;
-                        } else {
-                            continue;
-                        }
-                    }
                     eachTrack.put("domain", 0);
                     domains = getTranscriptsGO(filteredgenes.getJSONObject(i).get("transcript_id").toString());
                     for (Map domain : domains) {
@@ -556,27 +548,28 @@ public class SQLGeneDAO implements GeneStore {
                         start_pos = temp;
                     }
 
-                    for (int a = 0; a < ends_gene.size(); a++) {
-
-                        if (start_pos - ends_gene.get(a) >= delta) {
-                            ends_gene.remove(a);
-                            ends_gene.add(a, end_pos);
-                            eachGene.put("layer", a + 1);
-                            break;
-                        } else if ((start_pos - ends_gene.get(a) <= delta && (a + 1) == ends_gene.size()) || start_pos == ends_gene.get(a)) {
-
-                            if (a == 0) {
-                                eachGene.put("layer", ends_gene.size());
-                                ends_gene.add(a, end_pos);
-                            } else {
-                                ends_gene.add(ends_gene.size(), end_pos);
-                                eachGene.put("layer", ends_gene.size());
-                            }
-                            break;
-                        } else {
-                            continue;
-                        }
-                    }
+                    eachTrack.put("layer", util.stackLayerInt(ends_gene,start_pos, delta, end_pos));
+                    ends_gene = util.stackLayerList(ends_gene,start_pos, delta, end_pos);
+//                    for (int a = 0; a < ends_gene.size(); a++) {
+//
+//                        if (start_pos - ends_gene.get(a) >= delta) {
+//                            ends_gene.set(a, end_pos);
+//                            eachGene.put("layer", a + 1);
+//                            break;
+//                        } else if ((start_pos - ends_gene.get(a) <= delta && (a + 1) == ends_gene.size()) || start_pos == ends_gene.get(a)) {
+//
+//                            if (a == 0) {
+//                                eachGene.put("layer", ends_gene.size());
+//                                ends_gene.add(a, end_pos);
+//                            } else {
+//                                ends_gene.add(ends_gene.size(), end_pos);
+//                                eachGene.put("layer", ends_gene.size());
+//                            }
+//                            break;
+//                        } else {
+//                            continue;
+//                        }
+//                    }
 
                     eachGene.put("domain", 0);
                     domains = getGenesAttribs(filteredgenes.getJSONObject(i).get("gene_id").toString());
@@ -585,10 +578,7 @@ public class SQLGeneDAO implements GeneStore {
                     }
                     if (lastsize < 2 && layer > 2) {
                         layer = 1;
-                    } else {
-                        layer = layer;
                     }
-
                     if (thissize > 1) {
                         layer = 1;
                     }

@@ -37,6 +37,8 @@ import org.broad.tribble.*;
 import edu.unc.genomics.Interval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import uk.ac.bbsrc.tgac.browser.core.store.UtilsStore;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -59,6 +61,13 @@ import java.util.regex.Pattern;
 public class SamBamService {
 
     protected static final Logger log = LoggerFactory.getLogger(SamBamService.class);
+
+    @Autowired
+    private static UtilsStore util;
+
+    public void setUtilsStore(UtilsStore util) {
+        this.util = util;
+    }
 
     /**
      * Return JSONArray
@@ -134,8 +143,7 @@ public class SamBamService {
                     }
                     for (int i = 0; i < ends.size(); i++) {
                         if (start_pos - ends.get(i) > delta) {
-                            ends.remove(i);
-                            ends.add(i, end_pos);
+                            ends.set(i, end_pos);
                             read.put("layer", i + 1);
                             break;
                         } else if ((start_pos - ends.get(i) < delta) && (i + 1) == ends.size()) {
@@ -357,7 +365,6 @@ public class SamBamService {
                 read.put("start", start_pos);
                 read.put("end", end_pos);
                 read.put("desc", record.getReadName());
-                read.put("layer", ends.size());
                 if (record.getProperPairFlag()) {
                     if (record.getFirstOfPairFlag()) {
                         read.put("colour", "steelblue");
@@ -367,6 +374,9 @@ public class SamBamService {
                 } else {
                     read.put("colour", "orange");
                 }
+                /**
+                 * flags that csn be used in future
+                 */
 //                read.put("flag0", record.getFlags());
 //                read.put("flag1", record.getDuplicateReadFlag());
 //                read.put("flag4", record.getReadPairedFlag());
@@ -381,25 +391,8 @@ public class SamBamService {
 //                read.put("flag12", record.getNotPrimaryAlignmentFlag());
 
                 read.put("cigars", record.getCigarString());
-                for (int i = 0; i < ends.size(); i++) {
-                    if (start_pos - ends.get(i) >= delta) {
-                        ends.remove(i);
-                        ends.add(i, end_pos);
-                        read.put("layer", i + 1);
-                        break;
-                    } else if ((start_pos - ends.get(i) < delta) && (i + 1) == ends.size()) {
-                        if (i == 0) {
-                            read.put("layer", ends.size());
-                            ends.add(i, end_pos);
-                        } else {
-                            read.put("layer", ends.size());
-                            ends.add(ends.size(), end_pos);
-                        }
-                        break;
-                    } else {
-                        continue;
-                    }
-                }
+                read.put("layer", util.stackLayerInt(ends, start_pos, delta, end_pos));
+                ends = util.stackLayerList(ends, start_pos, delta, end_pos);
                 wig.add(read);
             }
 
