@@ -38,7 +38,7 @@ import java.util.Map;
  * Time: 11:00:38
  * To change this template use File | Settings | File Templates.
  */
-public interface GeneStore extends Store<String> {
+public interface GeneStore extends Store {
     public JSONArray processGenes(List<Map<String, Object>> maps, long start, long end, int delta, int id, String trackId) throws Exception;
     public JSONArray getGeneGraph(int id, String trackId, long start, long end) throws IOException;
     public String getGeneNamefromId(int geneID) throws IOException;

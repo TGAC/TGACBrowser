@@ -36,7 +36,7 @@ import java.io.IOException;
  * Time: 11:00:38
  * To change this template use File | Settings | File Templates.
  */
-public interface AssemblyStore extends Store<String> {
+public interface AssemblyStore extends Store {
     public int countAssembly(int id, String trackId, long start, long end) throws Exception;
     public JSONArray getAssemblyGraph(int id, String trackId, long start, long end) throws IOException;
     public JSONArray getAssembly(int query, String trackId, int delta) throws Exception;

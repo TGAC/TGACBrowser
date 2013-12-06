@@ -28,8 +28,6 @@ package uk.ac.bbsrc.tgac.browser.core.store;
 import net.sf.json.JSONArray;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -38,7 +36,7 @@ import java.util.Map;
  * Time: 11:00:38
  * To change this template use File | Settings | File Templates.
  */
-public interface AnalysisStore extends Store<String> {
+public interface AnalysisStore extends Store {
     public String getTrackIDfromName(String trackName) throws IOException;
     public JSONArray getAnnotationId(int query) throws IOException;
     public String getLogicNameByAnalysisId(int query) throws IOException;

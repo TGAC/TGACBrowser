@@ -36,7 +36,7 @@ import java.io.IOException;
  * Time: 11:03:58
  * To change this template use File | Settings | File Templates.
  */
-public interface SearchStore extends Store<String> {
+public interface SearchStore extends Store {
     public boolean checkChromosome() throws Exception;
     public JSONArray getGenesSearch(String query) throws IOException;
     public JSONArray getTranscriptSearch(String query) throws IOException;
