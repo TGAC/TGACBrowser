@@ -902,7 +902,7 @@ function dispTrack(div, trackName, className) {
                     if (stopposition < 2) {
                         stopposition = 2;
                     }
-                    trackClass = 'snp' + track[track_len].cigarline + ' track';
+                    trackClass = 'snp' + track[track_len].cigarline;
 
                     label = track[track_len].cigarline;
                 }

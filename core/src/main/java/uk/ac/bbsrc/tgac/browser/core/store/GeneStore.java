@@ -45,6 +45,4 @@ public interface GeneStore extends Store {
     public int countGene(int id, String trackId, long start, long end) throws Exception;
     public List<Map<String, Object>> getGenes(int query, String trackId) throws IOException;
     public String getTranscriptNamefromId(int transcriptID) throws IOException;
-
-
 }
