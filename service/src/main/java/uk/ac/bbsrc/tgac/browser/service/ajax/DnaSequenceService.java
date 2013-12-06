@@ -238,25 +238,19 @@ public class DnaSequenceService {
         long end = json.getInt("end");
         int delta = json.getInt("delta");
         response.put("name", trackName);
-        log.info(trackName);
-        log.info(trackId);
         int count;
         try {
             Integer queryid = sequenceStore.getSeqRegion(seqName);
-            if (trackId.toLowerCase().contains(".bw") || trackId.toLowerCase().contains(".bigwig")) {
-                response.put(trackName, BigWigService.getBigWig(start, end, delta, trackId, seqName));
+            if (trackId.toLowerCase().contains(".bw") || trackId.toLowerCase().contains(".bigwig") || trackId.toLowerCase().contains(".wig")) {
+                response.put(trackName, BigWigService.getWig(start, end, delta, trackId, seqName));
             } else if (trackId.contains(".sam") || trackId.contains(".bam")) {
                 count = SamBamService.countBAM(start, end, delta, trackId, seqName);
-                log.info("\n\n\ncount "+count);
                 if (count < 25000) {
                     response.put(trackName, SamBamService.getBAMReads(start, end, delta, trackId, seqName));
                 } else {
                     response.put("type", "graph");
                     response.put(trackName, SamBamService.getBAMGraphs(start, end, delta, trackId, seqName));
                 }
-
-            } else if (trackId.contains(".wig")) {
-                response.put(trackName, SamBamService.getWig(start, end, delta, trackId, seqName));
             } else if (trackId.contains(".bed")) {
                 response.put(trackName, SamBamService.getBed(start, end, delta, trackId, seqName));
             } else if (trackId.indexOf("cs") >= 0) {
@@ -284,11 +278,7 @@ public class DnaSequenceService {
                     response.put(trackName, geneStore.getGeneGraph(queryid, trackId, start, end));
                 }
             } else {
-                log.info("\n\nloadtrack else");
-                log.info("\n\n" + dafStore.getClass().getName());
                 count = dafStore.countHit(queryid, trackId, start, end);
-                log.info("\n\n\n\nelse" + count);
-
                 if (count < 5000) {
                     response.put(trackName, dafStore.processHit(dafStore.getHit(queryid, trackId, start, end), start, end, delta, queryid, trackId));
                 } else {
@@ -297,22 +287,13 @@ public class DnaSequenceService {
                 }
             }
 
-        } catch (
-                IOException e
-                )
-
-        {
-
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (IOException e) {
+            e.printStackTrace();
             e.getMessage();
             e.getCause();
             return JSONUtils.SimpleJSONError(e.getMessage());
-        } catch (
-                Exception e
-                )
-
-        {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (Exception e) {
+            e.printStackTrace();
             e.getMessage();
             e.getCause();
         }

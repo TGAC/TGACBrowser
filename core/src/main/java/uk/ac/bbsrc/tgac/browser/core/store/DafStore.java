@@ -38,7 +38,7 @@ import java.util.Map;
  * Time: 11:00:38
  * To change this template use File | Settings | File Templates.
  */
-public interface DafStore extends Store<String> {
+public interface DafStore extends Store {
     public List<Map<String, Object>> getHit(int query, String trackId, long start, long end) throws IOException;
     public JSONArray processHit(List<Map<String, Object>> maps, long start, long end, int delta, int id, String trackId) throws Exception;
     public JSONArray getHitGraph(int id, String trackId, long start, long end) throws IOException;

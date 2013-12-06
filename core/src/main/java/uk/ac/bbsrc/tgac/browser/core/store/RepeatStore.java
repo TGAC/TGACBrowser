@@ -27,7 +27,6 @@ package uk.ac.bbsrc.tgac.browser.core.store;
 
 import net.sf.json.JSONArray;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +37,7 @@ import java.util.Map;
  * Time: 11:00:38
  * To change this template use File | Settings | File Templates.
  */
-public interface RepeatStore extends Store<String> {
+public interface RepeatStore extends Store {
     public int countRepeat(int id, String trackId, long start, long end);
     public List<Map<String, Object>> getRepeat(int query, String trackId, long start, long end) throws Exception;
     public JSONArray processRepeat(List<Map<String, Object>> maps, long start, long end, int delta, int id, String trackId) throws Exception;

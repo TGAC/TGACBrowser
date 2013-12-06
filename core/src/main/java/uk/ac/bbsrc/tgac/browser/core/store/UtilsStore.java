@@ -25,11 +25,7 @@
 
 package uk.ac.bbsrc.tgac.browser.core.store;
 
-import net.sf.json.JSONArray;
-
-import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -38,7 +34,7 @@ import java.util.Map;
  * Time: 16:04
  * To change this template use File | Settings | File Templates.
  */
-public interface UtilsStore extends Store<String>{
+public interface UtilsStore extends Store {
     public int stackLayerInt(List<Integer> ends, int start_pos, int delta, int end_pos) throws Exception;
     public List<Integer> stackLayerList(List<Integer> ends, int start_pos, int delta, int end_pos) throws Exception;
 }

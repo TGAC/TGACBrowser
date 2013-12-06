@@ -38,7 +38,7 @@ import java.util.Map;
  * Time: 11:03:58
  * To change this template use File | Settings | File Templates.
  */
-public interface SequenceStore extends Store<String> {
+public interface SequenceStore extends Store {
     public String getSeqBySeqRegionId(int query) throws IOException;
 
     public Integer getSeqRegion(String query) throws IOException;

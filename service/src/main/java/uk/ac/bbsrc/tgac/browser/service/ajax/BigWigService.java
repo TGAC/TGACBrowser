@@ -26,44 +26,24 @@
 package uk.ac.bbsrc.tgac.browser.service.ajax;
 
 import edu.unc.genomics.Contig;
-import edu.unc.genomics.io.IntervalFileReader;
+import edu.unc.genomics.io.TextWigFileReader;
 import edu.unc.genomics.io.WigFileException;
+import edu.unc.genomics.io.WigFileReader;
 import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-import net.sf.samtools.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.*;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-import java.util.logging.Level;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import edu.unc.genomics.IntervalFactory;
 import edu.unc.genomics.io.BigWigFileReader;
-import edu.unc.genomics.io.WigFileReader;
 import edu.unc.genomics.*;
-
-import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
-
-import net.sf.samtools.seekablestream.SeekableStream.*;
 
 /**
  * Created with IntelliJ IDEA.
  * User: thankia
- * Date: 2/1/13
+ * Date: 22/11/13
  * Time: 12:04 PM
  * To change this template use File | Settings | File Templates.
  */
@@ -82,17 +62,14 @@ public class BigWigService {
      * @return JSONArray of tracks
      * @throws Exception
      */
-    public static JSONArray getBigWig(long start, long end, int delta, String trackId, String reference) throws Exception, WigFileException {
-        log.info("\n\n\ngetbigwig\n\n\n");
-
+    public static JSONArray getWig(long start, long end, int delta, String trackId, String reference) throws Exception, WigFileException {
         JSONArray wig = new JSONArray();
         MemoryMXBean memoryBean = ManagementFactory.getMemoryMXBean();
         final int MEGABYTE = (1024 * 1024);
 
         try {
             Path path = Paths.get(trackId);
-            BigWigFileReader bw = new BigWigFileReader(path);
-
+            WigFileReader bw = WigFileReader.autodetect(path);
             Contig result;
 
             long span[] = new long[2];
@@ -134,22 +111,21 @@ public class BigWigService {
                         span[1] = (long) value;
                         wig.add(span);
                     }
-
                 }
                 bw.close();
                 return wig;
             }
         } catch (OutOfMemoryError e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
             MemoryUsage heapUsage = memoryBean.getHeapMemoryUsage();
             long maxMemory = heapUsage.getMax() / MEGABYTE;
             long usedMemory = heapUsage.getUsed() / MEGABYTE;
             throw new Exception("Memory Use :" + usedMemory + "M/" + maxMemory + "M");
         } catch (WigFileException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
             throw new Exception("WigFile Exception error" + e.toString() + " " + e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
             throw new Exception("getBigWig error" + e.toString() + " " + e.getMessage());
         }
     }
