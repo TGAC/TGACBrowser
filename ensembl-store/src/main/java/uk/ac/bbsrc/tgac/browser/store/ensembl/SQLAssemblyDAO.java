@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import uk.ac.bbsrc.tgac.browser.core.store.AssemblyStore;
+import uk.ac.bbsrc.tgac.browser.core.store.UtilsStore;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -61,6 +62,13 @@ public class SQLAssemblyDAO implements AssemblyStore {
 
     public JdbcTemplate getJdbcTemplate() {
         return template;
+    }
+
+    @Autowired
+    private UtilsStore util;
+
+    public void setUtilsStore(UtilsStore util) {
+        this.util = util;
     }
 
     public static final String GET_SEQ_REGION_NAME_FROM_ID = "SELECT name FROM seq_region WHERE seq_region_id = ?";
@@ -290,7 +298,7 @@ public class SQLAssemblyDAO implements AssemblyStore {
             List<Map<String, Object>> maps = template.queryForList(GET_Assembly, new Object[]{id, trackId.replace("cs", "")});
             if (maps.size() > 0) {
                 ends.add(0, 0);
-                trackList = getAssemblyLevel(maps, ends, delta);
+                trackList = getAssemblyLevel(0, maps,  delta);
             } else {
                 trackList = recursiveAssembly(0, id, trackId, delta);
             }
@@ -364,82 +372,16 @@ public class SQLAssemblyDAO implements AssemblyStore {
                 eachTrack_temp.put("start", start + Integer.parseInt(map_temp.get("asm_start").toString()) - 1);
                 eachTrack_temp.put("end", start + Integer.parseInt(map_temp.get("asm_end").toString()) - 1);
                 eachTrack_temp.put("flag", false);
-                for (int i = 0; i < ends.size(); i++) {
-                    if ((Integer.parseInt(map_temp.get("asm_start").toString()) - ends.get(i)) > delta) {
-                        ends.remove(i);
-                        ends.add(i, Integer.parseInt(map_temp.get("asm_end").toString()));
-                        eachTrack_temp.put("layer", i + 1);
-                        break;
-                    } else if ((Integer.parseInt(map_temp.get("asm_start").toString()) - ends.get(i) <= delta && (i + 1) == ends.size()) || Integer.parseInt(map_temp.get("asm_start").toString()) == ends.get(i)) {
-                        if (i == 0) {
-                            eachTrack_temp.put("layer", ends.size());
-                            ends.add(i, Integer.parseInt(map_temp.get("asm_end").toString()));
-                        } else {
-                            ends.add(ends.size(), Integer.parseInt(map_temp.get("asm_end").toString()));
-                            eachTrack_temp.put("layer", ends.size());
-                        }
-                        break;
-                    }
-                }
+
+                eachTrack_temp.put("layer", util.stackLayerInt(ends,Integer.parseInt(map_temp.get("asm_start").toString()), delta, Integer.parseInt(map_temp.get("asm_end").toString())));
+                ends = util.stackLayerList(ends,Integer.parseInt(map_temp.get("asm_start").toString()), delta, Integer.parseInt(map_temp.get("asm_end").toString()));
+
                 eachTrack_temp.put("desc", template.queryForObject(GET_SEQ_REGION_NAME_FROM_ID, new Object[]{map_temp.get("cmp_seq_region_id")}, String.class));
                 attribs = template.queryForList(GET_SEQ_REGION_ATTRIB_FROM_ID, new Object[]{map_temp.get("cmp_seq_region_id")});
                 for (Map attrib : attribs) {
                     eachTrack_temp.put("colour", attrib.get("value"));
                 }
                 assemblyTracks.add(eachTrack_temp);
-            }
-            return assemblyTracks;
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new Exception("Assembly level " + e.getMessage());
-        }
-    }
-
-    /**
-     * Get Assembly Level tracks
-     *
-     * @param maps
-     * @param ends
-     * @param delta
-     * @return JSONArray with Assembly information
-     * @throws Exception
-     */
-    public JSONArray getAssemblyLevel(List<Map<String, Object>> maps, List<Integer> ends, int delta) throws Exception {
-        try {
-            JSONArray assemblyTracks = new JSONArray();
-            List<Map<String, Object>> attribs;
-
-            for (Map map : maps) {
-                JSONObject eachTrack = new JSONObject();
-                eachTrack.put("id", map.get("cmp_seq_region_id"));
-                eachTrack.put("start", map.get("asm_start"));
-                eachTrack.put("end", map.get("asm_end"));
-                eachTrack.put("flag", false);
-                for (int i = 0; i < ends.size(); i++) {
-                    if ((Integer.parseInt(map.get("asm_start").toString()) - ends.get(i)) > delta) {
-                        ends.remove(i);
-                        ends.add(i, Integer.parseInt(map.get("asm_end").toString()));
-                        eachTrack.put("layer", i + 1);
-                        break;
-
-                    } else if ((Integer.parseInt(map.get("asm_start").toString()) - ends.get(i) <= delta) && (i + 1) == ends.size()) {
-
-                        if (i == 0) {
-                            eachTrack.put("layer", ends.size());
-                            ends.add(i, Integer.parseInt(map.get("asm_end").toString()));
-                        } else {
-                            ends.add(ends.size(), Integer.parseInt(map.get("asm_end").toString()));
-                            eachTrack.put("layer", ends.size());
-                        }
-                        break;
-                    }
-                }
-                eachTrack.put("desc", template.queryForObject(GET_SEQ_REGION_NAME_FROM_ID, new Object[]{map.get("cmp_seq_region_id")}, String.class));
-                attribs = template.queryForList(GET_SEQ_REGION_ATTRIB_FROM_ID, new Object[]{map.get("cmp_seq_region_id")});
-                for (Map attrib : attribs) {
-                    eachTrack.put("colour", attrib.get("value"));
-                }
-                assemblyTracks.add(eachTrack);
             }
             return assemblyTracks;
         } catch (Exception e) {

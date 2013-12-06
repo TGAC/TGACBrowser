@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import uk.ac.bbsrc.tgac.browser.core.store.DafStore;
+import uk.ac.bbsrc.tgac.browser.core.store.UtilsStore;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -62,6 +63,14 @@ public class SQLDafDAO implements DafStore {
     public JdbcTemplate getJdbcTemplate() {
         return template;
     }
+
+    @Autowired
+    private UtilsStore util;
+
+    public void setUtilsStore(UtilsStore util) {
+        this.util = util;
+    }
+
 
     public static final String GET_length_from_seqreg_id = "SELECT length FROM seq_region where seq_region_id =?";
     public static final String GET_HIT_SIZE = "SELECT COUNT(dna_align_feature_id) FROM dna_align_feature where seq_region_id =? and analysis_id = ?";
@@ -391,25 +400,8 @@ public class SQLDafDAO implements DafStore {
                         eachTrack_temp.put("cigarline", map_temp.get("cigarline").toString());
                     }
                     if (track_end - track_start > 1) {
-                        for (int i = 0; i < ends.size(); i++) {
-                            if ((Integer.parseInt(map_temp.get("start").toString()) - ends.get(i)) > delta) {
-                                ends.remove(i);
-                                ends.add(i, Integer.parseInt(map_temp.get("end").toString()));
-                                eachTrack_temp.put("layer", i + 1);
-                                break;
-                            } else if ((Integer.parseInt(map_temp.get("start").toString()) - ends.get(i) <= delta && (i + 1) == ends.size()) || Integer.parseInt(map_temp.get("start").toString()) == ends.get(i)) {
-
-                                if (i == 0) {
-                                    ends.add(i, Integer.parseInt(map_temp.get("end").toString()));
-                                    eachTrack_temp.put("layer", ends.size());
-                                } else {
-                                    eachTrack_temp.put("layer", ends.size());
-                                    ends.add(ends.size(), Integer.parseInt(map_temp.get("end").toString()));
-
-                                }
-                                break;
-                            }
-                        }
+                        eachTrack_temp.put("layer", util.stackLayerInt(ends,Integer.parseInt(map_temp.get("start").toString()), delta, Integer.parseInt(map_temp.get("end").toString())));
+                        ends = util.stackLayerList(ends,Integer.parseInt(map_temp.get("start").toString()), delta, Integer.parseInt(map_temp.get("end").toString()));
                     }
                     eachTrack_temp.put("desc", map_temp.get("desc"));
                     hitTracks.add(eachTrack_temp);

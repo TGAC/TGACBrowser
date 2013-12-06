@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import uk.ac.bbsrc.tgac.browser.core.store.RepeatStore;
+import uk.ac.bbsrc.tgac.browser.core.store.UtilsStore;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -65,6 +66,12 @@ public class SQLRepeatDAO implements RepeatStore {
         return template;
     }
 
+    @Autowired
+    private UtilsStore util;
+
+    public void setUtilsStore(UtilsStore util) {
+        this.util = util;
+    }
 
     public static final String GET_length_from_seqreg_id = "SELECT length FROM seq_region where seq_region_id =?";
     public static final String GET_Assembly_for_reference = "SELECT * FROM assembly where asm_seq_region_id =?";
@@ -321,7 +328,7 @@ public class SQLRepeatDAO implements RepeatStore {
      * @param delta
      * @return
      */
-    public JSONArray getRepeatLevel(int start_add, List<Map<String, Object>> maps, long start, long end, int delta) {
+    public JSONArray getRepeatLevel(int start_add, List<Map<String, Object>> maps, long start, long end, int delta) throws Exception {
         List<Integer> ends = new ArrayList<Integer>();
         JSONObject eachTrack_temp = new JSONObject();
         ends.add(0, 0);
@@ -338,29 +345,8 @@ public class SQLRepeatDAO implements RepeatStore {
                 eachTrack_temp.put("repeatstart", start_add + Integer.parseInt(map.get("repeatstart").toString()));
                 eachTrack_temp.put("repeatend", start_add + Integer.parseInt(map.get("repeatstart").toString()));
                 eachTrack_temp.put("score", map.get("score"));
-
-                for (int i = 0; i < ends.size(); i++) {
-                    if (start_pos - ends.get(i) > delta) {
-                        ends.remove(i);
-                        ends.add(i, end_pos);
-                        eachTrack_temp.put("layer", i + 1);
-                        break;
-                    } else if ((start_pos - ends.get(i) <= delta && (i + 1) == ends.size()) || start_pos == ends.get(i)) {
-
-                        if (i == 0) {
-                            eachTrack_temp.put("layer", ends.size());
-                            ends.add(i, Integer.parseInt(map.get("end").toString()));
-                        } else {
-                            ends.add(ends.size(), Integer.parseInt(map.get("end").toString()));
-                            eachTrack_temp.put("layer", ends.size());
-                        }
-
-
-                        break;
-                    } else {
-                        continue;
-                    }
-                }
+                eachTrack_temp.put("layer", util.stackLayerInt(ends,start_pos, delta, end_pos));
+                ends = util.stackLayerList(ends,start_pos, delta, end_pos);
 
                 trackList.add(eachTrack_temp);
             }
