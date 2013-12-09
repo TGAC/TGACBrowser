@@ -257,7 +257,6 @@ function toggleLeftInfo(div, id) {
 }
 
 function loadDefaultTrack(tracklist) {
-    console.log("loadDefaultTrack")
     var Tracklist = tracklist;
     var cookietest = []
     if (jQuery.cookie('trackslist')) {
@@ -265,7 +264,7 @@ function loadDefaultTrack(tracklist) {
     }
     else {
         for (var i = 0; i < Tracklist.length; i++) {
-            if (Tracklist[i].disp == "1" && tracklist[i].id.indexOf("noid") < 0) {
+            if (Tracklist[i].disp == "1" && tracklist[i].id.toString().indexOf("noid") < 0) {
                 jQuery('#' + Tracklist[i].name + 'Checkbox').attr('checked', true);
                 mergeTrackList(Tracklist[i].name);
 
@@ -305,7 +304,7 @@ function loadDefaultTrack(tracklist) {
     for (var i = 0; i < Tracklist.length; i++) {
 
         jQuery.each(cookietest, function (j, v) {
-            if (v.name == Tracklist[i].name && v.disp == 1 && Tracklist[i].id.indexOf('noid') < 0) {
+            if (v.name == Tracklist[i].name && v.disp == 1 && Tracklist[i].id.toString().indexOf('noid') < 0) {
                 jQuery('#' + Tracklist[i].name + 'Checkbox').attr('checked', true);
                 mergeTrackList(Tracklist[i].name);
                 var partial = (getEnd() - getBegin()) + ((getEnd() - getBegin()) / 2);
@@ -314,11 +313,15 @@ function loadDefaultTrack(tracklist) {
                 if (start < 0) {
                     start = 0;
                 }
+
                 if (end > sequencelength) {
                     end = sequencelength;
                 }
+
                 deltaWidth = parseInt(end - start) * 2 / parseInt(maxLen);
+
                 window[Tracklist[i].name] == "loading";
+
                 trackToggle(Tracklist[i].name);
                 Fluxion.doAjax(
                     'dnaSequenceService',
@@ -337,16 +340,13 @@ function loadDefaultTrack(tracklist) {
                         trackToggle(trackname);
                     }
                     });
-
-
                 jQuery('#' + Tracklist[i].name + 'Checkbox').attr('checked', true);
-                loadTrackAjax(Tracklist[i].id, Tracklist[i].name);
+                window['track_list' + track_list[i].name].disp = 1
+
                 return false; // stops the loop
             }
             else if (v.name == Tracklist[i].name && v.disp == 0) {
-
                 window["track_list" + Tracklist[i].name].disp = 0;
-
             }
         });
         continue;
@@ -437,25 +437,13 @@ function selectAllCheckbox() {
                 //    do nothing
             }
             else {
-                var name_splitter = jQuery(this).attr('name');
                 jQuery(this).attr('checked', 'checked');
                 eval(jQuery(this).attr('onClick'));
             }
         })
-//    trackToggle("all")
     }
     else {
-//     jQuery("#tracklist input").each(function () {
-//     if (jQuery(this).is(':checked')) {
-//       jQuery(this).attr('checked', false);
-//       eval(jQuery(this).attr('onClick'));
-//     }
-//     else {
-//       //    do nothing
-//     }
-//   })
     }
-
 }
 
 function unSelectAllCheckbox() {
@@ -465,11 +453,7 @@ function unSelectAllCheckbox() {
                 jQuery(this).attr('checked', false);
                 window['track_list' + this.id.replace("Checkbox", "")].disp = 0
             }
-            else {
-                //    do nothing
-            }
         })
     }
     trackToggle("all")
-
 }
