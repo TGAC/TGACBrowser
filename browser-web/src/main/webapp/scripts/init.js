@@ -47,20 +47,17 @@ function setBlast() {
 
 
         jQuery.getScript("scripts/blast_local.js", function (data, textStatus, jqxhr) {
-            console.log('Load was performed.');
         });
 
         jQuery("#blastdbs").show();
     }
     else if (jQuery("#blastType").text().indexOf('ncbi') >= 0) {
         jQuery.getScript("scripts/blast_ncbi.js", function (data, textStatus, jqxhr) {
-            console.log('Load was performed.');
         });
         jQuery("#ncbiblastdbs").show();
     }
     else if (jQuery("#blastType").text().indexOf('server') >= 0) {
         jQuery.getScript("scripts/blast_server.js", function (data, textStatus, jqxhr) {
-            console.log('Load was performed.');
         });
         jQuery("#blastdbs").show();
     }

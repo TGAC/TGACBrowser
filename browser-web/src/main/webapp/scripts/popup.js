@@ -213,14 +213,10 @@ function zoomHere(begin, end) {
         end = begin;
         begin = temp;
     }
-//  setBegin(begin - 1);
-//  setEnd(end + 1);
-    console.log(begin + ":" + end)
     var tempBegin = (begin - 1);
     var tempEnd = (end + 1);
 
     if ((tempEnd - tempBegin) <= minWidth) {
-        console.log("if")
         var diff = minWidth - (tempEnd - tempBegin);
 
         setBegin(parseInt(tempBegin - parseInt((diff / 2))));
@@ -228,7 +224,6 @@ function zoomHere(begin, end) {
 
     }
     else {
-        console.log("else")
         setBegin(tempBegin);
         setEnd(tempEnd);
     }

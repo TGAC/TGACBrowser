@@ -412,7 +412,7 @@ function reloadTracks(tracks, tracklist, blast) {
 
             trackToggle('blasttrack');
         }
-        else if (tracklist[i].disp == 1 && tracklist[i].id.indexOf('noid') < 0) {
+        else if (tracklist[i].disp == 1 && tracklist[i].id.toString().indexOf('noid') < 0) {
             jQuery('#' + tracklist[i].name + 'Checkbox').attr('checked', true);
             if (tracklist[i].merge == "1") {
                 mergeTrackList(tracklist[i].name);
@@ -708,25 +708,19 @@ function dispOnMap(json, maximumLengthname, maximumsequencelength) {
 }
 
 function clicked_func(element) {
-    console.log(element)
     element = element.replace(/\./g, '\\.')
     var seqregioncontent = "";
 
 
     element = jQuery("[name='" + element + "']");
     var parent_main = element.attr("parent");
-    console.log(element)
 
     var temp_element = element;
     var class_clicked = "." + element.attr('class');
-    console.log(class_clicked)
     var temp = element.prevAll(class_clicked);
-    console.log(temp)
     for (var i = 0; i < temp.length; i++) {
-        console.log(temp[i])
         var temp_id = temp[i].id.replace(/\./g, '\\.');
         var temp_element = jQuery("[name='" + temp_id + "']");
-        console.log(temp_element)
         var parent = temp_element.attr("parent");
         var start = temp_element.attr("start");
         var end = temp_element.attr("end");
@@ -746,7 +740,6 @@ function clicked_func(element) {
 
     var temp_id = temp_element.attr('id').replace(/\./g, '\\.');
     var temp_element = jQuery("[name='" + temp_id + "']");
-    console.log(temp_element)
     var parent = temp_element.attr("parent");
     var start = temp_element.attr("start");
     var end = temp_element.attr("end");
@@ -759,10 +752,8 @@ function clicked_func(element) {
     var temp = element.nextAll(class_clicked);
 
     for (var i = 0; i < temp.length; i++) {
-        console.log(temp[i])
         var temp_id = temp[i].id.replace(/\./g, '\\.');
         var temp_element = jQuery("[name='" + temp_id + "']");
-        console.log(temp_element)
         var parent = temp_element.attr("parent");
         var start = temp_element.attr("start");
         var end = temp_element.attr("end");
@@ -780,10 +771,7 @@ function clicked_func(element) {
     jQuery("#searchresult").html(seqregioncontent)
     jQuery("#searchresult").fadeIn()
     jQuery("#searchresult").css('top', '225px')
-    console.log(parent_main)
     jQuery("#searchresult").css('left', jQuery("#" + parent_main).css('left'))
-
-
 }
 
 function getMarkers() {

@@ -112,8 +112,6 @@ function submitBlastTask(query, db, format, type, start, end, hit, params) {
           {'url': ajaxurl, 'querystring': query, 'blastdb': db, 'location': link, 'BlastAccession': id, 'format': format, "type": type, "params": params},
           {'doOnSuccess': function (json) {
             if (json.id) {
-              console.log(id + ":" + json.id);
-//              id = json.id;
               checkTask(id, db, format, start, end, hit, link, json.id, type);
             }
             else {

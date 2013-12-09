@@ -614,7 +614,6 @@ function dispGeneExon(track, genestrand, className, div) {
                         last = current;
                     }
                     else if (exon_start < transcript_start && exon_stop < transcript_start) {
-                        console.log("2")
                         startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                         stopposition = (exon_stop - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
@@ -626,7 +625,6 @@ function dispGeneExon(track, genestrand, className, div) {
                         last = current;
                     }
                     else if (exon_start < transcript_start && exon_stop > transcript_end) {
-                        console.log("3")
 
                         startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                         stopposition = (transcript_start - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
@@ -733,7 +731,6 @@ function dispGeneExon(track, genestrand, className, div) {
                         }
                         else {
                             marker_pos = parseInt(marker_pos) + parseInt(startposition) - 8;
-                            console.log("here span" + top + ":" + marker_pos)
                         }
                         jQuery("<span>").attr({
                             'class': spanclass,
