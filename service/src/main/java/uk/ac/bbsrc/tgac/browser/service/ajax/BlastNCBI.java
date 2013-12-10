@@ -87,7 +87,7 @@ public class BlastNCBI {
        connection.setRequestProperty("charset", "utf-8");
        connection.setRequestProperty("Content-Length", "" + Integer.toString(urlParameters.getBytes().length));
        connection.setUseCaches(false);
-       log.info(urlParameters);
+       log.info("\n\n\nurl parameters "+urlParameters);
        DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
        wr.writeBytes(urlParameters);
        wr.flush();
@@ -97,7 +97,6 @@ public class BlastNCBI {
        String str;
 
        while (null != (str = input.readLine())) {
-         log.info(str);
          Pattern p = Pattern.compile("<input name=\"RID\" size=\"50\" type=\"text\" value=\"(.*)\" id=\"rid\" />");
          Matcher matcher_comment = p.matcher(str);
          if (matcher_comment.find()) {
@@ -164,6 +163,7 @@ public class BlastNCBI {
       str = connectNCBI(urlParameters);
       while (str == "running") {
         str = connectNCBI(urlParameters);
+          log.info(str);
         if (str == "finished") {
 //          sb.append(parseNCBI(urlParameters));
             jsonArray = parseNCBI(urlParameters);

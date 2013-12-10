@@ -40,6 +40,7 @@ function blastSearch(query, db, type) {
     db = database[0];
     var id = randomString(8);
     var link = database[1];
+    jQuery("#blast_list").append("<div id='" + id + "' class='blast_list_node'> <b>BLAST job " + id + " </b> <img style='position: relative;' src='./images/browser/loading_big.gif' height=15px alt='Loading'></div>")
 
 
     var location = jQuery('#title').text();
@@ -52,7 +53,6 @@ function blastSearch(query, db, type) {
         {'doOnSuccess': function (json) {
             jQuery('#main').animate({"height": "0px"}, { duration: 300, queue: false});
             jQuery('#main').fadeOut();
-            //            parseBLAST(json);
 
 
             if (json.html == "No hits found.") {
@@ -70,7 +70,6 @@ function blastSearch(query, db, type) {
                 jQuery('#main').fadeOut();
                 parseBLAST(json);
             }
-            //jQuery('#blastresult').html(json.html);
             jQuery("#notifier").hide()
             jQuery("#notifier").html("");
         }
@@ -126,14 +125,16 @@ function blastTrackSearch(query, start, end, hit, db, type) {
             db: blastdb,
             hit: hit,
             link: link,
-            format: 5,
+            format: '6 qseqid sseqid qstart qend bitscore qseq sseq btop',
             type: type
         });
+
+    var format = '6 qseqid sseqid qstart qend bitscore qseq sseq btop';
 
     Fluxion.doAjax(
         'blastservicelocal',
         'blastSearchTrack',
-        {'query': query, 'blastdb': db, 'location': location, 'url': ajaxurl, 'start': start, 'end': end, 'hit': hit, 'BlastAccession': id, 'type': type, 'blastBinary': blastbinary},
+        {'query': query, 'blastdb': db, 'location': location, 'url': ajaxurl, 'start': start, 'end': end, 'hit': hit, 'BlastAccession': id, 'type': type, 'format': format, 'blastBinary': blastbinary},
         {'doOnSuccess': function (json) {
             findAndRemove(blastsdata, 'id', json.id);
 

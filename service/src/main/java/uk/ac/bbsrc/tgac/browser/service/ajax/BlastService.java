@@ -43,12 +43,13 @@ import java.sql.Statement;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
 import java.lang.*;
 
-import uk.ac.bbsrc.tgac.browser.service.ajax.BlastManagerServices;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.*;
 import org.xml.sax.SAXParseException;
+import uk.ac.bbsrc.tgac.browser.core.store.BLASTManagerStore;
+
 
 /**
  * Created by IntelliJ IDEA.
@@ -61,7 +62,13 @@ import org.xml.sax.SAXParseException;
 @Ajaxified
 public class BlastService {
     private Logger log = LoggerFactory.getLogger(getClass());
-    private BlastManagerServices blastmanagerservices;
+
+    @Autowired
+    private BLASTManagerStore blastManagerStore;
+
+    public void setBlastManagerStore(BLASTManagerStore blastManagerStore) {
+        this.blastManagerStore = blastManagerStore;
+    }
 
     /**
      * Return JSONObject
@@ -85,13 +92,13 @@ public class BlastService {
             String location = json.getString("location");
             String old_blastAccession = json.getString("old_taskid");
 
-            if (blastmanagerservices.checkResultDatabase(old_blastAccession)) {
+            if (blastManagerStore.checkResultDatabase(old_blastAccession)) {
                 log.info("already in db");
-                blasts = blastmanagerservices.getFromDatabase(old_blastAccession, location);
+                blasts = blastManagerStore.getFromDatabase(old_blastAccession, location);
                 html.put("id", blastAccession);
                 html.put("html", blasts);
             } else {
-                blasts = blastmanagerservices.getFromDatabase(blastAccession, location);
+                blasts = blastManagerStore.getFromDatabase(blastAccession, location);
                 html.put("id", blastAccession);
                 html.put("html", blasts);
             }
@@ -133,13 +140,13 @@ public class BlastService {
 
         try {
 
-            if (blastmanagerservices.checkResultDatabase(old_blastAccession)) {
-                blasts = blastmanagerservices.getTrackFromDatabase(old_blastAccession, query_start);
+            if (blastManagerStore.checkResultDatabase(old_blastAccession)) {
+                blasts = blastManagerStore.getTrackFromDatabase(old_blastAccession, query_start);
                 blast_response.put("blast", blasts);
 
             } else {
 
-                blasts = blastmanagerservices.getTrackFromDatabase(blastAccession, query_start);
+                blasts = blastManagerStore.getTrackFromDatabase(blastAccession, query_start);
                 blast_response.put("blast", blasts);
             }
             return blast_response; //JSONUtils.JSONObjectResponse("blast", result);
@@ -172,8 +179,8 @@ public class BlastService {
             String blastAccession = json.getString("accession");
             JSONObject jsonObject = new JSONObject();
             JSONArray jsonArray = new JSONArray();
-            if (blastmanagerservices.checkResultDatabase(blastAccession)) {
-                jsonArray = blastmanagerservices.getBLASTEntryFromDatabase(blastAccession, seqRegion);
+            if (blastManagerStore.checkResultDatabase(blastAccession)) {
+                jsonArray = blastManagerStore.getBLASTEntryFromDatabase(blastAccession, seqRegion);
 
             } else {
 
@@ -266,15 +273,13 @@ public class BlastService {
             String blastdb = json.getString("blastdb");
             String params = json.getString("params");
             String format = json.getString("format");
-
-
-            if (blastmanagerservices.checkDatabase(fasta, blastdb, location, type, params, format)) {
-                String id = blastmanagerservices.getIDFromDatabase(fasta, blastdb, location, type, params, format).toString();
+            if (blastManagerStore.checkDatabase(fasta, blastdb, location, type, params, format)) {
+                String id = blastManagerStore.getIDFromDatabase(fasta, blastdb, location, type, params, format).toString();
                 JSONObject r = new JSONObject();
                 r.put("id", id);
                 return r;
             } else {
-                blastmanagerservices.insertintoDatabase(accession, fasta, blastdb, location, type, params, format);
+                blastManagerStore.insertintoDatabase(accession, fasta, blastdb, location, type, params, format);
 
 
                 JSONObject task = new JSONObject();
@@ -453,7 +458,7 @@ public class BlastService {
 
             if (getTaskSQL(old_taskId) != null) {
                 if (getTaskSQL(old_taskId).equals("COMPLETED") || getTaskSQL(old_taskId).equals("FAILED")) {
-                    blastmanagerservices.updateDatabase(old_taskId, getTaskSQL(old_taskId).toString());
+                    blastManagerStore.updateDatabase(old_taskId, getTaskSQL(old_taskId).toString());
                     q1.put("stopUpdater", "true");
                 }
             }
