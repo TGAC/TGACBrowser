@@ -200,6 +200,8 @@ public class BlastServiceLocal {
         String location = json.getString("location");
         String type = json.getString("type");
         String file = "../webapps/" + location + "/temp/" + json.getString("BlastAccession") + ".xml";
+        String format = json.getString("format");
+
 
         JSONObject blast_response = new JSONObject();
 
@@ -213,7 +215,7 @@ public class BlastServiceLocal {
             out.flush();
             out.close();
 
-            String execBlast = blastBinary + "/" + type + " -db " + blastdb + " -query " + fastaTmp + " -out " + file + " -outfmt 5 -max_target_seqs 10";
+            String execBlast = blastBinary + "/" + type + " -db " + blastdb + " -query " + fastaTmp + " -out " + file + " -outfmt "+format+" -max_target_seqs 10";
             Process proc = Runtime.getRuntime().exec(execBlast);
 
             proc.waitFor();
@@ -226,7 +228,6 @@ public class BlastServiceLocal {
             DocumentBuilder db = dbf.newDocumentBuilder();
 
             dom = db.parse(input);
-//
             Element docEle = dom.getDocumentElement();
             NodeList nl = docEle.getElementsByTagName("Hit");
 

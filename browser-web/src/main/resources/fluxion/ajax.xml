@@ -10,7 +10,7 @@
     <bean class="net.sourceforge.fluxion.ajax.controller.AjaxController">
         <property name="invalidSessionUrl" value="/index.jsp"/>
     </bean>
-    
+
     <bean id="dnaSequenceService"
           class="uk.ac.bbsrc.tgac.browser.service.ajax.DnaSequenceService">
         <!-- <property name="seqStore" ref="sequenceStore"/> -->
@@ -24,11 +24,11 @@
           class="uk.ac.bbsrc.tgac.browser.service.ajax.BlastService">
     </bean>
     <bean id="blastservicelocal"
-             class="uk.ac.bbsrc.tgac.browser.service.ajax.BlastServiceLocal">
-       </bean>
+          class="uk.ac.bbsrc.tgac.browser.service.ajax.BlastServiceLocal">
+    </bean>
 
     <bean id="blastServiceNCBI"
-                 class="uk.ac.bbsrc.tgac.browser.service.ajax.BlastNCBI">
+          class="uk.ac.bbsrc.tgac.browser.service.ajax.BlastNCBI">
     </bean>
 </beans>
 

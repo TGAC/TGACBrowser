@@ -27,9 +27,21 @@
         <property name="password" value="${db.password}"/>
     </bean>
 
+    <bean id="blast_dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="${blast_db.driver}"/>
+        <property name="url" value="${blast_db.url}"/>
+        <property name="username" value="${blast_db.username}"/>
+        <property name="password" value="${blast_db.password}"/>
+    </bean>
+
 
     <bean name="interfaceTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
         <property name="dataSource" ref="dataSource"/>
+        <property name="nativeJdbcExtractor" ref="nativeJdbcExtractor"/>
+    </bean>
+
+    <bean name="blast_dbTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="blast_dataSource"/>
         <property name="nativeJdbcExtractor" ref="nativeJdbcExtractor"/>
     </bean>
 
@@ -38,7 +50,12 @@
 
 
     <ehcache:annotation-driven cache-manager="cacheManager" proxy-target-class="true"/>
+
     <bean id="cacheManager" name="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"/>
+
+    <bean id="blastManagerDAO" class="uk.ac.bbsrc.tgac.browser.store.ensembl.BLASTManagerDAO">
+        <property name="jdbcTemplate" ref="blast_dbTemplate"/>
+    </bean>
 
     <bean id="sequenceDAO" class="uk.ac.bbsrc.tgac.browser.store.ensembl.SQLSequenceDAO">
         <property name="jdbcTemplate" ref="interfaceTemplate"/>
@@ -70,6 +87,17 @@
 
     <bean id="util" class="uk.ac.bbsrc.tgac.browser.store.ensembl.Util">
         <property name="jdbcTemplate" ref="interfaceTemplate"/>
+    </bean>
+
+    <bean name="blastManagerStore" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="proxyInterfaces">
+            <value>uk.ac.bbsrc.tgac.browser.core.store.BLASTManagerStore</value>
+        </property>
+        <property name="interceptorNames">
+            <list>
+                <value>blastManagerDAO</value>
+            </list>
+        </property>
     </bean>
 
     <bean name="sequenceStore" class="org.springframework.aop.framework.ProxyFactoryBean">
