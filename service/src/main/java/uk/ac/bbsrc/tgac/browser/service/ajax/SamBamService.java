@@ -32,6 +32,7 @@ import edu.unc.genomics.io.IntervalFileReader;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.samtools.*;
+import net.sourceforge.fluxion.ajax.Ajaxified;
 import org.broad.tribble.*;
 
 import edu.unc.genomics.Interval;
@@ -39,6 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.bbsrc.tgac.browser.core.store.UtilsStore;
+import uk.ac.bbsrc.tgac.browser.store.ensembl.Util;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -58,17 +60,13 @@ import java.util.regex.Pattern;
  * Time: 12:04 PM
  * To change this template use File | Settings | File Templates.
  */
+@Ajaxified
 public class SamBamService {
 
     protected static final Logger log = LoggerFactory.getLogger(SamBamService.class);
 
-    @Autowired
-    private static UtilsStore util;
 
-    public void setUtilsStore(UtilsStore util) {
-        this.util = util;
-    }
-
+    private Util util = new Util();
     /**
      * Return JSONArray
      * <p>
@@ -163,7 +161,7 @@ public class SamBamService {
      * @return JSONArray of tracks
      * @throws Exception
      */
-    public static JSONArray getBAMReads(long start, long end, int delta, String trackId, String reference) throws Exception {
+    public JSONArray getBAMReads(long start, long end, int delta, String trackId, String reference) throws Exception {
         JSONArray wig = new JSONArray();
         JSONObject response = new JSONObject();
         List<Integer> ends = new ArrayList<Integer>();

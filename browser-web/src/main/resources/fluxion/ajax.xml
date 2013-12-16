@@ -16,6 +16,11 @@
         <!-- <property name="seqStore" ref="sequenceStore"/> -->
     </bean>
 
+    <bean id="samBamService"
+          class="uk.ac.bbsrc.tgac.browser.service.ajax.SamBamService">
+        <!-- <property name="seqStore" ref="sequenceStore"/> -->
+    </bean>
+
     <bean id="fileService"
           class="uk.ac.bbsrc.tgac.browser.service.ajax.FileService">
     </bean>
