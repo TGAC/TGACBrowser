@@ -1124,17 +1124,7 @@ function dispGraph(div, trackName, className) {
                         'title': track_start + ":" + track_stop + "->" + track[track_len].graph,
                         'onClick': "setBegin(" + track[track_len].start + ");setEnd(" + track[track_len].end + ");jumpToSeq();"
                     }).appendTo(div);
-
-//            track_html += "<div class= \"graph " + className + "_graph\" onclick=\"setBegin(" + track[track_len].start + ");setEnd(" + track[track_len].end + ");jumpToSeq();\"STYLE=\"bottom:0px; height: " + (track[track_len].graph * 45 / max) + "px;" +
-//                "LEFT:" + startposition + "px;" +
-//                "width:" + (stopposition - 1) + "px \" title=\"" + track_start + ":" + track_stop + "->" + track[track_len].graph + "\" ></div>";
-
         }
-//  jQuery(div).css('height', '70px');
-//        jQuery(div).fadeIn();
-//        jQuery("#" + trackName + "_wrapper").fadeIn();
-//
-//        jQuery(div).html(track_html);
     }
 }
 
@@ -1275,12 +1265,7 @@ function dispGraphWig(div, trackName, trackId, className) {
                 pathinfo.push({ x: tempx, y: tempy});
 
 
-//        if (data.length < 400) {
                 i++;
-//        }
-//        else {
-//          i = parseInt(i + (data.length / 400));
-//        }
 
                 if (last_start < data[i].start - diff) {
                     if (start > 0) {
@@ -1343,8 +1328,6 @@ function dispGraphWig(div, trackName, trackId, className) {
     jQuery(div).css('height', '70px');
     jQuery(div).fadeIn();
     jQuery("#" + trackName + "_wrapper").fadeIn();
-//
-    // jQuery(div).html(track_html);
 }
 
 function sortResults(prop, asc, array) {
