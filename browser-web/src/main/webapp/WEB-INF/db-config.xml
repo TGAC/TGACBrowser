@@ -53,7 +53,7 @@
 
     <bean id="cacheManager" name="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"/>
 
-    <bean id="blastManagerDAO" class="uk.ac.bbsrc.tgac.browser.store.ensembl.BLASTManagerDAO">
+    <bean id="blastManagerDAO" class="uk.ac.bbsrc.tgac.browser.store.blastmanager.BLASTManagerDAO">
         <property name="jdbcTemplate" ref="blast_dbTemplate"/>
     </bean>
 
@@ -91,7 +91,7 @@
 
     <bean name="blastManagerStore" class="org.springframework.aop.framework.ProxyFactoryBean">
         <property name="proxyInterfaces">
-            <value>uk.ac.bbsrc.tgac.browser.core.store.BLASTManagerStore</value>
+            <value>uk.ac.bbsrc.tgac.browser.blastmanager.store.BLASTManagerStore</value>
         </property>
         <property name="interceptorNames">
             <list>

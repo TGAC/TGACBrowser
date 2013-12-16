@@ -25,9 +25,6 @@
 
 package uk.ac.bbsrc.tgac.browser.service.ajax;
 
-import java.lang.reflect.Method;
-import java.util.logging.Logger;
-
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sourceforge.fluxion.ajax.Ajaxified;
@@ -45,7 +42,7 @@ import java.lang.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.*;
 import org.xml.sax.SAXParseException;
-import uk.ac.bbsrc.tgac.browser.core.store.BLASTManagerStore;
+import uk.ac.bbsrc.tgac.browser.blastmanager.store.BLASTManagerStore;
 
 import static org.apache.commons.lang.StringUtils.split;
 

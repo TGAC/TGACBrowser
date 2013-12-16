@@ -1981,7 +1981,7 @@ span.counter {
     border: 1px solid gray;
     /*border-radius: 10px 10px;*/
     border-radius: 5px;
-    z-index: 999;
+    z-index: 1999;
     padding: 5px;
 
 }

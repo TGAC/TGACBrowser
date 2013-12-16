@@ -23,7 +23,7 @@
 #
  */
 
-package uk.ac.bbsrc.tgac.browser.core.store;
+package uk.ac.bbsrc.tgac.browser.blastmanager.store;
 
 import net.sf.json.JSONArray;
 import uk.ac.bbsrc.tgac.browser.core.store.Store;
