@@ -1721,7 +1721,7 @@ span.counter {
     width: auto;
 }
 .ruler{
-    font:13px Courier;
+    font:10px Courier;
 }
 
 .jump {
@@ -2684,4 +2684,14 @@ border: 1px solid gray;
 
 .ui-resizable-s{
     bottom: 0px;
+}
+
+
+.span_str{
+    position: absolute;
+    width: 10px;
+}
+
+.aminoacid-str{
+    box-shadow: 1px 1px 10px 2px #A9A9A9 inset;
 }

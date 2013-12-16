@@ -36,19 +36,19 @@ function stringColour(temp) {
     var newSeq = "";
     for (var i = 0; i < letters.length; i++) {
         if (letters[i] == 'A') {
-            newSeq += '<span style="color:#ff8c00;">' + letters[i] + '</span>';
+            newSeq += "<span class=\"span_str\" style=\"background:#ff8c00; LEFT: "+(i*10)+"px;\">" + letters[i] + "</span>" ;
         }
         else if (letters[i] == 'C') {
-            newSeq += '<span style="color:green; ">' + letters[i] + '</span>';
+            newSeq += "<span class=\"span_str\" style=\"background:green; left: "+(i*10)+"px;\">" + letters[i] + "</span>";
         }
         else if (letters[i] == 'G') {
-            newSeq += '<span style="color:blue;">' + letters[i] + '</span>';
+            newSeq += "<span class=\"span_str\" style=\"background:blue; left: "+(i*10)+"px;\">" + letters[i] + "</span>";
         }
         else if (letters[i] == 'T') {
-            newSeq += '<span style="color:red; ;">' + letters[i] + '</span>';
+            newSeq += "<span class=\"span_str\" style=\"background:red; left:  "+(i*10)+"px;\">" + letters[i] + "</span>";
         }
         else {
-            newSeq += '<span style="color:black; ">' + letters[i] + '</span>';
+            newSeq += "<span class=\"span_str\" style=\"background:black; left:  "+(i*10)+"px;\">" + letters[i] + "</span>";
         }
     }
     return newSeq;
@@ -70,8 +70,8 @@ function visualLength(temp) {
 
 function findminwidth() {
     maxLen = jQuery(window).width();
-    var len = visualLength(sequencelength);
-    var seqWidth = parseFloat(maxLen) * sequencelength / parseFloat(len);
+//    var len = visualLength(sequencelength);
+    var seqWidth = maxLen / 10; //parseFloat(maxLen) * sequencelength / parseFloat(len);
     deltaWidth = parseInt(sequencelength) * 2 / parseInt(maxLen);
     if (sequencelength < seqWidth) {
 //       still need to recode
