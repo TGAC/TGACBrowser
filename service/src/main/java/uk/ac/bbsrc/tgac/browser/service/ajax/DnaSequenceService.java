@@ -52,7 +52,7 @@ import java.io.*;
  */
 @Ajaxified
 public class DnaSequenceService {
-    protected static final Logger log = LoggerFactory.getLogger(DnaSequenceService.class);
+    protected final Logger log = LoggerFactory.getLogger(DnaSequenceService.class);
     @Autowired
     private SequenceStore sequenceStore;
 
@@ -102,6 +102,8 @@ public class DnaSequenceService {
     public void setSearchStore(SearchStore searchStore) {
         this.searchStore = searchStore;
     }
+
+    private SamBamService samBamService = new SamBamService();
 
     /**
      * Returns a JSONObject that can be read as single reference or a list of results
@@ -245,8 +247,8 @@ public class DnaSequenceService {
                 response.put(trackName, BigWigService.getWig(start, end, delta, trackId, seqName));
             } else if (trackId.contains(".sam") || trackId.contains(".bam")) {
                 count = SamBamService.countBAM(start, end, delta, trackId, seqName);
-                if (count < 25000) {
-                    response.put(trackName, SamBamService.getBAMReads(start, end, delta, trackId, seqName));
+                if (count < 5000) {
+                    response.put(trackName, samBamService.getBAMReads(start, end, delta, trackId, seqName));
                 } else {
                     response.put("type", "graph");
                     response.put(trackName, SamBamService.getBAMGraphs(start, end, delta, trackId, seqName));
