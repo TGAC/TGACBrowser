@@ -25,6 +25,7 @@
 
 package uk.ac.bbsrc.tgac.browser.service.ajax;
 
+import java.lang.reflect.Method;
 import java.util.logging.Logger;
 
 import net.sf.json.JSONArray;
@@ -41,8 +42,10 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import java.lang.*;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.*;
 import org.xml.sax.SAXParseException;
+import uk.ac.bbsrc.tgac.browser.core.store.BLASTManagerStore;
 
 import static org.apache.commons.lang.StringUtils.split;
 
@@ -58,6 +61,13 @@ import static org.apache.commons.lang.StringUtils.split;
 
 public class BlastServiceLocal {
     private org.slf4j.Logger log = LoggerFactory.getLogger(getClass());
+
+    @Autowired
+    private BLASTManagerStore blastManagerStore;
+
+    public void setBlastManagerStore(BLASTManagerStore blastManagerStore) {
+        this.blastManagerStore = blastManagerStore;
+    }
 
     /**
      * Return JSON Object
@@ -85,83 +95,94 @@ public class BlastServiceLocal {
             String blastAccession = json.getString("BlastAccession");
             String type = json.getString("type");
             String blastBinary = json.getString("blastBinary");
-
-            String file = "../webapps/" + location + "/temp/" + json.getString("BlastAccession") + ".xml";
-            File fastaTmp = File.createTempFile("blast", ".fa");
-
-            PrintWriter out = new PrintWriter(fastaTmp);
-            out.println(fasta);
-            out.flush();
-            out.close();
-
-//      generate BLAST command
-            String execBlast = blastBinary + "/" + type + " -db " + blastdb + " -query " + fastaTmp + "  -outfmt 6 -out " + file + " -task blastn";
-
-//     run Command
-            Process proc = Runtime.getRuntime().exec(execBlast);
-//      wait for command to finish
-            proc.waitFor();
-
-            FileInputStream fstream = new FileInputStream(file);
-
-            String str = "running";
-
-            DataInputStream input = new DataInputStream(fstream);
-
-            int i = 0;
+            String format = json.getString("format");
+            String params = json.getString("params");
 
 
-            while (null != (str = input.readLine())) {
-                JSONObject eachBlast = new JSONObject();
-
-                Pattern p = Pattern.compile("#");
-                Matcher matcher_comment = p.matcher(str);
-                if (matcher_comment.find()) {
-                } else {
-                    Pattern p1 = Pattern.compile("<.*>");
-                    Matcher matcher_score = p1.matcher(str);
-                    if (matcher_score.find()) {
-                    } else {
-                        String str1 = str.replaceAll("\\s+", "<td>");
-                        String[] id;
-                        id = str1.split("<td>");
-                        String seqregionName = id[1];
-                        String hsp_from = id[8];
-                        String hsp_to = id[9];
-                        String str2 = "";
-                        eachBlast.put("q_id", id[0]);
-                        if (location.length() > 0) {
-                            eachBlast.put("s_id", "<a target='_blank' href='../" + location + "/index.jsp?query=" + seqregionName + "&from=" + hsp_from + "&to=" + hsp_to + "&blasttrack=" + blastAccession + "'>"
-                                    + seqregionName + "</a>");
-                        } else {
-                            eachBlast.put("s_id", id[1]);
-
-                        }
-                        eachBlast.put("identity", id[2]);
-                        eachBlast.put("aln_length", id[3]);
-                        eachBlast.put("mismatch", id[4]);
-                        eachBlast.put("gap_open", id[5]);
-                        eachBlast.put("q_start", id[6]);
-                        eachBlast.put("q_end", id[7]);
-                        eachBlast.put("s_start", id[8]);
-                        eachBlast.put("s_end", id[9]);
-                        eachBlast.put("e_value", id[10]);
-                        eachBlast.put("bit_score", id[11]);
-                        eachBlast.put("s_db", blastdb.substring(blastdb.lastIndexOf("/") + 1));
-
-
-                        i++;
-                    }
-                }
-                blasts.add(eachBlast);
-            }
-
-            input.close();
-
-            String result = null;
-            if (i > 0) {
+            if (blastManagerStore.checkDatabase(fasta, blastdb, location, type, params, format)) {
+                blasts = blastManagerStore.getFromDatabase(blastAccession, location);
             } else {
-                blasts.add("No hits found.");
+                blastManagerStore.insertintoDatabase(blastAccession, fasta, blastdb, location, type, params, format);
+                String file = "../webapps/" + location + "/temp/" + json.getString("BlastAccession") + ".xml";
+
+                File fastaTmp = File.createTempFile("blast", ".fa");
+
+                PrintWriter out = new PrintWriter(fastaTmp);
+                out.println(fasta);
+                out.flush();
+                out.close();
+
+                String execBlast = blastBinary + "/" + type + " -db " + blastdb + " -query " + fastaTmp + "  -outfmt 6 -task blastn";
+                Process proc = Runtime.getRuntime().exec(execBlast);
+                proc.waitFor();
+                int i = 0;
+
+                BufferedReader stdInput = new BufferedReader(new
+                        InputStreamReader(proc.getInputStream()));
+
+                BufferedReader stdError = new BufferedReader(new
+                        InputStreamReader(proc.getErrorStream()));
+
+                // read the output from the command
+                System.out.println("Here is the standard output of the command:\n");
+                String str = null;
+                while ((str = stdInput.readLine()) != null) {
+                    JSONObject eachBlast = new JSONObject();
+
+                    Pattern p = Pattern.compile("#");
+                    Matcher matcher_comment = p.matcher(str);
+                    if (matcher_comment.find()) {
+                    } else {
+                        Pattern p1 = Pattern.compile("<.*>");
+                        Matcher matcher_score = p1.matcher(str);
+                        if (matcher_score.find()) {
+                        } else {
+                            String str1 = str.replaceAll("\\s+", "<td>");
+                            String[] id;
+                            id = str1.split("<td>");
+                            String seqregionName = id[1];
+                            String hsp_from = id[8];
+                            String hsp_to = id[9];
+                            String str2 = "";
+                            eachBlast.put("q_id", id[0]);
+                            if (location.length() > 0) {
+                                eachBlast.put("s_id", "<a target='_blank' href='../" + location + "/index.jsp?query=" + seqregionName + "&from=" + hsp_from + "&to=" + hsp_to + "&blasttrack=" + blastAccession + "'>"
+                                        + seqregionName + "</a>");
+                            } else {
+                                eachBlast.put("s_id", id[1]);
+
+                            }
+                            eachBlast.put("identity", id[2]);
+                            eachBlast.put("aln_length", id[3]);
+                            eachBlast.put("mismatch", id[4]);
+                            eachBlast.put("gap_open", id[5]);
+                            eachBlast.put("q_start", id[6]);
+                            eachBlast.put("q_end", id[7]);
+                            eachBlast.put("s_start", id[8]);
+                            eachBlast.put("s_end", id[9]);
+                            eachBlast.put("e_value", id[10]);
+                            eachBlast.put("bit_score", id[11]);
+                            eachBlast.put("s_db", blastdb.substring(blastdb.lastIndexOf("/") + 1));
+
+
+                            i++;
+                        }
+                    }
+                    blasts.add(eachBlast);
+                }
+
+                // read any errors from the attempted command
+                System.out.println("Here is the standard error of the command (if any):\n");
+                while ((str = stdError.readLine()) != null) {
+                    System.out.println(str);
+                }
+
+                blastManagerStore.setResultToDatabase(blastAccession, blasts);
+                String result = null;
+                if (i > 0) {
+                } else {
+                    blasts.add("No hits found.");
+                }
             }
 
             html.put("id", json.getString("BlastAccession"));
@@ -199,99 +220,120 @@ public class BlastServiceLocal {
         int noofhits = json.getInt("hit");
         String location = json.getString("location");
         String type = json.getString("type");
-        String file = "../webapps/" + location + "/temp/" + json.getString("BlastAccession") + ".xml";
         String format = json.getString("format");
 
 
         JSONObject blast_response = new JSONObject();
 
-        File fastaTmp = File.createTempFile("blast", ".fa");
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         Document dom;
+        String blastAccession = json.getString("BlastAccession");
+        String params = json.getString("params");
 
         try {
-            PrintWriter out = new PrintWriter(fastaTmp);
-            out.println(fasta.replaceAll("[0-9 \t\n\r]", ""));
-            out.flush();
-            out.close();
-
-            String execBlast = blastBinary + "/" + type + " -db " + blastdb + " -query " + fastaTmp + " -out " + file + " -outfmt "+format+" -max_target_seqs 10";
-            Process proc = Runtime.getRuntime().exec(execBlast);
-
-            proc.waitFor();
-
-            FileInputStream fstream = new FileInputStream(file);
-            DataInputStream input = new DataInputStream(fstream);
-            int in = 0;
-            int findHits = 1;
             JSONArray blasts = new JSONArray();
-            DocumentBuilder db = dbf.newDocumentBuilder();
 
-            dom = db.parse(input);
-            Element docEle = dom.getDocumentElement();
-            NodeList nl = docEle.getElementsByTagName("Hit");
+            if (blastManagerStore.checkResultDatabase(blastAccession)) {
+                blasts = blastManagerStore.getFromDatabase(blastAccession, location);
+            } else {
+                blastManagerStore.insertintoDatabase(blastAccession, fasta, blastdb, location, type, params, format);
 
-            if (nl != null && nl.getLength() > 0) {
-                HIT:
-                for (int a = 0; a < nl.getLength(); a++) {
+                String file = "../webapps/" + location + "/temp/" + json.getString("BlastAccession") + ".xml";
 
-                    Element el = (Element) nl.item(a);
-                    String hit_id = getTextValue(el, "Hit_def");
+                File fastaTmp = File.createTempFile("blast", ".fa");
 
-                    NodeList hsps = el.getElementsByTagName("Hsp");
-                    if (hsps != null && hsps.getLength() > 0) {
-                        for (int b = 0; b < hsps.getLength(); b++) {
+                PrintWriter out = new PrintWriter(fastaTmp);
+                out.println(fasta.replaceAll("[0-9 \t\n\r]", ""));
+                out.flush();
+                out.close();
+
+                String execBlast = blastBinary + "/" + type + " -db " + blastdb + " -query " + fastaTmp + " -outfmt 5 -max_target_seqs 10 ";
 
 
-                            Element ell = (Element) hsps.item(b);
+                log.info("command " + execBlast);
+                Process proc = Runtime.getRuntime().exec(execBlast);
 
-                            String hsp_from = getTextValue(ell, "Hsp_query-from");
+                proc.waitFor();
 
-                            String hsp_score = getTextValue(ell, "Hsp_score");
 
-                            String hsp_to = getTextValue(ell, "Hsp_query-to");
+                BufferedReader stdInput = new BufferedReader(new
+                        InputStreamReader(proc.getInputStream()));
 
-                            JSONObject eachBlast = new JSONObject();
-                            JSONArray indels = new JSONArray();
-                            JSONObject eachIndel = new JSONObject();
+                BufferedReader stdError = new BufferedReader(new
+                        InputStreamReader(proc.getErrorStream()));
 
-                            eachBlast.put("start", query_start + Integer.parseInt(hsp_from));
-                            eachBlast.put("end", query_start + Integer.parseInt(hsp_to));
-                            eachBlast.put("desc", "<a href=\"javascript:void(0);\" onclick=\"seqregionSearchPopup(\'" + hit_id + "\')\">"
-                                    + hit_id + "</a>");
-                            eachBlast.put("score", hsp_score);
-                            eachBlast.put("flag", false);
-                            eachBlast.put("reverse", "");
+                DataInputStream input = new DataInputStream(proc.getInputStream());
+                int in = 0;
+                int findHits = 1;
+                DocumentBuilder db = dbf.newDocumentBuilder();
 
-                            String hsp_midline = getTextValue(ell, "Hsp_midline");
-                            if (hsp_midline.split(" ").length > 1) {
-                                String hsp_query_seq = getTextValue(ell, "Hsp_qseq");
-                                String hsp_hit_seq = getTextValue(ell, "Hsp_hseq");
-                                String[] newtemp = hsp_midline.split(" ");
-                                int ins = 0;
-                                for (int x = 0; x < newtemp.length - 1; x++) {
-                                    ins = ins + ((newtemp[x].length() + 1));
-                                    eachIndel.put("position", ins + in);
-                                    eachIndel.put("query", hsp_query_seq.substring((ins - 3) > -1 ? (ins - 3) : 0, (ins + 2) <= hsp_query_seq.length() ? (ins + 2) : hsp_query_seq.length()));
-                                    eachIndel.put("hit", hsp_hit_seq.substring((ins - 3) > -1 ? (ins - 3) : 0, (ins + 2) <= hsp_hit_seq.length() ? (ins + 2) : hsp_hit_seq.length()));
-                                    indels.add(eachIndel);
+                dom = db.parse(input);
+                Element docEle = dom.getDocumentElement();
+                NodeList nl = docEle.getElementsByTagName("Hit");
+
+                if (nl != null && nl.getLength() > 0) {
+                    HIT:
+                    for (int a = 0; a < nl.getLength(); a++) {
+
+                        Element el = (Element) nl.item(a);
+                        String hit_id = getTextValue(el, "Hit_def");
+
+                        NodeList hsps = el.getElementsByTagName("Hsp");
+                        if (hsps != null && hsps.getLength() > 0) {
+                            for (int b = 0; b < hsps.getLength(); b++) {
+
+
+                                Element ell = (Element) hsps.item(b);
+
+                                String hsp_from = getTextValue(ell, "Hsp_query-from");
+
+                                String hsp_score = getTextValue(ell, "Hsp_score");
+
+                                String hsp_to = getTextValue(ell, "Hsp_query-to");
+
+                                JSONObject eachBlast = new JSONObject();
+                                JSONArray indels = new JSONArray();
+                                JSONObject eachIndel = new JSONObject();
+
+                                eachBlast.put("start", query_start + Integer.parseInt(hsp_from));
+                                eachBlast.put("end", query_start + Integer.parseInt(hsp_to));
+                                eachBlast.put("desc", "<a href=\"javascript:void(0);\" onclick=\"seqregionSearchPopup(\'" + hit_id + "\')\">"
+                                        + hit_id + "</a>");
+                                eachBlast.put("score", hsp_score);
+                                eachBlast.put("flag", false);
+                                eachBlast.put("reverse", "");
+
+                                String hsp_midline = getTextValue(ell, "Hsp_midline");
+                                if (hsp_midline.split(" ").length > 1) {
+                                    String hsp_query_seq = getTextValue(ell, "Hsp_qseq");
+                                    String hsp_hit_seq = getTextValue(ell, "Hsp_hseq");
+                                    String[] newtemp = hsp_midline.split(" ");
+                                    int ins = 0;
+                                    for (int x = 0; x < newtemp.length - 1; x++) {
+                                        ins = ins + ((newtemp[x].length() + 1));
+                                        eachIndel.put("position", ins + in);
+                                        eachIndel.put("query", hsp_query_seq.substring((ins - 3) > -1 ? (ins - 3) : 0, (ins + 2) <= hsp_query_seq.length() ? (ins + 2) : hsp_query_seq.length()));
+                                        eachIndel.put("hit", hsp_hit_seq.substring((ins - 3) > -1 ? (ins - 3) : 0, (ins + 2) <= hsp_hit_seq.length() ? (ins + 2) : hsp_hit_seq.length()));
+                                        indels.add(eachIndel);
+                                    }
                                 }
+
+                                eachBlast.put("indels", indels);
+                                blasts.add(eachBlast);
+
+                                findHits++;
+                                if (findHits > noofhits) {
+                                    break HIT;
+
+                                }
+
                             }
-
-                            eachBlast.put("indels", indels);
-                            blasts.add(eachBlast);
-
-                            findHits++;
-                            if (findHits > noofhits) {
-                                break HIT;
-
-                            }
-
                         }
                     }
+                } else {
+                    blasts.add("No hits found.");
                 }
-            } else {
-                blasts.add("No hits found.");
+                blastManagerStore.setResultToDatabase(blastAccession, blasts);
             }
             blast_response.put("id", json.getString("BlastAccession"));
             blast_response.put("blast", blasts);
