@@ -1,0 +1,52 @@
+#
+# Copyright (c) 2012. The Genome Analysis Centre, Norwich, UK
+# MISO project contacts: Robert Davey, Mario Caccamo @ TGAC
+# **********************************************************************
+#
+# This file is part of TGAC Browser.
+#
+# Contact: tgac.browser@tgac.ac.uk
+#
+# **********************************************************************
+#
+
+
+
+
+
+browser.fasta = true
+browser.title = TGAC Browser - Primula_test
+browser.header = Primula_Test
+browser.urlpath = primula_test
+browser.defaultRef = LIB1168_contig1
+
+
+browser.blastdblink = primula_test,primula_test,primula_test,primula_test,primula_test,primula_test,primula_test,primula_test,primula_test,primula_test,primula_test,primula_test,primula_test,primula_test,primula_test,primula_test,primula_test,primula_test,primula_test
+browser.blastdblocation = /net/tgac-cfs3/ifs/TGAC/browser/jobs/primuladb/all_Illumina_BACs.fasta,/net/tgac-cfs3/ifs/TGAC/browser/jobs/primuladb/prim-thrumparent-k71-scaffolds.fa,/net/tgac-cfs3/ifs/TGAC/browser/jobs/primuladb/prim-thrumpool-k71-scaffolds.fa,/net/tgac-cfs3/ifs/TGAC/browser/jobs/primuladb/prim-thrumparent-ab-ctg-scaff.fa,/net/tgac-cfs3/ifs/TGAC/browser/jobs/primuladb/454_BAC_contigs.fasta,/net/tgac-cfs3/ifs/TGAC/browser/jobs/primuladb/Illumina_BACs_v2_merged.fasta,/net/tgac-cfs3/ifs/TGAC/browser/jobs/primuladb/pool2_4_merged.fasta,/net/tgac-cfs3/ifs/TGAC/browser/jobs/primuladb/pool1_3_merged.fasta,/net/tgac-cfs3/ifs/TGAC/browser/jobs/primuladb/prim-pinparent-k71-scaffolds.fa,/net/tgac-cfs3/ifs/TGAC/browser/jobs/primuladb/prim-pinpool-k71-scaffolds.fa,/net/tgac-cfs3/ifs/TGAC/browser/jobs/primuladb/prim-pollen-k71-scaffolds.fa,/net/tgac-cfs3/ifs/TGAC/browser/jobs/primuladb/prim-allpin-k71-scaffolds.fa,/net/tgac-cfs3/ifs/TGAC/browser/jobs/primuladb/prim-allthrum-k71-scaffolds.fa,/net/tgac-cfs3/ifs/TGAC/browser/jobs/primuladb/prim-longhomo-k81-scaffolds.fa,/net/tgac-cfs3/ifs/TGAC/browser/jobs/primuladb/prim-longhomo-soap2-scaff.fa,/net/tgac-cfs3/ifs/TGAC/browser/jobs/primuladb/prim-pinparent-ab-ctg-scaff.fa,/net/tgac-cfs3/ifs/TGAC/browser/jobs/primuladb/prim-thrumparent-ab-ctg-scaff_v2.fa,/net/tgac-cfs3/ifs/TGAC/browser/jobs/primuladb/pv_flowers_trans.fa,/net/tgac-cfs3/ifs/TGAC/browser/jobs/primuladb/pv_oakleaf_trans.fa
+
+browser.trackfiles = 
+
+##main db config
+db.driver:com.mysql.jdbc.Driver
+db.username = tgacbrowser
+db.password = tgac_bioinf
+db.url = jdbc:mysql://n78048.nbi.ac.uk:3306/wrightj_primula_vulgaris_test
+
+#
+
+#
+##general browser config
+#browser.name: name
+#browser.base.url: http://host.com/
+#
+##blast config
+#blast.switch:on
+#blast.db:/path/db.fa
+#blast.query.file.dir:/dir/
+#blast.cluster.host:host.name
+#blast.cluster.port:1234
+#
+##conan service for checking blast jobs on cluster
+#blast.conan.db.url:jdbc:mysql://host:3306/db
+#blast.conan.db.username:user
+#blast.conan.db.password:passwd

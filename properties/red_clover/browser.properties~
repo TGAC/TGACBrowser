@@ -1,0 +1,37 @@
+#
+# Copyright (c) 2012. The Genome Analysis Centre, Norwich, UK
+# MISO project contacts: Robert Davey, Mario Caccamo @ TGAC
+# **********************************************************************
+#
+# This file is part of TGAC Browser.
+#
+# Contact: tgac.browser@tgac.ac.uk
+#
+# **********************************************************************
+#
+
+
+
+
+
+browser.fasta = true
+browser.title = TGAC Browser - Red Clover
+browser.header = Red Clover
+browser.urlpath = red_clover
+
+browser.defaultRef = ctg1
+browser.linkLocation = 
+browser.blastdblink = 
+browser.blastdblocation = 
+browser.trackfiles = 
+
+browser.blastType = 
+browser.blastLocation = /opt/blast+
+
+
+##main db config
+db.driver:com.mysql.jdbc.Driver
+db.url:jdbc:mysql://n78048.nbi.ac.uk:3306/waited_red_clover_assembly
+db.username:tgacbrowser
+db.password:tgac_bioinf
+## main db config ends

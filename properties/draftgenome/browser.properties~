@@ -1,0 +1,48 @@
+#
+# Copyright (c) 2011-2013. The Genome Analysis Centre, Norwich, UK
+# TGAC Browser project contacts: Anil Thanki, Xingdong Bian, Robert Davey, Mario Caccamo @ TGAC
+# **********************************************************************
+#
+# This file is part of TGAC Browser.
+#
+# Contact: tgac.browser@tgac.ac.uk
+#
+# **********************************************************************
+#
+
+
+browser.fasta = false
+browser.title = 42YearDraft
+browser.header = 42YearDraft
+browser.urlpath = draftgenome
+browser.defaultRef = 42yrdraftgenome
+
+browser.blastdblink = 
+browser.blastdblocation = 
+
+
+browser.trackfiles = 
+#browser.trackfiles = /storage/browser/temp.sam,/storage/browser/temp2.sam
+
+browser.linkLocation = 
+
+#blast options
+#browser.blasttype = local/server/ncbi --> choose one [server works with pipeline conf], blast location works with local or leave empty
+browser.blastType = 
+browser.blastLocation = /opt/blast+
+
+##main db config
+db.driver:com.mysql.jdbc.Driver
+db.url:jdbc:mysql://localhost:3306/42yrdraft
+db.username:root
+db.password:tgac_bioinf
+## main db config ends
+
+##general browser config
+#blast.cluster.host:host.name
+#blast.cluster.port:1234
+#
+##conan service for checking blast jobs on cluster
+#blast.conan.db.url:jdbc:mysql://host:3306/db
+#blast.conan.db.username:user
+#blast.conan.db.password:passwd
