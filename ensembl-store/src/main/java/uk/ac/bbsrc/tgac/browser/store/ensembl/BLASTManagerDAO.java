@@ -137,7 +137,7 @@ public class BLASTManagerDAO implements BLASTManagerStore {
 
 
     public void setResultToDatabase(String blastAccession, JSONArray result) throws Exception {
-        template.update(UPDATE_RESULTS, new Object[]{blastAccession, result});
+        template.update(UPDATE_RESULTS, new Object[]{blastAccession, result.toString()});
     }
 
     public void updateDatabase(String taskId, String status) throws Exception {
