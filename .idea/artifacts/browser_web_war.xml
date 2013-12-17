@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="war" name="browser-web:war">
-    <output-path>$PROJECT_DIR$/browser-web/target</output-path>
-    <root id="archive" name="${profile}.war">
-      <element id="artifact" artifact-name="browser-web:war exploded" />
-    </root>
-  </artifact>
-</component>
