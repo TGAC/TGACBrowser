@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License along with TGA
 
 You can follow TGAC Browser development on Twitter: @TGACBrowser (https://twitter.com/tgacbrowser), @anilthanki (https://twitter.com/anilthanki)
 
-Version 0.1.2
+Version 0.2.0
 
 
 Release Notes
@@ -23,7 +23,7 @@ Release Notes
 
 Here is a link for release notes
 
-https://documentation.tgac.ac.uk/display/TB/TGAC+Browser+0.1.2+release
+https://documentation.tgac.ac.uk/display/TB/TGAC+Browser+0.2.0+release
 
 
 Documentation
@@ -31,7 +31,7 @@ Documentation
 
 Here is a link to TGAC Browser documentation: How To Setup, How to use, etc 
 
-https://documentation.tgac.ac.uk/display/TB/TGAC+Browser+-+Installation+Guide+v0.1.2
+https://documentation.tgac.ac.uk/display/TB/TGAC+Browser+-+Installation+Guide+v0.2.0
 
 
 
