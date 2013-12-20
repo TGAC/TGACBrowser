@@ -28,7 +28,7 @@
     <parent>
         <artifactId>tgac-browser</artifactId>
               <groupId>uk.ac.bbsrc.tgac.tgac-browser</groupId>
-        <version>0.1.2</version>
+        <version>0.2.0</version>
     </parent>
     <groupId>${parent.groupId}</groupId>
     <version>${parent.version}</version>
