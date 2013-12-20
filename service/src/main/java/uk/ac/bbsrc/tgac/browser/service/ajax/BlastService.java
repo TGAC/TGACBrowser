@@ -296,7 +296,7 @@ public class BlastService {
                 j.put("params", json);
 
                 task.put("submit", j);
-                String response = sendMessage(prepareSocket("norwich.nbi.bbsrc.ac.uk", 7899), task.toString());
+                String response = sendMessage(prepareSocket("<server-path>", 7899), task.toString());
                 if (!"".equals(response)) {
                     JSONObject r = JSONObject.fromObject(response);
                     return r;
@@ -397,7 +397,7 @@ public class BlastService {
             q1.put("params", params);
             String query = q1.toString();
             log.info(">>>>>" + query);
-            String response = sendMessage(prepareSocket("norwich.nbi.bbsrc.ac.uk", 7899), query);
+            String response = sendMessage(prepareSocket("<server-path>", 7899), query);
             log.info("\n\n\n<<<<" + response);
             if (!"".equals(response)) {
                 JSONArray r = JSONArray.fromObject(response);
@@ -425,7 +425,7 @@ public class BlastService {
     public String getTaskSQL(String taskId) throws Exception {
         String result = null;
         Class.forName("com.mysql.jdbc.Driver").newInstance();
-        Connection conn = DriverManager.getConnection("jdbc:mysql://london.nbi.bbsrc.ac.uk:3306/conan", "conan", "conan");
+        Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/conan", "conan", "conan");
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery("select STATE from CONAN_TASKS where NAME=\"" + taskId + "\"");
         while (rs.next()) {
