@@ -7,13 +7,6 @@
 
 </style>
 
-<%--<div id="searchseqregioninput">--%>
-<%--<input type="text" id="search" value="scaffold1.1-size1749886"/>--%>
-<%--<button class="ui-state-default ui-corner-all" onclick="search(jQuery('#search').val());">Search Seq Region Name--%>
-<%--</button>--%>
-<%--</div>--%>
-
-
 <center>
 
     <div id="mainsearch" style="top : 10px ;"></div>
@@ -47,7 +40,6 @@
             if (key == "blasttrack") {
                 showBlast = true;
             }
-
         });
 
         if (vars.length > 0) {
@@ -58,11 +50,7 @@
 
         }
         else if (jQuery('#search').val().length >= 1) {
-            var now = new Date();
-
-
             search(jQuery('#search').val(), oldTracklist);
-        <%--vars[1] for blast and so on --%>
         }
         else if(chr == true){
              getReferences(true)
@@ -70,10 +58,6 @@
         else {
           console.log("else")
         }
-
-//        if(showBlast){
-//            loadPreBlast(vars[3], vars[0]);
-//        }
     }
 
 

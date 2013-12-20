@@ -82,16 +82,6 @@ function seqregionSearchPopup(query, from, to, blast) {
                 jQuery('#openCloseWrap').show();
                 jQuery('#displayoptions').show();
                 seqregname = json.seqregname;
-                tracks = jQuery("#filetrack").html().split(',');
-                if (tracks[0].length) {
-                    for (var i = 0; i < tracks.length; i++) {
-                        var filename = tracks[i].substring(tracks[i].lastIndexOf("/") + 1, tracks[i].lastIndexOf("."));
-                        var type = tracks[i].substring(tracks[i].lastIndexOf(".") + 1, tracks[i].length);
-                        track_list.push(
-                            {name: filename + "_" + type, id: tracks[i], display_label: filename, desc: tracks[i], disp: 1, merge: 0, graph: "false", display_lable: tracks[i], label: 0}
-                        );
-                    }
-                }
 
                 trackList(track_list);
 
@@ -285,7 +275,6 @@ function loadTrackAjax(trackId, trackname) {
 
     if (window[trackname] || window[trackname] == "running" || window[trackname] == "loading") {
         trackToggle(trackname);
-//    need to think abt it
     }
 
     if (jQuery("#" + trackname + "Checkbox").attr('checked') && trackId.indexOf('noid') < 0) {

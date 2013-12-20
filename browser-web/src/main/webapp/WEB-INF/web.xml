@@ -58,11 +58,6 @@
     </context-param>
 
     <context-param>
-        <param-name>trackfiles</param-name>
-        <param-value>${browser.trackfiles}</param-value>
-    </context-param>
-
-    <context-param>
         <param-name>urlpath</param-name>
         <param-value>${browser.urlpath}</param-value>
     </context-param>
