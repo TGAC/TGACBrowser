@@ -100,7 +100,6 @@ public class BlastServiceLocal {
                 blasts = blastManagerStore.getFromDatabase(blastAccession, location);
             } else {
                 blastManagerStore.insertintoDatabase(blastAccession, fasta, blastdb, location, type, params, format);
-                String file = "../webapps/" + location + "/temp/" + json.getString("BlastAccession") + ".xml";
 
                 File fastaTmp = File.createTempFile("blast", ".fa");
 
