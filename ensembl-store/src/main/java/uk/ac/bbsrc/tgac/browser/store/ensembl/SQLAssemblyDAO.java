@@ -298,7 +298,7 @@ public class SQLAssemblyDAO implements AssemblyStore {
             List<Map<String, Object>> maps = template.queryForList(GET_Assembly, new Object[]{id, trackId.replace("cs", "")});
             if (maps.size() > 0) {
                 ends.add(0, 0);
-                trackList = getAssemblyLevel(0, maps,  delta);
+                trackList = getAssemblyLevel(0, maps, delta);
             } else {
                 trackList = recursiveAssembly(0, id, trackId, delta);
             }
@@ -373,13 +373,22 @@ public class SQLAssemblyDAO implements AssemblyStore {
                 eachTrack_temp.put("end", start + Integer.parseInt(map_temp.get("asm_end").toString()) - 1);
                 eachTrack_temp.put("flag", false);
 
-                eachTrack_temp.put("layer", util.stackLayerInt(ends,Integer.parseInt(map_temp.get("asm_start").toString()), delta, Integer.parseInt(map_temp.get("asm_end").toString())));
-                ends = util.stackLayerList(ends,Integer.parseInt(map_temp.get("asm_start").toString()), delta, Integer.parseInt(map_temp.get("asm_end").toString()));
+                eachTrack_temp.put("layer", util.stackLayerInt(ends, Integer.parseInt(map_temp.get("asm_start").toString()), delta, Integer.parseInt(map_temp.get("asm_end").toString())));
+                ends = util.stackLayerList(ends, Integer.parseInt(map_temp.get("asm_start").toString()), delta, Integer.parseInt(map_temp.get("asm_end").toString()));
 
                 eachTrack_temp.put("desc", template.queryForObject(GET_SEQ_REGION_NAME_FROM_ID, new Object[]{map_temp.get("cmp_seq_region_id")}, String.class));
                 attribs = template.queryForList(GET_SEQ_REGION_ATTRIB_FROM_ID, new Object[]{map_temp.get("cmp_seq_region_id")});
-                for (Map attrib : attribs) {
-                    eachTrack_temp.put("colour", attrib.get("value"));
+
+                if (attribs.size() > 0) {
+                    for (Map attrib : attribs) {
+                        log.info("\n\n\ncmp_seq_region_id" + map_temp.get("cmp_seq_region_id") + " - " + eachTrack_temp.get("desc"));
+                        log.info("colour" + attrib.get("value"));
+
+                        eachTrack_temp.put("colour", attrib.get("value"));
+                    }
+                } else {
+                    eachTrack_temp.remove("colour");
+
                 }
                 assemblyTracks.add(eachTrack_temp);
             }
