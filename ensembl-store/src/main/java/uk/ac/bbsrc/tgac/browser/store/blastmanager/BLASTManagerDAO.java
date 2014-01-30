@@ -234,6 +234,7 @@ public class BLASTManagerDAO implements BLASTManagerStore {
                 eachBlast.put("bit_score", explrObject.get("bit_score"));
                 eachBlast.put("s_db", explrObject.get("s_db"));
                 eachBlast.put("sequence", explrObject.get("sequence"));
+                eachBlast.put("qsequence", explrObject.get("qsequence"));
                 blasts.add(eachBlast);
             }
         } else {

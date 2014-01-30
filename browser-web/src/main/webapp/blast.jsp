@@ -42,6 +42,7 @@
         <select name="blast_type" id="blast_type">
             <option value="blastn"> blastn</option>
             <option value="tblastn">tblastn</option>
+            <option value="blastx">blastx</option>
         </select>
 
         <input type=checkbox id='filter' name='filter' checked> Include Repeats

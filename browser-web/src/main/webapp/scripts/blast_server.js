@@ -34,7 +34,7 @@
 
 function blastSearch(query, blastdb, type, params) {
   if (jQuery('#blast_list img').length < 3) {
-    submitBlastTask(query, blastdb, "6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore sseq", type, 0, 0, 0, params);
+    submitBlastTask(query, blastdb, "6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore sseq qseq", type, 0, 0, 0, params);
     jQuery('#main').animate({"height": "0px"}, { duration: 300, queue: false});
     jQuery('#main').fadeOut();
   }

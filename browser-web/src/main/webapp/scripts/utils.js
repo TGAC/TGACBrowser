@@ -36,19 +36,19 @@ function stringColour(temp) {
     var newSeq = "";
     for (var i = 0; i < letters.length; i++) {
         if (letters[i] == 'A') {
-            newSeq += "<span class=\"span_str\" style=\"background:#ff8c00; LEFT: "+(i*10)+"px;\">" + letters[i] + "</span>" ;
+            newSeq += "<span class=\"span_str\" style=\"background:#ff8c00; LEFT: " + (i * 10) + "px;\">" + letters[i] + "</span>";
         }
         else if (letters[i] == 'C') {
-            newSeq += "<span class=\"span_str\" style=\"background:green; left: "+(i*10)+"px;\">" + letters[i] + "</span>";
+            newSeq += "<span class=\"span_str\" style=\"background:green; left: " + (i * 10) + "px;\">" + letters[i] + "</span>";
         }
         else if (letters[i] == 'G') {
-            newSeq += "<span class=\"span_str\" style=\"background:blue; left: "+(i*10)+"px;\">" + letters[i] + "</span>";
+            newSeq += "<span class=\"span_str\" style=\"background:blue; left: " + (i * 10) + "px;\">" + letters[i] + "</span>";
         }
         else if (letters[i] == 'T') {
-            newSeq += "<span class=\"span_str\" style=\"background:red; left:  "+(i*10)+"px;\">" + letters[i] + "</span>";
+            newSeq += "<span class=\"span_str\" style=\"background:red; left:  " + (i * 10) + "px;\">" + letters[i] + "</span>";
         }
         else {
-            newSeq += "<span class=\"span_str\" style=\"background:black; left:  "+(i*10)+"px;\">" + letters[i] + "</span>";
+            newSeq += "<span class=\"span_str\" style=\"background:black; left:  " + (i * 10) + "px;\">" + letters[i] + "</span>";
         }
     }
     return newSeq;
@@ -286,25 +286,25 @@ function groupCancel() {
 }
 
 function stringTrim(string, width, newClass) {
-    if(newClass){
+    if (newClass) {
         console.log(newClass)
         jQuery("#ruler").addClass(newClass.toString())
     }
-    else{
+    else {
         jQuery("#ruler").addClass("ruler")
     }
     var ruler = jQuery("#ruler");
-    console.log("added"+jQuery("#ruler").attr('class'))
+    console.log("added" + jQuery("#ruler").attr('class'))
     var inLength = 0;
     var tempStr = "";
 
     jQuery("#ruler").html(string);
     inLength = jQuery("#ruler").width();
 
-    if(newClass){
+    if (newClass) {
         jQuery("#ruler").removeClass(newClass.toString())
     }
-    else{
+    else {
         jQuery("#ruler").removeClass("ruler")
     }
 
@@ -393,43 +393,97 @@ function backup_tracks_removed(track, i) {
 //  }
 }
 
-function parseBLAST(json){
+function parseBLAST(json) {
     jQuery('#blastresult').fadeIn();
-    jQuery('#blastresult').append("<table style=\"display: none;\" class='list' id='blasttable"+json.id+"'> <thead> " +
+    jQuery('#blastresult').append("<table style=\"display: none;\" class='list' id='blasttable" + json.id + "'> <thead> " +
         "<tr><th> Query id </th> <th> Subject id </th>  <th> % identity </th>   <th> alignment length </th>  <th> mismatches </th>  <th> gap openings </th>  <th> q.start </th>  <th> q.end </th>  <th> s.start </th>  <th> s.end </th> <th> e-value </th> <th> bit score </th> <th> Subject db </th><th> Download Sequence </th>        </tr>        </thead>        <tbody>        </tbody>    </table>")
 
-    for(var i=0; i<json.html.length; i++){
-        jQuery("#blasttable"+json.id+" tbody").append("<tr><td>"+json.html[i].q_id+"</td><td>"+json.html[i].s_id+"</td><td>"+json.html[i].identity+"</td><td>"+json.html[i].aln_length+"</td><td>"+json.html[i].mismatch+"</td><td>"+json.html[i].gap_open+"</td><td>"+json.html[i].q_start+"</td><td>"+json.html[i].q_end+"</td><td>"+json.html[i].s_start+"</td><td>"+json.html[i].s_end+"</td><td>"+json.html[i].e_value+"</td><td>"+json.html[i].bit_score+"</td><td>"+json.html[i].s_db+"</td><td><div class=\"ui-widget ui-state-default ui-corner-all ui-button ui-icon ui-icon-arrow-1-s\" id=\"openmenu\" onclick=\"sub_seq('"+json.html[i].sequence+"')\" title=\"More Option\"> </div></td></tr>");
+    for (var i = 0; i < json.html.length; i++) {
+        jQuery("#blasttable" + json.id + " tbody").append("<tr><td>" + json.html[i].q_id + "</td><td>" + json.html[i].s_id + "</td><td>" + json.html[i].identity + "</td><td>" + json.html[i].aln_length + "</td><td>" + json.html[i].mismatch + "</td><td>" + json.html[i].gap_open + "</td><td>" + json.html[i].q_start + "</td><td>" + json.html[i].q_end + "</td><td>" + json.html[i].s_start + "</td><td>" + json.html[i].s_end + "</td><td>" + json.html[i].e_value + "</td><td>" + json.html[i].bit_score + "</td><td>" + json.html[i].s_db + "</td><td><div class=\"ui-widget ui-state-default ui-corner-all ui-button ui-icon ui-icon-arrow-1-s\" id=\"openmenu\" onclick=\"sub_seq('" + json.html[i].sequence + "','" + json.html[i].qsequence + "')\" title=\"More Option\"> </div></td></tr>");
     }
-    jQuery("#blasttable"+json.id).tablesorter();
-    jQuery("'#blasttable"+json.id+"'").trigger("update");
+    jQuery("#blasttable" + json.id).tablesorter();
+    jQuery("'#blasttable" + json.id + "'").trigger("update");
 }
 
-function sub_seq(seq){
+function sub_seq(seq, qseq) {
     var id = "";//seq.split("<br>")[0];
-  //  seq =  seq.split("<br>")[1];
+    //  seq =  seq.split("<br>")[1];
     jQuery.colorbox({
         width: "90%",
         height: "100%",
-        html: "<table><tr><td><button class='ui-state-default ui-corner-all' " +
-            "onclick=\"selectText('sub_output');\"')\">Select Sequence</button><br/>" +
-            "<td><div id=fastadownload></div></td></td></tr></table><br/>" +
+        html: "<table><tr><td><button id=\"subbutton\" class='ui-state-default ui-corner-all' " +
+            "onclick=\"blastToogle();\">Alignemt Sequence</button><br/>" +
+            "</td></td></tr></table><br/>" +
             "<br/><b>Subject Sequence:</b> <br/>" +
-            "<div id=\"sub_output\" style=' font-family: Courier, \"Courier New\", monospace'> "+id+"<br>"+convertFasta(seq)+"</div>"});
+            "<div id=\"btop_output\" style='display : inline;  font-family: Courier, \"Courier New\", monospace'> " + id + "<br>" + convertSeqtoBLAST(seq, qseq) + "</div>" +
+            "<div id=\"sub_output\" style=' display: none; font-family: Courier, \"Courier New\", monospace'> <table><tr><td><button class='ui-state-default ui-corner-all' " +
+            "onclick=\"selectText('sub_output');\"')\">Select Sequence</button><br/>" +
+            "<td><div id=fastadownload></div></td></td></tr></table><br/> " + id + "<br>" + convertFasta(seq) + "</div>"});
 }
 
-function resetBLAST(){
+function blastToogle() {
+    jQuery("#btop_output").toggle();
+    jQuery("#sub_output").toggle();
+    if (jQuery("#subbutton").text() == "Alignemt Sequence") {
+        jQuery("#subbutton").text("Sub Sequence");
+    }
+    else {
+        jQuery("#subbutton").text("Alignemt Sequence");
+    }
+
+}
+
+function resetBLAST() {
     jQuery('#blasttable tbody').html("");
     jQuery('#blastresult').fadeOut();
 }
 
-function toogleTable(id){
+function toogleTable(id) {
     jQuery("th.header").closest("table").hide();
-    jQuery("#blasttable"+id).show()
+    jQuery("#blasttable" + id).show()
 }
 
-function deleteTable(id){
+function deleteTable(id) {
 
-    jQuery("#blasttable"+id).remove()
-    jQuery("#"+id).remove()
+    jQuery("#blasttable" + id).remove()
+    jQuery("#" + id).remove()
+}
+
+function convertSeqtoBLAST(seq, qseq) {
+    var start = 0;
+    var end = 69;
+    var oldString = seq;
+    var oldQString = qseq;
+    var oldbtopString = "";
+
+    var newString = "";
+    var newQString = "";
+    var oldStringlength = oldString.length
+    var i = 0;
+    while (i < oldStringlength) {
+        if (oldString.charAt(i) == oldQString.charAt(i)) {
+            oldbtopString += "|";
+        }
+        else {
+            console.log(oldString.charAt(i) + " == " + oldQString.charAt(i))
+            oldbtopString += " ";
+        }
+        i++;
+    }
+
+    while (oldString.length > 70) {
+        newString = newString + '<br/>' + oldString.substring(start, end);
+        newString = newString + '<br/>' + oldbtopString.substring(start, end);
+        newString = newString + '<br/>' + oldQString.substring(start, end) + '<br/>';
+
+        oldString = oldString.substring(end, oldString.length);
+        oldQString = oldQString.substring(end, oldQString.length);
+        oldbtopString = oldbtopString.substring(end, oldbtopString.length);
+
+    }
+    newString += "<br />" + oldString;
+    newString = newString + '<br/>' + oldbtopString;
+    newString = newString + '<br/>' + oldQString
+
+    return newString.replace(/ /g, "&nbsp;");
 }

@@ -71,7 +71,6 @@ public class Util implements UtilsStore {
      * @return number of layer as an integer
      */
     public int stackLayerInt(List<Integer> ends, int start_pos, int delta, int end_pos) throws Exception {
-        log.info("\n\n\n\nstackleyerInt "+start_pos+" "+delta+" "+end_pos);
         try {
             int position = 0;
             for (int a = 0; a < ends.size(); a++) {
@@ -103,7 +102,6 @@ public class Util implements UtilsStore {
      * @return List of layer list to be reuse
      */
     public List<Integer> stackLayerList(List<Integer> ends, int start_pos, int delta, int end_pos) throws Exception {
-        log.info("\n\n\n\nstackleyerList "+start_pos+" "+delta+" "+end_pos);
         try {
             for (int a = 0; a < ends.size(); a++) {
                 if (start_pos - ends.get(a) > delta) {

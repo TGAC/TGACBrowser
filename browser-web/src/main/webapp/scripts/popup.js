@@ -585,8 +585,6 @@ function showPeptides(track, i, k) {
                     "onclick=\"sequenceToogle();\">Peptide Sequence</button><br/>" +
                     "</td></td></tr></table><br/>" +
                     "<div id='cdnasequence' style='display : inline; font-family: Courier, \"Courier New\", monospace'><b>cDNA Seq</b><hr>" + cdnaseq + "</div><div id='peptidesequence' style='display : none; font-family: Courier, \"Courier New\", monospace'><b>Peptide Seq</b><hr>" + peptideseq + "</div>" });
-
-
         }
         });
 
@@ -814,12 +812,8 @@ function convertFasta(string) {
     while (oldString.length > 70) {
         newString = newString + '<br/>' + oldString.substring(start, end);
         oldString = oldString.substring(end, oldString.length);
-//    start = start + 70;
-//    end = end + 70;
     }
     newString += "<br />" + oldString;
-
-
     return newString;
 }
 
