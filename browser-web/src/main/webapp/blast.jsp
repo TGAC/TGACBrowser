@@ -123,7 +123,7 @@
                 var params = "-num_threads  4 ";
                 if(jQuery("#filter").attr('checked'))
                 {
-                    if(jQuery('#blast_type').val().indexOf('tblastn') >= 0){
+                    if(jQuery('#blast_type').val().indexOf('tblastn') >= 0 || jQuery('#blast_type').val().indexOf('blastx') >= 0){
                         params += " -seg no";
                     }
                     else {
