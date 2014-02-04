@@ -104,6 +104,8 @@ public class DnaSequenceService {
     }
 
     private SamBamService samBamService = new SamBamService();
+    private GFFService gffService = new GFFService();
+
 
     /**
      * Returns a JSONObject that can be read as single reference or a list of results
@@ -253,12 +255,23 @@ public class DnaSequenceService {
                     response.put("type", "graph");
                     response.put(trackName, SamBamService.getBAMGraphs(start, end, delta, trackId, seqName));
                 }
+            }else if (trackId.contains(".gff") || trackId.contains(".GFF")) {
+                log.info("GFF");
+                count = GFFService.countGFF(start, end, delta, trackId, seqName);
+                if (count < 5000) {
+                    response.put(trackName, gffService.getGFFReads(start, end, delta, trackId, seqName));
+                } else {
+                    response.put("type", "graph");
+                    response.put(trackName, GFFService.getGFFGraphs(start, end, delta, trackId, seqName));
+                }
             } else if (trackId.contains(".bed")) {
                 response.put(trackName, SamBamService.getBed(start, end, delta, trackId, seqName));
             } else if (trackId.indexOf("cs") >= 0) {
+                log.info("assembly found \n\n\n\n");
                 count = assemblyStore.countAssembly(queryid, trackId, start, end);
+                log.info("\n\n\ncount "+ count);
                 if (count < 5000) {
-                    response.put(trackName, assemblyStore.getAssembly(queryid, trackId, delta));
+//                    response.put(trackName, assemblyStore.getAssembly(queryid, trackId, delta));
                 } else {
                     response.put("type", "graph");
                     response.put(trackName, assemblyStore.getAssemblyGraph(queryid, trackId, start, end));
