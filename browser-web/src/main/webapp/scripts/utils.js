@@ -135,7 +135,7 @@ function trackToggle(trackname) {
                         dispGraphHeat("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
 
                     }  else if (window['track_list' + trackName].graphtype == "wig") {
-                        dispGraphBed("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
+                        dispGraphWig("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
                     }
                 }
                 else if (trackName.toLowerCase().indexOf("blasttrack") >= 0) {
@@ -171,7 +171,7 @@ function trackToggle(trackname) {
                     dispGraphHeat("#" + trackname + "_div", trackname, window['track_list' + trackname].display_label);
 
                 }  else if (window['track_list' + trackname].graphtype == "wig") {
-                    dispGraphBed("#" + trackname + "_div", trackname, window['track_list' + trackname].display_label);
+                    dispGraphWig("#" + trackname + "_div", trackname, window['track_list' + trackname].display_label);
                 }
             }
             else if (trackname.toLowerCase().indexOf("blasttrack") >= 0) {

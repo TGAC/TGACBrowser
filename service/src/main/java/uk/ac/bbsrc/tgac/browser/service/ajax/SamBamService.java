@@ -29,6 +29,7 @@ import edu.unc.genomics.SAMEntry;
 import edu.unc.genomics.io.BAMFileReader;
 import edu.unc.genomics.io.BedFileWriter;
 import edu.unc.genomics.io.IntervalFileReader;
+import edu.unc.genomics.io.IntervalFileSnifferException;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.samtools.*;
@@ -262,15 +263,24 @@ public class SamBamService {
 
             long diff = (end - start) / 400;
             long temp_start, temp_end;
+            long span[] = new long[2];
 
             for (int i = 0; i < 400; i++) {
                 temp_start = start + (i * diff);
                 temp_end = temp_start + diff;
                 int count = readers.load(reference, (int) temp_start, (int) temp_end).size();
-                read.put("start", temp_start);
-                read.put("end", temp_end);
-                read.put("graph", count);
-                bam.add(read);
+
+                temp_start = start + (i * diff);
+                temp_end = temp_start + diff;
+
+
+
+                    span[0] =temp_start;
+                    span[1] = (long) count;
+//                read.put("start", temp_start);
+//                read.put("end", temp_end);
+//                read.put("graph", count);
+                bam.add(span);
             }
             return bam;
         } catch (Exception e) {
