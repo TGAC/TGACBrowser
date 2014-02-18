@@ -346,7 +346,12 @@ public class SQLGeneDAO implements GeneStore {
     )
 
     public List<Map<String, Object>> getGenes(int id, String trackId) throws IOException {
-        return template.queryForList(GET_Gene_by_view, new Object[]{id, trackId});
+        try{
+            return template.queryForList(GET_Gene_by_view, new Object[]{id, trackId});
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new IOException("Get gene "+e.getMessage());
+        }
     }
 
 //  @Cacheable(cacheName = "transcriptGoCache",
@@ -550,26 +555,6 @@ public class SQLGeneDAO implements GeneStore {
 
                     eachTrack.put("layer", util.stackLayerInt(ends_gene,start_pos, delta, end_pos));
                     ends_gene = util.stackLayerList(ends_gene,start_pos, delta, end_pos);
-//                    for (int a = 0; a < ends_gene.size(); a++) {
-//
-//                        if (start_pos - ends_gene.get(a) >= delta) {
-//                            ends_gene.set(a, end_pos);
-//                            eachGene.put("layer", a + 1);
-//                            break;
-//                        } else if ((start_pos - ends_gene.get(a) <= delta && (a + 1) == ends_gene.size()) || start_pos == ends_gene.get(a)) {
-//
-//                            if (a == 0) {
-//                                eachGene.put("layer", ends_gene.size());
-//                                ends_gene.add(a, end_pos);
-//                            } else {
-//                                ends_gene.add(ends_gene.size(), end_pos);
-//                                eachGene.put("layer", ends_gene.size());
-//                            }
-//                            break;
-//                        } else {
-//                            continue;
-//                        }
-//                    }
 
                     eachGene.put("domain", 0);
                     domains = getGenesAttribs(filteredgenes.getJSONObject(i).get("gene_id").toString());

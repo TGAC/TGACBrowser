@@ -191,6 +191,12 @@ public class SamBamService {
                 read.put("start", start_pos);
                 read.put("end", end_pos);
                 read.put("desc", record.getReadName());
+                if(record.getMateNegativeStrandFlag() == true){
+                    read.put("strand", false);
+                }  else{
+                    read.put("strand", true);
+
+                }
                 if (record.getProperPairFlag()) {
                     if (record.getFirstOfPairFlag()) {
                         read.put("colour", "steelblue");

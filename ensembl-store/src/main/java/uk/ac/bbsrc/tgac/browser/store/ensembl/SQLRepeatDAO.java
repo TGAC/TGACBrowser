@@ -274,7 +274,12 @@ public class SQLRepeatDAO implements RepeatStore {
      * @throws Exception
      */
     public List<Map<String, Object>> getRepeat(int id, String trackId, long start, long end) throws Exception {
-        return template.queryForList(GET_REPEAT, new Object[]{id, trackId, start, end, start, end, start, end, start, end});
+        try {
+            return template.queryForList(GET_REPEAT, new Object[]{id, trackId, start, end, start, end, start, end, start, end});
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new IOException("GET Repeat "+ e.getMessage());
+        }
     }
 
     /**

@@ -75,7 +75,6 @@ public class GFFService {
      * @throws Exception
      */
     public static int countGFF(long start, long end, int delta, String trackId, String reference) throws Exception {
-        log.info("\n\ncount GFF");
         Path path = Paths.get(trackId);
         int gene = 0;
 
@@ -88,7 +87,6 @@ public class GFFService {
                     }
                 }
             }
-            log.info("\n\ncount GFF gene "+ gene);
 
             return gene;
         } catch (Exception e) {
@@ -109,8 +107,6 @@ public class GFFService {
      * @throws Exception
      */
     public JSONArray getGFFReads(long start, long end, int delta, String trackId, String reference) throws Exception {
-        log.info("\n\nget GFF");
-
         JSONArray wig = new JSONArray();
         JSONObject response = new JSONObject();
         List<Integer> ends = new ArrayList<Integer>();
@@ -180,7 +176,6 @@ public class GFFService {
                 }
             }
             if (genes) {
-                log.info("genes true");
                 gene.put("transcript", transcriptList);
                 wig.add(gene);
             }
@@ -206,7 +201,6 @@ public class GFFService {
      */
 
     public static JSONArray getGFFGraphs(long start, long end, int delta, String trackId, String reference) throws Exception {
-        log.info("\n\nget GFF reads ");
 
         JSONArray gff = new JSONArray();
         JSONObject response = new JSONObject();

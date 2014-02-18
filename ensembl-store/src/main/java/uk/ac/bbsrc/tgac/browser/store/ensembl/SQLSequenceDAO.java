@@ -139,7 +139,6 @@ public class SQLSequenceDAO implements SequenceStore {
     }
 
     public int getPositionOnReference(int id, int pos) {
-        log.info("getpositiononref " + id + ":" + pos);
         if (checkCoord(id, "chr")) {
 
         } else {
@@ -156,7 +155,6 @@ public class SQLSequenceDAO implements SequenceStore {
     }
 
     public int getAssemblyReference(int id) {
-        log.info("getassemblyreference" + id);
         int ref_id = 0;
         if (checkCoord(id, "chr")) {
             ref_id = id;
@@ -164,11 +162,8 @@ public class SQLSequenceDAO implements SequenceStore {
             List<Map<String, Object>> maps = template.queryForList(GET_reference_for_Assembly, new Object[]{id});
             for (Map map : maps) {
                 if (checkCoord(Integer.parseInt(map.get("asm_seq_region_id").toString()), "chr")) {
-                    log.info("if" + map.get("asm_seq_region_id").toString());
                     ref_id = Integer.parseInt(map.get("asm_seq_region_id").toString());
                 } else {
-                    log.info("else" + map.get("asm_seq_region_id").toString());
-
                     ref_id = getAssemblyReference(Integer.parseInt(map.get("asm_seq_region_id").toString()));
                 }
             }
