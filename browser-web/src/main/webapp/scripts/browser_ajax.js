@@ -310,6 +310,7 @@ function loadTrackAjax(trackId, trackname) {
 
                 if (json.type == "graph") {
                     window['track_list' + json.name].graph = "true";
+                    window['track_list' + json.name].graphtype = json.graphtype;
                 }
                 else {
                     window['track_list' + json.name].graph = "false";
@@ -439,6 +440,7 @@ function reloadTracks(tracks, tracklist, blast) {
 
                     if (json.type == "graph") {
                         window['track_list' + json.name].graph = "true";
+                        window['track_list' + json.name].graphtype = json.graphtype;
                     }
                     else {
                         window['track_list' + json.name].graph = "false";

@@ -2264,10 +2264,15 @@ span.counter {
 }
 
 .graph {
-    opacity: 1;
-    cursor: pointer;
+     opacity: 1;
+     cursor: pointer;
+     position: absolute;
+     border: 1px solid black;
+     background: steelblue;
+ }
+
+.heatgraph {
     position: absolute;
-    border: 1px solid black;
     background: steelblue;
 }
 

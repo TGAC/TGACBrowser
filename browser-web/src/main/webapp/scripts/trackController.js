@@ -927,12 +927,12 @@ function dispTrack(div, trackName, className) {
                     'title': label
                 }).html(label).appendTo(temp);
 
-                if (stopposition > 10) {
-                    jQuery("<span>").attr({
-                        'class': spanclass,
-                        'style': "cursor:pointer; position:absolute; TOP:" + (-6) + "px; left:" + ( parseInt(stopposition / 2) ) + "px; opacity:0.6; "
-                    }).appendTo(temp);
-                }
+//                if (stopposition > 10) {
+//                    jQuery("<span>").attr({
+//                        'class': spanclass,
+//                        'style': "cursor:pointer; position:absolute; TOP:" + (-6) + "px; left:" + ( parseInt(stopposition / 2) ) + "px; opacity:0.6; "
+//                    }).appendTo(temp);
+//                }
 
                 if (track[track_len].cigars && stopposition > 50) {
                     jQuery(dispCigarLine(track[track_len].cigars, track[track_len].start, top)).appendTo(div);
@@ -1147,4 +1147,74 @@ function dispGraph(div, trackName, className) {
         }
     }
 }
+function dispGraphHeat(div, trackName, className) {
+    var track_html = "";
+    jQuery(div).html("");
+
+    if (jQuery('input[name=' + trackName + 'mergedCheckbox]').is(':checked')) {
+        jQuery(div).fadeOut();
+        jQuery("#" + trackName + "_wrapper").fadeOut();
+        div = "#mergedtrack";
+        jQuery("#mergedtrack").fadeIn();
+        jQuery("#mergedtrack_wrapper").fadeIn();
+
+        track_html.push("(" + merged_track_list + ")");
+        jQuery("#mergelabel").html(track_html.join(""));
+
+        className = " mergedtrack " + className;
+        labelclass = "Merged_Track";
+    }
+    else {
+        jQuery(div).fadeIn();
+        jQuery("#" + track + "_wrapper").fadeIn();
+    }
+
+    if (!window[trackName] || window[trackName] == "loading") {
+        jQuery(div).html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
+        jQuery(div).fadeIn();
+        jQuery("#" + trackName + "_wrapper").fadeIn();
+
+    }
+    else {
+        var track = window[trackName];
+        var partial = (parseInt(getEnd()) - parseInt(getBegin())) / 2;
+        var start = parseInt(getBegin()) - parseInt(partial)
+        var end = parseInt(getEnd()) + parseInt(partial);
+        var maxLen_temp = jQuery("#canvas").css("width");
+
+        var newStart_temp = getBegin();
+        var newEnd_temp = getEnd();
+
+        if (track[0]) {
+            track = jQuery.grep(track, function (element, index) {
+                return element.start >= start && element.start <= end; // retain appropriate elements
+            });
+        }
+
+
+        var total = 0;
+        var max = Math.max.apply(Math, track.map(function (o) {
+            return o.graph;
+        }));
+
+        var track_len = track.length;
+
+        while (track_len--) {
+            var track_start = track[track_len].start;
+            var track_stop = track[track_len].end;
+
+            var startposition = (track_start - newStart_temp) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen_temp) / 2;
+            var stopposition = (track_stop - track_start ) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp);
+
+            jQuery("<div>").attr({
+                'id': trackName + "" + track_len,
+                'class': "heatgraph " + className + "_heatgraph",
+                'style': "bottom:0px; height: 70px; opacity: " + (track[track_len].graph / max).toFixed(1) + "; LEFT:" + startposition + "px; width:" + (stopposition - 1) + "px",
+                'title': track_start + ":" + track_stop + "->" + track[track_len].graph
+            }).appendTo(div);
+
+        }
+    }
+}
+
 

@@ -75,7 +75,9 @@ function trackList(tracklist) {
             merge: Tracklist[i].merge,
             label: Tracklist[i].label,
             graph: Tracklist[i].graph,
-            label_show: true
+            graphtype : null,
+
+        label_show: true
         }
     }
 
@@ -128,6 +130,7 @@ function trackList(tracklist) {
                 jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_exon" + "{ background:" + Tracklist[i].web.colour + "; border: 1px solid " + Tracklist[i].web.colour + ";} </style>").appendTo("head");
                 jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_utr" + "{ border: 1px solid " + Tracklist[i].web.colour + "; background:none repeat scroll 0 0 white;} </style>").appendTo("head");
                 jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_graph{ border:1px solid black; background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
+                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_heatgraph{  background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
 
             }
             else if (Tracklist[i].web.source == "file") {
@@ -139,6 +142,7 @@ function trackList(tracklist) {
                 jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_exon" + "{ background:" + Tracklist[i].web.colour + "; border: 1px solid " + Tracklist[i].web.colour + ";} </style>").appendTo("head");
                 jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_utr" + "{ border: 1px solid " + Tracklist[i].web.colour + "; background:none repeat scroll 0 0 white;} </style>").appendTo("head");
                 jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_graph{ border:1px solid black; background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
+                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_heatgraph{ background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
 
             }
             else {
@@ -146,6 +150,7 @@ function trackList(tracklist) {
 
                 jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "{ background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
                 jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_graph { border:1px solid black; background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
+                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_heatgraph {  background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
 
             }
         }
@@ -160,6 +165,7 @@ function trackList(tracklist) {
                 jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_exon" + "{ background: green; border: 1px solid green;} </style>").appendTo("head");
                 jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_utr" + "{ border: 1px solid green; background:none repeat scroll 0 0 white;} </style>").appendTo("head");
                 jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_graph { border:1px solid black; background:green;} </style>").appendTo("head");
+                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_heatgraph {  background:green;} </style>").appendTo("head");
 
             }
             else {
@@ -189,6 +195,7 @@ function trackList(tracklist) {
 
                 jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "{ background:" + colour + ";} </style>").appendTo("head");
                 jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_graph{ border:1px solid black; background:" + colour + ";} </style>").appendTo("head");
+                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_heatgraph{ background:" + colour + ";} </style>").appendTo("head");
             }
         }
     }
@@ -307,6 +314,7 @@ function loadDefaultTrack(tracklist) {
 
                         if (json.type == "graph") {
                             window['track_list' + json.name].graph = "true";
+                            window['track_list' + json.name].graphtype = json.graphtype;
                         }
                         else {
                             window['track_list' + json.name].graph = "false";
@@ -350,6 +358,7 @@ function loadDefaultTrack(tracklist) {
 
                         if (json.type == "graph") {
                             window['track_list' + json.name].graph = "true";
+                            window['track_list' + json.name].graphtype = json.graphtype;
                         }
                         else {
                             window['track_list' + json.name].graph = "false";

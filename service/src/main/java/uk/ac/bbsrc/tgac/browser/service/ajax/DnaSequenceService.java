@@ -253,28 +253,33 @@ public class DnaSequenceService {
                     response.put(trackName, samBamService.getBAMReads(start, end, delta, trackId, seqName));
                 } else {
                     response.put("type", "graph");
+                    response.put("graphtype", "wig");
                     response.put(trackName, SamBamService.getBAMGraphs(start, end, delta, trackId, seqName));
                 }
-            }else if (trackId.contains(".gff") || trackId.contains(".GFF")) {
+            } else if (trackId.contains(".gff") || trackId.contains(".GFF")) {
                 log.info("GFF");
                 count = GFFService.countGFF(start, end, delta, trackId, seqName);
                 if (count < 5000) {
                     response.put(trackName, gffService.getGFFReads(start, end, delta, trackId, seqName));
                 } else {
                     response.put("type", "graph");
+                    response.put("graphtype", "bar");
                     response.put(trackName, GFFService.getGFFGraphs(start, end, delta, trackId, seqName));
                 }
             } else if (trackId.contains(".bed")) {
                 response.put(trackName, SamBamService.getBed(start, end, delta, trackId, seqName));
             } else if (trackId.indexOf("cs") >= 0) {
-                log.info("assembly found \n\n\n\n");
                 count = assemblyStore.countAssembly(queryid, trackId, start, end);
-                log.info("\n\n\ncount "+ count);
                 if (count < 5000) {
-//                    response.put(trackName, assemblyStore.getAssembly(queryid, trackId, delta));
+                    response.put(trackName, assemblyStore.getAssembly(queryid, trackId, delta, start, end));
+                } else if (count < 50000) {
+                    response.put("type", "graph");
+                    response.put("graphtype", "bar");
+                    response.put(trackName, assemblyStore.getAssemblyGraph(queryid, trackId, start, end));
                 } else {
                     response.put("type", "graph");
-                    response.put(trackName, assemblyStore.getAssemblyGraph(queryid, trackId, start, end));
+                    response.put("graphtype", "heat");
+                    response.put(trackName, assemblyStore.getAssemblyOverviewGraph(queryid, trackId, start, end));
                 }
             } else if (analysisStore.getLogicNameByAnalysisId(Integer.parseInt(trackId)).matches("(?i).*repeat.*")) {
                 count = repeatStore.countRepeat(queryid, trackId, start, end);
@@ -282,6 +287,7 @@ public class DnaSequenceService {
                     response.put(trackName, repeatStore.processRepeat(repeatStore.getRepeat(queryid, trackId, start, end), start, end, delta, queryid, trackId));
                 } else {
                     response.put("type", "graph");
+                    response.put("graphtype", "bar");
                     response.put(trackName, repeatStore.getRepeatGraph(queryid, trackId, start, end));
                 }
             } else if (analysisStore.getLogicNameByAnalysisId(Integer.parseInt(trackId)).matches("(?i).*gene.*")) {
@@ -290,6 +296,7 @@ public class DnaSequenceService {
                     response.put(trackName, geneStore.processGenes(geneStore.getGenes(queryid, trackId), start, end, delta, queryid, trackId));
                 } else {
                     response.put("type", "graph");
+                    response.put("graphtype", "bar");
                     response.put(trackName, geneStore.getGeneGraph(queryid, trackId, start, end));
                 }
             } else {
@@ -298,6 +305,7 @@ public class DnaSequenceService {
                     response.put(trackName, dafStore.processHit(dafStore.getHit(queryid, trackId, start, end), start, end, delta, queryid, trackId));
                 } else {
                     response.put("type", "graph");
+                    response.put("graphtype", "bar");
                     response.put(trackName, dafStore.getHitGraph(queryid, trackId, start, end));
                 }
             }
@@ -328,13 +336,8 @@ public class DnaSequenceService {
     public JSONObject metaInfo(HttpSession session, JSONObject json) {
         JSONObject response = new JSONObject();
         try {
-            log.info("\n\nmetainfo\n\n");
             response.put("metainfo", sequenceStore.getdbinfo());
-            log.info("\n\nchr\n\n");
-
             response.put("chr", searchStore.checkChromosome());
-            log.info("\n\nafter\n\n");
-
             return response;
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -396,7 +399,6 @@ public class DnaSequenceService {
             if (trackid.indexOf("cs") >= 0) {
                 response.put("name", sequenceStore.getSeqRegionName(query));
             } else if (analysisStore.getLogicNameByAnalysisId(Integer.parseInt(trackid)).matches("(?i).*repeat.*")) {
-//              as we dont have decided to save repeat name in a table
                 response.put("name", "");
             } else if (analysisStore.getLogicNameByAnalysisId(Integer.parseInt(trackid)).matches("(?i).*gene.*")) {
                 response.put("name", geneStore.getGeneNamefromId(query));

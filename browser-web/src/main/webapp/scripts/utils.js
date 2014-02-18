@@ -128,12 +128,20 @@ function trackToggle(trackname) {
             graph = window['track_list' + trackName].graph;
             if (jQuery("#" + track_list[i].name + "Checkbox").is(':checked')) {
                 if (graph == "true") {
-                    dispGraph("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
+//                    dispGraph("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
+                    if (window['track_list' + trackName].graphtype == "bar") {
+                        dispGraph("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
+                    } else if (window['track_list' + trackName].graphtype == "heat") {
+                        dispGraphHeat("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
+
+                    }  else if (window['track_list' + trackName].graphtype == "wig") {
+                        dispGraphBed("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
+                    }
                 }
                 else if (trackName.toLowerCase().indexOf("blasttrack") >= 0) {
                     dispBLAST("#" + trackName + "_div", 'blasttrack');
                 }
-                else if (trackName.toLowerCase().indexOf("gene") >= 0) {
+                else if (trackName.toLowerCase().indexOf("gene") >= 0 || trackName.toLowerCase().indexOf("gff") >= 0) {
                     dispGenes("#" + trackName + "_div", trackName, window['track_list' + trackName].expand, window['track_list' + trackName].display_label);
                 }
                 else if (trackid.toString().toLowerCase().indexOf("wig") >= 0 || trackid.toString().toLowerCase().indexOf("bw") >= 0 || trackid.toString().toLowerCase().indexOf("bigwig") >= 0) {
@@ -157,12 +165,19 @@ function trackToggle(trackname) {
         graph = window['track_list' + trackname].graph;
         if (jQuery('#' + trackname + 'Checkbox').is(':checked')) {
             if (graph == "true") {
-                dispGraph("#" + trackname + "_div", trackname, window['track_list' + trackname].display_label);
+                if (window['track_list' + trackname].graphtype == "bar") {
+                    dispGraph("#" + trackname + "_div", trackname, window['track_list' + trackname].display_label);
+                } else if (window['track_list' + trackname].graphtype == "heat") {
+                    dispGraphHeat("#" + trackname + "_div", trackname, window['track_list' + trackname].display_label);
+
+                }  else if (window['track_list' + trackname].graphtype == "wig") {
+                    dispGraphBed("#" + trackname + "_div", trackname, window['track_list' + trackname].display_label);
+                }
             }
             else if (trackname.toLowerCase().indexOf("blasttrack") >= 0) {
                 dispBLAST("#" + trackname + "_div", 'blasttrack');
             }
-            else if (trackname.toLowerCase().indexOf("gene") >= 0) {
+            else if (trackname.toLowerCase().indexOf("gene") >= 0 || trackname.toLowerCase().indexOf("gff") >= 0) {
                 dispGenes("#" + trackname + "_div", trackname, window['track_list' + trackname].expand, window['track_list' + trackname].display_label);
             }
             else if (trackid.toString().toLowerCase().indexOf("wig") >= 0 || trackid.toString().toLowerCase().indexOf("bw") >= 0 || trackid.toString().toLowerCase().indexOf("bigwig") >= 0) {

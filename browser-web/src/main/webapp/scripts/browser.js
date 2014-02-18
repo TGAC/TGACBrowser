@@ -400,6 +400,7 @@ function addJSON(from, to, trackName, trackId) {
                     window[trackname] = json[trackname];
                     if (json.type == "graph") {
                         window['track_list' + json.name].graph = "true";
+                        window['track_list' + json.name].graphtype = json.graphtype;
                     }
                     else {
                         window['track_list' + json.name].graph = "false";
@@ -450,6 +451,7 @@ function addJSON(from, to, trackName, trackId) {
 
                                 if (json.type == "graph") {
                                     window['track_list' + json.name].graph = "true";
+                                    window['track_list' + json.name].graphtype = json.graphtype;
                                 }
                                 else {
                                     window['track_list' + json.name].graph = "false";
