@@ -937,9 +937,9 @@ function dispTrack(div, trackName, className) {
                 if (track[track_len].cigars && stopposition > 50) {
                     jQuery(dispCigarLine(track[track_len].cigars, track[track_len].start, top)).appendTo(div);
                 }
-//                else if (track[track_len].cigarline && stopposition > 50) {
-//                    jQuery(dispCigarLine(track[track_len].cigarline, track[track_len].start, top)).appendTo(div);
-//                }
+                else if (track[track_len].cigarline && stopposition > 50) {
+                    jQuery(dispCigarLine(track[track_len].cigarline, track[track_len].start, top)).appendTo(div);
+                }
             }
         }
         else if (track.length >= 10000) {

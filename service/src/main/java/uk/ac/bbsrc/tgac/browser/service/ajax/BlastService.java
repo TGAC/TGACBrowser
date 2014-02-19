@@ -378,6 +378,7 @@ public class BlastService {
 
             return response.toString().replace("\\\n", "").replace("\\\t", "");
         } catch (UnknownHostException e) {
+            e.printStackTrace();
             throw new IOException(e.getMessage());
         }
     }
@@ -466,6 +467,7 @@ public class BlastService {
             q1.put("old_id", old_taskId);
             return q1;
         } catch (Exception e) {
+            e.printStackTrace();
             return JSONUtils.SimpleJSONError(e.getMessage());
         }
     }

@@ -110,7 +110,11 @@ function newpopup(track, i, j) {
         jQuery("#EditDescription").html('<span title="Edit" class="ui-button ui-icon ui-icon-pencil" onclick=showEditDesc(\"' + track + '\",\'' + i + '\');></span>');
         jQuery("#deleteTrack").html('<span title="Remove" class="ui-button ui-icon ui-icon-trash" onclick=deleteTrack(\"' + track + '\",\'' + i + '\');></span>');
         jQuery("#flagTrack").html('<span title="Flag" class="ui-button ui-icon ui-icon-flag" onclick=flagTrack(\"' + track + '\",\'' + i + '\');></span>');
-        jQuery("#Detail").html(stringTrim(window[track][i].desc, width));
+        if(window['track_list' + track].id.contains("cs")){
+            jQuery("#Detail").html("<a target='_blank' href='index.jsp?query=" + window[track][i].desc+"' > "+stringTrim(window[track][i].desc, width)+ "</a>");
+        }   else{
+            jQuery("#Detail").html(stringTrim(window[track][i].desc, width));
+        }
 
     }
 

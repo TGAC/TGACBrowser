@@ -32,7 +32,7 @@
  */
 
 var seq = null, seqLen, sequencelength, randomnumber, merged_track_list, deltaWidth = 0, refheight;
-var maxLen, showCDS = false, showSNP = false, ctrldown = false;
+var showCDS = false, showSNP = false, ctrldown = false;
 var rightclick = false, path;
 //var cds, SNPs, Exon, minWidth;
 var newStart, newEnd, mouseX, mouseY, border_left, border_right, selectionStart, selectionEnd, lastStart = -1, lastEnd = -1, grouplastid = null, grouptrack, grouptrackclass;
