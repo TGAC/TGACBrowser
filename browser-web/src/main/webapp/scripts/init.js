@@ -346,6 +346,29 @@ function onLoad() {
     jQuery('#blastpopup').hide();
     jQuery('#dragpopup').hide();
     jQuery('#track-upload-form').hide();
+
+//    jQuery(window).bind('orientationchange', function(e) {
+//           getMaxLen();
+//        switch ( window.orientation ) {
+//
+//            case 0:
+//                maxLen = jQuery(window).width();
+//                alert('portrait mode');
+//                break;
+//
+//            case 90:
+//                maxLen = jQuery(window).height();
+//                alert('landscape mode screen turned to the left');
+//                break;
+//
+//            case -90:
+//                maxLen = jQuery(window).height();
+//                alert('landscape mode screen turned to the right');
+//                break;
+//
+//        }
+//
+//    });
 }
 
 

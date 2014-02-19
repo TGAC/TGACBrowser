@@ -70,13 +70,11 @@ function visualLength(temp) {
 
 function findminwidth() {
     maxLen = jQuery(window).width();
-//    var len = visualLength(sequencelength);
     var seqWidth = maxLen / 10; //parseFloat(maxLen) * sequencelength / parseFloat(len);
     deltaWidth = parseInt(sequencelength) * 2 / parseInt(maxLen);
     if (sequencelength < seqWidth) {
 //       still need to recode
         seqWidth = sequencelength;
-        maxLen = len;
         jQuery('#canvas').width(len)
         jQuery('#bar_image').width(len)
         var left = (parseInt(jQuery(window).width()) - len) / 2;
@@ -502,3 +500,40 @@ function convertSeqtoBLAST(seq, qseq) {
 
     return newString.replace(/ /g, "&nbsp;");
 }
+
+//
+// for touch screen orientation
+//
+// function getMaxLen(){
+//
+//    try {
+//        document.createEvent("TouchEvent");
+//       alert("touch")
+//
+//            switch ( window.orientation ) {
+//
+//                case 0:
+//                    maxLen = jQuery(window).width();
+//                    alert('portrait mode'+maxLen+" "+jQuery(window).innerWidth);
+//                    break;
+//
+//                case 90:
+//                    maxLen = jQuery(window).width();
+//                    alert('landscape mode screen turned to the left'+maxLen+" "+jQuery(window).clientWidth);
+//                    break;
+//
+//                case -90:
+//                    maxLen = jQuery(window).width();
+//                    alert('landscape mode screen turned to the right'+maxLen+" "+jQuery(window).clientWidth);
+//                    break;
+//
+//
+//            }
+//    } catch (e) {
+//        console.log("no touch")
+//        maxLen = jQuery(window).width();
+//
+//    }
+//
+//
+//}
