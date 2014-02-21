@@ -82,8 +82,9 @@ public class SQLSeachDAO implements SearchStore {
 
     public static final String GET_SEQ_FROM_SEQ_REGION_ID = "SELECT sequence FROM dna WHERE seq_region_id = ?";
     public static final String GET_SEQ_REGION_ID_FROM_NAME = "SELECT seq_region_id FROM seq_region WHERE name  = ?";
-    public static final String GET_SEQ_REGION_ID_SEARCH = "SELECT s.seq_region_id, s.name, s.length, cs.name as Type FROM seq_region s, coord_system cs WHERE s.name like ? and cs.coord_system_id = s.coord_system_id;";
+    public static final String GET_SEQ_REGION_ID_SEARCH = "SELECT s.seq_region_id, s.name, s.length, cs.name as Type, s.coord_system_id as coord FROM seq_region s, coord_system cs WHERE s.name like ? and cs.coord_system_id = s.coord_system_id;";
 //    public static final String GET_SEQ_REGION_ID_SEARCH = "SELECT * FROM seq_region WHERE name like ? limit 100";
+public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_region_id, s.name, s.length, cs.name as Type, s.coord_system_id as coord FROM seq_region s, coord_system cs WHERE s.name = ? and cs.coord_system_id = s.coord_system_id;";
 
     public static final String GET_SIZE_SEQ_REGION_ID_SEARCH = "SELECT count(length) FROM seq_region WHERE name like ?";
     public static final String GET_SEQ_REGION_ID_SEARCH_all = "SELECT * FROM seq_region WHERE coord_system_id = ?";
@@ -109,8 +110,8 @@ public class SQLSeachDAO implements SearchStore {
     public static final String GET_Domain_per_Gene = "SELECT * FROM transcript_attrib where transcript_id =?";
     public static final String GET_CDS_start_per_Gene = "SELECT seq_start FROM translation where transcript_id =?";
     public static final String GET_CDS_end_per_Gene = "SELECT seq_end FROM translation where transcript_id =?";
-    public static final String GET_GO_Genes = "select * from gene_attrib where value like ?";
-    public static final String GET_GO_Transcripts = "select * from transcript_attrib where value like ?";
+    public static final String GET_GO_Genes = "select gene_id, value from gene_attrib where value like ? limit 100";
+    public static final String GET_GO_Transcripts = "select transcript_id, value from transcript_attrib where value like ? limit 100";
     public static final String GET_GENE_SIZE = "SELECT COUNT(gene_id) FROM gene where seq_region_id =? and analysis_id = ?";
     public static final String GET_Gene_name_from_ID = "SELECT description FROM gene where gene_id =?";
     public static final String GET_Transcript_name_from_ID = "SELECT description FROM transcript where transcript_id =?";
@@ -174,10 +175,12 @@ public class SQLSeachDAO implements SearchStore {
                     eachGene.put("start", pos + Integer.parseInt(map.get("seq_region_start").toString()));
                     eachGene.put("end", pos + Integer.parseInt(map.get("seq_region_end").toString()));
                     eachGene.put("parent", getSeqRegionName(getAssemblyReference(Integer.parseInt(map.get("seq_region_id").toString()))));
+//                    eachGene.put("coord", getSeqRegionName(getAssemblyReference(Integer.parseInt(map.get("seq_region_id").toString()))));
                 } else {
                     eachGene.put("start", map.get("seq_region_start"));
                     eachGene.put("end", map.get("seq_region_end"));
                     eachGene.put("parent", getSeqRegionName(Integer.parseInt(map.get("seq_region_id").toString())));
+                    eachGene.put("coord", template.queryForObject(GET_coord_sys_id, new Object[]{map.get("seq_region_id")}, String.class));
                 }
                 eachGene.put("analysis_id", template.queryForObject(GET_LOGIC_NAME_FROM_ANALYSIS_ID, new Object[]{map.get("analysis_id")}, String.class));
                 genes.add(eachGene);
@@ -203,10 +206,13 @@ public class SQLSeachDAO implements SearchStore {
             if(chr){
                 for (Map map : maps) {
                     if (chr) {
-                        int pos = getPositionOnReference(Integer.parseInt(map.get("seq_region_id").toString()), 0);
-                        map.put("start", pos);
-                        map.put("end", pos + Integer.parseInt(map.get("length").toString()));
-                        map.put("parent", getSeqRegionName(getAssemblyReference(Integer.parseInt(map.get("seq_region_id").toString()))));
+                        if(getAssemblyReference(Integer.parseInt(map.get("seq_region_id").toString())) != 0){
+                            int pos = getPositionOnReference(Integer.parseInt(map.get("seq_region_id").toString()), 0);
+                            map.put("start", pos);
+                            map.put("end", pos + Integer.parseInt(map.get("length").toString()));
+                            map.put("parent", getSeqRegionName(getAssemblyReference(Integer.parseInt(map.get("seq_region_id").toString()))));
+                            map.put("coord", map.get("coord"));
+                        }
                     }
                     names.add(map);
                     i++;
@@ -228,11 +234,57 @@ public class SQLSeachDAO implements SearchStore {
 
             return names;
         } catch (EmptyResultDataAccessException e) {
-
-
-            throw new IOException("result not found");
+            e.printStackTrace();
+            throw new IOException("empty result exception result not found "+e.getMessage());
         } catch (Exception e) {
-            throw new IOException("result not found");  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
+            throw new IOException("result not found "+e.getMessage());  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
+
+    public JSONArray getSeqRegionSearchformatch(String searchQuery) throws IOException {
+        try {
+            JSONArray names = new JSONArray();
+            List<Map<String, Object>> maps = template.queryForList(GET_SEQ_REGION_ID_SEARCH_FOR_MATCH, new Object[]{searchQuery});
+
+            boolean chr = checkChromosome();
+            int i = 1;
+            if(chr){
+                for (Map map : maps) {
+                    if (chr) {
+                        if(getAssemblyReference(Integer.parseInt(map.get("seq_region_id").toString())) != 0){
+                            int pos = getPositionOnReference(Integer.parseInt(map.get("seq_region_id").toString()), 0);
+                            map.put("start", pos);
+                            map.put("end", pos + Integer.parseInt(map.get("length").toString()));
+                            map.put("parent", getSeqRegionName(getAssemblyReference(Integer.parseInt(map.get("seq_region_id").toString()))));
+                            map.put("coord", map.get("coord"));
+                        }
+                    }
+                    names.add(map);
+                    i++;
+                    if(i > 100)
+                    {
+                        break;
+                    }
+                }
+            }else{
+                for (Map map : maps) {
+                    names.add(map);
+                    i++;
+                    if(i > 100)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            return names;
+        } catch (EmptyResultDataAccessException e) {
+            e.printStackTrace();
+            throw new IOException("empty result exception result not found "+e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new IOException("result not found "+e.getMessage());  //To change body of catch statement use File | Settings | File Templates.
         }
     }
 
@@ -307,9 +359,11 @@ public class SQLSeachDAO implements SearchStore {
 
     public String getLogicNameByAnalysisId(int id) throws IOException {
         try {
+            log.info("\n\n\ngetLogicNameByAnalysisId " + id);
             String str = template.queryForObject(GET_LOGIC_NAME_FROM_ANALYSIS_ID, new Object[]{id}, String.class);
             return str;
         } catch (EmptyResultDataAccessException e) {
+            e.printStackTrace();
             throw new IOException(" getLogicNameByAnalysisId no result found");
 
         }
@@ -332,6 +386,7 @@ public class SQLSeachDAO implements SearchStore {
                     eachGene.put("start", map.get("seq_region_start"));
                     eachGene.put("end", map.get("seq_region_end"));
                     eachGene.put("parent", getSeqRegionName(Integer.parseInt(map.get("seq_region_id").toString())));
+                    eachGene.put("coord", template.queryForObject(GET_coord_sys_id, new Object[]{map.get("seq_region_id")}, String.class));
                 }
                 eachGene.put("analysis_id", template.queryForObject(GET_LOGIC_NAME_FROM_ANALYSIS_ID, new Object[]{map.get("analysis_id")}, String.class));
                 genes.add(eachGene);
@@ -339,8 +394,10 @@ public class SQLSeachDAO implements SearchStore {
             return genes;
         } catch (EmptyResultDataAccessException e) {
 //     return getGOSearch(searchQuery);
+            e.printStackTrace();
             throw new IOException("result not found");
         } catch (Exception e) {
+            e.printStackTrace();
             throw new IOException("result not found");  //To change body of catch statement use File | Settings | File Templates.
         }
     }
@@ -356,17 +413,18 @@ public class SQLSeachDAO implements SearchStore {
                     JSONObject eachGo = new JSONObject();
                     eachGo.put("name", gene.get("description"));
                     if (checkChromosome()) {
-                        int pos = getPositionOnReference(Integer.parseInt(map.get("seq_region_id").toString()), 0);
-                        eachGo.put("start", pos + Integer.parseInt(map.get("seq_region_start").toString()));
-                        eachGo.put("end", pos + Integer.parseInt(map.get("seq_region_end").toString()));
-                        eachGo.put("parent", getSeqRegionName(getAssemblyReference(Integer.parseInt(map.get("seq_region_id").toString()))));
+                        int pos = getPositionOnReference(Integer.parseInt(gene.get("seq_region_id").toString()), 0);
+                        eachGo.put("start", pos + Integer.parseInt(gene.get("seq_region_start").toString()));
+                        eachGo.put("end", pos + Integer.parseInt(gene.get("seq_region_end").toString()));
+                        eachGo.put("parent", getSeqRegionName(getAssemblyReference(Integer.parseInt(gene.get("seq_region_id").toString()))));
                     } else {
-                        eachGo.put("start", map.get("seq_region_start"));
-                        eachGo.put("end", map.get("seq_region_end"));
-                        eachGo.put("parent", getSeqRegionName(Integer.parseInt(map.get("seq_region_id").toString())));
+                        eachGo.put("start", gene.get("seq_region_start"));
+                        eachGo.put("end", gene.get("seq_region_end"));
+                        eachGo.put("parent", getSeqRegionName(Integer.parseInt(gene.get("seq_region_id").toString())));
+                        eachGo.put("coord", template.queryForObject(GET_coord_sys_id, new Object[]{gene.get("seq_region_id")}, String.class));
                     }
+                    eachGo.put("value", map.get("value"));
                     eachGo.put("Type", "Gene");
-//                    eachGo.put("parent", getSeqRegionName(Integer.parseInt(gene.get("seq_region_id").toString())));
                     eachGo.put("analysis_id", getLogicNameByAnalysisId(Integer.parseInt(gene.get("analysis_id").toString())));
                     GOs.add(eachGo);
                 }
@@ -380,25 +438,27 @@ public class SQLSeachDAO implements SearchStore {
                     JSONObject eachGo = new JSONObject();
                     eachGo.put("name", gene.get("description"));
                     if (checkChromosome()) {
-                        int pos = getPositionOnReference(Integer.parseInt(map.get("seq_region_id").toString()), 0);
-                        eachGo.put("start", pos + Integer.parseInt(map.get("seq_region_start").toString()));
-                        eachGo.put("end", pos + Integer.parseInt(map.get("seq_region_end").toString()));
+                        int pos = getPositionOnReference(Integer.parseInt(gene.get("seq_region_id").toString()), 0);
+                        eachGo.put("start", pos + Integer.parseInt(gene.get("seq_region_start").toString()));
+                        eachGo.put("end", pos + Integer.parseInt(gene.get("seq_region_end").toString()));
                         eachGo.put("parent", getSeqRegionName(getAssemblyReference(Integer.parseInt(map.get("seq_region_id").toString()))));
                     } else {
                         eachGo.put("start", map.get("seq_region_start"));
                         eachGo.put("end", map.get("seq_region_end"));
-                        eachGo.put("parent", getSeqRegionName(Integer.parseInt(map.get("seq_region_id").toString())));
+                        eachGo.put("parent", getSeqRegionName(Integer.parseInt(gene.get("seq_region_id").toString())));
                     }
                     eachGo.put("Type", "Transcript");
-//                    eachGo.put("parent", getSeqRegionName(Integer.parseInt(gene.get("seq_region_id").toString())));
+                    eachGo.put("value", map.get("value"));
                     eachGo.put("analysis_id", getLogicNameByAnalysisId(Integer.parseInt(gene.get("analysis_id").toString())));
                     GOs.add(eachGo);
                 }
             }
             return GOs;
         } catch (EmptyResultDataAccessException e) {
+            e.printStackTrace();
             throw new IOException("result not found");
         } catch (Exception e) {
+            e.printStackTrace();
             throw new IOException("result not found");  //To change body of catch statement use File | Settings | File Templates.
         }
     }

@@ -121,33 +121,32 @@ public class DnaSequenceService {
      */
 
     public JSONObject searchSequence(HttpSession session, JSONObject json) {
+        log.info("\n\n\n\n\n\n\nsearchsequence");
+
         String seqName = json.getString("query");
         JSONObject response = new JSONObject();
         try {
 
             Integer queryid = sequenceStore.getSeqRegionearchsize(seqName);
-
-//      if more than one results
             if (queryid > 1) {
                 response.put("html", "seqregion");
                 response.put("chromosome", searchStore.checkChromosome());
+                response.put("chromosome", searchStore.checkChromosome());
                 response.put("seqregion", searchStore.getSeqRegionSearch(seqName));
-            }
-//      if no result from seq_region
-            else if (queryid == 0) {
+            } else if (queryid == 0) {
                 response.put("html", "gene");
                 response.put("gene", searchStore.getGenesSearch(seqName));
+                response.put("chromosome", searchStore.checkChromosome());
                 response.put("transcript", searchStore.getTranscriptSearch(seqName));
                 response.put("GO", searchStore.getGOSearch(seqName));
                 response.put("chromosome", searchStore.checkChromosome());
-            }
-//      if only one result from seq_region
-            else {
+            } else {
                 Integer query = sequenceStore.getSeqRegion(seqName);
                 String seqRegName = sequenceStore.getSeqRegionName(query);
                 String seqlength = sequenceStore.getSeqLengthbyId(query);
                 response.put("seqlength", seqlength);
-                response.put("html", "");
+                response.put("chromosome", searchStore.checkChromosome());
+                response.put("html", "one");
                 response.put("seqname", "<p> <b>Seq Region ID:</b> " + query + ",<b> Name: </b> " + seqRegName);//+", <b>cds:</b> "+cds+"</p>");
                 response.put("seqregname", seqRegName);
                 response.put("tracklists", analysisStore.getAnnotationId(query));
@@ -177,21 +176,72 @@ public class DnaSequenceService {
             JSONObject response = new JSONObject();
             String seqName = json.getString("query");
 
-            Integer query = sequenceStore.getSeqRegionforone(seqName);
+            Integer queryid = sequenceStore.getSeqRegionearchsizeformatch(seqName);
+            if (queryid > 1) {
+                response.put("html", "seqregion");
+                response.put("chromosome", searchStore.checkChromosome());
+                response.put("seqregion", searchStore.getSeqRegionSearchformatch(seqName));
+            } else if (queryid == 0) {
+                queryid = sequenceStore.getSeqRegionearchsize(seqName);
+                if (queryid > 1) {
+                    response.put("html", "seqregion");
+                    response.put("chromosome", searchStore.checkChromosome());
+                    response.put("seqregion", searchStore.getSeqRegionSearch(seqName));
+                } else if (queryid == 0) {
+                    response.put("html", "gene");
+                    response.put("gene", searchStore.getGenesSearch(seqName));
+                    response.put("transcript", searchStore.getTranscriptSearch(seqName));
+                    response.put("GO", searchStore.getGOSearch(seqName));
+                    response.put("chromosome", searchStore.checkChromosome());
+                }
+            } else {
+                Integer query = sequenceStore.getSeqRegion(seqName);
+                String seqRegName = sequenceStore.getSeqRegionName(query);
+                String seqlength = sequenceStore.getSeqLengthbyId(query);
+                response.put("seqlength", seqlength);
+                response.put("chromosome", searchStore.checkChromosome());
+                response.put("html", "one");
+                response.put("seqname", "<p> <b>Seq Region ID:</b> " + query + ",<b> Name: </b> " + seqRegName);//+", <b>cds:</b> "+cds+"</p>");
+                response.put("seqregname", seqRegName);
+                response.put("tracklists", analysisStore.getAnnotationId(query));
+                response.put("coord_sys", sequenceStore.getCoordSys(seqName));
+            }
+            return response;
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return JSONUtils.SimpleJSONError(e.getMessage());
+        }
 
+    }
+
+    /**
+     * Returns a JSONObject that can be read as single reference
+     * <p/>
+     * This calls the methods in sequenceStore class
+     * and search through database for the keyword for seq_region table for only one result
+     *
+     * @param session an HTTPSession comes from ajax call
+     * @param json    json object with key parameters sent from ajax call
+     * @return JSONObject with one result
+     */
+
+    public JSONObject seqregionSearchSequenceWithCoord(HttpSession session, JSONObject json) throws IOException {
+        try {
+            JSONObject response = new JSONObject();
+            String seqName = json.getString("query");
+            String coord = json.getString("coord");
+
+            Integer queryid = sequenceStore.getSeqRegionearchsizeformatch(seqName);
+
+            Integer query = sequenceStore.getSeqRegionWithCoord(seqName, coord);
             String seqRegName = sequenceStore.getSeqRegionName(query);
-
             String seqlength = sequenceStore.getSeqLengthbyId(query);
-
             response.put("seqlength", seqlength);
             response.put("html", "");
             response.put("seqname", "<p> <b>Seq Region ID:</b> " + query + ",<b> Name: </b> " + seqRegName);//+", <b>cds:</b> "+cds+"</p>");
             response.put("seqregname", seqRegName);
-
             response.put("tracklists", analysisStore.getAnnotationId(query));
-
-            response.put("coord_sys", sequenceStore.getCoordSys(seqRegName));
-
+            response.put("coord_sys", sequenceStore.getCoordSys(seqName));
             return response;
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.

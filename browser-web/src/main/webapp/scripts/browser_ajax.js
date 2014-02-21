@@ -52,98 +52,61 @@ function seqregionSearchPopup(query, from, to, blast) {
         'seqregionSearchSequence',
         {'query': query, 'url': ajaxurl},
         {'doOnSuccess': function (json) {
-            if (json.html == "seqregion") {
-                jQuery('#canvas').hide();
-                jQuery('#currentposition').hide();
-                jQuery("#searchresult").fadeIn();
-                var content = "<h1>Search Results: </h1><br>";
-                for (var i = 0; i < json.seqregion.length; i++) {
-                    if (json.seqregion[i].parent_id) {
-                        content += "Seq Regions: " + json.seqregion[i].seq_region_id + ": <a target='_blank' href=\"index.jsp?query=" + json.seqregion[i].parent_name + "&&from=" + json.seqregion[i].start + "&&to=" + json.seqregion[i].end + "\" > " + json.seqregion[i].name + "</a> <br>";
-                    }
-                    else {
-                        content += "Seq Regions: " + json.seqregion[i].seq_region_id + ": <a target='_blank' href=\"index.jsp??query=" + json.seqregion[i].name + "&&blast=\" > " + json.seqregion[i].name + "</a> <br>";
-                    }
-                }
-                jQuery("#searchresult").html(content)
+//            if (json.chromosome == true) {
+//                jQuery("#searchresult").fadeOut();
+//                getReferences(json);
+//                jQuery("#searchresultMap").fadeIn();
+//            } else
+
+            if (son.html == "one") {
+                jQuery("#searchresult").fadeOut();
+                drawBrowser(json, from, to, blast)
+                jQuery("#searchresultMap").fadeIn();
+            } else if (json.html == "seqregion") {
+                makeSeqRegionList(json, from, to, blast)
+
             }
             else {
-                jQuery("#searchresult").fadeOut();
-                seq = json.html;
-                sequencelength = json.seqlength;
-                if (!track_list) {
-                    track_list = json.tracklists;
-                }
-                jQuery('#seqnameh1').html(json.seqregname);
-                jQuery('#seqname').html("<br/>");
-                jQuery('#searchseqregioninput').fadeOut();
-                jQuery('#canvas').show();
-                jQuery('#currentposition').show();
-                jQuery('#openCloseWrap').show();
-                jQuery('#displayoptions').show();
-                seqregname = json.seqregname;
-                tracks = jQuery("#filetrack").html().split(',');
-                if (tracks[0].length) {
-                    for (var i = 0; i < tracks.length; i++) {
-                        var filename = tracks[i].substring(tracks[i].lastIndexOf("/") + 1, tracks[i].lastIndexOf("."));
-                        var type = tracks[i].substring(tracks[i].lastIndexOf(".") + 1, tracks[i].length);
-                        track_list.push(
-                            {name: filename + "_" + type, id: tracks[i], display_label: filename, desc: tracks[i], disp: 1, merge: 0, graph: "false", display_lable: tracks[i], label: 0}
-                        );
-                    }
-                }
-
-                trackList(track_list);
-
-                minWidth = findminwidth();
-                if (maxLen > minWidth) {
-
-                    if (from && to) {
-                        if (parseInt(from) < parseInt(to)) {
-                            setBegin(from);
-                            setEnd(parseInt(to));
-                        }
-                        else {
-                            setBegin(to);
-                            setEnd(parseInt(from));
-                        }
-                    }
-                    else {
-                        setBegin((sequencelength - minWidth) / 2);
-                        setEnd(parseInt(getBegin()) + minWidth);
-                    }
-                    if (blast) {
-                        loadPreBlast(blast, query);
-                    }
-                    jumpToSeq();
-                    setNavPanel();
-
-                    jQuery("#controlsbutton").colorbox({width: "90%", inline: true, href: "#controlpanel"});
-                }
-                else {
-
-                }
-                dispSeqCoord();
-                displayCursorPosition();
-                if (json.coord_sys.indexOf('chromosome') >= 0) {
-                    getReferences();
-                }
-                else {
-                    chromosome = false;
-                }
-                loadDefaultTrack(track_list);
+                drawBrowser(json, from, to, blast)
             }
         }
         });
 
 }
 
-function search(query, from, to, jsonid, oldtracks) {
+function seqregionSearchwithCoord(query, coord, from, to, blast) {
+
+    jQuery("#searchresult").fadeOut();
+    jQuery("#searchresultMap").fadeOut();
+    jQuery('#sessioninput').fadeOut();
+    jQuery('#tabGenes').html('');
+    jQuery('#tabGO').html('');
+    jQuery('#tabTranscripts').html('');
+    jQuery("#searchresultHead").html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>");
+    jQuery("#searchresult").fadeIn();
+
+    jQuery("#sessionid").html("");
+    minWidth = null;
+    removeAllPopup();
+    Fluxion.doAjax(
+        'dnaSequenceService',
+        'seqregionSearchSequenceWithCoord',
+        {'query': query, 'coord': coord, 'url': ajaxurl},
+        {'doOnSuccess': function (json) {
+            drawBrowser(json, from, to, blast);
+        }
+        });
+
+}
+
+
+function search(query, from, to, blast) {
     if (track_list) {
         jQuery.cookie('trackslist', track_list.toJSON(), {  path: '/', expires: 10});
         removeTrackslist(track_list);
     }
 
+    console.log("search " + query)
     jQuery('#sessioninput').fadeOut();
     jQuery("#sessionid").html("");
     minWidth = null;
@@ -164,91 +127,21 @@ function search(query, from, to, jsonid, oldtracks) {
             jQuery('#canvas').hide();
             jQuery('#currentposition').hide();
 
-            if (json.chromosome == true) {
-                jQuery("#searchresult").fadeOut();
-                getReferences(json);
-                jQuery("#searchresultMap").fadeIn();
+            if (json.html == "one") {
+                drawBrowser(json, from, to, blast);
             }
             else if (json.html == "seqregion") {
-                jQuery("#searchresult").fadeIn();
-                var seqregioncontent = "<h1>Search Results: </h1><br>";
-                var content = "<h1>Search Results: </h1><br>";
-                for (var i = 0; i < json.seqregion.length; i++) {
-                    if (i == 0) {
-                        seqregioncontent += "<table class='list' id='search_hit' ><thead><tr><th>SeqRegion</th><th>SeqRegion Id</th><th>Reference Name</th><th>Link</th></tr></thead>";
-                    }
-
-                    seqregioncontent += "<tr><td>" + json.seqregion[i].Type + "<td> " + json.seqregion[i].seq_region_id + "<td>" + json.seqregion[i].name + " <td><a target='_blank' href='index.jsp?query=" + json.seqregion[i].name + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span><a/></td>";
-                    if (i == json.seqregion.length - 1) {
-                        seqregioncontent += "</table>";
-                        jQuery("#searchresult").html(seqregioncontent);
-                    }
-
-                    jQuery("#search_hit").tablesorter();
-                }
-
+                console.log(" else if")
+                makeSeqRegionList(json, from, to, blast)
             }
             else if (json.html == "gene" || json.html == "GO" || json.html == "transcript") {
 
-                jQuery('#canvas').hide();
-                jQuery('#currentposition').hide();
-                jQuery("#searchresult").html(" <div id=\"searchresultHead\"></div><div id=\"searchnavtabs\"><ul> <li><a href=\"#tabGenes\"><span>Genes</span></a></li>  <li><a href=\"#tabTranscripts\"><span>Transcripts</span></a></li><li><a href=\"#tabGO\"><span>GO</span></a></li> </ul> <div id=\"tabGenes\"></div> <div id=\"tabGO\"> </div>      <div id=\"tabTranscripts\"></div> </div>");
-                jQuery("#searchresult").fadeIn();
-                var genecontent = "";
-                var content = "<h1>Search Results: </h1><br>";
-                for (var i = 0; i < json.gene.length; i++) {
-                    if (i == 0) {
-                        genecontent += "<table class='list' id='gene_hit'><thead><tr><th>Track</th><th>Gene</th><th>Reference Name</th><th>Position</th><th>Link</th></tr></thead>";
-                    }
-                    genecontent += "<tr><td>" + json.gene[i].Type + "<td> " + json.gene[i].name + "<td>" + json.gene[i].parent + "<td>" + json.gene[i].start + "-" + json.gene[i].end + "<td> <a target='_blank' href='index.jsp?query=" + json.gene[i].parent + "&&from=" + json.gene[i].start + "&&to=" + json.gene[i].end + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span> </a></td>";
-                    if (i == json.gene.length - 1) {
-                        genecontent += "</table>";
-                        jQuery('#tabGenes').append(genecontent);
-                    }
-
-                    jQuery("#gene_hit").tablesorter();
-
-                }
-                content += "<hr>";
-                var gocontent = "";
-                for (var i = 0; i < json.GO.length; i++) {
-
-                    if (i == 0) {
-                        gocontent += "<table class='list' id='go_hit'><thead><tr><th>Attribute Type</th><th>Gene/Transcript Name</th><th>Reference Name</th><th>Position</th><th>Link</th></tr></thead>";
-                    }
-
-                    gocontent += "<tr><td>" + json.GO[i].Type + "<td>" + json.GO[i].name + "<td>" + json.GO[i].parent + "<td>" + json.GO[i].start + "-" + json.GO[i].end + "</td><td> <a target='_blank' href='index.jsp?query=" + json.GO[i].parent + "&&from=" + json.GO[i].start + "&&to=" + json.GO[i].end + "' ><span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span> </a></tr>";
-
-                    if (i == json.GO.length - 1) {
-                        gocontent += "</table>";
-                        jQuery('#tabGO').append(gocontent);
-                    }
-
-                    jQuery("#go_hit").tablesorter();
-
-                }
-
-
-                content += "<hr>";
-                var transcriptcontent = "";
-                for (var i = 0; i < json.transcript.length; i++) {
-                    if (i == 0) {
-                        transcriptcontent += "<table class='list' id='transcript_hit'><thead><tr><th>Attribute Type</th><th>Transcript Name</th><th>Reference Name</th><th>Position</th><th>Link</th></tr></thead>";
-                    }
-                    transcriptcontent += "<tr><td> " + json.transcript[i].Type + "<td>" + json.transcript[i].name + "<td> " + json.transcript[i].parent + "<td>" + json.transcript[i].start + "-" + json.transcript[i].end + "<td><a target='_blank' href='index.jsp?query=" + json.transcript[i].parent + "&&from=" + json.transcript[i].start + "&&to=" + json.transcript[i].end + "' ><span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span> </a></td></tr>";
-
-                    if (i == json.transcript.length - 1) {
-                        transcriptcontent += "</table>";
-                        jQuery('#tabTranscripts').append(transcriptcontent);
-                    }
-                }
-
-                jQuery("#transcript_hit").tablesorter();
-                jQuery("#searchnavtabs").tabs();
-                jQuery("#searchresultHead").html("<h2>Search Result</h2>");
+                console.log("else if")
+                makeFeatureList(json, from, to)
             }
             else {
-                window.location.replace("index.jsp?query=" + json.seqregname);
+                console.log("else if")
+//                window.location.replace("index.jsp?query=" + json.seqregname);
             }
         }
         });
@@ -657,7 +550,7 @@ function dispOnMap(json, maximumLengthname, maximumsequencelength) {
             if (mapheight < 1) {
                 mapheight = 1;
             }
-            jQuery("#refmap").append("<div name='" + markers[i].name + "' parent=" + markers[i].parent + " start=" + markers[i].start + " end=" + markers[i].end + " id='" + markers[i].name + "' title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' class='refmapsearchmarkerseqregion'  style='left:" + left + "px; bottom:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick=clicked_func('" + markers[i].name + "'); ></div>");
+            jQuery("#refmap").append("<div name='" + markers[i].name + "' parent=" + markers[i].parent + " coord=" + markers[i].coord + " start=" + markers[i].start + " end=" + markers[i].end + " id='" + markers[i].name + "' title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' class='refmapsearchmarkerseqregion'  style='left:" + left + "px; bottom:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick=clicked_func('" + markers[i].name + "'); ></div>");
         }
 
     }
@@ -676,7 +569,7 @@ function dispOnMap(json, maximumLengthname, maximumsequencelength) {
             if (mapheight < 1) {
                 mapheight = 1;
             }
-            jQuery("#refmap").append("<div name='" + markers[i].name + "' parent=" + markers[i].parent + " start=" + markers[i].start + " end=" + markers[i].end + " id='" + markers[i].name + "' title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' class='refmapsearchmarkergene'  style='left:" + left + "px; bottom:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick=clicked_func('" + markers[i].name + "'); ></div>");
+            jQuery("#refmap").append("<div name='" + markers[i].name + "' parent=" + markers[i].parent + " coord=" + markers[i].coord + " start=" + markers[i].start + " end=" + markers[i].end + " id='" + markers[i].name + "' title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' class='refmapsearchmarkergene'  style='left:" + left + "px; bottom:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick=clicked_func('" + markers[i].name + "'); ></div>");
 
         }
 
@@ -690,7 +583,7 @@ function dispOnMap(json, maximumLengthname, maximumsequencelength) {
             if (mapheight < 1) {
                 mapheight = 1;
             }
-            jQuery("#refmap").append("<div name='" + markers[i].name + "' parent=" + markers[i].parent + " start=" + markers[i].start + " end=" + markers[i].end + " id='" + markers[i].name + "' title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' class='refmapsearchmarkertranscript'  style='left:" + left + "px; bottom:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick=clicked_func('" + markers[i].name + "'); ></div>");
+            jQuery("#refmap").append("<div name='" + markers[i].name + "' parent=" + markers[i].parent + " coord=" + markers[i].coord + " start=" + markers[i].start + " end=" + markers[i].end + " id='" + markers[i].name + "' title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' class='refmapsearchmarkertranscript'  style='left:" + left + "px; bottom:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick=clicked_func('" + markers[i].name + "'); ></div>");
         }
 
         var markers = json.GO;
@@ -703,7 +596,7 @@ function dispOnMap(json, maximumLengthname, maximumsequencelength) {
             if (mapheight < 1) {
                 mapheight = 1;
             }
-            jQuery("#refmap").append("<div name='" + markers[i].name + "' parent=" + markers[i].parent + " start=" + markers[i].start + " end=" + markers[i].end + " id='" + markers[i].name + "' title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' class='refmapsearchmarkergo'  style='left:" + left + "px; bottom:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick=clicked_func('" + markers[i].name + "'); ></div>");
+            jQuery("#refmap").append("<div name='" + markers[i].name + "' parent=" + markers[i].parent + " coord=" + markers[i].coord + " start=" + markers[i].start + " end=" + markers[i].end + " id='" + markers[i].name + "' title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' class='refmapsearchmarkergo'  style='left:" + left + "px; bottom:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick=clicked_func('" + markers[i].name + "'); ></div>");
         }
     }
 
@@ -726,10 +619,13 @@ function clicked_func(element) {
         var parent = temp_element.attr("parent");
         var start = temp_element.attr("start");
         var end = temp_element.attr("end");
+        var coord = temp_element.attr("coord");
+
+
         var name = temp_element.attr("title").split(":")[0];
         var link = "<a target='_blank' href='index.jsp?query=" + parent + "&&from=" + start + "&&to=" + end + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span><a/>"
 
-        seqregioncontent = "<tr><td>" + parent + "</td><td>" + name + "</td><td>" + start + ":" + end + "</td><td>" + link + "</td>" + seqregioncontent;
+        seqregioncontent = "<tr><td>" + parent + "</td><td>" + coord + "</td><td>" + name + "</td><td>" + start + ":" + end + "</td><td>" + link + "</td>" + seqregioncontent;
 
         if (i >= 4) {
             break;
@@ -737,7 +633,7 @@ function clicked_func(element) {
 
     }
 
-    seqregioncontent = "<table class='list' id='search_hit' ><thead><tr><th>Parent</th><th>Name</th><th>Position</th><th>Link</th></tr> </thead>" + seqregioncontent;
+    seqregioncontent = "<table class='list' id='search_hit' ><thead><tr><th>Parent</th><th>coord-sys</th><th>Name</th><th>Position</th><th>Link</th></tr> </thead>" + seqregioncontent;
     temp_element = element;
 
     var temp_id = temp_element.attr('id').replace(/\./g, '\\.');
@@ -746,10 +642,11 @@ function clicked_func(element) {
     var start = temp_element.attr("start");
     var end = temp_element.attr("end");
     var name = temp_element.attr("title").split(":")[0];
+    var coord = temp_element.attr("coord");
 
 
     var link = "<a target='_blank' href='index.jsp?query=" + parent + "&&from=" + start + "&&to=" + end + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span><a/>"
-    seqregioncontent += "<tr><td><b><u>" + parent + "</b></u></td><td><b><u>" + name + "</b></u></td><td><u><b>" + start + ":" + end + "</u></b></td><td>" + link + "</td>";
+    seqregioncontent += "<tr><td><b><u>" + parent + "</b></u></td><td>" + coord + "</td><td><b><u>" + name + "</b></u></td><td><u><b>" + start + ":" + end + "</u></b></td><td>" + link + "</td>";
 
     var temp = element.nextAll(class_clicked);
 
@@ -761,8 +658,10 @@ function clicked_func(element) {
         var end = temp_element.attr("end");
         var name = temp_element.attr("title").split(":")[0];
         var link = "<a target='_blank' href='index.jsp?query=" + parent + "&&from=" + start + "&&to=" + end + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span><a/>"
+        var coord = temp_element.attr("coord");
 
-        seqregioncontent += "<tr><td>" + parent + "</td><td>" + name + "</td><td>" + start + ":" + end + "</td><td>" + link + "</td>";
+
+        seqregioncontent += "<tr><td>" + parent + "</td><td>" + coord + "</td><td>" + name + "</td><td>" + start + ":" + end + "</td><td>" + link + "</td>";
 
         if (i >= 4) {
             break;
@@ -814,4 +713,198 @@ function changeCSS() {
     jQuery("#sequence").css('top', '280px');
     jQuery(".fakediv").css('top', '260px');
 
+}
+
+function drawBrowser(json, from, to, blast) {
+    console.log(1)
+    jQuery("#searchresult").fadeOut();
+    seq = json.html;
+    sequencelength = json.seqlength;
+    if (!track_list) {
+        track_list = json.tracklists;
+    }
+    console.log(2)
+
+    jQuery('#seqnameh1').html(json.seqregname);
+    jQuery('#seqname').html("<br/>");
+    jQuery('#searchseqregioninput').fadeOut();
+    jQuery('#canvas').show();
+    jQuery('#currentposition').show();
+    jQuery('#openCloseWrap').show();
+    jQuery('#displayoptions').show();
+    console.log(3)
+
+    seqregname = json.seqregname;
+    tracks = jQuery("#filetrack").html().split(',');
+    if (tracks[0].length) {
+        for (var i = 0; i < tracks.length; i++) {
+            var filename = tracks[i].substring(tracks[i].lastIndexOf("/") + 1, tracks[i].lastIndexOf("."));
+            var type = tracks[i].substring(tracks[i].lastIndexOf(".") + 1, tracks[i].length);
+            track_list.push(
+                {name: filename + "_" + type, id: tracks[i], display_label: filename, desc: tracks[i], disp: 1, merge: 0, graph: "false", display_lable: tracks[i], label: 0}
+            );
+        }
+    }
+
+    console.log(4)
+
+    trackList(track_list);
+    console.log(45)
+
+    minWidth = findminwidth();
+
+    console.log("46" + minWidth)
+
+    if (maxLen > minWidth) {
+        console.log(461)
+
+        if (from && to) {
+            console.log(462)
+
+            if (parseInt(from) < parseInt(to)) {
+                setBegin(from);
+                setEnd(parseInt(to));
+            }
+            else {
+                setBegin(to);
+                setEnd(parseInt(from));
+            }
+        }
+        else {
+            console.log(463)
+
+            setBegin((sequencelength - minWidth) / 2);
+            setEnd(parseInt(getBegin()) + minWidth);
+        }
+        console.log(464)
+
+        if (blast) {
+            loadPreBlast(blast, seqregname);
+        }
+
+        console.log(465)
+
+        jumpToSeq();
+        console.log(466)
+
+        setNavPanel();
+        console.log(467)
+
+        jQuery("#controlsbutton").colorbox({width: "90%", inline: true, href: "#controlpanel"});
+    }
+    else {
+
+    }
+
+    console.log(5)
+
+    dispSeqCoord();
+    console.log(6)
+
+    displayCursorPosition();
+    console.log(7)
+
+    if (json.coord_sys.indexOf('chromosome') >= 0) {
+        getReferences();
+    }
+    else {
+        chromosome = false;
+    }
+    console.log(8)
+
+    loadDefaultTrack(track_list);
+
+}
+
+function makeSeqRegionList(json, from, to, blast) {
+    console.log("seqregion list")
+    jQuery('#canvas').hide();
+    jQuery('#currentposition').hide();
+    jQuery("#searchresult").fadeIn();
+    var content = "<h1>Search Results: </h1><br>";
+    console.log("seqregion list " + json.seqregion.length)
+
+    var seqregioncontent = "";
+    for (var i = 0; i < json.seqregion.length; i++) {
+        console.log("i " + i)
+
+
+        if (i == 0) {
+            seqregioncontent += "<table class='list' id='search_hit' ><thead><tr><th>SeqRegion</th><th>Coord-sys</th><th>SeqRegion Id</th><th>Reference Name</th><th>Link</th></tr></thead>";
+        }
+
+        if (from && to) {
+            seqregioncontent += "<tr><td>" + json.seqregion[i].Type + "<td>" + json.seqregion[i].coord + "<td> " + json.seqregion[i].seq_region_id + "<td>" + json.seqregion[i].name + " <td><a target='_blank' href='index.jsp?query=" + json.seqregion[i].name + "&coord=" + json.seqregion[i].coord + "&from=" + from + "&to=" + to + "&blast=" + blast + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span><a/></td>";
+        }
+        else {
+            seqregioncontent += "<tr><td>" + json.seqregion[i].Type + "<td>" + json.seqregion[i].coord + "<td> " + json.seqregion[i].seq_region_id + "<td>" + json.seqregion[i].name + " <td><a target='_blank' href='index.jsp?query=" + json.seqregion[i].name + "&coord=" + json.seqregion[i].coord + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span><a/></td>";
+        }
+
+        if (i == json.seqregion.length - 1) {
+            seqregioncontent += "</table>";
+            jQuery("#searchresult").html(seqregioncontent);
+        }
+
+        jQuery("#search_hit").tablesorter();
+    }
+}
+
+function makeFeatureList(json, from, to) {
+    console.log("feature list")
+
+    jQuery('#currentposition').hide();
+    jQuery("#searchresult").html(" <div id=\"searchresultHead\"></div><div id=\"searchnavtabs\"><ul> <li><a href=\"#tabGenes\"><span>Genes</span></a></li>  <li><a href=\"#tabTranscripts\"><span>Transcripts</span></a></li><li><a href=\"#tabGO\"><span>GO</span></a></li> </ul> <div id=\"tabGenes\"></div> <div id=\"tabGO\"> </div>      <div id=\"tabTranscripts\"></div> </div>");
+    jQuery("#searchresult").fadeIn();
+    var genecontent = "";
+    var content = "<h1>Search Results: </h1><br>";
+    for (var i = 0; i < json.gene.length; i++) {
+        if (i == 0) {
+            genecontent += "<table class='list' id='gene_hit'><thead><tr><th>Track</th><th>Gene</th><th>Reference Name</th><th>Reference Coord Sys</th><th>Position</th><th>Link</th></tr></thead>";
+        }
+        genecontent += "<tr><td>" + json.gene[i].Type + "<td> " + json.gene[i].name + "<td>" + json.gene[i].parent + "<td> " + json.gene[i].coord + "<td>" + json.gene[i].start + "-" + json.gene[i].end + "<td> <a target='_blank' href='index.jsp?query=" + json.gene[i].parent + "&&coord=" + json.gene[i].coord + "&&from=" + json.gene[i].start + "&&to=" + json.gene[i].end + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span> </a></td>";
+        if (i == json.gene.length - 1) {
+            genecontent += "</table>";
+            jQuery('#tabGenes').append(genecontent);
+        }
+
+        jQuery("#gene_hit").tablesorter();
+
+    }
+    content += "<hr>";
+    var gocontent = "";
+    for (var i = 0; i < json.GO.length; i++) {
+
+        if (i == 0) {
+            gocontent += "<table class='list' id='go_hit'><thead><tr><th>Attribute Type</th><th>Gene/Transcript Name</th><th>Attrib</th><th>Reference Name</th><th>Reference Coord Sys</th><th>Position</th><th>Link</th></tr></thead>";
+        }
+
+        gocontent += "<tr><td>" + json.GO[i].Type + "<td>" + json.GO[i].name + "<td>" + json.GO[i].parent + "<td> " + json.GO[i].value + "<td> " + json.GO[i].coord + "<td>" + json.GO[i].start + "-" + json.GO[i].end + "</td><td> <a target='_blank' href='index.jsp?query=" + json.GO[i].parent + "&&coord=" + json.GO[i].coord + "&&from=" + json.GO[i].start + "&&to=" + json.GO[i].end + "' ><span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span> </a></tr>";
+
+        if (i == json.GO.length - 1) {
+            gocontent += "</table>";
+            jQuery('#tabGO').append(gocontent);
+        }
+
+        jQuery("#go_hit").tablesorter();
+
+    }
+
+
+    content += "<hr>";
+    var transcriptcontent = "";
+    for (var i = 0; i < json.transcript.length; i++) {
+        if (i == 0) {
+            transcriptcontent += "<table class='list' id='transcript_hit'><thead><tr><th>Attribute Type</th><th>Transcript Name</th><th>Reference Name</th><th>Reference Coord Sys</th><th>Position</th><th>Link</th></tr></thead>";
+        }
+        transcriptcontent += "<tr><td> " + json.transcript[i].Type + "<td>" + json.transcript[i].name + "<td> " + json.transcript[i].parent + "<td> " + json.transcript[i].coord + "<td>" + json.transcript[i].start + "-" + json.transcript[i].end + "<td><a target='_blank' href='index.jsp?query=" + json.transcript[i].parent + "&&coord=" + json.transcript[i].coord + "&&from=" + json.transcript[i].start + "&&to=" + json.transcript[i].end + "' ><span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span> </a></td></tr>";
+
+        if (i == json.transcript.length - 1) {
+            transcriptcontent += "</table>";
+            jQuery('#tabTranscripts').append(transcriptcontent);
+        }
+    }
+
+    jQuery("#transcript_hit").tablesorter();
+    jQuery("#searchnavtabs").tabs();
+    jQuery("#searchresultHead").html("<h2>Search Result</h2>");
 }

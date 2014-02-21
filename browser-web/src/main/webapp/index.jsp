@@ -23,10 +23,10 @@
 <script type="text/javascript">
 
 
-    jQuery(document).ready(function() {
+    jQuery(document).ready(function () {
         var chr = metaData();
 
-        jQuery("#mainsearch").load("browser.jsp", function() {
+        jQuery("#mainsearch").load("browser.jsp", function () {
             onLoad();
             getUrlVariables(chr);
         });
@@ -34,46 +34,25 @@
 
     function getUrlVars() {
         var vars = {};
-        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m, key, value) {
+        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
             vars[key] = value;
         });
         return vars;
     }
     function getUrlVariables(chr) {
-        var showBlast = false;
-        var vars = [];
-        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m, key, value) {
-            vars.push(value);
-            if (key == "blasttrack") {
-                showBlast = true;
+
+        jQuery.urlParam = function (name) {
+            var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href);
+            if (results == null) {
+                return null;
             }
-
-        });
-
-        if (vars.length > 0) {
-
-            jQuery("#search").val(vars[0]);
-
-            seqregionSearchPopup(jQuery("#search").val(), vars[1], vars[2], vars[3])
-
-        }
-        else if (jQuery('#search').val().length >= 1) {
-            var now = new Date();
-
-
-            search(jQuery('#search').val(), oldTracklist);
-        <%--vars[1] for blast and so on --%>
-        }
-        else if(chr == true){
-             getReferences(true)
-        }
-        else {
-          console.log("else")
+            else {
+                return results[1] || 0;
+            }
         }
 
-//        if(showBlast){
-//            loadPreBlast(vars[3], vars[0]);
-//        }
+        processURL(jQuery.urlParam)
+
     }
 
 

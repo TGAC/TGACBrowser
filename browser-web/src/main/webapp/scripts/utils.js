@@ -132,7 +132,7 @@ function trackToggle(trackname) {
                     } else if (window['track_list' + trackName].graphtype == "heat") {
                         dispGraphHeat("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
 
-                    }  else if (window['track_list' + trackName].graphtype == "wig") {
+                    } else if (window['track_list' + trackName].graphtype == "wig") {
                         dispGraphWig("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
                     }
                 }
@@ -168,7 +168,7 @@ function trackToggle(trackname) {
                 } else if (window['track_list' + trackname].graphtype == "heat") {
                     dispGraphHeat("#" + trackname + "_div", trackname, window['track_list' + trackname].display_label);
 
-                }  else if (window['track_list' + trackname].graphtype == "wig") {
+                } else if (window['track_list' + trackname].graphtype == "wig") {
                     dispGraphWig("#" + trackname + "_div", trackname, window['track_list' + trackname].display_label);
                 }
             }
@@ -537,3 +537,36 @@ function convertSeqtoBLAST(seq, qseq) {
 //
 //
 //}
+
+function processURL(urlParam) {
+
+    if (jQuery.urlParam("query") != null && jQuery.urlParam("from") != null && jQuery.urlParam("to") != null && jQuery.urlParam("coord") != null && jQuery.urlParam("blasttrack") != null) {
+        console.log(1);
+        seqregionSearchwithCoord(urlParam("query"), urlParam("coord"), urlParam("from"), urlParam("to"),  urlParam("blasttrack"))
+    }
+    else if (jQuery.urlParam("query") != null && jQuery.urlParam("from") != null && jQuery.urlParam("to") != null && jQuery.urlParam("blasttrack") != null) {
+        console.log(2);
+        seqregionSearchPopup(urlParam("query"), urlParam("from"), urlParam("to"), urlParam("blasttrack"))
+    }
+    else if (jQuery.urlParam("query") != null && jQuery.urlParam("from") != null && jQuery.urlParam("to") != null && jQuery.urlParam("coord") != null) {
+        console.log(3);
+        seqregionSearchwithCoord(urlParam("query"), urlParam("coord"), urlParam("from"), urlParam("to"))
+    }
+    else if (jQuery.urlParam("query") != null && jQuery.urlParam("from") && jQuery.urlParam("to") != null) {
+        console.log(4);
+        search(urlParam("query"), urlParam("from"), urlParam("to"))
+    }
+    else if (jQuery.urlParam("query") != null && jQuery.urlParam("coord") != null) {
+        console.log(5);
+        seqregionSearchwithCoord(jQuery.urlParam("query"), jQuery.urlParam("coord"))
+    }
+    else if (jQuery.urlParam("query") != null) {
+        console.log(5);
+        search(jQuery.urlParam("query"))
+    } else {
+        console.log(6);
+        getReferences(true)
+    }
+    console.log(jQuery.urlParam("query"))
+}
+

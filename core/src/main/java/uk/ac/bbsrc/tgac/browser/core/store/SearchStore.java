@@ -42,6 +42,8 @@ public interface SearchStore extends Store {
     public JSONArray getTranscriptSearch(String query) throws IOException;
     public JSONArray getGOSearch(String query) throws IOException;
     public JSONArray getSeqRegionSearch(String query) throws IOException;
+    public JSONArray getSeqRegionSearchformatch(String query) throws IOException;
+
 
 
 }
