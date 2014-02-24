@@ -773,15 +773,16 @@ function dispTrack(div, trackName, className) {
 
     if (window['track_list' + trackName].id.toString().indexOf('cs') > -1) {
         coord = true;
-        if (trackName.toLowerCase().indexOf("contig") >= 0) {
-            trackClass = "contigs track";
-        }
-        else if (trackName.toLowerCase().indexOf("clone") >= 0) {
-            trackClass = "clone track";
-        }
-        else {
-            trackClass = "unknown track";
-        }
+        trackClass = "track";
+//        if (trackName.toLowerCase().indexOf("contig") >= 0) {
+//            trackClass = "contigs track";
+//        }
+//        else if (trackName.toLowerCase().indexOf("clone") >= 0) {
+//            trackClass = "clone track";
+//        }
+//        else {
+//            trackClass = "unknown track";
+//        }
     }
     else {
         coord = false;
@@ -876,7 +877,7 @@ function dispTrack(div, trackName, className) {
                 var track_desc = track[track_len].desc;
                 var top;
                 if (coord || track[track_len].layer) {
-                    top = (track[track_len].layer) * 10 + 10;
+                    top = (track[track_len].layer) * 10;
                     if (track[track_len].layer > j) {
                         j = track[track_len].layer;
                     }
