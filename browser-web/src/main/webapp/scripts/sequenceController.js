@@ -85,7 +85,7 @@ function seqBar(seqStart, seqEnd) {
         Fluxion.doAjax(
             'dnaSequenceService',
             'loadSequence',
-            {'query': seqregname, 'from': start, 'to': end, 'url': ajaxurl},
+            {'query': seqregname, 'from': start, 'to': end, 'coord': coord, 'url': ajaxurl},
             {'doOnSuccess': function (json) {
                 var seq = json.seq;
                 if (seq.length > 1) {

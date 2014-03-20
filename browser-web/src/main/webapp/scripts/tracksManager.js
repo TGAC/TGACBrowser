@@ -88,7 +88,6 @@ function trackList(tracklist) {
 
         if (Tracklist[i].web && Tracklist[i].web.trackgroup) {
 
-            console.log(Tracklist[i].name)
             if (document.getElementById("group" + Tracklist[i].web.trackgroup) == null) {
 
                 jQuery("#tracklist").append("<div style='padding: 5px; margin: 10px; position: relative; border: 1px solid lightgray; top: 10px' id='group" + Tracklist[i].web.trackgroup + "'> <b>" + Tracklist[i].web.trackgroup + "</b> <p></div>")
@@ -119,13 +118,11 @@ function trackList(tracklist) {
         }
 
         if (Tracklist[i].web && Tracklist[i].web.colour) {
-            console.log(Tracklist[i].name)
 
             if (Tracklist[i].name.toLowerCase().indexOf("snp") >= 0) {
 
             }
             else if (Tracklist[i].web.source == "file" && (Tracklist[i].name.toLowerCase().indexOf("gene") >= 0 || Tracklist[i].name.toLowerCase().indexOf("gff") >= 0)) {
-                console.log("gene " +Tracklist[i].name)
 
                 jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_exon" + "{ background:" + Tracklist[i].web.colour + "; border: 1px solid " + Tracklist[i].web.colour + ";} </style>").appendTo("head");
                 jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_utr" + "{ border: 1px solid " + Tracklist[i].web.colour + "; background:none repeat scroll 0 0 white;} </style>").appendTo("head");
@@ -137,7 +134,6 @@ function trackList(tracklist) {
                 jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "" + "{ fill:" + Tracklist[i].web.colour + "; stroke: " + Tracklist[i].web.colour + "; background: " + Tracklist[i].web.colour + ";} </style>").appendTo("head");
             }
             else if (Tracklist[i].name.toLowerCase().indexOf("gene") >= 0 || Tracklist[i].name.toLowerCase().indexOf("gff") >= 0) {
-                console.log("gene " +Tracklist[i].name)
 
                 jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_exon" + "{ background:" + Tracklist[i].web.colour + "; border: 1px solid " + Tracklist[i].web.colour + ";} </style>").appendTo("head");
                 jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_utr" + "{ border: 1px solid " + Tracklist[i].web.colour + "; background:none repeat scroll 0 0 white;} </style>").appendTo("head");
@@ -146,7 +142,6 @@ function trackList(tracklist) {
 
             }
             else {
-                console.log("gene "+Tracklist[i].name)
 
                 jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "{ background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
                 jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_graph { border:1px solid black; background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
@@ -156,7 +151,6 @@ function trackList(tracklist) {
         }
         else {
 
-            console.log(Tracklist[i].name)
 
             if (Tracklist[i].name.toLowerCase().indexOf("snp") >= 0) {
 
@@ -308,7 +302,7 @@ function loadDefaultTrack(tracklist) {
                 Fluxion.doAjax(
                     'dnaSequenceService',
                     'loadTrack',
-                    {'query': seqregname, 'name': Tracklist[i].name, 'trackid': Tracklist[i].id, 'start': start, 'end': end, 'delta': deltaWidth, 'url': ajaxurl},
+                    {'query': seqregname, 'coord': coord, 'name': Tracklist[i].name, 'trackid': Tracklist[i].id, 'start': start, 'end': end, 'delta': deltaWidth, 'url': ajaxurl},
                     {'doOnSuccess': function (json) {
                         var trackname = json.name;
 
@@ -352,7 +346,7 @@ function loadDefaultTrack(tracklist) {
                 Fluxion.doAjax(
                     'dnaSequenceService',
                     'loadTrack',
-                    {'query': seqregname, 'name': Tracklist[i].name, 'trackid': Tracklist[i].id, 'start': start, 'end': end, 'delta': deltaWidth, 'url': ajaxurl},
+                    {'query': seqregname, 'coord': coord, 'name': Tracklist[i].name, 'trackid': Tracklist[i].id, 'start': start, 'end': end, 'delta': deltaWidth, 'url': ajaxurl},
                     {'doOnSuccess': function (json) {
                         var trackname = json.name;
 

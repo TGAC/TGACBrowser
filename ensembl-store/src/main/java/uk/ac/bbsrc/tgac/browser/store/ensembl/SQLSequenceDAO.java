@@ -64,13 +64,19 @@ public class SQLSequenceDAO implements SequenceStore {
 
     public static final String GET_SEQ_FROM_SEQ_REGION_ID = "SELECT sequence FROM dna WHERE seq_region_id = ?";
     public static final String GET_SEQ_REGION_ID_FROM_NAME = "SELECT seq_region_id FROM seq_region WHERE name  = ?";
+    public static final String GET_SEQ_REGION_ID_FROM_NAME_AND_COORD = "SELECT seq_region_id FROM seq_region WHERE name  = ? and coord_system_id = ?";
+
     public static final String GET_SEQ_REGION_ID_SEARCH = "SELECT s.seq_region_id, s.name, s.length, cs.name as Type FROM seq_region s, coord_system cs WHERE s.name like ? and cs.coord_system_id = s.coord_system_id;";
 
     public static final String GET_SIZE_SEQ_REGION_ID_SEARCH = "SELECT count(length) FROM seq_region WHERE name like ?";
     public static final String GET_SIZE_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT count(length) FROM seq_region WHERE name = ?";
     public static final String GET_SEQ_REGION_ID_SEARCH_all = "SELECT * FROM seq_region WHERE coord_system_id = ?";
     public static final String GET_SEQ_REGION_NAME_FROM_ID = "SELECT name FROM seq_region WHERE seq_region_id = ?";
+    public static final String GET_SEQ_REGION_NAME_FROM_ID_AND_COORD = "SELECT name FROM seq_region WHERE seq_region_id = ? and coord_system_id = ?";
+
     public static final String GET_SEQ_LENGTH_FROM_ID = "SELECT length FROM seq_region WHERE seq_region_id = ?";
+    public static final String GET_SEQ_LENGTH_FROM_ID_AND_COORD = "SELECT length FROM seq_region WHERE seq_region_id = ? and coord_system_id = ?";
+
     public static final String GET_SEQ_REGION_ID_SEARCH_For_One = "SELECT seq_region_id FROM seq_region WHERE name = ?";
 
     public static final String GET_Domain_per_Gene = "SELECT * FROM transcript_attrib where transcript_id =?";
@@ -91,7 +97,7 @@ public class SQLSequenceDAO implements SequenceStore {
     public static final String GET_coord_sys_id_by_name = "SELECT coord_system_id FROM seq_region where name =?";
     public static final String GET_Coord_systemid_FROM_ID = "SELECT coord_system_id FROM seq_region WHERE seq_region_id = ?";
     public static final String CHECK_Coord_sys_attr = "select * from coord_system where coord_system_id = ? and (name like ? OR attrib like ?);";
-    public static final String GET_coord_attrib_chr = "SELECT coord_system_id FROM coord_system where name like ? || attrib like ?";
+    public static final String GET_coord_attrib_chr = "SELECT * FROM coord_system where name like ? || attrib like ?";
 
     //  public static final String GET_GENOME_MARKER = "SELECT * from marker_feature";
     public static final String GET_GENOME_MARKER = "select mf.marker_feature_id as id, sr.name as reference, mf.marker_id as marker_id, mf.seq_region_start as start, mf.seq_region_end as end, mf.analysis_id as analysis_id from marker_feature mf, seq_region sr where mf.seq_region_id = sr.seq_region_id;";
@@ -179,12 +185,16 @@ public class SQLSequenceDAO implements SequenceStore {
             List<Map<String, Object>> attrib_temp = template.queryForList(GET_coord_attrib_chr, new Object[]{"%chr%", "%chr%"});
             JSONObject eachName = new JSONObject();
             if (attrib_temp.size() > 0) {
-                List<Map<String, Object>> maps = template.queryForList(GET_SEQ_REGION_ID_SEARCH_all, new Object[]{attrib_temp.get(0).get("coord_system_id").toString()});
-                for (Map map : maps) {
-                    eachName.put("name", map.get("name"));
-                    eachName.put("seq_region_id", map.get("seq_region_id"));
-                    eachName.put("length", map.get("length"));
-                    names.add(eachName);
+                for (Map attrib : attrib_temp) {
+                    List<Map<String, Object>> maps = template.queryForList(GET_SEQ_REGION_ID_SEARCH_all, new Object[]{attrib.get("coord_system_id").toString()});
+                    for (Map map : maps) {
+                        eachName.put("name", map.get("name"));
+                        eachName.put("seq_region_id", map.get("seq_region_id"));
+                        eachName.put("length", map.get("length"));
+                        eachName.put("coord_name", attrib.get("name"));
+                        eachName.put("coord", attrib.get("coord_system_id"));
+                        names.add(eachName);
+                    }
                 }
             }
             return names;
@@ -245,10 +255,20 @@ public class SQLSequenceDAO implements SequenceStore {
 
     public Integer getSeqRegionWithCoord(String searchQuery, String coord) throws IOException {
         try {
-            int i = template.queryForObject(GET_SEQ_REGION_ID_FROM_NAME, new Object[]{searchQuery}, Integer.class);
+            int i = template.queryForObject(GET_SEQ_REGION_ID_FROM_NAME_AND_COORD, new Object[]{searchQuery, coord}, Integer.class);
             return i;
         } catch (EmptyResultDataAccessException e) {
             return 0;
+        }
+    }
+
+    public String getSeqRegionName(int searchQuery, String coord) throws IOException {
+        try {
+            String str = template.queryForObject(GET_SEQ_REGION_NAME_FROM_ID_AND_COORD, new Object[]{searchQuery, coord}, String.class);
+            return str;
+        } catch (EmptyResultDataAccessException e) {
+            throw new IOException(" getSeqRegionName no result found");
+
         }
     }
 
@@ -262,13 +282,22 @@ public class SQLSequenceDAO implements SequenceStore {
         }
     }
 
-
     public Map<String, Object> getStartEndAnalysisIdBySeqRegionId(int id) throws IOException {
         try {
             Map<String, Object> map = template.queryForMap(GET_START_END_ANALYSIS_ID_FROM_SEQ_REGION_ID, new Object[]{id});
             return map;
         } catch (EmptyResultDataAccessException e) {
             throw new IOException(" getStartEndAnalysisIdBySeqRegionI no result found");
+
+        }
+    }
+
+    public String getSeqLengthbyId(int query, String coord) throws IOException {
+        try {
+            String i = template.queryForObject(GET_SEQ_LENGTH_FROM_ID_AND_COORD, new Object[]{query, coord}, String.class);
+            return i;
+        } catch (EmptyResultDataAccessException e) {
+            throw new IOException(" getSeqlength no result found");
 
         }
     }

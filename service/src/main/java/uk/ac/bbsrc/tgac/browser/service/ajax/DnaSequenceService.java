@@ -131,7 +131,6 @@ public class DnaSequenceService {
             if (queryid > 1) {
                 response.put("html", "seqregion");
                 response.put("chromosome", searchStore.checkChromosome());
-                response.put("chromosome", searchStore.checkChromosome());
                 response.put("seqregion", searchStore.getSeqRegionSearch(seqName));
             } else if (queryid == 0) {
                 response.put("html", "gene");
@@ -145,7 +144,7 @@ public class DnaSequenceService {
                 String seqRegName = sequenceStore.getSeqRegionName(query);
                 String seqlength = sequenceStore.getSeqLengthbyId(query);
                 response.put("seqlength", seqlength);
-                response.put("chromosome", searchStore.checkChromosome());
+                response.put("chromosome", searchStore.checkChromosome(query));
                 response.put("html", "one");
                 response.put("seqname", "<p> <b>Seq Region ID:</b> " + query + ",<b> Name: </b> " + seqRegName);//+", <b>cds:</b> "+cds+"</p>");
                 response.put("seqregname", seqRegName);
@@ -199,7 +198,7 @@ public class DnaSequenceService {
                 String seqRegName = sequenceStore.getSeqRegionName(query);
                 String seqlength = sequenceStore.getSeqLengthbyId(query);
                 response.put("seqlength", seqlength);
-                response.put("chromosome", searchStore.checkChromosome());
+                response.put("chromosome", searchStore.checkChromosome(query));
                 response.put("html", "one");
                 response.put("seqname", "<p> <b>Seq Region ID:</b> " + query + ",<b> Name: </b> " + seqRegName);//+", <b>cds:</b> "+cds+"</p>");
                 response.put("seqregname", seqRegName);
@@ -234,14 +233,15 @@ public class DnaSequenceService {
             Integer queryid = sequenceStore.getSeqRegionearchsizeformatch(seqName);
 
             Integer query = sequenceStore.getSeqRegionWithCoord(seqName, coord);
-            String seqRegName = sequenceStore.getSeqRegionName(query);
-            String seqlength = sequenceStore.getSeqLengthbyId(query);
+            String seqRegName = sequenceStore.getSeqRegionName(query, coord);
+            String seqlength = sequenceStore.getSeqLengthbyId(query, coord);
             response.put("seqlength", seqlength);
-            response.put("html", "");
+            response.put("html", "one");
+            response.put("chromosome", searchStore.checkChromosome(query));
             response.put("seqname", "<p> <b>Seq Region ID:</b> " + query + ",<b> Name: </b> " + seqRegName);//+", <b>cds:</b> "+cds+"</p>");
             response.put("seqregname", seqRegName);
             response.put("tracklists", analysisStore.getAnnotationId(query));
-            response.put("coord_sys", sequenceStore.getCoordSys(seqName));
+            response.put("coord_sys", coord);
             return response;
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -288,13 +288,15 @@ public class DnaSequenceService {
         JSONObject response = new JSONObject();
         String trackName = json.getString("name");
         String trackId = json.getString("trackid");
+        String coord = json.getString("coord");
+
         long start = json.getInt("start");
         long end = json.getInt("end");
         int delta = json.getInt("delta");
         response.put("name", trackName);
         int count;
         try {
-            Integer queryid = sequenceStore.getSeqRegion(seqName);
+            Integer queryid = sequenceStore.getSeqRegionWithCoord(seqName, coord);
             if (trackId.toLowerCase().contains(".bw") || trackId.toLowerCase().contains(".bigwig") || trackId.toLowerCase().contains(".wig")) {
                 response.put(trackName, BigWigService.getWig(start, end, delta, trackId, seqName));
             } else if (trackId.contains(".sam") || trackId.contains(".bam")) {
@@ -478,8 +480,11 @@ public class DnaSequenceService {
         String query = json.getString("query");
         int from = json.getInt("from");
         int to = json.getInt("to");
+        String coord = json.getString("coord");
+
+
         try {
-            String queryid = sequenceStore.getSeqRegion(query).toString();
+            String queryid = sequenceStore.getSeqRegionWithCoord(query, coord).toString();
             if (from <= to) {
                 response.put("seq", sequenceStore.getSeq(queryid, from, to));
             } else {

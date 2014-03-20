@@ -92,7 +92,7 @@ function jumpToHere(e) {
     jumpToSeq();
 }
 
-function jumpToOther(e, length, name) {
+function jumpToOther(e, length, name, coord) {
     var top = parseFloat(e.pageY - jQuery('#' + name).offset().top);
     //if (top > parseFloat(getMapMarkerTop())) {
     top = top - parseFloat(getMapMarkerHeight()) / 2;
@@ -122,7 +122,7 @@ function jumpToOther(e, length, name) {
         begin = 1;
         end = length;
     }
-    window.location.replace("index.jsp?query=" + name + "&from=" + begin + "&to=" + end);
+    window.location.replace("index.jsp?query=" + name + "&coord="+coord+"&from=" + begin + "&to=" + end);
 }
 
 function zoomOut(zoom_len) {
@@ -394,7 +394,7 @@ function addJSON(from, to, trackName, trackId) {
             Fluxion.doAjax(
                 'dnaSequenceService',
                 'loadTrack',
-                {'query': seqregname, 'name': trackName, 'trackid': trackId, 'start': from, 'end': to, 'delta': deltaWidth, 'url': ajaxurl},
+                {'query': seqregname, 'coord': coord, 'name': trackName, 'trackid': trackId, 'start': from, 'end': to, 'delta': deltaWidth, 'url': ajaxurl},
                 {'doOnSuccess': function (json) {
                     var trackname = json.name;
                     window[trackname] = json[trackname];
@@ -444,7 +444,7 @@ function addJSON(from, to, trackName, trackId) {
                         Fluxion.doAjax(
                             'dnaSequenceService',
                             'loadTrack',
-                            {'query': seqregname, 'name': trackname, 'trackid': trackid, 'start': from, 'end': to, 'delta': deltaWidth, 'url': ajaxurl},
+                            {'query': seqregname, 'coord': coord, 'name': trackname, 'trackid': trackid, 'start': from, 'end': to, 'delta': deltaWidth, 'url': ajaxurl},
                             {'doOnSuccess': function (json) {
                                 var trackname = json.name;
                                 window[trackname] = json[trackname];

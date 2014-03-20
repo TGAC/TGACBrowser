@@ -524,7 +524,7 @@ function showPeptides(track, i, k) {
     Fluxion.doAjax(
         'dnaSequenceService',
         'loadSequence',
-        {'query': seqregname, 'from': window[track][i].start, 'to': window[track][i].end, 'url': ajaxurl},
+        {'query': seqregname, 'from': window[track][i].start, 'to': window[track][i].end, 'coord': coord, 'url': ajaxurl},
         {'doOnSuccess': function (json) {
 
             seq = json.seq;
@@ -710,7 +710,6 @@ function convertPeptide(cdnaseq) {
 }
 
 function fetchFasta(begin, end, track, i, j) {
-
     if (begin > end) {
         var temp = end;
         end = begin;
@@ -731,13 +730,13 @@ function fetchFasta(begin, end, track, i, j) {
             "onclick=\"selectText('fastaoutput');\"')\">Select Sequence</button><br/>" +
             "<td><div id=fastadownload></div></td></td></tr></table><br/>" +
             // "<b>Position: </b>" + begin + " - " + end+
-            "<br/><b>Fasta:</b> <br/>" + reverseText +
+            "<br/>" + reverseText +
             "<div id=\"fastaoutput\" style=' font-family: Courier, \"Courier New\", monospace'><img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'></div>"});
 
     Fluxion.doAjax(
         'dnaSequenceService',
         'loadSequence',
-        {'query': seqregname, 'from': begin, 'to': end, 'url': ajaxurl},
+        {'query': seqregname, 'from': begin, 'to': end, 'coord': coord, 'url': ajaxurl},
         {'doOnSuccess': function (json) {
             var seq = (json.seq).toLowerCase();
             if (i) {
@@ -745,13 +744,12 @@ function fetchFasta(begin, end, track, i, j) {
 
                 if (window[track][i].transcript[j].start > window[track][i].transcript[j].end) {
                     start = window[track][i].transcript[j].end;
-                    stop = window[track][i].transcript[j].start;
                 }
                 else {
                     start = window[track][i].transcript[j].start;
-                    stop = window[track][i].transcript[j].end;
                 }
                 var exons = window[track][i].transcript[j].Exons.length;
+                var annotations = [];
                 for (var k = 0; k < exons; k++) {
                     var substart, subend;
                     if (window[track][i].transcript[j].start > window[track][i].transcript[j].end) {
@@ -762,20 +760,30 @@ function fetchFasta(begin, end, track, i, j) {
                         substart = window[track][i].transcript[j].Exons[k].start - start;
                         subend = window[track][i].transcript[j].Exons[k].end - start;
                     }
-                    var exonSeq = seq.substring(substart, subend);
-                    seq = seq.substring(0, substart) + exonSeq.toUpperCase() + seq.substring(subend + 1, seq.length);
+                    annotations.push({
+                        color:"#F0F020",
+                        regions: [{start: substart, end: subend}]
+                    })
                 }
-                jQuery('#fastaoutput').html(">" + seqregname + ": " + begin + " - " + end + " <font color='green'> " + convertFasta(seq) + "</font>");
-                jQuery('#fastaoutput').each(function () {
-                    var pattern = /([ATCG]+)/g;
-                    var before = '<span style="color: red;">';
-                    var after = '</span>';
-                    jQuery(this).html(jQuery('#fastaoutput').html().replace(pattern, before + "$1" + after));
+                var theSequence = seq;
+                jQuery("#fastaoutput").html("")
+                var mySequence = new Biojs.Sequence({
+                    sequence : theSequence,
+                    target : "fastaoutput",
+                    format : 'FASTA',
+                    id : seqregname + ": " + begin + " - " + end ,
+                    annotations: annotations
                 });
-
             }
             else {
-                jQuery('#fastaoutput').html(">" + seqregname + ": " + begin + " - " + end + convertFasta(seq));
+                var theSequence = seq;
+                jQuery("#fastaoutput").html("")
+                var mySequence = new Biojs.Sequence({
+                    sequence : theSequence,
+                    target : "fastaoutput",
+                    format : 'FASTA',
+                    id : seqregname + ": " + begin + " - " + end
+                });
             }
             jQuery('#fastadownload').html("<button class='ui-state-default ui-corner-all' " +
                 "onclick=fastaFile('" + seq + "'," + begin + "," + end + ") \">Prepare Download Sequence File</button>");
@@ -790,19 +798,12 @@ function blast(begin, end, hit, blastdb, type) {
     Fluxion.doAjax(
         'dnaSequenceService',
         'loadSequence',
-        {'query': seqregname, 'from': begin, 'to': end, 'url': ajaxurl},
+        {'query': seqregname, 'from': begin, 'to': end, 'coord': coord, 'url': ajaxurl},
         {'doOnSuccess': function (json) {
             var seq = json.seq;
             blastTrackSearch(seq, begin, end, hit, blastdb, type);
         }
         });
-
-
-//    blastTrackSearch(seq.substring(begin, end), begin, end, hit, blastdb);
-//  }
-//  else {
-//    alert("BLAST limit applies less than 10kb");
-//  }
 
     removeMenu();
 }

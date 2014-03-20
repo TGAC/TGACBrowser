@@ -71,7 +71,7 @@ public class SQLAnalysisDAO implements AnalysisStore {
     public static final String Get_Tracks_Info = "select * from analysis_description";
     public static final String GET_ANALYSIS_ID_FROM_LOGIC_NAME = "select analysis_id from analysis where logic_name = ?";
     public static final String GET_TRACKS_VIEW = "select a.logic_name as name, a.analysis_id as id, ad.description, ad.display_label, ad.displayable, ad.web_data from analysis a, analysis_description ad where a.analysis_id = ad.analysis_id;";
-    public static final String GET_Coords_sys_API = "SELECT coord_system_id,name,rank FROM coord_system where rank > ?";
+    public static final String GET_Coords_sys_API = "SELECT coord_system_id,name,rank, version FROM coord_system where rank > ?";
     public static final String GET_Coord_systemid_FROM_ID = "SELECT coord_system_id FROM seq_region WHERE seq_region_id = ?";
     public static final String GET_RANK_for_COORD_SYSTEM_ID = "SELECT rank FROM coord_system where coord_system_id =?";
 
@@ -171,11 +171,11 @@ public class SQLAnalysisDAO implements AnalysisStore {
             for (Map map : coords) {
                 JSONObject annotationid = new JSONObject();
 
-                annotationid.put("name", map.get("name"));
+                annotationid.put("name", map.get("name")+":"+map.get("version"));
                 annotationid.put("id", "cs" + map.get("coord_system_id"));
                 annotationid.put("desc", "Coordinate System Rank:" + map.get("rank"));
                 annotationid.put("disp", "0");
-                annotationid.put("display_label", map.get("name"));
+                annotationid.put("display_label", map.get("name")+":"+map.get("version"));
                 annotationid.put("merge", "0");
                 annotationid.put("label", "0");
                 annotationid.put("graph", "false");

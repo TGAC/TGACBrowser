@@ -340,6 +340,25 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
         }
     }
 
+    public boolean checkChromosome(int id) throws Exception {
+        try {
+            Boolean check;
+            int coord_sys_id = template.queryForObject(GET_coord_sys_id, new Object[]{id}, Integer.class);
+
+            String coord_sys_name = template.queryForObject(GET_coord_sys_name, new Object[]{coord_sys_id}, String.class);
+            String coord_attrib_name = template.queryForObject(GET_coord_attrib, new Object[]{coord_sys_id}, String.class);
+            if (coord_attrib_name.toLowerCase().contains("chr") || coord_sys_name.toLowerCase().contains("chr")) {
+                check = true;
+            } else {
+                check = false;
+            }
+            return check;
+        } catch (EmptyStackException e) {
+            e.printStackTrace();
+            throw new Exception("Chromosome not found");
+        }
+    }
+
     public int getAssemblyReference(int id) {
         int ref_id = 0;
         if (checkCoord(id, "chr")) {

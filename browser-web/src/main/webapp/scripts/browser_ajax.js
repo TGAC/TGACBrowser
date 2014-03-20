@@ -25,6 +25,8 @@
 
 
 var seqregname = null;
+var coord = null;
+
 var track_list, minWidth;
 var start_global, end_global, hit_global, blastid = 0, blastdb = "", oldTracklist;
 
@@ -34,7 +36,6 @@ function seqregionSearch(query) {
 }
 
 function seqregionSearchPopup(query, from, to, blast) {
-
     jQuery("#searchresult").fadeOut();
     jQuery("#searchresultMap").fadeOut();
     jQuery('#sessioninput').fadeOut();
@@ -52,16 +53,21 @@ function seqregionSearchPopup(query, from, to, blast) {
         'seqregionSearchSequence',
         {'query': query, 'url': ajaxurl},
         {'doOnSuccess': function (json) {
-//            if (json.chromosome == true) {
-//                jQuery("#searchresult").fadeOut();
-//                getReferences(json);
-//                jQuery("#searchresultMap").fadeIn();
-//            } else
+            jQuery("#searchresultMap").fadeOut();
 
-            if (son.html == "one") {
+            if (json.chromosome == true) {
+                jQuery("#searchresult").fadeOut();
+                getReferences(json);
+                jQuery("#searchresultMap").fadeIn();
+                if (json.html == "one") {
+                    drawBrowser(json, from, to, blast);
+                    setMapMarkerLeft();
+                    setMapMarkerTop(getBegin());
+                    setMapMarkerHeight(getEnd() - getBegin())
+                }
+            } else if (json.html == "one") {
                 jQuery("#searchresult").fadeOut();
                 drawBrowser(json, from, to, blast)
-                jQuery("#searchresultMap").fadeIn();
             } else if (json.html == "seqregion") {
                 makeSeqRegionList(json, from, to, blast)
 
@@ -75,7 +81,6 @@ function seqregionSearchPopup(query, from, to, blast) {
 }
 
 function seqregionSearchwithCoord(query, coord, from, to, blast) {
-
     jQuery("#searchresult").fadeOut();
     jQuery("#searchresultMap").fadeOut();
     jQuery('#sessioninput').fadeOut();
@@ -86,6 +91,8 @@ function seqregionSearchwithCoord(query, coord, from, to, blast) {
     jQuery("#searchresult").fadeIn();
 
     jQuery("#sessionid").html("");
+    jQuery("#searchresultMap").fadeOut();
+
     minWidth = null;
     removeAllPopup();
     Fluxion.doAjax(
@@ -93,7 +100,20 @@ function seqregionSearchwithCoord(query, coord, from, to, blast) {
         'seqregionSearchSequenceWithCoord',
         {'query': query, 'coord': coord, 'url': ajaxurl},
         {'doOnSuccess': function (json) {
-            drawBrowser(json, from, to, blast);
+            if (json.chromosome == true) {
+                jQuery("#searchresult").fadeOut();
+                getReferences(json);
+                jQuery("#searchresultMap").fadeIn();
+                if (json.html == "one") {
+                    drawBrowser(json, from, to, blast);
+                    setMapMarkerLeft();
+                    setMapMarkerTop(getBegin());
+                    setMapMarkerHeight(getEnd() - getBegin())
+                }
+            } else if (json.html == "one") {
+                jQuery("#searchresult").fadeOut();
+                drawBrowser(json, from, to, blast)
+            }
         }
         });
 
@@ -101,12 +121,12 @@ function seqregionSearchwithCoord(query, coord, from, to, blast) {
 
 
 function search(query, from, to, blast) {
+
     if (track_list) {
         jQuery.cookie('trackslist', track_list.toJSON(), {  path: '/', expires: 10});
         removeTrackslist(track_list);
     }
 
-    console.log("search " + query)
     jQuery('#sessioninput').fadeOut();
     jQuery("#sessionid").html("");
     minWidth = null;
@@ -126,17 +146,25 @@ function search(query, from, to, blast) {
         {'doOnSuccess': function (json) {
             jQuery('#canvas').hide();
             jQuery('#currentposition').hide();
+            jQuery("#searchresultMap").fadeOut();
 
-            if (json.html == "one") {
+            if (json.chromosome == true) {
+                jQuery("#searchresult").fadeOut();
+                getReferences(json);
+                jQuery("#searchresultMap").fadeIn();
+                if (json.html == "one") {
+                    drawBrowser(json, from, to, blast);
+                    setMapMarkerLeft();
+                    setMapMarkerTop(getBegin());
+                    setMapMarkerHeight(getEnd() - getBegin())
+                }
+            } else if (json.html == "one") {
                 drawBrowser(json, from, to, blast);
             }
             else if (json.html == "seqregion") {
-                console.log(" else if")
                 makeSeqRegionList(json, from, to, blast)
             }
             else if (json.html == "gene" || json.html == "GO" || json.html == "transcript") {
-
-                console.log("else if")
                 makeFeatureList(json, from, to)
             }
             else {
@@ -197,7 +225,7 @@ function loadTrackAjax(trackId, trackname) {
         Fluxion.doAjax(
             'dnaSequenceService',
             'loadTrack',
-            {'query': seqregname, 'name': trackname, 'trackid': trackId, 'start': start, 'end': end, 'delta': deltaWidth, 'url': ajaxurl},
+            {'query': seqregname, 'coord': coord, 'name': trackname, 'trackid': trackId, 'start': start, 'end': end, 'delta': deltaWidth, 'url': ajaxurl},
             {'doOnSuccess': function (json) {
                 var trackname = json.name;
 
@@ -290,7 +318,7 @@ function loadSeq(query, from, to) {
     Fluxion.doAjax(
         'dnaSequenceService',
         'loadSequence',
-        {'query': query, 'from': getBegin(), 'to': getEnd(), 'url': ajaxurl},
+        {'query': query, 'from': getBegin(), 'to': getEnd(), 'coord': coord, 'url': ajaxurl},
         {'doOnSuccess': function (json) {
             seq = json.seq;
             return json.seq;
@@ -327,7 +355,7 @@ function reloadTracks(tracks, tracklist, blast) {
             Fluxion.doAjax(
                 'dnaSequenceService',
                 'loadTrack',
-                {'query': seqregname, 'name': tracklist[i].name, 'trackid': tracklist[i].id, 'start': start, 'end': end, 'delta': deltaWidth, 'url': ajaxurl},
+                {'query': seqregname, 'coord': coord, 'name': tracklist[i].name, 'trackid': tracklist[i].id, 'start': start, 'end': end, 'delta': deltaWidth, 'url': ajaxurl},
                 {'doOnSuccess': function (json) {
                     var trackname = json.name;
 
@@ -504,10 +532,10 @@ function getReferences(show) {
                     }
                     var top = parseInt(jQuery("#map").css('top')) + parseInt(jQuery("#map").css('height')) - (height + 20);
                     if (seqregname == json.seqregion[referenceLength].name) {
-                        jQuery("#refmap").append("<div onclick='jumpToHere(event);' class='refmap' id='" + json.seqregion[referenceLength].name + "' style='left: " + left + "px; width:" + width + "px; height:" + height + "px;'></div>");
+                        jQuery("#refmap").append("<div onclick='jumpToHere(event);' class='refmap' id='" + json.seqregion[referenceLength].name + "\",\"" + json.seqregion[referenceLength].coord + "' style='left: " + left + "px; width:" + width + "px; height:" + height + "px;'></div>");
                     }
                     else {
-                        jQuery("#refmap").append("<div onclick='jumpToOther(event, " + length + ",\"" + json.seqregion[referenceLength].name + "\");' class='refmap' id='" + json.seqregion[referenceLength].name + "' style='left: " + left + "px; width:" + width + "px; height:" + height + "px;'></div>");
+                        jQuery("#refmap").append("<div onclick='jumpToOther(event, " + length + ",\"" + json.seqregion[referenceLength].name + "\",\"" + json.seqregion[referenceLength].coord + "\");' class='refmap' id='" + json.seqregion[referenceLength].name + "' style='left: " + left + "px; width:" + width + "px; height:" + height + "px;'></div>");
                     }
                     jQuery("#refmap").append("<div style='position:absolute; bottom: 0px; left: " + (left) + "px; '>" + stringTrim(json.seqregion[referenceLength].name, width * 2) + "</div>");
                     jQuery("#map").fadeIn();
@@ -515,7 +543,7 @@ function getReferences(show) {
                 if (show) {
                     jQuery("#searchresultMap").show;
 
-                    if (show.html) {
+                    if (show.html != "one") {
                         dispOnMap(show, maximumLengthname, maximumsequencelength);
                     }
 
@@ -716,14 +744,12 @@ function changeCSS() {
 }
 
 function drawBrowser(json, from, to, blast) {
-    console.log(1)
     jQuery("#searchresult").fadeOut();
     seq = json.html;
     sequencelength = json.seqlength;
     if (!track_list) {
         track_list = json.tracklists;
     }
-    console.log(2)
 
     jQuery('#seqnameh1').html(json.seqregname);
     jQuery('#seqname').html("<br/>");
@@ -732,9 +758,9 @@ function drawBrowser(json, from, to, blast) {
     jQuery('#currentposition').show();
     jQuery('#openCloseWrap').show();
     jQuery('#displayoptions').show();
-    console.log(3)
 
     seqregname = json.seqregname;
+    coord = json.coord_sys;
     tracks = jQuery("#filetrack").html().split(',');
     if (tracks[0].length) {
         for (var i = 0; i < tracks.length; i++) {
@@ -746,21 +772,12 @@ function drawBrowser(json, from, to, blast) {
         }
     }
 
-    console.log(4)
-
     trackList(track_list);
-    console.log(45)
 
     minWidth = findminwidth();
 
-    console.log("46" + minWidth)
-
     if (maxLen > minWidth) {
-        console.log(461)
-
         if (from && to) {
-            console.log(462)
-
             if (parseInt(from) < parseInt(to)) {
                 setBegin(from);
                 setEnd(parseInt(to));
@@ -771,24 +788,17 @@ function drawBrowser(json, from, to, blast) {
             }
         }
         else {
-            console.log(463)
-
             setBegin((sequencelength - minWidth) / 2);
             setEnd(parseInt(getBegin()) + minWidth);
         }
-        console.log(464)
 
         if (blast) {
             loadPreBlast(blast, seqregname);
         }
 
-        console.log(465)
-
         jumpToSeq();
-        console.log(466)
 
         setNavPanel();
-        console.log(467)
 
         jQuery("#controlsbutton").colorbox({width: "90%", inline: true, href: "#controlpanel"});
     }
@@ -796,13 +806,9 @@ function drawBrowser(json, from, to, blast) {
 
     }
 
-    console.log(5)
-
     dispSeqCoord();
-    console.log(6)
 
     displayCursorPosition();
-    console.log(7)
 
     if (json.coord_sys.indexOf('chromosome') >= 0) {
         getReferences();
@@ -810,24 +816,20 @@ function drawBrowser(json, from, to, blast) {
     else {
         chromosome = false;
     }
-    console.log(8)
 
     loadDefaultTrack(track_list);
 
 }
 
 function makeSeqRegionList(json, from, to, blast) {
-    console.log("seqregion list")
     jQuery('#canvas').hide();
     jQuery('#currentposition').hide();
     jQuery("#searchresult").fadeIn();
+
     var content = "<h1>Search Results: </h1><br>";
-    console.log("seqregion list " + json.seqregion.length)
 
     var seqregioncontent = "";
     for (var i = 0; i < json.seqregion.length; i++) {
-        console.log("i " + i)
-
 
         if (i == 0) {
             seqregioncontent += "<table class='list' id='search_hit' ><thead><tr><th>SeqRegion</th><th>Coord-sys</th><th>SeqRegion Id</th><th>Reference Name</th><th>Link</th></tr></thead>";
@@ -850,11 +852,10 @@ function makeSeqRegionList(json, from, to, blast) {
 }
 
 function makeFeatureList(json, from, to) {
-    console.log("feature list")
-
     jQuery('#currentposition').hide();
     jQuery("#searchresult").html(" <div id=\"searchresultHead\"></div><div id=\"searchnavtabs\"><ul> <li><a href=\"#tabGenes\"><span>Genes</span></a></li>  <li><a href=\"#tabTranscripts\"><span>Transcripts</span></a></li><li><a href=\"#tabGO\"><span>GO</span></a></li> </ul> <div id=\"tabGenes\"></div> <div id=\"tabGO\"> </div>      <div id=\"tabTranscripts\"></div> </div>");
     jQuery("#searchresult").fadeIn();
+
     var genecontent = "";
     var content = "<h1>Search Results: </h1><br>";
     for (var i = 0; i < json.gene.length; i++) {
@@ -890,7 +891,6 @@ function makeFeatureList(json, from, to) {
     }
 
 
-    content += "<hr>";
     var transcriptcontent = "";
     for (var i = 0; i < json.transcript.length; i++) {
         if (i == 0) {

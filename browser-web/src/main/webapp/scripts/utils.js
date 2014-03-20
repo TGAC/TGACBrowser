@@ -300,14 +300,12 @@ function groupCancel() {
 
 function stringTrim(string, width, newClass) {
     if (newClass) {
-        console.log(newClass)
         jQuery("#ruler").addClass(newClass.toString())
     }
     else {
         jQuery("#ruler").addClass("ruler")
     }
     var ruler = jQuery("#ruler");
-    console.log("added" + jQuery("#ruler").attr('class'))
     var inLength = 0;
     var tempStr = "";
 
