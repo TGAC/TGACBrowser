@@ -105,6 +105,7 @@ public class DnaSequenceService {
 
     private SamBamService samBamService = new SamBamService();
     private GFFService gffService = new GFFService();
+    private VCFService vcfService = new VCFService();
 
 
     /**
@@ -317,6 +318,18 @@ public class DnaSequenceService {
                     response.put("type", "graph");
                     response.put("graphtype", "bar");
                     response.put(trackName, GFFService.getGFFGraphs(start, end, delta, trackId, seqName));
+                }
+            } else if (trackId.contains(".vcf") || trackId.contains(".VCF")) {
+                log.info("\n\n\n\n\nVCF");
+                count = VCFService.countVCF(start, end, delta, trackId, seqName);
+                log.info("\n\n\n\n\nVCF "+ count);
+
+                if (count < 5000) {
+                    response.put(trackName, vcfService.getVCFReads(start, end, delta, trackId, seqName));
+                } else {
+                    response.put("type", "graph");
+                    response.put("graphtype", "bar");
+                    response.put(trackName, VCFService.getVCFGraphs(start, end, delta, trackId, seqName));
                 }
             } else if (trackId.contains(".bed")) {
                 response.put(trackName, SamBamService.getBed(start, end, delta, trackId, seqName));
