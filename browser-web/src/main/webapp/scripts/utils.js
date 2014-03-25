@@ -561,6 +561,9 @@ function processURL(urlParam) {
     else if (jQuery.urlParam("query") != null) {
         console.log(5);
         search(jQuery.urlParam("query"))
+    }  else if (jQuery("#search").val().length >0) {
+        console.log(5);
+        search(jQuery("#search").val())
     } else {
         console.log(6);
         getReferences(true)

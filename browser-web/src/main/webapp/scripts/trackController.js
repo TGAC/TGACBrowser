@@ -203,7 +203,10 @@ function dispBLAST(div, track) {
                 var blast_desc = blasts[i].desc.replace(">", "");
                 var score = blasts[i].score;
 
-
+                if(blast_start >blast_stop){
+                    blast_start = blasts[i].end;
+                    blast_stop = blasts[i].start;
+                }
                 var partial = (getEnd() - getBegin()) / 2;
                 var start = getBegin() - partial;
 

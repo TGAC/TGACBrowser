@@ -150,7 +150,7 @@ public class DnaSequenceService {
                 response.put("seqname", "<p> <b>Seq Region ID:</b> " + query + ",<b> Name: </b> " + seqRegName);//+", <b>cds:</b> "+cds+"</p>");
                 response.put("seqregname", seqRegName);
                 response.put("tracklists", analysisStore.getAnnotationId(query));
-                response.put("coord_sys", sequenceStore.getCoordSys(seqName));
+                response.put("coord_sys", sequenceStore.getSeqRegionCoordId(seqName));
             }
             return response;
         } catch (Exception e) {
@@ -204,7 +204,7 @@ public class DnaSequenceService {
                 response.put("seqname", "<p> <b>Seq Region ID:</b> " + query + ",<b> Name: </b> " + seqRegName);//+", <b>cds:</b> "+cds+"</p>");
                 response.put("seqregname", seqRegName);
                 response.put("tracklists", analysisStore.getAnnotationId(query));
-                response.put("coord_sys", sequenceStore.getCoordSys(seqName));
+                response.put("coord_sys", sequenceStore.getSeqRegionCoordId(seqName));
             }
             return response;
         } catch (Exception e) {
