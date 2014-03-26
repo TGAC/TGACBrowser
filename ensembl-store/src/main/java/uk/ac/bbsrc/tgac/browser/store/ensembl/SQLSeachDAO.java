@@ -378,7 +378,6 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
 
     public String getLogicNameByAnalysisId(int id) throws IOException {
         try {
-            log.info("\n\n\ngetLogicNameByAnalysisId " + id);
             String str = template.queryForObject(GET_LOGIC_NAME_FROM_ANALYSIS_ID, new Object[]{id}, String.class);
             return str;
         } catch (EmptyResultDataAccessException e) {

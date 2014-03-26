@@ -532,7 +532,7 @@ function getReferences(show) {
                     }
                     var top = parseInt(jQuery("#map").css('top')) + parseInt(jQuery("#map").css('height')) - (height + 20);
                     if (seqregname == json.seqregion[referenceLength].name) {
-                        jQuery("#refmap").append("<div onclick='jumpToHere(event);' class='refmap' id='" + json.seqregion[referenceLength].name + "\",\"" + json.seqregion[referenceLength].coord + "' style='left: " + left + "px; width:" + width + "px; height:" + height + "px;'></div>");
+                        jQuery("#refmap").append("<div onclick='jumpToHere(event);' class='refmap' id='" + json.seqregion[referenceLength].name + "' style='left: " + left + "px; width:" + width + "px; height:" + height + "px;'></div>");
                     }
                     else {
                         jQuery("#refmap").append("<div onclick='jumpToOther(event, " + length + ",\"" + json.seqregion[referenceLength].name + "\",\"" + json.seqregion[referenceLength].coord + "\");' class='refmap' id='" + json.seqregion[referenceLength].name + "' style='left: " + left + "px; width:" + width + "px; height:" + height + "px;'></div>");
@@ -569,18 +569,27 @@ function dispOnMap(json, maximumLengthname, maximumsequencelength) {
         jQuery("#searchResultLegend").html("<div class='searchResultLegend'><input checked type=checkbox name='refmapsearchmarkerseqregion' onClick=jQuery('.refmapsearchmarkerseqregion').toggle()> Seq Region </div> ")
 
         var markers = json.seqregion;
+        var seqregionlist = "<table class='list' id='search_hit' ><thead><tr><th>coord-sys</th><th>Name</th><th>Position</th><th>Link</th></tr> </thead>";
+
         for (var i = 0; i < markers.length; i++) {
 
-            var length = maximumsequencelength * parseFloat(jQuery("#" + markers[i].parent).css('height')) / parseFloat(jQuery("#" + maximumLengthname).css('height'));
-            var maptop = parseFloat(jQuery("#" + markers[i].parent).css('height')) + parseInt(jQuery("#" + markers[i].parent).css('bottom')) - (parseInt(markers[i].end) * parseFloat(jQuery("#" + markers[i].parent).css('height')) / length);
-            var left = parseInt(jQuery("#" + markers[i].parent).css('left')) + parseInt(20);
-            var mapheight = ((markers[i].end - markers[i].start) * parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
-            if (mapheight < 1) {
-                mapheight = 1;
+            if (markers[i].parent) {
+                jQuery("#" + markers[i].parent).attr("onclick", "")
+                var length = maximumsequencelength * parseFloat(jQuery("#" + markers[i].parent).css('height')) / parseFloat(jQuery("#" + maximumLengthname).css('height'));
+                var maptop = ((markers[i].start) * parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
+                var left = 25;//parseInt(jQuery("#" + markers[i].parent).css('left')) + parseInt(20);
+                var mapheight = ((markers[i].end - markers[i].start) * parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
+                if (mapheight < 1) {
+                    mapheight = 1;
+                }
+                jQuery("#" + markers[i].parent).append("<div name='" + markers[i].name + "' parent=" + markers[i].parent + " coord=" + markers[i].coord + " start= 0 end=" + (markers[i].end - markers[i].start) + " id='" + markers[i].name + "' title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' class='refmapsearchmarkerseqregion'  style='left:" + left + "px; top:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick=clicked_func('" + markers[i].name + "'); ></div>");
+            } else {
+                var link = "<a target='_blank' href='index.jsp?query=" + markers[i].name + "&&coord=" + markers[i].coord + "&&from=0&&to=" + markers[i].length + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span><a/>"
+                seqregionlist += "<tr><td>" + markers[i].coord + "</td><td>" + markers[i].name + "</td><td>0:" + markers[i].length + "</td><td>" + link + "</td>";
             }
-            jQuery("#refmap").append("<div name='" + markers[i].name + "' parent=" + markers[i].parent + " coord=" + markers[i].coord + " start=" + markers[i].start + " end=" + markers[i].end + " id='" + markers[i].name + "' title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' class='refmapsearchmarkerseqregion'  style='left:" + left + "px; bottom:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick=clicked_func('" + markers[i].name + "'); ></div>");
         }
 
+       jQuery("#unmapped").html(seqregionlist)
     }
 
     if (json.html == "gene" || json.html == "GO" || json.html == "transcript") {
@@ -590,41 +599,43 @@ function dispOnMap(json, maximumLengthname, maximumsequencelength) {
         var markers = json.gene;
 
         for (var i = 0; i < markers.length; i++) {
+            jQuery("#" + markers[i].parent).attr("onclick", "")
             var length = maximumsequencelength * parseFloat(jQuery("#" + markers[i].parent).css('height')) / parseFloat(jQuery("#" + maximumLengthname).css('height'));
-            var maptop = parseFloat(jQuery("#" + markers[i].parent).css('height')) + parseInt(jQuery("#" + markers[i].parent).css('bottom')) - (parseInt(markers[i].end) * parseFloat(jQuery("#" + markers[i].parent).css('height')) / length);
-            var left = parseInt(jQuery("#" + markers[i].parent).css('left')) + parseInt(20);
+            var maptop = ((markers[i].start) * parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
+            var left = 25;//parseInt(jQuery("#" + markers[i].parent).css('left')) + parseInt(20);
             var mapheight = ((markers[i].end - markers[i].start) * parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
             if (mapheight < 1) {
                 mapheight = 1;
             }
-            jQuery("#refmap").append("<div name='" + markers[i].name + "' parent=" + markers[i].parent + " coord=" + markers[i].coord + " start=" + markers[i].start + " end=" + markers[i].end + " id='" + markers[i].name + "' title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' class='refmapsearchmarkergene'  style='left:" + left + "px; bottom:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick=clicked_func('" + markers[i].name + "'); ></div>");
+            jQuery("#" + markers[i].parent).append("<div name='" + markers[i].name + "' parent=" + markers[i].parent + " coord=" + markers[i].coord + " start=" + markers[i].start + " end=" + markers[i].end + " id='" + markers[i].name + "' title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' class='refmapsearchmarkergene'  style='left:" + left + "px; top:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick=clicked_func('" + markers[i].name + "'); ></div>");
 
         }
 
         var markers = json.transcript;
 
         for (var i = 0; i < markers.length; i++) {
+            jQuery("#" + markers[i].parent).attr("onclick", "")
             var length = maximumsequencelength * parseFloat(jQuery("#" + markers[i].parent).css('height')) / parseFloat(jQuery("#" + maximumLengthname).css('height'));
-            var maptop = parseFloat(jQuery("#" + markers[i].parent).css('height')) + parseInt(jQuery("#" + markers[i].parent).css('bottom')) - (parseInt(markers[i].end) * parseFloat(jQuery("#" + markers[i].parent).css('height')) / length);
-            var left = parseInt(jQuery("#" + markers[i].parent).css('left')) + parseInt(20);
+            var maptop = ((markers[i].start) * parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
+            var left = 25;//parseInt(jQuery("#" + markers[i].parent).css('left')) + parseInt(20);
             var mapheight = ((markers[i].end - markers[i].start) * parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
             if (mapheight < 1) {
                 mapheight = 1;
             }
-            jQuery("#refmap").append("<div name='" + markers[i].name + "' parent=" + markers[i].parent + " coord=" + markers[i].coord + " start=" + markers[i].start + " end=" + markers[i].end + " id='" + markers[i].name + "' title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' class='refmapsearchmarkertranscript'  style='left:" + left + "px; bottom:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick=clicked_func('" + markers[i].name + "'); ></div>");
+            jQuery("#" + markers[i].parent).append("<div name='" + markers[i].name + "' parent=" + markers[i].parent + " coord=" + markers[i].coord + " start=" + markers[i].start + " end=" + markers[i].end + " id='" + markers[i].name + "' title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' class='refmapsearchmarkertranscript'  style='left:" + left + "px; top:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick=clicked_func('" + markers[i].name + "'); ></div>");
         }
 
         var markers = json.GO;
 
         for (var i = 0; i < markers.length; i++) {
             var length = maximumsequencelength * parseFloat(jQuery("#" + markers[i].parent).css('height')) / parseFloat(jQuery("#" + maximumLengthname).css('height'));
-            var maptop = parseFloat(jQuery("#" + markers[i].parent).css('height')) + parseInt(jQuery("#" + markers[i].parent).css('bottom')) - (parseInt(markers[i].end) * parseFloat(jQuery("#" + markers[i].parent).css('height')) / length);
-            var left = parseInt(jQuery("#" + markers[i].parent).css('left')) + parseInt(20);
+            var maptop = ((markers[i].start) * parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
+            var left = 25;//parseInt(jQuery("#" + markers[i].parent).css('left')) + parseInt(20);
             var mapheight = ((markers[i].end - markers[i].start) * parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
             if (mapheight < 1) {
                 mapheight = 1;
             }
-            jQuery("#refmap").append("<div name='" + markers[i].name + "' parent=" + markers[i].parent + " coord=" + markers[i].coord + " start=" + markers[i].start + " end=" + markers[i].end + " id='" + markers[i].name + "' title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' class='refmapsearchmarkergo'  style='left:" + left + "px; bottom:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick=clicked_func('" + markers[i].name + "'); ></div>");
+            jQuery("#" + markers[i].parent).append("<div name='" + markers[i].name + "' parent=" + markers[i].parent + " coord=" + markers[i].coord + " start=" + markers[i].start + " end=" + markers[i].end + " id='" + markers[i].name + "' title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' class='refmapsearchmarkergo'  style='left:" + left + "px; top:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick=clicked_func('" + markers[i].name + "'); ></div>");
         }
     }
 
@@ -651,7 +662,7 @@ function clicked_func(element) {
 
 
         var name = temp_element.attr("title").split(":")[0];
-        var link = "<a target='_blank' href='index.jsp?query=" + parent + "&&from=" + start + "&&to=" + end + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span><a/>"
+        var link = "<a target='_blank' href='index.jsp?query=" + parent + "&&coord=" + coord + "&&from=" + start + "&&to= " + end + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span><a/>"
 
         seqregioncontent = "<tr><td>" + parent + "</td><td>" + coord + "</td><td>" + name + "</td><td>" + start + ":" + end + "</td><td>" + link + "</td>" + seqregioncontent;
 
@@ -673,7 +684,7 @@ function clicked_func(element) {
     var coord = temp_element.attr("coord");
 
 
-    var link = "<a target='_blank' href='index.jsp?query=" + parent + "&&from=" + start + "&&to=" + end + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span><a/>"
+    var link = "<a target='_blank' href='index.jsp?query=" + name + "&&coord=" + coord + "&&from=" + start + "&&to=" + end + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span><a/>"
     seqregioncontent += "<tr><td><b><u>" + parent + "</b></u></td><td>" + coord + "</td><td><b><u>" + name + "</b></u></td><td><u><b>" + start + ":" + end + "</u></b></td><td>" + link + "</td>";
 
     var temp = element.nextAll(class_clicked);
@@ -685,7 +696,7 @@ function clicked_func(element) {
         var start = temp_element.attr("start");
         var end = temp_element.attr("end");
         var name = temp_element.attr("title").split(":")[0];
-        var link = "<a target='_blank' href='index.jsp?query=" + parent + "&&from=" + start + "&&to=" + end + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span><a/>"
+        var link = "<a target='_blank' href='index.jsp?query=" + parent + "&&coord=" + coord + "&&from=" + start + "&&to=" + end + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span><a/>"
         var coord = temp_element.attr("coord");
 
 

@@ -31,6 +31,8 @@
         <div id="refmap"></div>
         <div id="mapmarker">
         </div>
+        <div id="unmapped" style="position: absolute; right: 0px;"></div>
+
     </div>
     <div id="searchresult">
         <div id="searchresultHead"></div>
