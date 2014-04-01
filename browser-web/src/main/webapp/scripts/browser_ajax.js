@@ -569,7 +569,7 @@ function dispOnMap(json, maximumLengthname, maximumsequencelength) {
         jQuery("#searchResultLegend").html("<div class='searchResultLegend'><input checked type=checkbox name='refmapsearchmarkerseqregion' onClick=jQuery('.refmapsearchmarkerseqregion').toggle()> Seq Region </div> ")
 
         var markers = json.seqregion;
-        var seqregionlist = "<table class='list' id='search_hit' ><thead><tr><th>coord-sys</th><th>Name</th><th>Position</th><th>Link</th></tr> </thead>";
+        var seqregionlist = "UnMapped Hits: <br> <table class='list' id='search_hit' ><thead><tr><th>coord-sys</th><th>Name</th><th>Position</th><th>Link</th></tr> </thead>";
 
         for (var i = 0; i < markers.length; i++) {
 

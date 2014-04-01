@@ -38,7 +38,10 @@ import uk.ac.bbsrc.tgac.browser.core.store.AssemblyStore;
 import uk.ac.bbsrc.tgac.browser.core.store.UtilsStore;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -81,9 +84,10 @@ public class SQLAssemblyDAO implements AssemblyStore {
     public static final String GET_ASSEMBLY_SIZE_SLICE = "SELECT COUNT(a.asm_seq_region_id) FROM assembly a, seq_region s WHERE a.asm_seq_region_id = ? AND a.cmp_seq_region_id = s.seq_region_id AND s.coord_system_id = ? AND ( (a.asm_start >= ? AND a.asm_end <= ?) OR (a.asm_start <= ? AND a.asm_end >= ?) OR (a.asm_end >= ? AND a.asm_end <= ?) OR (a.asm_start >= ? AND a.asm_start <= ?))";
     public static final String GET_Coord_systemid_FROM_ID = "SELECT coord_system_id FROM seq_region WHERE seq_region_id = ?";
     public static final String GET_ASSEMBLY_SIZE_SLICE_for_ref = "SELECT count(a.asm_seq_region_id) FROM assembly a, seq_region s where a.asm_seq_region_id = ? and a.cmp_seq_region_id = s.seq_region_id and  a.asm_start >= ? and a.asm_start <= ?";
-    public static final String GET_Assembly_for_reference_SIZE_SLICE = "SELECT * FROM assembly a, seq_region s WHERE a.asm_seq_region_id = ? AND a.cmp_seq_region_id = s.seq_region_id AND ( (a.asm_start >= ? AND a.asm_end <= ?) OR (a.asm_start <= ? AND a.asm_end >= ?) OR (a.asm_end >= ? AND a.asm_end <= ?) OR (a.asm_start >= ? AND a.asm_start <= ?))";
+    public static final String GET_Assembly_for_reference_SIZE_SLICE = "SELECT * FROM assembly a, seq_region s WHERE a.asm_seq_region_id = ? AND a.cmp_seq_region_id = s.seq_region_id AND ( (a.asm_start >= ? AND a.asm_end <=?) OR (a.asm_start <= ? AND a.asm_end >= ?) OR (a.asm_end >= ? AND a.asm_start <= ?) OR (a.asm_start <= ? AND a.asm_end >= ?))";
 
-    public static final String GET_Assembly = "SELECT a.asm_seq_region_id,a.cmp_seq_region_id,a.asm_start,a.asm_end FROM assembly a, seq_region s where a.asm_seq_region_id =? and a.cmp_seq_region_id = s.seq_region_id and s.coord_system_id = ? and ((a.asm_start >= ? AND a.asm_end <= ?) OR (a.asm_start <= ? AND a.asm_end >= ?) OR (a.asm_end >= ? AND a.asm_end <= ?) OR (a.asm_start >= ? AND a.asm_start <= ?)) ORDER BY a.asm_start asc, (a.asm_end-a.asm_start) desc";
+    public static final String GET_Assembly = "SELECT a.asm_seq_region_id,a.cmp_seq_region_id,a.asm_start,a.asm_end, s.name, IFNULL((SELECT VALUE FROM seq_region_attrib WHERE attrib_type_id = 3 AND seq_region_id = s.seq_region_id), 'No') AS attrib FROM assembly a, seq_region s, seq_region_attrib sa WHERE a.asm_seq_region_id = ? AND a.cmp_seq_region_id = s.seq_region_id AND s.coord_system_id = ? and ((a.asm_start >= ? AND a.asm_end <=?) OR (a.asm_start <= ? AND a.asm_end >= ?) OR (a.asm_end >= ? AND a.asm_start <= ?) OR (a.asm_start <= ? AND a.asm_end >= ?)) ORDER BY a.asm_start asc, (a.asm_end-a.asm_start) desc";
+//    public static final String GET_Assembly = "SELECT a.asm_seq_region_id,a.cmp_seq_region_id,a.asm_start,a.asm_end, s.name FROM assembly a, seq_region s where a.asm_seq_region_id =? and a.cmp_seq_region_id = s.seq_region_id and s.coord_system_id = ? and ((a.asm_start >= ? AND a.asm_end <=?) OR (a.asm_start <= ? AND a.asm_end >= ?) OR (a.asm_end >= ? AND a.asm_start <= ?) OR (a.asm_start <= ? AND a.asm_end >= ?)) ORDER BY a.asm_start asc, (a.asm_end-a.asm_start) desc";
 
     private JdbcTemplate template;
 
@@ -106,13 +110,11 @@ public class SQLAssemblyDAO implements AssemblyStore {
     public JSONArray recursiveAssemblyGraph(int start_pos, int id, String trackId, long start, long end) throws IOException {
         try {
             JSONArray assemblyTracks = new JSONArray();
-            List<Map<String, Object>> maps_one = template.queryForList(GET_Assembly_for_reference_SLICE, new Object[]{id,start, end, start, end, end, end, start,start});
-            log.info("\n\n\nrecursive assembly graph id "+id+" - "+maps_one.size());
+            List<Map<String, Object>> maps_one = template.queryForList(GET_Assembly_for_reference_SLICE, new Object[]{id, start, end, start, end, end, end, start, start});
 
             if (maps_one.size() > 0) {
                 main:
                 for (int j = 0; j < maps_one.size(); j++) {
-                    log.info("\n\n\nmain loop "+j);
                     long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
                     long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
                     if (track_start < 0) {
@@ -121,33 +123,16 @@ public class SQLAssemblyDAO implements AssemblyStore {
                     if (track_end > Integer.parseInt(maps_one.get(j).get("asm_end").toString())) {
                         track_end = Integer.parseInt(maps_one.get(j).get("asm_end").toString());
                     }
-                    int no_of_tracks = template.queryForObject(GET_ASSEMBLY_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId.replace("cs", ""), track_start, track_end,track_start, track_end, track_end, track_end, track_start, track_start}, Integer.class);
-                    log.info("no of tracks "+no_of_tracks);
+                    int no_of_tracks = template.queryForObject(GET_ASSEMBLY_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId.replace("cs", ""), track_start, track_end, track_start, track_end, track_end, track_end, track_start, track_start}, Integer.class);
 
                     if (no_of_tracks < 1) {
-//                        track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-//                        track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-//                        if (track_start < 0) {
-//                            track_start = 0;
-//                        }
-//                        if (track_end > Integer.parseInt(maps_one.get(j).get("asm_end").toString())) {
-//                            track_end = Integer.parseInt(maps_one.get(j).get("asm_end").toString());
-//                        }
                         start_pos += Integer.parseInt(maps_one.get(j).get("asm_start").toString());
                         assemblyTracks.addAll(recursiveAssemblyGraph(Integer.parseInt(maps_one.get(j).get("asm_start").toString()), Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end));
                     } else {
-//                        track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-//                        track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-//                        if (track_start < 0) {
-//                            track_start = 0;
-//                        }
-//                        if (track_end > Integer.parseInt(maps_one.get(j).get("asm_end").toString())) {
-//                            track_end = Integer.parseInt(maps_one.get(j).get("asm_end").toString());
-//                        }
                         assemblyTracks.addAll(getAssemblyGraphLevel(Integer.parseInt(maps_one.get(j).get("asm_start").toString()), Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end));
 
                     }
-            }
+                }
             }
             return assemblyTracks;
         } catch (EmptyResultDataAccessException e) {
@@ -173,14 +158,13 @@ public class SQLAssemblyDAO implements AssemblyStore {
             JSONArray trackList = new JSONArray();
             long from = start;
             long to = 0;
-            int no_of_tracks = template.queryForObject(GET_ASSEMBLY_SIZE_SLICE, new Object[]{id, trackId.replace("cs", ""), start, end, start, end, end,end, start, start}, Integer.class);
-            log.info("\n\n\ngetAssemblyGraphLevel id "+id+" - "+no_of_tracks);
+            int no_of_tracks = template.queryForObject(GET_ASSEMBLY_SIZE_SLICE, new Object[]{id, trackId.replace("cs", ""), start, end, start, end, end, end, start, start}, Integer.class);
 
             if (no_of_tracks > 0) {
                 for (int i = 1; i <= 200; i++) {
                     JSONObject eachTrack = new JSONObject();
                     to = start + (i * (end - start) / 200);
-                    no_of_tracks = template.queryForObject(GET_ASSEMBLY_SIZE_SLICE, new Object[]{id, trackId.replace("cs", ""), from, to, from , to , to , to, from , from }, Integer.class);
+                    no_of_tracks = template.queryForObject(GET_ASSEMBLY_SIZE_SLICE, new Object[]{id, trackId.replace("cs", ""), from, to, from, to, to, to, from, from}, Integer.class);
                     eachTrack.put("start", start_pos + from);
                     eachTrack.put("end", start_pos + to);
                     eachTrack.put("graph", no_of_tracks);
@@ -216,37 +200,16 @@ public class SQLAssemblyDAO implements AssemblyStore {
             int no_of_tracks = 0;
 
             for (int i = 1; i <= 200; i++) {
-                    JSONObject eachTrack = new JSONObject();
-                    to = start + (i * (end - start) / 200);
-                    no_of_tracks = countAssembly(id, trackId, from, to);
-                    eachTrack.put("start", from);
-                    eachTrack.put("end", to);
-                    eachTrack.put("graph", no_of_tracks);
-                    eachTrack.put("id", id);
-                    trackList.add(eachTrack);
-                    from = to;
-                }
-
-//            JSONArray trackList = new JSONArray();
-//            long from = start;
-//            long to = 0;
-//            int no_of_tracks = template.queryForObject(GET_ASSEMBLY_SIZE_SLICE, new Object[]{id, trackId.replace("cs", ""), start, end, start, end, end,end, start, start}, Integer.class);
-//            log.info("\n\n\nget assembly graph "+no_of_tracks);
-//            if (no_of_tracks > 0) {
-//                for (int i = 1; i <= 200; i++) {
-//                    JSONObject eachTrack = new JSONObject();
-//                    to = start + (i * (end - start) / 200);
-//                    no_of_tracks = template.queryForObject(GET_ASSEMBLY_SIZE_SLICE, new Object[]{id, trackId.replace("cs", ""), from, to, from , to , to , to, from , from}, Integer.class);
-//                    eachTrack.put("start", from);
-//                    eachTrack.put("end", to);
-//                    eachTrack.put("graph", no_of_tracks);
-//                    eachTrack.put("id", id);
-//                    trackList.add(eachTrack);
-//                    from = to;
-//                }
-//            } else {
-//                trackList.addAll(recursiveAssemblyGraph(0, id, trackId, start, end));
-//            }
+                JSONObject eachTrack = new JSONObject();
+                to = start + (i * (end - start) / 200);
+                no_of_tracks = countAssembly(id, trackId, from, to);
+                eachTrack.put("start", from);
+                eachTrack.put("end", to);
+                eachTrack.put("graph", no_of_tracks);
+                eachTrack.put("id", id);
+                trackList.add(eachTrack);
+                from = to;
+            }
             return trackList;
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
@@ -275,16 +238,16 @@ public class SQLAssemblyDAO implements AssemblyStore {
             List<Map<String, Object>> maps_two = template.queryForList(GET_Assembly_for_reference, new Object[]{id});
 
             int no_of_tracks = 0;
-                for (Map map_temp : maps_two) {
-                    JSONObject eachTrack = new JSONObject();
-                    no_of_tracks =  template.queryForInt(COUNT_Assembly_for_reference, new Object[]{map_temp.get("cmp_seq_region_id")});
-                    eachTrack.put("start", map_temp.get("asm_start"));
-                    eachTrack.put("end", map_temp.get("asm_end"));
-                    eachTrack.put("graph", no_of_tracks);
-                    eachTrack.put("id", id);
-                    trackList.add(eachTrack);
-                    from = to;
-                }
+            for (Map map_temp : maps_two) {
+                JSONObject eachTrack = new JSONObject();
+                no_of_tracks = template.queryForInt(COUNT_Assembly_for_reference, new Object[]{map_temp.get("cmp_seq_region_id")});
+                eachTrack.put("start", map_temp.get("asm_start"));
+                eachTrack.put("end", map_temp.get("asm_end"));
+                eachTrack.put("graph", no_of_tracks);
+                eachTrack.put("id", id);
+                trackList.add(eachTrack);
+                from = to;
+            }
             return trackList;
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
@@ -306,7 +269,7 @@ public class SQLAssemblyDAO implements AssemblyStore {
     public int countRecursiveAssembly(int id, String trackId, long start, long end) throws Exception {
         int hit_size = 0;
         try {
-            List<Map<String, Object>> maps_one = template.queryForList(GET_Assembly_for_reference_SIZE_SLICE, new Object[]{id,  start, end, start, end, end, end, start,start});
+            List<Map<String, Object>> maps_one = template.queryForList(GET_Assembly_for_reference_SIZE_SLICE, new Object[]{id, start, end, start, end, end, end, start, start});
 
             if (maps_one.size() > 0) {
                 main:
@@ -314,7 +277,8 @@ public class SQLAssemblyDAO implements AssemblyStore {
                     long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
                     long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
 
-                    int count = template.queryForObject(GET_ASSEMBLY_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId.replace("cs", ""), track_start, track_end, track_start, track_end, track_end, track_end, track_start,track_start }, Integer.class);
+                    int count = template.queryForObject(GET_ASSEMBLY_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId.replace("cs", ""), track_start, track_end, track_start, track_end, track_end, track_end, track_start, track_start}, Integer.class);
+
                     if (count < 1) {
                         hit_size += countRecursiveAssembly(Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId.replace("cs", ""), track_start, track_end);
                     } else if (count > 5000) {
@@ -369,10 +333,8 @@ public class SQLAssemblyDAO implements AssemblyStore {
     public JSONArray getAssembly(int id, String trackId, int delta, long start, long end) throws Exception {
         try {
             JSONArray trackList = new JSONArray();
-            List<Integer> ends = new ArrayList<Integer>();
             List<Map<String, Object>> maps = template.queryForList(GET_Assembly, new Object[]{id, trackId.replace("cs", ""), start, end, start, end, end, end, start, start});
             if (maps.size() > 0) {
-                ends.add(0, 0);
                 trackList = getAssemblyLevel(0, maps, delta);
             } else {
                 trackList = recursiveAssembly(0, id, trackId, delta, start, end);
@@ -409,18 +371,13 @@ public class SQLAssemblyDAO implements AssemblyStore {
                     long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
                     List<Map<String, Object>> maps_two = template.queryForList(GET_Assembly, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId.replace("cs", ""), track_start, track_end, track_start, track_end, track_end, track_end, track_start, track_start});
                     if (maps_two.size() > 0) {
-                        List<Integer> ends = new ArrayList<Integer>();
-                        ends.add(0, 0);
                         assemblyTracks.addAll(getAssemblyLevel(start_pos + Integer.parseInt(maps_one.get(j).get("asm_start").toString()), maps_two, delta));
                     } else {
-                        List<Integer> ends = new ArrayList<Integer>();
-                        ends.add(0, 0);
                         track_start = track_start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
                         track_end = track_start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
                         assemblyTracks.addAll(recursiveAssembly(start_pos + Integer.parseInt(maps_one.get(j).get("asm_start").toString()), Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, delta, track_start, track_end));
                     }
                 }
-
             }
             return assemblyTracks;
         } catch (Exception e) {
@@ -445,6 +402,7 @@ public class SQLAssemblyDAO implements AssemblyStore {
             ends.add(0, 0);
             JSONObject eachTrack_temp = new JSONObject();
             JSONArray assemblyTracks = new JSONArray();
+
             for (Map map_temp : maps_two) {
                 int asm_start_pos = Integer.parseInt(map_temp.get("asm_start").toString());
                 int asm_end_pos = Integer.parseInt(map_temp.get("asm_end").toString());
@@ -457,16 +415,8 @@ public class SQLAssemblyDAO implements AssemblyStore {
                 eachTrack_temp.put("layer", util.stackLayerInt(ends, asm_start_pos, delta, asm_end_pos));
                 ends = util.stackLayerList(ends, asm_start_pos, delta, asm_end_pos);
 
-                eachTrack_temp.put("desc", template.queryForObject(GET_SEQ_REGION_NAME_FROM_ID, new Object[]{map_temp.get("cmp_seq_region_id")}, String.class));
-                attribs = template.queryForList(GET_SEQ_REGION_ATTRIB_FROM_ID, new Object[]{map_temp.get("cmp_seq_region_id")});
-
-                if (attribs.size() > 0) {
-                    for (Map attrib : attribs) {
-                        eachTrack_temp.put("colour", attrib.get("value"));
-                    }
-                } else {
-                    eachTrack_temp.remove("colour");
-                }
+                eachTrack_temp.put("desc", map_temp.get("name"));
+                eachTrack_temp.put("colour", map_temp.get("attrib"));
                 assemblyTracks.add(eachTrack_temp);
             }
             return assemblyTracks;
