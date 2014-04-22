@@ -96,8 +96,8 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
     public static final String GET_SEQ_REGION_ATTRIB_FROM_ID = "SELECT * FROM seq_region_attrib WHERE seq_region_id = ? and attrib_type_id = 3";
 
 
-    public static final String GET_GENE_SEARCH = "SELECT * FROM gene WHERE description like ?";
-    public static final String GET_TRANSCRIPT_SEARCH = "SELECT * FROM transcript WHERE description like ?";
+    public static final String GET_GENE_SEARCH = "SELECT gene_id, analysis_id, seq_region_start, seq_region_end, seq_region_id, description FROM gene WHERE description like ?";
+    public static final String GET_TRANSCRIPT_SEARCH = "SELECT transcript_id, analysis_id, seq_region_start, seq_region_end, seq_region_id, description FROM transcript WHERE description LIKE ?";
     public static final String GET_transcript = "SELECT transcript_id, seq_region_start, seq_region_end,description,seq_region_strand FROM transcript where gene_id =? ORDER BY seq_region_start ASC";
     //  public static final String GET_transcript = "SELECT * FROM transcript where seq_region_id =? AND analysis_id = ? AND ((seq_region_start > ? AND seq_region_end < ?) OR (seq_region_start < ? AND seq_region_end > ?) OR (seq_region_end > ? AND seq_region_end < ?) OR (seq_region_start > ? AND seq_region_start < ?))";
     public static final String GET_Genes = "SELECT gene_id,seq_region_start,seq_region_end, description,seq_region_strand FROM gene where seq_region_id =? and analysis_id = ? ";//AND ((seq_region_start > ? AND seq_region_end < ?) OR (seq_region_start < ? AND seq_region_end > ?) OR (seq_region_end > ? AND seq_region_end < ?) OR (seq_region_start > ? AND seq_region_start < ?))";
@@ -392,6 +392,8 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
             JSONArray genes = new JSONArray();
             List<Map<String, Object>> maps = template.queryForList(GET_TRANSCRIPT_SEARCH, new Object[]{'%' + searchQuery + '%'});
             for (Map map : maps) {
+              log.info("\n\n\ntranscript "+map.toString());
+
                 JSONObject eachGene = new JSONObject();
                 eachGene.put("Type", getLogicNameByAnalysisId(Integer.parseInt(map.get("analysis_id").toString())));
                 eachGene.put("name", map.get("description"));
@@ -406,6 +408,7 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
                     eachGene.put("parent", getSeqRegionName(Integer.parseInt(map.get("seq_region_id").toString())));
                     eachGene.put("coord", template.queryForObject(GET_coord_sys_id, new Object[]{map.get("seq_region_id")}, String.class));
                 }
+                log.info("\n\n\ntranscript "+eachGene.toString());
                 eachGene.put("analysis_id", template.queryForObject(GET_LOGIC_NAME_FROM_ANALYSIS_ID, new Object[]{map.get("analysis_id")}, String.class));
                 genes.add(eachGene);
             }
