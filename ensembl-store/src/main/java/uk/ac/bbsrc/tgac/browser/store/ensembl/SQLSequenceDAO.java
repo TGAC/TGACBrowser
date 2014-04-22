@@ -402,7 +402,8 @@ public class SQLSequenceDAO implements SequenceStore {
             if (to > seq.length()) {
                 to = seq.length();
             }
-            return seq.substring(from, to);
+//            because Java counts from 0 not 1
+            return seq.substring(from-1, to-1);
         } catch (EmptyResultDataAccessException e) {
             return "";
         }

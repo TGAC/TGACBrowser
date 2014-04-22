@@ -82,7 +82,7 @@ public class Util implements UtilsStore {
         try {
             int position = 0;
             for (int a = 0; a < ends.size(); a++) {
-                if (start_pos - ends.get(a) > delta) {
+                if (start_pos - ends.get(a) >= delta) {
                     position = (a + 1);
                     break;
                 } else if ((start_pos - ends.get(a) <= delta && (a + 1) == ends.size()) || start_pos == ends.get(a)) {
@@ -115,7 +115,7 @@ public class Util implements UtilsStore {
     public List<Integer> stackLayerList(List<Integer> ends, int start_pos, int delta, int end_pos) throws Exception {
         try {
             for (int a = 0; a < ends.size(); a++) {
-                if (start_pos - ends.get(a) > delta) {
+                if (start_pos - ends.get(a) >= delta) {
                     ends.set(a, end_pos);
                     break;
                 } else if ((start_pos - ends.get(a) <= delta && (a + 1) == ends.size()) || start_pos == ends.get(a)) {

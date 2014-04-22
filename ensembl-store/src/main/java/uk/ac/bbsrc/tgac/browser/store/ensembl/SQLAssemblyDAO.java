@@ -86,8 +86,16 @@ public class SQLAssemblyDAO implements AssemblyStore {
     public static final String GET_ASSEMBLY_SIZE_SLICE_for_ref = "SELECT count(a.asm_seq_region_id) FROM assembly a, seq_region s where a.asm_seq_region_id = ? and a.cmp_seq_region_id = s.seq_region_id and  a.asm_start >= ? and a.asm_start <= ?";
     public static final String GET_Assembly_for_reference_SIZE_SLICE = "SELECT * FROM assembly a, seq_region s WHERE a.asm_seq_region_id = ? AND a.cmp_seq_region_id = s.seq_region_id AND ( (a.asm_start >= ? AND a.asm_end <=?) OR (a.asm_start <= ? AND a.asm_end >= ?) OR (a.asm_end >= ? AND a.asm_start <= ?) OR (a.asm_start <= ? AND a.asm_end >= ?))";
 
-    public static final String GET_Assembly = "SELECT a.asm_seq_region_id,a.cmp_seq_region_id,a.asm_start,a.asm_end, s.name, IFNULL((SELECT VALUE FROM seq_region_attrib WHERE attrib_type_id = 3 AND seq_region_id = s.seq_region_id), 'No') AS attrib FROM assembly a, seq_region s, seq_region_attrib sa WHERE a.asm_seq_region_id = ? AND a.cmp_seq_region_id = s.seq_region_id AND s.coord_system_id = ? and ((a.asm_start >= ? AND a.asm_end <=?) OR (a.asm_start <= ? AND a.asm_end >= ?) OR (a.asm_end >= ? AND a.asm_start <= ?) OR (a.asm_start <= ? AND a.asm_end >= ?)) ORDER BY a.asm_start asc, (a.asm_end-a.asm_start) desc";
-//    public static final String GET_Assembly = "SELECT a.asm_seq_region_id,a.cmp_seq_region_id,a.asm_start,a.asm_end, s.name FROM assembly a, seq_region s where a.asm_seq_region_id =? and a.cmp_seq_region_id = s.seq_region_id and s.coord_system_id = ? and ((a.asm_start >= ? AND a.asm_end <=?) OR (a.asm_start <= ? AND a.asm_end >= ?) OR (a.asm_end >= ? AND a.asm_start <= ?) OR (a.asm_start <= ? AND a.asm_end >= ?)) ORDER BY a.asm_start asc, (a.asm_end-a.asm_start) desc";
+    public static final String GET_Assembly = "SELECT a.asm_seq_region_id,a.cmp_seq_region_id,a.asm_start,a.asm_end, s.name, sa.value as attrib " +
+            "FROM assembly a " +
+            "LEFT JOIN seq_region s " +
+            "ON a.cmp_seq_region_id = s.seq_region_id " +
+            "LEFT JOIN seq_region_attrib sa " +
+            "ON sa.seq_region_id = s.seq_region_id " +
+            "WHERE " +
+            "a.asm_seq_region_id = ? AND " +
+            "s.coord_system_id = ? AND " +
+            "((a.asm_start >= ? AND a.asm_end <=?) OR (a.asm_start <= ? AND a.asm_end >= ?) OR (a.asm_end >= ? AND a.asm_start <= ?) OR (a.asm_start <= ? AND a.asm_end >= ?)) ORDER BY a.asm_start asc, (a.asm_end-a.asm_start) desc";
 
     private JdbcTemplate template;
 

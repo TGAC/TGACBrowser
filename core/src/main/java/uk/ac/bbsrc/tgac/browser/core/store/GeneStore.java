@@ -43,6 +43,6 @@ public interface GeneStore extends Store {
     public JSONArray getGeneGraph(int id, String trackId, long start, long end) throws IOException;
     public String getGeneNamefromId(int geneID) throws IOException;
     public int countGene(int id, String trackId, long start, long end) throws Exception;
-    public List<Map<String, Object>> getGenes(int query, String trackId) throws IOException;
+    public List<Map<String, Object>> getGenes(int query, String trackId, long start, long end) throws IOException;
     public String getTranscriptNamefromId(int transcriptID) throws IOException;
 }

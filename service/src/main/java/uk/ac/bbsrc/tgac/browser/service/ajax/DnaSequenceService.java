@@ -358,7 +358,7 @@ public class DnaSequenceService {
             } else if (analysisStore.getLogicNameByAnalysisId(Integer.parseInt(trackId)).matches("(?i).*gene.*")) {
                 count = geneStore.countGene(queryid, trackId, start, end);
                 if (count < 1000) {
-                    response.put(trackName, geneStore.processGenes(geneStore.getGenes(queryid, trackId), start, end, delta, queryid, trackId));
+                    response.put(trackName, geneStore.processGenes(geneStore.getGenes(queryid, trackId,  start, end), start, end, delta, queryid, trackId));
                 } else {
                     response.put("type", "graph");
                     response.put("graphtype", "bar");
