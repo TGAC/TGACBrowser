@@ -197,6 +197,8 @@
 
 
             </div>
+                <span id="ruler"></span>
+
         </div>
     </div>
 
@@ -205,7 +207,7 @@
 <%--<div id="openCloseIdentifier"></div>--%>
 
 <div style='display:none'>
-    <div id="controlpanel">
+    <div id="controlpanel" style="font-family: Arial;">
 
         <h1>Control Panel</h1>
 
@@ -236,7 +238,7 @@
         </div>
 
         <div id="Tracksdiv">
-            <table>
+            <table width=100%>
                 <tr>
                     <th>
                         Track List
@@ -271,7 +273,7 @@
 
         <div id="MergeTracksdiv">
 
-            <table>
+            <table width=100%>
                 <tr>
                     <th>
                         Merge
@@ -606,7 +608,6 @@
 
 </div>
 
-<span id="ruler"></span>
 
 
 </body>

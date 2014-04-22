@@ -1793,7 +1793,7 @@ span.counter {
 
 #displayoptions {
     color: black;
-    font-weight: bold;
+    /*font-weight: bold;*/
     margin-left: 10px;
 }
 

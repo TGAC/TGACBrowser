@@ -605,16 +605,16 @@ function dispGeneExon(track, genestrand, className, div) {
 
             if (exon_len - 1 >= 0 && geneexons[exon_len - 1].end < newStart_temp && exon_len + 1 < geneexons.length && geneexons[exon_len + 1].start > newEnd_temp) {
 
-                startposition = (newStart_temp - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                stopposition = (getEnd() - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                startposition = ((newStart_temp - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                stopposition = ((getEnd() - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                 track_html += "<div style=\"position:absolute; z-index; 999; TOP:" + (top - 3) + "px; left:" + (startposition + 20) + "px; \" class=\"" + spanclass + "\"></div>";
                 track_html += "<div style=\"position:absolute; z-index; 999; TOP:" + (top - 3) + "px; left:" + (stopposition - 20) + "px; \" class=\"" + spanclass + "\"></div>";
             }
 
             if (transcript_start && transcript_end) {
                 if (exon_start > transcript_end && exon_stop > transcript_end) {
-                    startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                    stopposition = (exon_stop - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                    startposition = ((exon_start - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                    stopposition = (exon_stop - exon_start ) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
                     if (last != null) {
                         jQuery("<span>").attr({
                             'class': spanclass,
@@ -631,8 +631,8 @@ function dispGeneExon(track, genestrand, className, div) {
                     last = current;
                 }
                 else if (exon_start < transcript_start && exon_stop < transcript_start) {
-                    startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                    stopposition = (exon_stop - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                    startposition = ((exon_start - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                    stopposition = (exon_stop - exon_start) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
                     jQuery("<div>").attr({
                         'class': utrtrackClass,
@@ -642,15 +642,15 @@ function dispGeneExon(track, genestrand, className, div) {
                     last = current;
                 }
                 else if (exon_start < transcript_start && exon_stop > transcript_end) {
-                    startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                    stopposition = (transcript_start - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                    startposition =((exon_start - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                    stopposition = (transcript_start - exon_start) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
                     jQuery("<div>").attr({
                         'class': utrtrackClass,
                         'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
                     }).appendTo(div);
 
-                    startposition = ( transcript_end - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                    startposition = ((transcript_end - newStart_temp)-1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                     stopposition = (exon_stop - transcript_end + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
@@ -659,8 +659,8 @@ function dispGeneExon(track, genestrand, className, div) {
                         'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
                     }).appendTo(div);
 
-                    startposition = (transcript_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                    stopposition = (transcript_end - transcript_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                    startposition = ((transcript_start - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                    stopposition = (transcript_end - transcript_start ) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
                     jQuery("<div>").attr({
                         'class': trackClass,
                         'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
@@ -669,16 +669,16 @@ function dispGeneExon(track, genestrand, className, div) {
                     last = current;
                 }
                 else if (exon_stop > transcript_start && exon_start < transcript_start) {
-                    startposition = ( exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                    stopposition = (transcript_start - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                    startposition = ((exon_start - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                    stopposition = (transcript_start - exon_start) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
                     jQuery("<div>").attr({
                         'class': utrtrackClass,
                         'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
                     }).appendTo(div);
 
-                    startposition = (transcript_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                    stopposition = (exon_stop - transcript_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                    startposition = ((transcript_start - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                    stopposition = (exon_stop - transcript_start ) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
                     jQuery("<div>").attr({
@@ -689,8 +689,8 @@ function dispGeneExon(track, genestrand, className, div) {
                     last = current;
                 }
                 else if (exon_stop > transcript_end && exon_start < transcript_end) {
-                    startposition = ( transcript_end - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                    stopposition = (exon_stop - transcript_end + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                    startposition = ((transcript_end - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                    stopposition = (exon_stop - transcript_end) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
                     jQuery("<div>").attr({
@@ -698,8 +698,8 @@ function dispGeneExon(track, genestrand, className, div) {
                         'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
                     }).appendTo(div);
 
-                    startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                    stopposition = (transcript_end - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                    startposition = ((exon_start - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                    stopposition = (transcript_end - exon_start) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
                     jQuery("<div>").attr({
                         'class': trackClass,
@@ -709,8 +709,8 @@ function dispGeneExon(track, genestrand, className, div) {
                     last = current;
                 }
                 else {
-                    startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                    stopposition = (exon_stop - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                    startposition = ((exon_start - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                    stopposition = (exon_stop - exon_start) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
                     jQuery("<div>").attr({
@@ -730,8 +730,8 @@ function dispGeneExon(track, genestrand, className, div) {
                 }
             }
             else {
-                startposition = (exon_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                stopposition = (exon_stop - exon_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                startposition = ((exon_start - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                stopposition = (exon_stop - exon_start) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
                 jQuery("<div>").attr({
@@ -1137,7 +1137,7 @@ function dispGraph(div, trackName, className) {
             var track_start = track[track_len].start;
             var track_stop = track[track_len].end;
 
-            var startposition = (track_start - newStart_temp) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen_temp) / 2;
+            var startposition = ((track_start - newStart_temp)) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen_temp) / 2;
             var stopposition = (track_stop - track_start ) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp);
 
             jQuery("<div>").attr({

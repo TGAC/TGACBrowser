@@ -105,12 +105,12 @@ function newpopup(track, i, j) {
             jQuery("#revertme").html('');
 
         }
-
+        console.log(window['track_list' + track].id)
         jQuery("#ZoomHere").html('<span title="Zoom Here" class="ui-button ui-icon ui-icon-zoomin" onclick=zoomHere(' + window[track][i].start + ',' + endposition + ');></span>');
         jQuery("#EditDescription").html('<span title="Edit" class="ui-button ui-icon ui-icon-pencil" onclick=showEditDesc(\"' + track + '\",\'' + i + '\');></span>');
         jQuery("#deleteTrack").html('<span title="Remove" class="ui-button ui-icon ui-icon-trash" onclick=deleteTrack(\"' + track + '\",\'' + i + '\');></span>');
         jQuery("#flagTrack").html('<span title="Flag" class="ui-button ui-icon ui-icon-flag" onclick=flagTrack(\"' + track + '\",\'' + i + '\');></span>');
-        if(window['track_list' + track].id.indexOf("cs") >=0){
+        if(window['track_list' + track].id.toString().indexOf("cs") >=0){
             jQuery("#Detail").html("<a target='_blank' href='index.jsp?query=" + window[track][i].desc+"&&coord="+window['track_list' + track].id.replace("cs", "")+"' > "+stringTrim(window[track][i].desc, width)+ "</a>");
         }   else{
             jQuery("#Detail").html(stringTrim(window[track][i].desc, width));

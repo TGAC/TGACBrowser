@@ -40,7 +40,6 @@ var blastsdata = [];
 var grouplist = [];
 var tracks = [];
 var tracklocation = [];
-var chromosome = false;
 
 
 //toogle side bar codes
@@ -81,8 +80,8 @@ function trackList(tracklist) {
         }
     }
 
-    var tracks = "<table> <tr>";
-    var mergeTrack = "<table> <tr>";
+    var tracks = "<table width=100%> <tr>";
+    var mergeTrack = "<table width=100%> <tr>";
 
     for (var i = 0; i < Tracklist.length; i++) {
 
@@ -95,25 +94,24 @@ function trackList(tracklist) {
 
             }
 
-            jQuery("#group" + Tracklist[i].web.trackgroup).append("<span title='" + Tracklist[i].desc + "'><input type=\"checkbox\" id='" + Tracklist[i].name + "Checkbox' name='" + Tracklist[i].name + "-" + Tracklist[i].id + "'  onClick=loadTrackAjax(\"" + Tracklist[i].id + "\",\"" + Tracklist[i].name + "\"); />  " + Tracklist[i].display_label + " </span> <p> ");
-            jQuery("#mergegroup" + Tracklist[i].web.trackgroup).append("<span id='" + Tracklist[i].name + "span'> <input type=\"checkbox\" disabled id='" + Tracklist[i].name + "mergedCheckbox' name='" + Tracklist[i].name + "mergedCheckbox' onClick=mergeTrack(\"" + Tracklist[i].name + "\"); value=" + Tracklist[i].name + " >" + Tracklist[i].display_label + "  </span> <p>");
+            jQuery("#group" + Tracklist[i].web.trackgroup).append("<div style=\"position: relative; width: 70%; word-wrap: break-word;\" title='" + Tracklist[i].desc + "'><input type=\"checkbox\" id='" + Tracklist[i].name + "Checkbox' name='" + Tracklist[i].name + "-" + Tracklist[i].id + "'  onClick=loadTrackAjax(\"" + Tracklist[i].id + "\",\"" + Tracklist[i].name + "\"); />  " + Tracklist[i].display_label + " </div> <p> ");
+            jQuery("#mergegroup" + Tracklist[i].web.trackgroup).append("<div style=\"position: relative; width: 70%; word-wrap: break-word;\" id='" + Tracklist[i].name + "span'> <input type=\"checkbox\" disabled id='" + Tracklist[i].name + "mergedCheckbox' name='" + Tracklist[i].name + "mergedCheckbox' onClick=mergeTrack(\"" + Tracklist[i].name + "\"); value=" + Tracklist[i].name + " >" + Tracklist[i].display_label + "  </div> <p>");
 
         } else {
             if (document.getElementById("nogroup") == null) {
 
                 jQuery("#tracklist").append("<div style='padding: 5px; margin: 10px; position: relative; border: 1px solid lightgray; top: 10px' id='nogroup'> </div>")
                 jQuery("#mergetracklist").append("<div style='padding: 5px;  margin: 10px; position: relative; border: 1px solid lightgray; top: 10px' id='nomergegroup'></div>")
-                jQuery("#nogroup").append("<table> <tr>");
-                jQuery("#nomergemgroup").append("<table> <tr>");
+                jQuery("#nogroup").append("<table id='nogroup-table' width=100%> <tr>");
+                jQuery("#nomergegroup").append("<table id='nomergegroup-table' width=100%> <tr>");
 
             }
 
-            jQuery("#nogroup").append(" <td><span title='" + Tracklist[i].desc + "'><input type=\"checkbox\" id='" + Tracklist[i].name + "Checkbox' name='" + Tracklist[i].name + "-" + Tracklist[i].id + "'  onClick=loadTrackAjax(\"" + Tracklist[i].id + "\",\"" + Tracklist[i].name + "\"); />  " + Tracklist[i].display_label + " </span></td>");
-            jQuery("#nomergegroup").append("<td><span id='" + Tracklist[i].name + "span'> <input type=\"checkbox\" disabled id='" + Tracklist[i].name + "mergedCheckbox' name='" + Tracklist[i].name + "mergedCheckbox' onClick=mergeTrack(\"" + Tracklist[i].name + "\"); value=" + Tracklist[i].name + " >" + Tracklist[i].display_label + "  </span> </td>");
-
+            jQuery("#nogroup-table").append(" <td><div style=\"position: relative; width: 70%; word-wrap: break-word;\" title='" + Tracklist[i].desc + "'><input type=\"checkbox\" id='" + Tracklist[i].name + "Checkbox' name='" + Tracklist[i].name + "-" + Tracklist[i].id + "'  onClick=loadTrackAjax(\"" + Tracklist[i].id + "\",\"" + Tracklist[i].name + "\"); />  " + Tracklist[i].display_label + " </div></td>");
+            jQuery("#nomergegroup-table").append("<td><div style=\"position: relative; width: 70%; word-wrap: break-word;\" id='" + Tracklist[i].name + "span'> <input type=\"checkbox\" disabled id='" + Tracklist[i].name + "mergedCheckbox' name='" + Tracklist[i].name + "mergedCheckbox' onClick=mergeTrack(\"" + Tracklist[i].name + "\"); value=" + Tracklist[i].name + " >" + Tracklist[i].display_label + "  </div> </td>");
             if ((i + 1) % 3 == 0) {
-                jQuery("#nogroup").append("</tr> <tr>");
-                jQuery("#nomergegroup").append("</tr> <tr>");
+                jQuery("#nogroup-table").append("</tr> <tr>");
+                jQuery("#nomergegroup-table").append("</tr> <tr>");
             }
         }
 
@@ -478,3 +476,5 @@ function unSelectAllCheckbox() {
     }
     trackToggle("all")
 }
+
+

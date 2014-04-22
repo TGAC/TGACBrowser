@@ -1,26 +1,26 @@
 /*
-*
-* Copyright (c) 2013. The Genome Analysis Centre, Norwich, UK
-* TGAC Browser project contacts: Anil Thanki, Xingdong Bian, Robert Davey, Mario Caccamo @ TGAC
-* **********************************************************************
-*
-* This file is part of TGAC Browser.
-*
-* TGAC Browser is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* TGAC Browser is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with TGAC Browser.  If not, see <http://www.gnu.org/licenses/>.
-*
-* ***********************************************************************
-*
+ *
+ * Copyright (c) 2013. The Genome Analysis Centre, Norwich, UK
+ * TGAC Browser project contacts: Anil Thanki, Xingdong Bian, Robert Davey, Mario Caccamo @ TGAC
+ * **********************************************************************
+ *
+ * This file is part of TGAC Browser.
+ *
+ * TGAC Browser is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * TGAC Browser is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with TGAC Browser.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * ***********************************************************************
+ *
  */
 
 /**
@@ -33,150 +33,149 @@
 
 // API type functions to make generous coding
 function getDragableLeft() {
-  return jQuery("#draggable").position().left;
+    return jQuery("#draggable").position().left;
 }
 
 function setDragableLeft(left) {
-  jQuery("#draggable").animate({"left": left}, 100, function () {
-    setNavPanel()
-    if(chromosome){
-      setMapMarkerTop(getBegin());
-    }
+    jQuery("#draggable").animate({"left": left}, 100, function () {
+        setNavPanel()
+        setMapMarkerTop(getBegin());
 
-  });
+    });
 }
 
 function getDragableWidth() {
-  return jQuery("#draggable").css("width");
+    return jQuery("#draggable").css("width");
 }
 
 function setDragableWidth(width) {
-  jQuery("#draggable").animate({"width": width}, 100, function () {
-    setNavPanel()
-  });
-  var diff = parseInt((getEnd() - getBegin()) * 0.90);
-  var bp = "bp";
-  if (diff > 100000000) {
-    diff = (diff / 1000000);
-    bp = "Gbp";
-  }
-  else if (diff > 1000000) {
-    diff = (diff / 1000000);
-    bp = "Mbp";
-  }
-  else if (diff > 1000) {
-    diff = diff / 1000;
-    bp = "Kbp";
-  }
+    jQuery("#draggable").animate({"width": width}, 100, function () {
+        setNavPanel()
+    });
+    var diff = parseInt((getEnd() - getBegin()) * 0.90);
+    var bp = "bp";
+    if (diff > 100000000) {
+        diff = (diff / 1000000);
+        bp = "Gbp";
+    }
+    else if (diff > 1000000) {
+        diff = (diff / 1000000);
+        bp = "Mbp";
+    }
+    else if (diff > 1000) {
+        diff = diff / 1000;
+        bp = "Kbp";
+    }
 
-  jQuery("#leftbig").attr('title', "Move Left(" + diff + "" + bp + ")");
-  jQuery("#rightbig").attr('title', "Move Right(" + diff + "" + bp + ")");
-  setMapMarkerHeight(getEnd() - getBegin())
+    jQuery("#leftbig").attr('title', "Move Left(" + diff + "" + bp + ")");
+    jQuery("#rightbig").attr('title', "Move Right(" + diff + "" + bp + ")");
+    setMapMarkerHeight(getEnd() - getBegin())
 
 }
 
 function getbglayerWidth() {
-  return jQuery("#bg_layer").css("width");
+    return jQuery("#bg_layer").css("width");
 }
 
 function setbglayerWidth(width, seq) {
 //  to call disp seq function if left is 0 then it doesn't call so
-  if (seq == true) {
-    jQuery("#bg_layer").animate({"width": width}, 100, function () {
-      dispSeq();
-    });
-  }
-  else {
-    jQuery("#bg_layer").animate({"width": width}, { duration: 100, queue: false});
-  }
+    if (seq == true) {
+        jQuery("#bg_layer").animate({"width": width}, 100, function () {
+            dispSeq();
+        });
+    }
+    else {
+        jQuery("#bg_layer").animate({"width": width}, { duration: 100, queue: false});
+    }
 }
 
 function getbglayerLeft() {
-  return jQuery("#bg_layer").position().left;
+    return jQuery("#bg_layer").position().left;
 }
 
 function setbglayerLeft(left, seq) {
-  var diff = parseFloat(left) - parseFloat(getbglayerLeft());
-  if (parseInt(diff) >= 1 || parseInt(diff) <= -1) {
-    if (seq == true) {
-      jQuery("#bg_layer").animate({"left": left}, 100, function () {
-        dispSeq();
-      });
+    var diff = parseFloat(left) - parseFloat(getbglayerLeft());
+    if (parseInt(diff) >= 1 || parseInt(diff) <= -1) {
+        if (seq == true) {
+            jQuery("#bg_layer").animate({"left": left}, 100, function () {
+                dispSeq();
+            });
+        }
+        else {
+            jQuery("#bg_layer").animate({"left": left}, { duration: 100, queue: false});
+        }
     }
     else {
-      jQuery("#bg_layer").animate({"left": left}, { duration: 100, queue: false});
-    }
-  }
-  else {
-    setDragableLeft(parseFloat(getbglayerLeft()));
+        setDragableLeft(parseFloat(getbglayerLeft()));
 
-  }
+    }
 
 }
 
 function getBegin() {
-  if (parseInt(jQuery("#begin").val()) > 0) {
-    return jQuery("#begin").val();
-  }
-  else {
-    return 1;
-  }
+    if (parseInt(jQuery("#begin").val()) > 0) {
+        return jQuery("#begin").val();
+    }
+    else {
+        return 1;
+    }
 }
 
 function setBegin(begin) {
-  if (parseInt(begin) > 0) {
-    jQuery("#begin").val(parseInt(begin));
-  }
-  else {
-    jQuery("#begin").val(parseInt(1));
-  }
-  jQuery("#begin").size(begin.length);
+    if (parseInt(begin) > 0) {
+        jQuery("#begin").val(parseInt(begin));
+    }
+    else {
+        jQuery("#begin").val(parseInt(1));
+    }
+    jQuery("#begin").size(begin.length);
 }
 
 function getEnd() {
-  if (parseInt(jQuery("#end").val()) <= sequencelength) {
-    return jQuery("#end").val();
-  }
-  else {
-    return sequencelength;
-  }
+    if (parseInt(jQuery("#end").val()) <= sequencelength) {
+        return jQuery("#end").val();
+    }
+    else {
+        return sequencelength;
+    }
 }
 
 function setEnd(end) {
-  if (parseInt(end) <= sequencelength) {
-    jQuery("#end").val(parseInt(end));
-  }
-  else {
-    jQuery("#end").val(sequencelength);
-  }
-  jQuery("#end").size(end.length);
+    if (parseInt(end) <= sequencelength) {
+        jQuery("#end").val(parseInt(end));
+    }
+    else {
+        jQuery("#end").val(sequencelength);
+    }
+    jQuery("#end").size(end.length);
 
 }
 
 function setMapMarkerTop(top) {
-  var height = jQuery("#" + seqregname).css('height');
-  var maptop = parseFloat(jQuery("#" + seqregname).position().top) + top * parseFloat(height) / sequencelength;
-  jQuery("#mapmarker").animate({"top": maptop}, 100);
+    var ref = jQuery("#" + seqregname)
+    var height = ref.css('height');
+    var maptop = parseFloat(jQuery("#" + seqregname).position().top) + top * parseFloat(height) / sequencelength;
+    jQuery("#mapmarker").animate({"top": maptop}, 100);
 }
 
 function setMapMarkerHeight(height) {
-  var mapheight = height * parseFloat(refheight) / sequencelength;
-  jQuery("#mapmarker").animate({"height": mapheight}, 100);
+    var mapheight = height * parseFloat(refheight) / sequencelength;
+    jQuery("#mapmarker").animate({"height": mapheight}, 100);
 }
 
 function setMapMarkerLeft() {
-  var left = parseInt(jQuery("#" + seqregname).css('left'));
-  jQuery("#mapmarker").animate({"left": left}, 100);
+    var left = parseInt(jQuery("#" + seqregname).css('left'));
+    jQuery("#mapmarker").animate({"left": left}, 100);
 }
 
 function getMapMarkerTop() {
-  return jQuery("#mapmarker").position().top;
+    return jQuery("#mapmarker").position().top;
 }
 
 function getMapMarkerHeight() {
-  return jQuery("#mapmarker").css('height');
+    return jQuery("#mapmarker").css('height');
 }
 
 function getMapMarkerLeft() {
-  return jQuery("#mapmarker").position().left;
+    return jQuery("#mapmarker").position().left;
 }
