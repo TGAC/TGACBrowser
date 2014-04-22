@@ -86,7 +86,7 @@ public class SQLSequenceDAO implements SequenceStore {
 
     public static final String Get_Database_information = "SELECT meta_key,meta_value from meta";// + var1;
 
-    public static final String GET_Seq_API = "SELECT sequence FROM dna where seq_region_id = ?";
+    public static final String GET_Seq_API = "SELECT SUBSTRING(sequence, ?, ?) FROM dna where seq_region_id = ?";
 
     public static final String GET_reference_for_Assembly = "SELECT * FROM assembly where cmp_seq_region_id =?";
     public static final String GET_SEQS_LIST_API = "SELECT *  FROM assembly a, seq_region s, coord_system cs  where a.asm_seq_region_id = ? AND s.seq_region_id = a.cmp_seq_region_id AND cs.coord_system_id = s.coord_system_id AND cs.attrib like '%sequence%' AND   ((a.asm_start >= ? AND a.asm_end <= ?) OR (a.asm_start <= ? AND a.asm_end >= ?) OR (a.asm_end >= ? AND a.asm_end <= ?) OR (a.asm_start >= ? AND a.asm_start <= ?))";
@@ -395,15 +395,12 @@ public class SQLSequenceDAO implements SequenceStore {
         String seq = "";
         try {
 
-            seq = template.queryForObject(GET_Seq_API, new Object[]{query}, String.class);
             if (from < 0) {
                 from = 0;
             }
-            if (to > seq.length()) {
-                to = seq.length();
-            }
-//            because Java counts from 0 not 1
-            return seq.substring(from-1, to-1);
+            seq = template.queryForObject(GET_Seq_API, new Object[]{from, (to-from),query}, String.class);
+
+            return seq;//.substring(from-1, to-1);
         } catch (EmptyResultDataAccessException e) {
             return "";
         }
