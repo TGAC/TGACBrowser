@@ -171,7 +171,6 @@ function search(query, from, to, blast) {
                 makeFeatureList(json, from, to)
             }
             else {
-                console.log("else if")
 //                window.location.replace("index.jsp?query=" + json.seqregname);
             }
         }
@@ -581,7 +580,7 @@ function dispOnMap(json, maximumLengthname, maximumsequencelength) {
                 jQuery("#" + markers[i].parent).attr("onclick", "")
                 var length = maximumsequencelength * parseFloat(jQuery("#" + markers[i].parent).css('height')) / parseFloat(jQuery("#" + maximumLengthname).css('height'));
                 var maptop = ((markers[i].start) * parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
-                var left = 25;//parseInt(jQuery("#" + markers[i].parent).css('left')) + parseInt(20);
+                var left = 25;
                 var mapheight = ((markers[i].end - markers[i].start) * parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
                 if (mapheight < 1) {
                     mapheight = 1;
@@ -606,7 +605,7 @@ function dispOnMap(json, maximumLengthname, maximumsequencelength) {
             jQuery("#" + markers[i].parent).attr("onclick", "")
             var length = maximumsequencelength * parseFloat(jQuery("#" + markers[i].parent).css('height')) / parseFloat(jQuery("#" + maximumLengthname).css('height'));
             var maptop = ((markers[i].start) * parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
-            var left = 25;//parseInt(jQuery("#" + markers[i].parent).css('left')) + parseInt(20);
+            var left = 25;
             var mapheight = ((markers[i].end - markers[i].start) * parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
             if (mapheight < 1) {
                 mapheight = 1;
@@ -621,7 +620,7 @@ function dispOnMap(json, maximumLengthname, maximumsequencelength) {
             jQuery("#" + markers[i].parent).attr("onclick", "")
             var length = maximumsequencelength * parseFloat(jQuery("#" + markers[i].parent).css('height')) / parseFloat(jQuery("#" + maximumLengthname).css('height'));
             var maptop = ((markers[i].start) * parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
-            var left = 25;//parseInt(jQuery("#" + markers[i].parent).css('left')) + parseInt(20);
+            var left = 25;
             var mapheight = ((markers[i].end - markers[i].start) * parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
             if (mapheight < 1) {
                 mapheight = 1;
@@ -634,7 +633,7 @@ function dispOnMap(json, maximumLengthname, maximumsequencelength) {
         for (var i = 0; i < markers.length; i++) {
             var length = maximumsequencelength * parseFloat(jQuery("#" + markers[i].parent).css('height')) / parseFloat(jQuery("#" + maximumLengthname).css('height'));
             var maptop = ((markers[i].start) * parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
-            var left = 25;//parseInt(jQuery("#" + markers[i].parent).css('left')) + parseInt(20);
+            var left = 25;
             var mapheight = ((markers[i].end - markers[i].start) * parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
             if (mapheight < 1) {
                 mapheight = 1;

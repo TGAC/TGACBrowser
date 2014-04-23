@@ -128,7 +128,7 @@ function checkTask(id, db, format, start, end, hit, link) {
               window['blasttrack'] = "running";
             }
             if (window['blasttrack'] == "running") {
-              window['blasttrack'] = json.blast;//(decodeURIComponent(json.blast.replace(/\s+/g, ""))).replace(/>/g, "");
+              window['blasttrack'] = json.blast;
             }
             else {
               jQuery.merge(window['blasttrack'], json.blast);
@@ -150,8 +150,6 @@ function ncbiBLASTResult(id) {
           'ncbiBlastGetResult',
           {'url': ajaxurl,  'BlastAccession': id, 'format': format},
           {'doOnSuccess': function (json) {
-//            jQuery('#blastresult').html(json.html);
-//            jQuery("#blasttable").tablesorter();
             jQuery("#notifier").hide()
             jQuery("#notifier").html("");
 

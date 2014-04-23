@@ -105,7 +105,6 @@ function newpopup(track, i, j) {
             jQuery("#revertme").html('');
 
         }
-        console.log(window['track_list' + track].id)
         jQuery("#ZoomHere").html('<span title="Zoom Here" class="ui-button ui-icon ui-icon-zoomin" onclick=zoomHere(' + window[track][i].start + ',' + endposition + ');></span>');
         jQuery("#EditDescription").html('<span title="Edit" class="ui-button ui-icon ui-icon-pencil" onclick=showEditDesc(\"' + track + '\",\'' + i + '\');></span>');
         jQuery("#deleteTrack").html('<span title="Remove" class="ui-button ui-icon ui-icon-trash" onclick=deleteTrack(\"' + track + '\",\'' + i + '\');></span>');
@@ -259,12 +258,7 @@ function preBlast(begin, end, popup) {
         "<option value=\"9\">9</option>   " +
         "<option value=\"10\">10</option>  " +
         "</select> </td>" +
-//                       "<td>" +
-//                       "Select BLAST Type<select name=\"blasttype\" id=\"blasttype\">  " +
-//                                              "<option value=\"blastn\">blastn</option>  " +
-//                                              "<option value=\"tblastn\">tblastn</option> " +
         "</select> " +
-//                       "</td></tr>"
         "<td><span class=\"fg-button ui-icon ui-widget ui-state-default ui-corner-all ui-icon-close\" id=\"dontblast\"></span>" +
         "<span class=\"fg-button ui-icon ui-widget ui-state-default ui-corner-all ui-icon-check\" id=\"doblast\"></span> </td></tr></table>";
 

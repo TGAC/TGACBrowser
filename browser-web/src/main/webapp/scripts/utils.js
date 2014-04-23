@@ -109,15 +109,6 @@ function trackToggle(trackname) {
     var trackid = "";
 
 
-//    for (var i = 0; i < track_list.length; i++) {
-//        if (track_list[i].name == trackname) {
-//            index = i;
-//            trackid = track_list[i].id;
-//        }
-//        if (track_list[i].name == trackname && track_list[i].graph == "true") {
-//            graph = "true";
-//        }
-//    }
     if (trackname == "all") {
         jQuery("#mergedtrack").html("<div id= \"mergelabel\" align='left' class='handle'></div>");
         for (var i = 0; i < track_list.length; i++) {
@@ -126,7 +117,6 @@ function trackToggle(trackname) {
             graph = window['track_list' + trackName].graph;
             if (jQuery("#" + track_list[i].name + "Checkbox").is(':checked')) {
                 if (graph == "true") {
-//                    dispGraph("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
                     if (window['track_list' + trackName].graphtype == "bar") {
                         dispGraph("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
                     } else if (window['track_list' + trackName].graphtype == "heat") {
@@ -241,10 +231,7 @@ function removeTrackslist(trackList) {
     }
     jQuery("#mergetracklist").html("");
 }
-//
-//function controls() {
-////  jQuery("#slider").fadeIn();
-//}
+
 
 function toggleLeftInfo(div, id) {
     if (jQuery(div).hasClass("toggleLeft")) {
@@ -545,35 +532,26 @@ function convertSeqtoBLAST(seq, qseq) {
 function processURL(urlParam) {
 
     if (jQuery.urlParam("query") != null && jQuery.urlParam("from") != null && jQuery.urlParam("to") != null && jQuery.urlParam("coord") != null && jQuery.urlParam("blasttrack") != null) {
-        console.log(1);
         seqregionSearchwithCoord(urlParam("query"), urlParam("coord"), urlParam("from"), urlParam("to"),  urlParam("blasttrack"))
     }
     else if (jQuery.urlParam("query") != null && jQuery.urlParam("from") != null && jQuery.urlParam("to") != null && jQuery.urlParam("blasttrack") != null) {
-        console.log(2);
         seqregionSearchPopup(urlParam("query"), urlParam("from"), urlParam("to"), urlParam("blasttrack"))
     }
     else if (jQuery.urlParam("query") != null && jQuery.urlParam("from") != null && jQuery.urlParam("to") != null && jQuery.urlParam("coord") != null) {
-        console.log(3);
         seqregionSearchwithCoord(urlParam("query"), urlParam("coord"), urlParam("from"), urlParam("to"))
     }
     else if (jQuery.urlParam("query") != null && jQuery.urlParam("from") && jQuery.urlParam("to") != null) {
-        console.log(4);
         search(urlParam("query"), urlParam("from"), urlParam("to"))
     }
     else if (jQuery.urlParam("query") != null && jQuery.urlParam("coord") != null) {
-        console.log(5);
         seqregionSearchwithCoord(jQuery.urlParam("query"), jQuery.urlParam("coord"))
     }
     else if (jQuery.urlParam("query") != null) {
-        console.log(5);
         search(jQuery.urlParam("query"))
     }  else if (jQuery("#search").val().length >0) {
-        console.log(5);
         search(jQuery("#search").val())
     } else {
-        console.log(6);
         getReferences(true)
     }
-    console.log(jQuery.urlParam("query"))
 }
 

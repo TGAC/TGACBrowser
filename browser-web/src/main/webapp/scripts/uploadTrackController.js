@@ -223,22 +223,6 @@ function fileupload() {
     }
   })(f);
   r.readAsText(f);
-//  var chunks = Math.ceil(f.size/2097152);
-//  console.log(chunks);
-//  var start_read = 0;
-//  var stop_read = 2097152;
-//  for(i=0; i<chunks; i++)
-//  {
-//    console.log(i+"-"+start_read+":"+stop_read);
-//    if (file.webkitSlice) {
-//      var blob = f.webkitSlice(start_read, stop_read);
-//    } else if (file.mozSlice) {
-//      var blob = f.mozSlice(start_read, stop_read);
-//    }
-//    start_read = stop_read+1;
-//    stop_read = stop_read+2097152;
-//  }
-
 
   jQuery('body').css('cursor', 'auto');
 
@@ -314,37 +298,15 @@ function exportSession() {
     jQuery("#sessionid").show();
   }
   saveSession();
-  /*var Tracklist = track_list;
-   var data = "# TGAC-Browser Generated GFF\n# Exported at: " + new Date() + "\n# " + seqregname + " Position: " + parseInt(selectionStart) + "-" + parseInt(selectionEnd) + "\n# can be loaded back to TGAC-Browser for restarting the same session\n# Dumped from  database.\n#";
-   for (i = 0; i < Tracklist.length; i++) {
-
-   if (jQuery('input[name=' + Tracklist[i].name + 'Checkbox]').is(':checked')) {
-   //      var datam = (window[temp[0]]).split(",");
-   for (var j = 0; j < window[Tracklist[i].name].length; j++) {
-   //        var temp1 = window[Tracklist[i].name][j].split(":");
-   if (window[Tracklist[i].name][j].start >= selectionStart && window[Tracklist[i].name][j].end <= selectionEnd) {
-   data += "\n" + seqregname + "\t.\t" + Tracklist[i].name + "\t" + window[Tracklist[i].name][j].start + "\t" + window[Tracklist[i].name][j].end + "\t.\t.\t.\t" + window[Tracklist[i].name][j].desc;
-   }
-   }
-   }
-   }*/
-//   jQuery(window.location).attr('href', "./temp/"+randomnumber+".json").attr("target", "_blank");
-//    console.log(randomnumber)
-//  generateFileLink(data);
-}
+ }
 
 function exportSessionHelp() {
 
   var Tracklist = track_list;
   var data = "# TGAC-Browser Generated GFF\n# Exported at: " + new Date() + "\n# " + seqregname + "\n# can be loaded back to TGAC-Browser for restarting the same session\n# Dumped from  database.\n#";
   for (i = 0; i < Tracklist.length; i++) {
-//    var temp = Tracklist[i].split(":");
     if (jQuery('#' + Tracklist[i].name + 'Checkbox').is(':checked')) {
-//      var datam = (window[temp[0]]).split(",");
-//      for (var j = 0; j < datam.length; j++) {
-//        var temp1 = datam[j].split(":");
       data += "\n" + seqregname + "\t.\t" + Tracklist[i].name + "\t" + window[Tracklist[i].name][j].start + "\t" + window[Tracklist[i].name][j].end + "\t.\t.\t.\t" + window[Tracklist[i].name][j].desc;
-//      }
     }
   }
   generateFileLink(data);

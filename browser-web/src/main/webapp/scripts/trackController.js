@@ -118,27 +118,18 @@ function indelClick(query, hit) {
 
 function removeTrack(div, track) {
     jQuery('#' + track + 'Checkbox').attr('checked', false);
-//  jQuery("#" + track + "span").remove();
     jQuery("#" + track + "mergedCheckbox").attr("disabled", true);
     jQuery(div).html();
     jQuery(div).fadeOut();
     jQuery("#" + track + "_wrapper").fadeOut();
     window['track_list' + track].disp = 0
-
-//  jQuery(track_list).each(function (index) {
-//    if (track_list[index].name == track) {
-//      track_list[index].disp = 0;
-//    }
-//  });
 }
 
 function removeMergedTrack() {
 
     jQuery(track_list).each(function (index) {
         if (jQuery("#" + track_list[index].name + "mergedCheckbox").attr('checked')) {
-//      this.disp = 0;
             window['track_list' + track_list[index].name].disp = 0
-
             jQuery('input[name=' + track_list[index].name + 'mergedCheckbox]').attr('checked', false);
             trackToggle(track_list[index].name);
         }
@@ -152,16 +143,12 @@ function removeMergedTrack() {
 function toogleLabelMerged() {
     jQuery(track_list).each(function (index) {
         if (jQuery("#" + track_list[index].name + "mergedCheckbox").attr('checked')) {
-//      this.disp = 0;
             if (this.label == 1) {
                 window['track_list' + track_list[index].name].label = 0
-//        this.label = 0;
             }
             else {
                 window['track_list' + track_list[index].name].label = 1
-//        this.label = 1;
             }
-
         }
     });
 
@@ -407,8 +394,6 @@ function dispGenes(div, track, expand, className) {
                     gene_stop = genes[len].start;
                 }
 
-                //  if (show) {
-                var gene_desc = genes[len].desc;
                 var border = " border-left: 1px solid #000000; border-right: 1px solid #000000;";
                 if (genes[len].flag) {
                     if (trackClass.indexOf("geneflag") < 0) {
@@ -776,21 +761,11 @@ function dispTrack(div, trackName, className) {
     if (window['track_list' + trackName].id.toString().indexOf('cs') > -1) {
         coord = true;
         trackClass = "track";
-//        if (trackName.toLowerCase().indexOf("contig") >= 0) {
-//            trackClass = "contigs track";
-//        }
-//        else if (trackName.toLowerCase().indexOf("clone") >= 0) {
-//            trackClass = "clone track";
-//        }
-//        else {
-//            trackClass = "unknown track";
-//        }
     }
     else {
         coord = false;
         trackClass = "track";
     }
-
 
     var j = 0;
 
@@ -930,12 +905,6 @@ function dispTrack(div, trackName, className) {
                     'title': label
                 }).html(label).appendTo(temp);
 
-//                if (stopposition > 10) {
-//                    jQuery("<span>").attr({
-//                        'class': spanclass,
-//                        'style': "cursor:pointer; position:absolute; TOP:" + (-6) + "px; left:" + ( parseInt(stopposition / 2) ) + "px; opacity:0.6; "
-//                    }).appendTo(temp);
-//                }
 
                 if (track[track_len].cigars && stopposition > 50) {
                     jQuery(dispCigarLine(track[track_len].cigars, track[track_len].start, top)).appendTo(div);
