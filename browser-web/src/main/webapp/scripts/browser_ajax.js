@@ -61,6 +61,7 @@ function seqregionSearchPopup(query, from, to, blast) {
                 jQuery("#searchresultMap").fadeIn();
                 if (json.html == "one") {
                     drawBrowser(json, from, to, blast);
+                    getMarkers()
                     setMapMarkerLeft();
                     setMapMarkerTop(getBegin());
                     setMapMarkerHeight(getEnd() - getBegin())
@@ -106,6 +107,7 @@ function seqregionSearchwithCoord(query, coord, from, to, blast) {
                 jQuery("#searchresultMap").fadeIn();
                 if (json.html == "one") {
                     drawBrowser(json, from, to, blast);
+                    getMarkers()
                     setMapMarkerLeft();
                     setMapMarkerTop(getBegin());
                     setMapMarkerHeight(getEnd() - getBegin())
@@ -155,6 +157,7 @@ function search(query, from, to, blast) {
                 if (json.html == "one") {
                     drawBrowser(json, from, to, blast);
                     setMapMarkerLeft();
+                    getMarkers()
                     setMapMarkerTop(getBegin());
                     setMapMarkerHeight(getEnd() - getBegin())
                 }
@@ -267,7 +270,7 @@ function saveSession() {
     Fluxion.doAjax(
         'fileService',
         'saveFile',
-        {'location': path, 'reference': seqregname, 'session': randomnumber, 'from': getBegin(), 'to': getEnd(), 'seq': seq, 'seqlen': sequencelength, 'track': trackslist, 'tracks': tracks, 'filename': (randomnumber), 'blast': blast, 'edited_tracks': edited_tracks, 'removed_tracks': removed_tracks, 'url': ajaxurl},
+        {'location': path, 'reference': seqregname, 'coord_sys': coord, 'session': randomnumber, 'from': getBegin(), 'to': getEnd(), 'seq': seq, 'seqlen': sequencelength, 'track': trackslist, 'tracks': tracks, 'filename': (randomnumber), 'blast': blast, 'edited_tracks': edited_tracks, 'removed_tracks': removed_tracks, 'url': ajaxurl},
         {'doOnSuccess': function (json) {
             jQuery("#export").html("<a target = '_blank' href='" + json.link + "'>Export</a>")
             jQuery("#export").show();
@@ -287,6 +290,7 @@ function loadSession(query) {
             sequencelength = json.seqlen;
             track_list = json.tracklist;
             randomnumber = json.session;
+            coord = json.coord_sys;
             jQuery("#sessionid").html("<b>Session Id: </b><a  href='./session.jsp?query=" + randomnumber + "' target='_blank'>" + randomnumber + "</a> Saved at " + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds());
             jQuery("#sessionid").show();
 
@@ -537,7 +541,7 @@ function getReferences(show) {
                     else {
                         jQuery("#refmap").append("<div onclick='jumpToOther(event, " + length + ",\"" + json.seqregion[referenceLength].name + "\",\"" + json.seqregion[referenceLength].coord + "\");' class='refmap' id='" + json.seqregion[referenceLength].name + "' style='left: " + left + "px; width:" + width + "px; height:" + height + "px;'></div>");
                     }
-                    jQuery("#refmap").append("<div style='position:absolute; bottom: 0px; left: " + (left) + "px; '>" + stringTrim(json.seqregion[referenceLength].name, width * 2) + "</div>");
+                    jQuery("#refmap").append("<div style='position:absolute; bottom: 0px; left: " + (left) + "px; '>" + stringTrim(json.seqregion[referenceLength].name, width * 3) + "</div>");
                     jQuery("#map").fadeIn();
                 }
                 if (show) {
