@@ -39,8 +39,9 @@ function getDragableLeft() {
 function setDragableLeft(left) {
     jQuery("#draggable").animate({"left": left}, 100, function () {
         setNavPanel()
-        setMapMarkerTop(getBegin());
-
+        if(jQuery('#map').is(':visible') ) {
+            setMapMarkerTop(getBegin());
+        }
     });
 }
 
@@ -69,7 +70,9 @@ function setDragableWidth(width) {
 
     jQuery("#leftbig").attr('title', "Move Left(" + diff + "" + bp + ")");
     jQuery("#rightbig").attr('title', "Move Right(" + diff + "" + bp + ")");
-    setMapMarkerHeight(getEnd() - getBegin())
+    if(jQuery('#map').is(':visible') ) {
+        setMapMarkerHeight(getEnd() - getBegin())
+    }
 
 }
 
