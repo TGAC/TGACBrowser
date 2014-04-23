@@ -7,26 +7,26 @@
 # This file is part of TGAC Browser.
 #
 # TGAC Browser is free software: you can redistribute it and/or modify
-# it under the terms of the GNU eachEntryral Public License as published by
+# it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
 # TGAC Browser is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU eachEntryral Public License for more details.
+# GNU General Public License for more details.
 #
-# You should have received a copy of the GNU eachEntryral Public License
+# You should have received a copy of the GNU General Public License
 # along with TGAC Browser.  If not, see <http://www.gnu.org/licenses/>.
 #
 # ***********************************************************************
 #
  */
 
-package uk.ac.bbsrc.tgac.browser.service.ajax;
+package uk.ac.bbsrc.tgac.browser.service.ajax.javagenomicsio;
 
-import edu.unc.genomics.VCFEntry;
-import edu.unc.genomics.io.VCFFileReader;
+import edu.unc.genomics.*;
+import edu.unc.genomics.io.GFFFileReader;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sourceforge.fluxion.ajax.Ajaxified;
@@ -47,16 +47,16 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 @Ajaxified
-public class VCFService {
+public class GFFService {
 
-    protected static final Logger log = LoggerFactory.getLogger(VCFService.class);
+    protected static final Logger log = LoggerFactory.getLogger(GFFService.class);
 
 
     private Util util = new Util();
 
 
     /**
-     * Count reads in VCF file
+     * Count reads in GFF file
      *
      * @param start     long Start position from where track details to be extracted
      * @param end       long End position to where track details to be extracted
@@ -66,30 +66,29 @@ public class VCFService {
      * @return int no of reads
      * @throws Exception
      */
-    public static int countVCF(long start, long end, int delta, String trackId, String reference) throws Exception {
-        log.info("\n\n\n\n\nVCF count");
-
-
+    public static int countGFF(long start, long end, int delta, String trackId, String reference) throws Exception {
         Path path = Paths.get(trackId);
-        int eachEntry = 0;
+        int gene = 0;
 
         try {
-            VCFFileReader reader = new VCFFileReader(path);
-            for (VCFEntry entry : reader) { // All entries in the file
+            GFFFileReader reader = new GFFFileReader(path);
+            for (GFFEntry entry : reader) { // All entries in the file
                 if (entry.getChr().equals(reference) && entry.getStart() >= start && entry.getStop() <= end) {
-                    eachEntry++;
+                    if (entry.getFeature().toLowerCase().contains("gene")) {
+                        gene++;
+                    }
                 }
             }
 
-            return eachEntry;
+            return gene;
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            throw new Exception("count VCF :" + e.getMessage());
+            throw new Exception("count GFF :" + e.getMessage());
         }
     }
 
     /**
-     * Read VCF file to get read information
+     * Read GFF file to get read information
      *
      * @param start     long Start position from where track details to be extracted
      * @param end       long End position to where track details to be extracted
@@ -99,26 +98,31 @@ public class VCFService {
      * @return JSONArray of tracks
      * @throws Exception
      */
-    public JSONArray getVCFReads(long start, long end, int delta, String trackId, String reference) throws Exception {
-        log.info("\n\n\n\n\nVCF reads");
-
-        JSONArray VCF = new JSONArray();
+    public JSONArray getGFFReads(long start, long end, int delta, String trackId, String reference) throws Exception {
+        JSONArray wig = new JSONArray();
         JSONObject response = new JSONObject();
         List<Integer> ends = new ArrayList<Integer>();
         ends.add(0, 0);
 
-        List<Integer> eachEntrys_ends = new ArrayList<Integer>();
-        eachEntrys_ends.add(0, 0);
+        List<Integer> genes_ends = new ArrayList<Integer>();
+        genes_ends.add(0, 0);
 
         Path path = Paths.get(trackId);
 
 
         try {
-            VCFFileReader reader = new VCFFileReader(path);
+            GFFFileReader reader = new GFFFileReader(path);
 
-            JSONObject eachEntry = new JSONObject();
+            JSONObject gene = new JSONObject();
+            JSONObject transcript = new JSONObject();
+            JSONObject exon = new JSONObject();
 
-            for (VCFEntry entry : reader) { // All entries in the file
+            JSONArray exonList = new JSONArray();
+            JSONArray transcriptList = new JSONArray();
+            boolean genes = false;
+            boolean transcripts = false;
+
+            for (GFFEntry entry : reader) { // All entries in the file
                 // do what you want with the entry
                 // maybe store entries from chr1
                 int start_pos, end_pos;
@@ -128,33 +132,56 @@ public class VCFService {
                     start_pos = entry.getStart();
                     end_pos = entry.getStop();
 
+                    if (entry.getFeature().toLowerCase().contains("gene")) {
+                        if (genes) {
+                            gene.put("transcript", transcriptList);
+                            wig.add(gene);
+                            transcriptList = new JSONArray();
+                        }
+                        genes = true;
+                        gene.put("id", entry.getId());
+                        gene.put("start", start_pos);
+                        gene.put("end", end_pos);
+                        gene.put("source", entry.getSource());
 
-                    eachEntry.put("id", entry.getId());
-                    eachEntry.put("start", start_pos);
-                    eachEntry.put("end", end_pos);
-                    eachEntry.put("info", entry.getInfoString());
-                    eachEntry.put("qual", entry.getQual());
-                    eachEntry.put("alt", entry.getAlt());
-                    eachEntry.put("filter", entry.getFilter());
-                    eachEntry.put("genotype", entry.getGenotypes());
-                    eachEntry.put("ref",entry.getRef());
+                        transcript.put("domain", util.stackLayerInt(genes_ends, start_pos, delta, end_pos));
+                        genes_ends = util.stackLayerList(ends, start_pos, delta, end_pos);
+                    } else if (entry.getFeature().toLowerCase().contains("mrna")) {
+                        if (transcripts) {
+                            transcript.put("Exons", exonList);
+                            transcriptList.add(transcript);
+                            exonList = new JSONArray();
+                        }
+                        transcripts = true;
+                        transcript.put("id", entry.getId());
+                        transcript.put("start", start_pos);
+                        transcript.put("end", end_pos);
+                        transcript.put("layer", util.stackLayerInt(ends, start_pos, delta, end_pos));
+                        transcript.put("domain", entry.getSource());
 
-
-                    VCF.add(eachEntry);
-
+                        ends = util.stackLayerList(ends, start_pos, delta, end_pos);
+                    } else if (entry.getFeature().toLowerCase().contains("exon")) {
+                        exon.put("start", start_pos);
+                        exon.put("end", end_pos);
+                        exonList.add(exon);
+                    }
                 }
             }
-            return VCF;
+            if (genes) {
+                gene.put("transcript", transcriptList);
+                wig.add(gene);
+            }
+            return wig;
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             response.put("error", e.toString() + " " + e.getMessage());
-            VCF.add(response);
-            return VCF;
+            wig.add(response);
+            return wig;
         }
     }
 
     /**
-     * Read VCF file for getting overview information in form of graphs
+     * Read GFF file for getting overview information in form of graphs
      *
      * @param start     long Start position from where track details to be extracted
      * @param end       long End position to where track details to be extracted
@@ -165,28 +192,26 @@ public class VCFService {
      * @throws Exception
      */
 
-    public static JSONArray getVCFGraphs(long start, long end, int delta, String trackId, String reference) throws Exception {
+    public static JSONArray getGFFGraphs(long start, long end, int delta, String trackId, String reference) throws Exception {
 
-        log.info("\n\n\n\n\nVCF graphs");
-
-        JSONArray VCF = new JSONArray();
+        JSONArray gff = new JSONArray();
         JSONObject response = new JSONObject();
 
         Path path = Paths.get(trackId);
 
         try {
             JSONObject read = new JSONObject();
-            List<Integer> eachEntry_start = new ArrayList<>();
-            List<Integer> eachEntry_end = new ArrayList<>();
+            List<Integer> gene_start = new ArrayList<>();
+            List<Integer> gene_end = new ArrayList<>();
 
             long diff = (end - start) / 400;
             long temp_start, temp_end;
 
-            VCFFileReader reader = new VCFFileReader(path);
-            for (VCFEntry entry : reader) { // All entries in the file
+            GFFFileReader reader = new GFFFileReader(path);
+            for (GFFEntry entry : reader) { // All entries in the file
                 if (entry.getChr().equals(reference) && entry.getStart() >= start && entry.getStop() <= end) {
-                    eachEntry_start.add(entry.getStart());
-                    eachEntry_end.add(entry.getStop());
+                        gene_start.add(entry.getStart());
+                        gene_end.add(entry.getStop());
                 }
             }
 
@@ -195,24 +220,24 @@ public class VCFService {
                 temp_end = temp_start + diff;
                 int count = 0;
 
-                for (Integer entry : eachEntry_start) { // All entries in the file
-                    if (entry < temp_end && entry > temp_start) ;
+                for (Integer entry : gene_start) { // All entries in the file
+                    if(entry < temp_end && entry > temp_start);
                     {
                         count++;
-                        eachEntry_start.remove(entry);
+                        gene_start.remove(entry);
                     }
                 }
                 read.put("start", temp_start);
                 read.put("end", temp_end);
                 read.put("graph", count);
-                VCF.add(read);
+                gff.add(read);
             }
-            return VCF;
+            return gff;
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             response.put("error", e.toString() + " " + e.getMessage());
-            VCF.add(response);
-            return VCF;
+            gff.add(response);
+            return gff;
         }
 
     }

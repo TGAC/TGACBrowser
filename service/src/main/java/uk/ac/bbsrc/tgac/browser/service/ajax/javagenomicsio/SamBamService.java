@@ -23,24 +23,18 @@
 #
  */
 
-package uk.ac.bbsrc.tgac.browser.service.ajax;
+package uk.ac.bbsrc.tgac.browser.service.ajax.javagenomicsio;
 
 import edu.unc.genomics.SAMEntry;
 import edu.unc.genomics.io.BAMFileReader;
-import edu.unc.genomics.io.BedFileWriter;
 import edu.unc.genomics.io.IntervalFileReader;
-import edu.unc.genomics.io.IntervalFileSnifferException;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import net.sf.samtools.*;
 import net.sourceforge.fluxion.ajax.Ajaxified;
-import org.broad.tribble.*;
 
 import edu.unc.genomics.Interval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import uk.ac.bbsrc.tgac.browser.core.store.UtilsStore;
 import uk.ac.bbsrc.tgac.browser.store.ensembl.Util;
 
 import java.io.BufferedReader;
@@ -51,8 +45,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created with IntelliJ IDEA.

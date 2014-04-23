@@ -23,10 +23,9 @@
 #
  */
 
-package uk.ac.bbsrc.tgac.browser.service.ajax;
+package uk.ac.bbsrc.tgac.browser.service.ajax.javagenomicsio;
 
 import edu.unc.genomics.Contig;
-import edu.unc.genomics.io.TextWigFileReader;
 import edu.unc.genomics.io.WigFileException;
 import edu.unc.genomics.io.WigFileReader;
 import net.sf.json.JSONArray;
@@ -35,7 +34,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
-import edu.unc.genomics.io.BigWigFileReader;
+
 import edu.unc.genomics.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;

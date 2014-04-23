@@ -17,7 +17,7 @@
     </bean>
 
     <bean id="samBamService"
-          class="uk.ac.bbsrc.tgac.browser.service.ajax.SamBamService">
+          class="uk.ac.bbsrc.tgac.browser.service.ajax.javagenomicsio.SamBamService">
         <!-- <property name="seqStore" ref="sequenceStore"/> -->
     </bean>
 

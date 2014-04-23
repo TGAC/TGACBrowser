@@ -33,11 +33,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.bbsrc.tgac.browser.core.store.SequenceStore;
-import uk.ac.bbsrc.tgac.browser.service.ajax.FileService;
-import uk.ac.bbsrc.tgac.browser.service.ajax.SamBamService;
-import uk.ac.bbsrc.tgac.browser.service.ajax.BigWigService;
+import uk.ac.bbsrc.tgac.browser.service.ajax.javagenomicsio.BigWigService;
 import uk.ac.bbsrc.tgac.browser.core.store.*;
 import uk.ac.bbsrc.tgac.browser.core.store.DafStore;
+import uk.ac.bbsrc.tgac.browser.service.ajax.javagenomicsio.GFFService;
+import uk.ac.bbsrc.tgac.browser.service.ajax.javagenomicsio.SamBamService;
+import uk.ac.bbsrc.tgac.browser.service.ajax.javagenomicsio.VCFService;
 
 import javax.servlet.http.HttpSession;
 import java.io.*;
