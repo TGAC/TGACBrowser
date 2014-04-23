@@ -96,6 +96,18 @@ body {
     color: white;
     float: left;
     font-size: small;
+    /*left: 0;*/
+    left: 110px;
+    margin-left: 5px;
+    position: fixed;
+}
+
+
+#logo {
+    -moz-user-select: -moz-none;
+    color: white;
+    float: left;
+    font-size: small;
     left: 0;
     margin-left: 5px;
     position: fixed;

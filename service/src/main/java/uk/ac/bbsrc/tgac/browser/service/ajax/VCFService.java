@@ -7,16 +7,16 @@
 # This file is part of TGAC Browser.
 #
 # TGAC Browser is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
+# it under the terms of the GNU eachEntryral Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
 # TGAC Browser is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# GNU eachEntryral Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
+# You should have received a copy of the GNU eachEntryral Public License
 # along with TGAC Browser.  If not, see <http://www.gnu.org/licenses/>.
 #
 # ***********************************************************************
@@ -71,17 +71,17 @@ public class VCFService {
 
 
         Path path = Paths.get(trackId);
-        int gene = 0;
+        int eachEntry = 0;
 
         try {
             VCFFileReader reader = new VCFFileReader(path);
             for (VCFEntry entry : reader) { // All entries in the file
                 if (entry.getChr().equals(reference) && entry.getStart() >= start && entry.getStop() <= end) {
-                    gene++;
+                    eachEntry++;
                 }
             }
 
-            return gene;
+            return eachEntry;
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             throw new Exception("count VCF :" + e.getMessage());
@@ -102,13 +102,13 @@ public class VCFService {
     public JSONArray getVCFReads(long start, long end, int delta, String trackId, String reference) throws Exception {
         log.info("\n\n\n\n\nVCF reads");
 
-        JSONArray wig = new JSONArray();
+        JSONArray VCF = new JSONArray();
         JSONObject response = new JSONObject();
         List<Integer> ends = new ArrayList<Integer>();
         ends.add(0, 0);
 
-        List<Integer> genes_ends = new ArrayList<Integer>();
-        genes_ends.add(0, 0);
+        List<Integer> eachEntrys_ends = new ArrayList<Integer>();
+        eachEntrys_ends.add(0, 0);
 
         Path path = Paths.get(trackId);
 
@@ -116,14 +116,7 @@ public class VCFService {
         try {
             VCFFileReader reader = new VCFFileReader(path);
 
-            JSONObject gene = new JSONObject();
-            JSONObject transcript = new JSONObject();
-            JSONObject exon = new JSONObject();
-
-            JSONArray exonList = new JSONArray();
-            JSONArray transcriptList = new JSONArray();
-            boolean genes = false;
-            boolean transcripts = false;
+            JSONObject eachEntry = new JSONObject();
 
             for (VCFEntry entry : reader) { // All entries in the file
                 // do what you want with the entry
@@ -136,26 +129,27 @@ public class VCFService {
                     end_pos = entry.getStop();
 
 
-                    gene.put("id", entry.getId());
-                    gene.put("start", start_pos);
-                    gene.put("end", end_pos);
-                    gene.put("info", entry.getInfoString());
-                    gene.put("qual", entry.getQual());
-                    gene.put("alt", entry.getAlt());
-                    gene.put("filter", entry.getFilter());
-                    gene.put("genotype", entry.getGenotypes());
+                    eachEntry.put("id", entry.getId());
+                    eachEntry.put("start", start_pos);
+                    eachEntry.put("end", end_pos);
+                    eachEntry.put("info", entry.getInfoString());
+                    eachEntry.put("qual", entry.getQual());
+                    eachEntry.put("alt", entry.getAlt());
+                    eachEntry.put("filter", entry.getFilter());
+                    eachEntry.put("genotype", entry.getGenotypes());
+                    eachEntry.put("ref",entry.getRef());
 
 
-                    wig.add(gene);
+                    VCF.add(eachEntry);
 
                 }
             }
-            return wig;
+            return VCF;
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             response.put("error", e.toString() + " " + e.getMessage());
-            wig.add(response);
-            return wig;
+            VCF.add(response);
+            return VCF;
         }
     }
 
@@ -182,8 +176,8 @@ public class VCFService {
 
         try {
             JSONObject read = new JSONObject();
-            List<Integer> gene_start = new ArrayList<>();
-            List<Integer> gene_end = new ArrayList<>();
+            List<Integer> eachEntry_start = new ArrayList<>();
+            List<Integer> eachEntry_end = new ArrayList<>();
 
             long diff = (end - start) / 400;
             long temp_start, temp_end;
@@ -191,8 +185,8 @@ public class VCFService {
             VCFFileReader reader = new VCFFileReader(path);
             for (VCFEntry entry : reader) { // All entries in the file
                 if (entry.getChr().equals(reference) && entry.getStart() >= start && entry.getStop() <= end) {
-                    gene_start.add(entry.getStart());
-                    gene_end.add(entry.getStop());
+                    eachEntry_start.add(entry.getStart());
+                    eachEntry_end.add(entry.getStop());
                 }
             }
 
@@ -201,11 +195,11 @@ public class VCFService {
                 temp_end = temp_start + diff;
                 int count = 0;
 
-                for (Integer entry : gene_start) { // All entries in the file
+                for (Integer entry : eachEntry_start) { // All entries in the file
                     if (entry < temp_end && entry > temp_start) ;
                     {
                         count++;
-                        gene_start.remove(entry);
+                        eachEntry_start.remove(entry);
                     }
                 }
                 read.put("start", temp_start);

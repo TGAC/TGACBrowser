@@ -203,7 +203,7 @@ function dispBLAST(div, track) {
                 var blast_desc = blasts[i].desc.replace(">", "");
                 var score = blasts[i].score;
 
-                if(blast_start >blast_stop){
+                if (blast_start > blast_stop) {
                     blast_start = blasts[i].end;
                     blast_stop = blasts[i].start;
                 }
@@ -425,16 +425,16 @@ function dispGenes(div, track, expand, className) {
                 }
                 var top = genes[len].layer * 20 + 15;
 
-                if(max < top){
+                if (max < top) {
                     max = top;
                 }
-                    var startposition = (gene_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                var startposition = (gene_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                 var stopposition = (gene_stop - gene_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
                 var temp = jQuery("<div>").attr({
                     'id': track + "" + len,
-                    'class': trackClass + " " + className+"_exon",
+                    'class': trackClass + " " + className + "_exon",
                     'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width :" + stopposition + "px;",
                     'title': label,
                     'onClick': "trackClick(\"" + track + "\",\"" + len + "\")",
@@ -536,10 +536,9 @@ function dispGenes(div, track, expand, className) {
     jQuery("#" + track + "_wrapper").css("max-height", max);
 
 
-
-    if(max >  parseInt(jQuery("#" + track + "_wrapper").css("height"))){
+    if (max > parseInt(jQuery("#" + track + "_wrapper").css("height"))) {
         jQuery("#" + track + "_wrapper").children(".ui-resizable-handle").addClass("resize-arrow")
-    } else{
+    } else {
         jQuery("#" + track + "_wrapper").children(".ui-resizable-handle").removeClass("resize-arrow")
 
     }
@@ -642,7 +641,7 @@ function dispGeneExon(track, genestrand, className, div) {
                     last = current;
                 }
                 else if (exon_start < transcript_start && exon_stop > transcript_end) {
-                    startposition =((exon_start - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                    startposition = ((exon_start - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                     stopposition = (transcript_start - exon_start) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
                     jQuery("<div>").attr({
@@ -650,7 +649,7 @@ function dispGeneExon(track, genestrand, className, div) {
                         'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
                     }).appendTo(div);
 
-                    startposition = ((transcript_end - newStart_temp)-1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                    startposition = ((transcript_end - newStart_temp) - 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                     stopposition = (exon_stop - transcript_end + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
@@ -955,9 +954,206 @@ function dispTrack(div, trackName, className) {
 
     jQuery("#" + trackName + "_wrapper").css("max-height", max);
 
-    if(max >  parseInt(jQuery("#" + trackName + "_wrapper").css("height"))){
+    if (max > parseInt(jQuery("#" + trackName + "_wrapper").css("height"))) {
         jQuery("#" + trackName + "_wrapper").children(".ui-resizable-handle").addClass("resize-arrow")
-    } else{
+    } else {
+        jQuery("#" + trackName + "_wrapper").children(".ui-resizable-handle").removeClass("resize-arrow")
+
+    }
+}
+
+function dispVCF(div, trackName, className) {
+
+    var labelclass = "label" + trackName;
+    var modi_style;
+    var labeltoogle = "display : in-line;";
+    var trackId;
+    var trackClass, label;
+    var track_html = [];
+    var max = 110;
+
+
+    coord = false;
+    trackClass = "track";
+
+
+    var j = 0;
+
+
+    if (jQuery('input[name=' + trackName + 'mergedCheckbox]').is(':checked')) {
+        jQuery(div).fadeOut();
+        jQuery("#" + trackName + "_wrapper").fadeOut();
+        div = "#mergedtrack";
+        jQuery("#mergedtrack").fadeIn();
+        jQuery("#mergedtrack_wrapper").fadeIn();
+
+        track_html.push("(" + merged_track_list + ")");
+        jQuery("#mergelabel").html(track_html.join(""));
+
+        trackClass += " mergedtrack";
+        labelclass = "Merged_Track";
+    }
+    else {
+        jQuery(div).fadeIn();
+        jQuery("#" + trackName + "_wrapper").fadeIn();
+    }
+
+
+    if (!window[trackName] || window[trackName] == "loading") {
+        if (div.indexOf("mergedtrack") <= 0) {
+            jQuery(div).html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
+            jQuery(div).fadeIn();
+            jQuery("#" + trackName + "_wrapper").fadeIn();
+        }
+    }
+    else if (window[trackName][0] == "getHit no result found") {
+        if (div.indexOf("mergedtrack") <= 0) {
+            jQuery('#' + trackName + 'Checkbox').attr('checked', false);
+            jQuery(div).html();
+            jQuery(div).fadeOut();
+            jQuery("#" + trackName + "_wrapper").fadeOut();
+        }
+    }
+    else {
+        var partial = (getEnd() - getBegin()) / 2;
+        var start = getBegin() - partial;
+        var end = parseInt(getEnd()) + parseInt(partial);
+        var diff = getEnd() - getBegin();
+        var newStart_temp = getBegin();
+        var newEnd_temp = getEnd();
+        var maxLen_temp = jQuery("#canvas").css("width");
+
+        var track = window[trackName];
+
+        if (track[0] == null) {
+            if (div.indexOf("mergedtrack") <= 0) {
+                track_html = [];
+                track_html.push("<font size=4><center>No data available for selected region</center></font>");
+                jQuery(div).html(track_html.join(""));
+            }
+        }
+        else if (track.length > 0 && (track.length < 10000 || diff <= minWidth)) {
+            if (div.indexOf("mergedtrack") <= 0) {
+                track_html = [];
+                jQuery(div).html(track_html.join(""));
+            }
+            var coord;
+
+            var track_len = track.length;
+            var spanclass = "ui-icon ui-icon-carat-1-e";
+            var border = "";
+
+            var temp = newEnd_temp - newStart_temp;
+            var seqLen = visualLength(temp);
+            if (parseFloat(seqLen) <= (parseFloat(maxLen))) {
+                while (track_len--) {
+
+                    var strand = track[track_len].strand;
+
+
+                    var track_start = track[track_len].start;
+                    var track_stop = track[track_len].end ? track[track_len].end : parseInt(track[track_len].start) + 1;
+
+                    if (track[track_len].flag) {
+                        border = "border: 1px solid black;";
+                    }
+                    var track_desc = track[track_len].desc;
+                    var top;
+                    if (coord || track[track_len].layer) {
+                        top = (track[track_len].layer) * 10;
+                        if (track[track_len].layer > j) {
+                            j = track[track_len].layer;
+                        }
+                    }
+                    else {
+                        top = ((track_len) % (layers) + 1) * 20 + 15;
+                    }
+                    if (track[track_len].colour) {
+                        modi_style = 'background:' + track[track_len].colour + "; ";
+                    }
+                    else {
+                        modi_style = '';
+                    }
+                    var startposition = (track_start - newStart_temp) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen_temp) / 2;
+                    var stopposition = (track_stop - track_start + 1) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp);
+
+                    if (stopposition < 2) {
+                        stopposition = 2;
+                    }
+
+                    label = track[track_len].ref + "<br>" + track[track_len].alt;
+
+                    jQuery("<div>").attr({
+                        'id': trackName + "" + track_len,
+                        'class': trackClass,
+                        'style': "font-family: 'Courier New',Courier,monospace; font-size: 13px; " + border + " " + modi_style + " TOP:" + top + "px; LEFT:" + (startposition) + "px; width:" + (stopposition) + "px;",
+                        'onClick': "trackClick(\"" + trackName + "\",\"" + track_len + "\")"
+                    }).html(label).appendTo(div);
+
+
+                }
+
+            } else {
+                while (track_len--) {
+
+                    var strand = track[track_len].strand;
+
+
+                    var track_start = track[track_len].start;
+                    var track_stop = track[track_len].end ? track[track_len].end : parseInt(track[track_len].start) + 1;
+
+                    if (track[track_len].flag) {
+                        border = "border: 1px solid black;";
+                    }
+                    var track_desc = track[track_len].desc;
+                    var top;
+                    if (coord || track[track_len].layer) {
+                        top = (track[track_len].layer) * 10;
+                        if (track[track_len].layer > j) {
+                            j = track[track_len].layer;
+                        }
+                    }
+                    else {
+                        top = ((track_len) % (layers) + 1) * 20 + 15;
+                    }
+                    if (track[track_len].colour) {
+                        modi_style = 'background:' + track[track_len].colour + "; ";
+                    }
+                    else {
+                        modi_style = '';
+                    }
+                    var startposition = (track_start - newStart_temp) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen_temp) / 2;
+                    var stopposition = (track_stop - track_start + 1) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp);
+
+                    if (stopposition < 2) {
+                        stopposition = 2;
+                    }
+
+                    label = track[track_len].ref + "<br>" + track[track_len].alt;
+
+                    jQuery("<div>").attr({
+                        'id': trackName + "" + track_len,
+                        'class': trackClass +" "+className,
+                        'style': "font-family: 'Courier New',Courier,monospace; font-size: 13px; " + border + " " + modi_style + " TOP:" + top + "px; LEFT:" + (startposition) + "px; width:" + (stopposition) + "px;",
+                        'onClick': "trackClick(\"" + trackName + "\",\"" + track_len + "\")"
+                    }).appendTo(div);
+
+
+                }
+            }
+        }
+        else if (track.length >= 10000) {
+            dispGraph(div, trackName, trackId)
+        }
+    }
+
+    max = parseInt(jQuery(div)[0].scrollHeight) + 50;
+
+    jQuery("#" + trackName + "_wrapper").css("max-height", max);
+
+    if (max > parseInt(jQuery("#" + trackName + "_wrapper").css("height"))) {
+        jQuery("#" + trackName + "_wrapper").children(".ui-resizable-handle").addClass("resize-arrow")
+    } else {
         jQuery("#" + trackName + "_wrapper").children(".ui-resizable-handle").removeClass("resize-arrow")
 
     }
@@ -991,7 +1187,7 @@ function dispCigarLine(cigars, start, top) {
                 stopposition = (length) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
                 track_html += trackHTML(startposition, stopposition, top, trackClass);
                 cigar_pos = parseInt(cigar_pos) + parseInt(length)
-            }   else if (key == "N") {
+            } else if (key == "N") {
                 trackClass = "skip";
                 startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                 stopposition = (length) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
@@ -1047,7 +1243,7 @@ function dispCigar(cigars, start, top) {
         else if (key == "D") {
             trackClass = "delete";
         }
-        else if (key == "D" || key == "N" ) {
+        else if (key == "D" || key == "N") {
             trackClass = "skip";
         }
 
