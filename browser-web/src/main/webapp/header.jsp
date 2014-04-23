@@ -89,8 +89,9 @@
 
 
 <div class="headerbar">
-    <div id="dbinfo"></div>
-
+    <div id="logo">    <img height="30px" src="images/browser/TGAC_white.png" alt=""></a>
+    </div>
+    <%--<div id="dbinfo"></div>--%>
     <center>
 
         <a class="headerlink" href="<c:url value="/"/>"> <font color=white> TGAC Browser
