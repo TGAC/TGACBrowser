@@ -168,7 +168,7 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
             List<Map<String, Object>> maps = template.queryForList(GET_GENE_SEARCH, new Object[]{'%' + searchQuery + '%'});
             for (Map map : maps) {
                 JSONObject eachGene = new JSONObject();
-                eachGene.put("Type", getLogicNameByAnalysisId(Integer.parseInt(map.get("analysis_id").toString())));
+                eachGene.put("Type","Gene_"+getLogicNameByAnalysisId(Integer.parseInt(map.get("analysis_id").toString())));
                 eachGene.put("name", map.get("description"));
                 if (checkChromosome()) {
                     int pos = getPositionOnReference(Integer.parseInt(map.get("seq_region_id").toString()), 0);
@@ -182,6 +182,8 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
                     eachGene.put("parent", getSeqRegionName(Integer.parseInt(map.get("seq_region_id").toString())));
                     eachGene.put("coord", template.queryForObject(GET_coord_sys_id, new Object[]{map.get("seq_region_id")}, String.class));
                 }
+                log.info("\n\n\t\tanalyisis "+map.get("analysis_id"));
+
                 eachGene.put("analysis_id", template.queryForObject(GET_LOGIC_NAME_FROM_ANALYSIS_ID, new Object[]{map.get("analysis_id")}, String.class));
                 genes.add(eachGene);
             }
@@ -316,7 +318,10 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
 
     private boolean checkCoord(int id, String str) {
         boolean check = false;
+        log.info("\n\n\ncheckCoord = "+id);
         int cood_sys_id = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{id}, Integer.class);
+        log.info("\n\n\ncheckCoord = "+cood_sys_id);
+
         List<Map<String, Object>> maps = template.queryForList(CHECK_Coord_sys_attr, new Object[]{cood_sys_id, '%' + str + '%', '%' + str + '%'});
         if (maps.size() > 0) {
             check = true;
@@ -364,6 +369,7 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
         if (checkCoord(id, "chr")) {
             ref_id = id;
         } else {
+            log.info("\n\n\t\tgetassemblyref "+id);
             List<Map<String, Object>> maps = template.queryForList(GET_reference_for_Assembly, new Object[]{id});
             for (Map map : maps) {
                 if (checkCoord(Integer.parseInt(map.get("asm_seq_region_id").toString()), "chr")) {
@@ -378,6 +384,7 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
 
     public String getLogicNameByAnalysisId(int id) throws IOException {
         try {
+            log.info("\n\n\t\tanalyisis "+id);
             String str = template.queryForObject(GET_LOGIC_NAME_FROM_ANALYSIS_ID, new Object[]{id}, String.class);
             return str;
         } catch (EmptyResultDataAccessException e) {
@@ -395,7 +402,7 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
               log.info("\n\n\ntranscript "+map.toString());
 
                 JSONObject eachGene = new JSONObject();
-                eachGene.put("Type", getLogicNameByAnalysisId(Integer.parseInt(map.get("analysis_id").toString())));
+                eachGene.put("Type", "Transcript_"+getLogicNameByAnalysisId(Integer.parseInt(map.get("analysis_id").toString())));
                 eachGene.put("name", map.get("description"));
                 if (checkChromosome()) {
                     int pos = getPositionOnReference(Integer.parseInt(map.get("seq_region_id").toString()), 0);
@@ -409,6 +416,8 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
                     eachGene.put("coord", template.queryForObject(GET_coord_sys_id, new Object[]{map.get("seq_region_id")}, String.class));
                 }
                 log.info("\n\n\ntranscript "+eachGene.toString());
+                log.info("\n\n\t\tanalyisis "+map.get("analysis_id"));
+
                 eachGene.put("analysis_id", template.queryForObject(GET_LOGIC_NAME_FROM_ANALYSIS_ID, new Object[]{map.get("analysis_id")}, String.class));
                 genes.add(eachGene);
             }
@@ -445,7 +454,7 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
                         eachGo.put("coord", template.queryForObject(GET_coord_sys_id, new Object[]{gene.get("seq_region_id")}, String.class));
                     }
                     eachGo.put("value", map.get("value"));
-                    eachGo.put("Type", "Gene");
+                    eachGo.put("Type", "Gene_"+getLogicNameByAnalysisId(Integer.parseInt(gene.get("analysis_id").toString())));
                     eachGo.put("analysis_id", getLogicNameByAnalysisId(Integer.parseInt(gene.get("analysis_id").toString())));
                     GOs.add(eachGo);
                 }
@@ -462,13 +471,13 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
                         int pos = getPositionOnReference(Integer.parseInt(gene.get("seq_region_id").toString()), 0);
                         eachGo.put("start", pos + Integer.parseInt(gene.get("seq_region_start").toString()));
                         eachGo.put("end", pos + Integer.parseInt(gene.get("seq_region_end").toString()));
-                        eachGo.put("parent", getSeqRegionName(getAssemblyReference(Integer.parseInt(map.get("seq_region_id").toString()))));
+                        eachGo.put("parent", getSeqRegionName(getAssemblyReference(Integer.parseInt(gene.get("seq_region_id").toString()))));
                     } else {
                         eachGo.put("start", map.get("seq_region_start"));
                         eachGo.put("end", map.get("seq_region_end"));
                         eachGo.put("parent", getSeqRegionName(Integer.parseInt(gene.get("seq_region_id").toString())));
                     }
-                    eachGo.put("Type", "Transcript");
+                    eachGo.put("Type", "Transcript_"+getLogicNameByAnalysisId(Integer.parseInt(gene.get("analysis_id").toString())));
                     eachGo.put("value", map.get("value"));
                     eachGo.put("analysis_id", getLogicNameByAnalysisId(Integer.parseInt(gene.get("analysis_id").toString())));
                     GOs.add(eachGo);

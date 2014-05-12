@@ -2025,16 +2025,16 @@ span.counter {
 
 #searchResultLegend {
     position: fixed;
-    left: 10px;
     top: 80px;
 }
 
 .searchResultLegend {
-    position: absolute;
+    position: relative;
     height: 10px;
-    width: 100px;
+    width: 200px;
     z-index: 1999;
     text-align: left;
+    padding: 5px;
 }
 
 .textbutton {

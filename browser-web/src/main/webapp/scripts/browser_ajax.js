@@ -579,13 +579,18 @@ function dispOnMap(json, maximumLengthname, maximumsequencelength) {
     jQuery("#searchResultLegend").fadeIn();
 
     if (json.html == "seqregion") {
-        jQuery("#searchResultLegend").html("<div class='searchResultLegend'><input checked type=checkbox name='refmapsearchmarkerseqregion' onClick=jQuery('.refmapsearchmarkerseqregion').toggle()> Seq Region </div> ")
 
         var markers = json.seqregion;
         var seqregionlist = "UnMapped Hits: <br> <table class='list' id='search_hit' ><thead><tr><th>coord-sys</th><th>Name</th><th>Position</th><th>Link</th></tr> </thead>";
         jQuery("#unmapped").hide();
-
+        jQuery("#searchResultLegend").html("")
         for (var i = 0; i < markers.length; i++) {
+
+            if(document.getElementById(markers[i].Type) == null){
+                jQuery("#searchResultLegend").append("<div class='searchResultLegend'>" +
+                    "<input checked type=checkbox name='refmapsearchmarkerseqregion' id='"+markers[i].Type+"' onClick=jQuery('."+markers[i].Type+"').toggle()> "+stringTrim(markers[i].Type, 200)+"" +
+                    " </div> ")
+            }
 
             if (markers[i].parent) {
                 jQuery("#" + markers[i].parent).attr("onclick", "")
@@ -599,7 +604,8 @@ function dispOnMap(json, maximumLengthname, maximumsequencelength) {
                 jQuery("#" + markers[i].parent).append("<div name='" + markers[i].name + "' " +
                     "parent=" + markers[i].parent + " coord=" + markers[i].coord + " start= 0 end=" + (markers[i].end - markers[i].start) + " " +
                     "id='" + markers[i].name + "' " +
-                    "title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' class='refmapsearchmarkerseqregion'  " +
+                    "title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' " +
+                    "class='refmapsearchmarkerseqregion"+" "+  markers[i].Type +"' "+
                     "style='left:" + left + "px; top:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' " +
                     "onclick=clicked_func('" + markers[i].name + "'); >" +
                     "</div>");
@@ -614,12 +620,15 @@ function dispOnMap(json, maximumLengthname, maximumsequencelength) {
     }
 
     if (json.html == "gene" || json.html == "GO" || json.html == "transcript") {
-        jQuery("#searchResultLegend").append("<br><div class='searchResultLegend'><input checked type=checkbox name='refmapsearchmarkergene' onClick=jQuery('.refmapsearchmarkergene').toggle()> Gene </div> ")
-        jQuery("#searchResultLegend").append("<br><div class='searchResultLegend'><input checked type=checkbox name='refmapsearchmarkertranscript' onClick=jQuery('.refmapsearchmarkertranscript').toggle()> Transcript </div> ")
-        jQuery("#searchResultLegend").append("<br><div class='searchResultLegend'><input checked  type=checkbox name='refmapsearchmarkergo' onClick=jQuery('.refmapsearchmarkergo').toggle()> GO </div>")
         var markers = json.gene;
 
         for (var i = 0; i < markers.length; i++) {
+            if(document.getElementById(markers[i].Type) == null){
+                jQuery("#searchResultLegend").append("<div class='searchResultLegend'>" +
+                    "<input checked type=checkbox name='refmapsearchmarkerseqregion' id='"+markers[i].Type+"' onClick=jQuery('."+markers[i].Type+"').toggle()> "+stringTrim(markers[i].Type, 200)+"" +
+                    " </div> ")
+            }
+
             jQuery("#" + markers[i].parent).attr("onclick", "")
             var length = maximumsequencelength * parseFloat(jQuery("#" + markers[i].parent).css('height')) / parseFloat(jQuery("#" + maximumLengthname).css('height'));
             var maptop = ((markers[i].start) * parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
@@ -628,13 +637,25 @@ function dispOnMap(json, maximumLengthname, maximumsequencelength) {
             if (mapheight < 1) {
                 mapheight = 1;
             }
-            jQuery("#" + markers[i].parent).append("<div name='" + markers[i].name + "' parent=" + markers[i].parent + " coord=" + markers[i].coord + " start=" + markers[i].start + " end=" + markers[i].end + " id='" + markers[i].name + "' title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' class='refmapsearchmarkergene'  style='left:" + left + "px; top:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick=clicked_func('" + markers[i].name + "'); ></div>");
+            jQuery("#" + markers[i].parent).append("<div name='" + markers[i].name + "' " +
+                "parent=" + markers[i].parent + " coord=" + markers[i].coord + " start=" + markers[i].start + " end=" + markers[i].end + " id='" + markers[i].name + "' " +
+                "title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' " +
+                "class='refmapsearchmarkergene"+" "+  markers[i].Type +"' "+
+                "style='left:" + left + "px; top:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' " +
+                "onclick=clicked_func('" + markers[i].name + "'); >" +
+                "</div>");
 
         }
 
         var markers = json.transcript;
 
         for (var i = 0; i < markers.length; i++) {
+            if(document.getElementById(markers[i].Type) == null){
+                jQuery("#searchResultLegend").append("<div class='searchResultLegend'>" +
+                    "<input checked type=checkbox name='refmapsearchmarkerseqregion' id='"+markers[i].Type+"' onClick=jQuery('."+markers[i].Type+"').toggle()> "+stringTrim(markers[i].Type, 200)+"" +
+                    " </div> ")
+            }
+
             jQuery("#" + markers[i].parent).attr("onclick", "")
             var length = maximumsequencelength * parseFloat(jQuery("#" + markers[i].parent).css('height')) / parseFloat(jQuery("#" + maximumLengthname).css('height'));
             var maptop = ((markers[i].start) * parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
@@ -643,10 +664,17 @@ function dispOnMap(json, maximumLengthname, maximumsequencelength) {
             if (mapheight < 1) {
                 mapheight = 1;
             }
-            jQuery("#" + markers[i].parent).append("<div name='" + markers[i].name + "' parent=" + markers[i].parent + " coord=" + markers[i].coord + " start=" + markers[i].start + " end=" + markers[i].end + " id='" + markers[i].name + "' title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' class='refmapsearchmarkertranscript'  style='left:" + left + "px; top:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick=clicked_func('" + markers[i].name + "'); ></div>");
+            jQuery("#" + markers[i].parent).append("<div name='" + markers[i].name + "' " +
+                "parent=" + markers[i].parent + " coord=" + markers[i].coord + " start=" + markers[i].start + " end=" + markers[i].end + " id='" + markers[i].name + "' " +
+                "title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' " +
+                "class='refmapsearchmarkertranscript"+" "+  markers[i].Type +"' "+
+                "style='left:" + left + "px; top:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' " +
+                "onclick=clicked_func('" + markers[i].name + "'); >" +
+                "</div>");
         }
 
         var markers = json.GO;
+                jQuery("#searchResultLegend").append("<div class='searchResultLegend'><input checked  type=checkbox name='refmapsearchmarkergo' onClick=jQuery('.refmapsearchmarkergo').toggle()> GO </div>")
 
         for (var i = 0; i < markers.length; i++) {
             var length = maximumsequencelength * parseFloat(jQuery("#" + markers[i].parent).css('height')) / parseFloat(jQuery("#" + maximumLengthname).css('height'));
@@ -656,7 +684,15 @@ function dispOnMap(json, maximumLengthname, maximumsequencelength) {
             if (mapheight < 1) {
                 mapheight = 1;
             }
-            jQuery("#" + markers[i].parent).append("<div name='" + markers[i].name + "' parent=" + markers[i].parent + " coord=" + markers[i].coord + " start=" + markers[i].start + " end=" + markers[i].end + " id='" + markers[i].name + "' title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' class='refmapsearchmarkergo'  style='left:" + left + "px; top:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick=clicked_func('" + markers[i].name + "'); ></div>");
+            jQuery("#" + markers[i].parent).append("<div " +
+                "name='" + markers[i].name + "' " +
+                "parent=" + markers[i].parent + " coord=" + markers[i].coord + " start=" + markers[i].start + " end=" + markers[i].end + " " +
+                "id='" + markers[i].name + "' " +
+                "title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' " +
+                "class='refmapsearchmarkergo"+" "+  markers[i].Type +"' "+
+                "style='left:" + left + "px; top:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' " +
+                "onclick=clicked_func('" + markers[i].name + "'); >" +
+                "</div>");
         }
     }
 
@@ -671,7 +707,7 @@ function clicked_func(element) {
     var parent_main = element.attr("parent");
 
     var temp_element = element;
-    var class_clicked = "." + element.attr('class');
+    var class_clicked = "." + element.attr('class').split(" ")[1];
     var temp = element.prevAll(class_clicked);
     for (var i = 0; i < temp.length; i++) {
         var temp_id = temp[i].id.replace(/\./g, '\\.');
@@ -706,7 +742,7 @@ function clicked_func(element) {
 
 
     var link = "<a target='_blank' href='index.jsp?query=" + name + "&&coord=" + coord + "&&from=" + start + "&&to=" + end + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span><a/>"
-    seqregioncontent += "<tr><td><b><u>" + parent + "</b></u></td><td>" + coord + "</td><td><b><u>" + name + "</b></u></td><td><u><b>" + start + ":" + end + "</u></b></td><td>" + link + "</td>";
+    seqregioncontent += "<tr background=lightgray><td><b>" + parent + "</b></td><td>" + coord + "</td><td><b>" + name + "</b></td><td><b>" + start + ":" + end + "</b></td><td>" + link + "</td>";
 
     var temp = element.nextAll(class_clicked);
 
