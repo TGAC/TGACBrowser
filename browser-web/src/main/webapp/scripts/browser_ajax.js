@@ -543,27 +543,37 @@ function getReferences(show) {
                     jQuery("#refmap").append("<div style='position:absolute; bottom: 0px; left: " + (left) + "px; '>" + stringTrim(json.seqregion[referenceLength].name, width * 3) + "</div>");
                     jQuery("#map").fadeIn();
                 }
+
                 if (show) {
                     jQuery("#searchresultMap").show;
-
+                    jQuery("#mapmarker").fadeIn();
                     if (show.html != "one") {
+
+                        jQuery("#mapmarker").fadeOut();
                         dispOnMap(show, maximumLengthname, maximumsequencelength);
+
+                    } else {
+                        setMapMarkerLeft();
+                        setMapMarkerTop(getBegin());
+                        setMapMarkerHeight(getEnd() - getBegin())
                     }
 
-                    jQuery("#searchresultMap").html("<center><h1>References</h1><br>Click to jump to reference</center>");
+                    jQuery("#searchresultMap").html("<center><h1>Result for the search</h1><br>Click to jump to reference</center>");
                 }
                 else {
                     getMarkers();
+                    setMapMarkerLeft();
+                    setMapMarkerTop(getBegin());
+                    setMapMarkerHeight(getEnd() - getBegin())
                 }
-                setMapMarkerLeft();
-                setMapMarkerTop(getBegin());
-                setMapMarkerHeight(getEnd() - getBegin())
+
             }
         }
         });
 }
 
 function dispOnMap(json, maximumLengthname, maximumsequencelength) {
+
     var width = 15;
     jQuery("#searchResultLegend").html("")
     jQuery("#searchResultLegend").fadeIn();
@@ -573,6 +583,7 @@ function dispOnMap(json, maximumLengthname, maximumsequencelength) {
 
         var markers = json.seqregion;
         var seqregionlist = "UnMapped Hits: <br> <table class='list' id='search_hit' ><thead><tr><th>coord-sys</th><th>Name</th><th>Position</th><th>Link</th></tr> </thead>";
+        jQuery("#unmapped").hide();
 
         for (var i = 0; i < markers.length; i++) {
 
@@ -585,14 +596,21 @@ function dispOnMap(json, maximumLengthname, maximumsequencelength) {
                 if (mapheight < 1) {
                     mapheight = 1;
                 }
-                jQuery("#" + markers[i].parent).append("<div name='" + markers[i].name + "' parent=" + markers[i].parent + " coord=" + markers[i].coord + " start= 0 end=" + (markers[i].end - markers[i].start) + " id='" + markers[i].name + "' title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' class='refmapsearchmarkerseqregion'  style='left:" + left + "px; top:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick=clicked_func('" + markers[i].name + "'); ></div>");
+                jQuery("#" + markers[i].parent).append("<div name='" + markers[i].name + "' " +
+                    "parent=" + markers[i].parent + " coord=" + markers[i].coord + " start= 0 end=" + (markers[i].end - markers[i].start) + " " +
+                    "id='" + markers[i].name + "' " +
+                    "title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' class='refmapsearchmarkerseqregion'  " +
+                    "style='left:" + left + "px; top:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' " +
+                    "onclick=clicked_func('" + markers[i].name + "'); >" +
+                    "</div>");
             } else {
                 var link = "<a target='_blank' href='index.jsp?query=" + markers[i].name + "&&coord=" + markers[i].coord + "&&from=0&&to=" + markers[i].length + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span><a/>"
                 seqregionlist += "<tr><td>" + markers[i].coord + "</td><td>" + markers[i].name + "</td><td>0:" + markers[i].length + "</td><td>" + link + "</td>";
+                jQuery("#unmapped").show();
             }
         }
 
-       jQuery("#unmapped").html(seqregionlist)
+        jQuery("#unmapped").html(seqregionlist)
     }
 
     if (json.html == "gene" || json.html == "GO" || json.html == "transcript") {
