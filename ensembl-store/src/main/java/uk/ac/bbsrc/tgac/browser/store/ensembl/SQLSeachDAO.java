@@ -166,6 +166,7 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
         try {
             JSONArray genes = new JSONArray();
             List<Map<String, Object>> maps = template.queryForList(GET_GENE_SEARCH, new Object[]{'%' + searchQuery + '%'});
+            int i = 0;
             for (Map map : maps) {
                 JSONObject eachGene = new JSONObject();
                 eachGene.put("Type","Gene_"+getLogicNameByAnalysisId(Integer.parseInt(map.get("analysis_id").toString())));
@@ -186,6 +187,11 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
 
                 eachGene.put("analysis_id", template.queryForObject(GET_LOGIC_NAME_FROM_ANALYSIS_ID, new Object[]{map.get("analysis_id")}, String.class));
                 genes.add(eachGene);
+                i++;
+                if(i > 100)
+                {
+                    break;
+                }
             }
             return genes;
         } catch (EmptyResultDataAccessException e) {
@@ -398,6 +404,8 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
         try {
             JSONArray genes = new JSONArray();
             List<Map<String, Object>> maps = template.queryForList(GET_TRANSCRIPT_SEARCH, new Object[]{'%' + searchQuery + '%'});
+           int i = 0;
+
             for (Map map : maps) {
               log.info("\n\n\ntranscript "+map.toString());
 
@@ -420,6 +428,11 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
 
                 eachGene.put("analysis_id", template.queryForObject(GET_LOGIC_NAME_FROM_ANALYSIS_ID, new Object[]{map.get("analysis_id")}, String.class));
                 genes.add(eachGene);
+                i++;
+                if(i > 100)
+                {
+                    break;
+                }
             }
             return genes;
         } catch (EmptyResultDataAccessException e) {
@@ -436,6 +449,7 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
         try {
             JSONArray GOs = new JSONArray();
             List<Map<String, Object>> maps = template.queryForList(GET_GO_Genes, new Object[]{'%' + searchQuery + '%'});
+           int i = 0;
             for (Map map : maps) {
 
                 List<Map<String, Object>> genes = template.queryForList(GET_GO_Gene_Details, new Object[]{map.get("gene_id").toString()});
@@ -457,9 +471,15 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
                     eachGo.put("Type", "Gene_"+getLogicNameByAnalysisId(Integer.parseInt(gene.get("analysis_id").toString())));
                     eachGo.put("analysis_id", getLogicNameByAnalysisId(Integer.parseInt(gene.get("analysis_id").toString())));
                     GOs.add(eachGo);
+                    i++;
+                    if(i > 100)
+                    {
+                        break;
+                    }
                 }
             }
 
+            i = 0;
             List<Map<String, Object>> transcripts = template.queryForList(GET_GO_Transcripts, new Object[]{'%' + searchQuery + '%'});
             for (Map map : transcripts) {
 
@@ -481,6 +501,11 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
                     eachGo.put("value", map.get("value"));
                     eachGo.put("analysis_id", getLogicNameByAnalysisId(Integer.parseInt(gene.get("analysis_id").toString())));
                     GOs.add(eachGo);
+                    i++;
+                    if(i > 100)
+                    {
+                        break;
+                    }
                 }
             }
             return GOs;

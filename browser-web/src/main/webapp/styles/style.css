@@ -2011,7 +2011,6 @@ span.counter {
 }
 
 #searchresult {
-    background: none repeat scroll 0 0 #D3D3D3;
     float: left;
     left: 10px;
     margin-top: 10px;
@@ -2021,6 +2020,7 @@ span.counter {
     top: 25px;
     z-index: 999;
     left: 200px;
+    width: 50%;
 }
 
 #searchResultLegend {

@@ -896,7 +896,7 @@ function makeSeqRegionList(json, from, to, blast) {
 
     var content = "<h1>Search Results: </h1><br>";
 
-    var seqregioncontent = "";
+    var seqregioncontent = "<h1>Results for searched query</h1> <br> (Limited to first 100 match)";
     for (var i = 0; i < json.seqregion.length; i++) {
 
         if (i == 0) {
@@ -921,7 +921,7 @@ function makeSeqRegionList(json, from, to, blast) {
 
 function makeFeatureList(json, from, to) {
     jQuery('#currentposition').hide();
-    jQuery("#searchresult").html(" <div id=\"searchresultHead\"></div><div id=\"searchnavtabs\"><ul> <li><a href=\"#tabGenes\"><span>Genes</span></a></li>  <li><a href=\"#tabTranscripts\"><span>Transcripts</span></a></li><li><a href=\"#tabGO\"><span>GO</span></a></li> </ul> <div id=\"tabGenes\"></div> <div id=\"tabGO\"> </div>      <div id=\"tabTranscripts\"></div> </div>");
+    jQuery("#searchresult").html("<h1>Results for searched query</h1> <br> (Limited to first 100 match) <br> <div id=\"searchresultHead\"></div><div id=\"searchnavtabs\"><ul> <li><a href=\"#tabGenes\"><span>Genes</span></a></li>  <li><a href=\"#tabTranscripts\"><span>Transcripts</span></a></li><li><a href=\"#tabGO\"><span>GO</span></a></li> </ul> <div id=\"tabGenes\"></div> <div id=\"tabGO\"> </div>      <div id=\"tabTranscripts\"></div> </div>");
     jQuery("#searchresult").fadeIn();
 
     var genecontent = "";
