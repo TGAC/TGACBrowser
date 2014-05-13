@@ -89,7 +89,7 @@ function findminwidth() {
 }
 function browser_coordinates() {
 
-    var temp = "<FONT style=\"BACKGROUND-COLOR: #d3d3d3\">";
+    var temp = "";
     jQuery("#vertical0").html(temp + Math.round(getBegin()));
     jQuery("#vertical1").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.1)));
     jQuery("#vertical2").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.2)));
