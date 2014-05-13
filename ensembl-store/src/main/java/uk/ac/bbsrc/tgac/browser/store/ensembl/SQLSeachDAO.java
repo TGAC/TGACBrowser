@@ -358,7 +358,7 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
 
             String coord_sys_name = template.queryForObject(GET_coord_sys_name, new Object[]{coord_sys_id}, String.class);
             String coord_attrib_name = template.queryForObject(GET_coord_attrib, new Object[]{coord_sys_id}, String.class);
-            if (coord_attrib_name.toLowerCase().contains("chr") || coord_sys_name.toLowerCase().contains("chr")) {
+            if ((coord_attrib_name != null && coord_attrib_name.toLowerCase().contains("chr")) || (coord_sys_name != null && coord_sys_name.toLowerCase().contains("chr"))) {
                 check = true;
             } else {
                 check = false;

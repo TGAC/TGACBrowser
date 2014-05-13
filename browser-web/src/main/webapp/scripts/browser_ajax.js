@@ -558,7 +558,7 @@ function getReferences(show) {
                         setMapMarkerHeight(getEnd() - getBegin())
                     }
 
-                    jQuery("#searchresultMap").html("<center><h1>Result for the search</h1><br>Click to jump to reference</center>");
+                    jQuery("#searchresultMap").html("<center><h1>Result for the search</h1><br> (Limited to first 100 match)</center>");
                 }
                 else {
                     getMarkers();
