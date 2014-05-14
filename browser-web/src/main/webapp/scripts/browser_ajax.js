@@ -36,6 +36,8 @@ function seqregionSearch(query) {
 }
 
 function seqregionSearchPopup(query, from, to, blast) {
+    jQuery('#seqnameh1').html(query);
+
     jQuery("#searchresult").fadeOut();
     jQuery("#searchresultMap").fadeOut();
     jQuery('#sessioninput').fadeOut();
@@ -82,6 +84,8 @@ function seqregionSearchPopup(query, from, to, blast) {
 }
 
 function seqregionSearchwithCoord(query, coord, from, to, blast) {
+    jQuery('#seqnameh1').html(query);
+
     jQuery("#searchresult").fadeOut();
     jQuery("#searchresultMap").fadeOut();
     jQuery('#sessioninput').fadeOut();
@@ -123,6 +127,8 @@ function seqregionSearchwithCoord(query, coord, from, to, blast) {
 
 
 function search(query, from, to, blast) {
+    jQuery('#seqnameh1').html(query);
+
 
     if (track_list) {
         jQuery.cookie('trackslist', track_list.toJSON(), {  path: '/', expires: 10});
@@ -558,7 +564,6 @@ function getReferences(show) {
                         setMapMarkerHeight(getEnd() - getBegin())
                     }
 
-                    jQuery("#searchresultMap").html("<center><h1>Result for the search</h1><br> (Limited to first 100 match)</center>");
                 }
                 else {
                     getMarkers();
@@ -577,6 +582,7 @@ function dispOnMap(json, maximumLengthname, maximumsequencelength) {
     var width = 15;
     jQuery("#searchResultLegend").html("")
     jQuery("#searchResultLegend").fadeIn();
+    jQuery("#searchresultMap").html("<center><h1>Result for the search</h1><br> (Limited to first 100 match)</center>");
 
     if (json.html == "seqregion") {
 
@@ -807,11 +813,12 @@ function changeCSS() {
     jQuery("#draggable").css('top', '229px');
     jQuery("#wrapper").css('top', '265px');
     jQuery("#sequence").css('top', '280px');
-    jQuery(".fakediv").css('top', '260px');
+    jQuery(".fakediv").css('top', '20px');
 
 }
 
 function drawBrowser(json, from, to, blast) {
+    jQuery("#searchresultMap").html("")
     jQuery("#searchresult").fadeOut();
     seq = json.html;
     sequencelength = json.seqlength;

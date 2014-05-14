@@ -148,7 +148,7 @@ body {
 
 .fakediv {
     background: none repeat scroll 0 0 white;
-    height: 40px;
+    height: 220px;
     left: 0;
     position: fixed;
     top: 115px;
@@ -2031,7 +2031,7 @@ span.counter {
 .searchResultLegend {
     position: relative;
     height: 10px;
-    width: 200px;
+    /*width: 200px;*/
     z-index: 1999;
     text-align: left;
     padding: 5px;
@@ -2532,7 +2532,7 @@ span.deleteicon input {
     /*border-left: 1px solid black;*/
     /*border-right: 1px solid black;*/
     z-index: 999;
-    background: white;
+    /*background: white;*/
 }
 
 #mapmarker {
