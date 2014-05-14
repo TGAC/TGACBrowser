@@ -73,7 +73,6 @@ function seqregionSearchPopup(query, from, to, blast) {
                 drawBrowser(json, from, to, blast)
             } else if (json.html == "seqregion") {
                 makeSeqRegionList(json, from, to, blast)
-
             }
             else {
                 drawBrowser(json, from, to, blast)
@@ -725,7 +724,7 @@ function clicked_func(element) {
 
 
         var name = temp_element.attr("title").split(":")[0];
-        var link = "<a target='_blank' href='index.jsp?query=" + parent + "&&coord=" + coord + "&&from=" + start + "&&to= " + end + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span><a/>"
+        var link = "<a target='_blank' href='index.jsp?query=" + name + "&&coord=" + coord + "&&from=" + start + "&&to= " + end + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span><a/>"
 
         seqregioncontent = "<tr><td>" + parent + "</td><td>" + coord + "</td><td>" + name + "</td><td>" + start + ":" + end + "</td><td>" + link + "</td>" + seqregioncontent;
 
@@ -759,7 +758,7 @@ function clicked_func(element) {
         var start = temp_element.attr("start");
         var end = temp_element.attr("end");
         var name = temp_element.attr("title").split(":")[0];
-        var link = "<a target='_blank' href='index.jsp?query=" + parent + "&&coord=" + coord + "&&from=" + start + "&&to=" + end + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span><a/>"
+        var link = "<a target='_blank' href='index.jsp?query=" + name + "&&coord=" + coord + "&&from=" + start + "&&to=" + end + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span><a/>"
         var coord = temp_element.attr("coord");
 
 
@@ -806,6 +805,10 @@ function getMarkers() {
 }
 
 function changeCSS() {
+    jQuery("#mapmarker").animate({"left": 0}, 100);
+    jQuery("#mapmarker").animate({"height": 0}, 100);
+    jQuery("#mapmarker").animate({"top": 0}, 100);
+
     jQuery("#bar_image").css('top', '210px');
     jQuery("#nav_panel").css('top', '192px');
     jQuery(".vertical-line").css('top', '264px');
@@ -814,6 +817,7 @@ function changeCSS() {
     jQuery("#wrapper").css('top', '265px');
     jQuery("#sequence").css('top', '280px');
     jQuery(".fakediv").css('top', '20px');
+    jQuery(".fakediv").css('height', '220px');
 
 }
 
