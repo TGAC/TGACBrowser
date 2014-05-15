@@ -37,7 +37,7 @@ function seqregionSearch(query) {
 
 function seqregionSearchPopup(query, from, to, blast) {
     jQuery('#seqnameh1').html(query);
-
+    seqregname = null;
     jQuery("#searchresult").fadeOut();
     jQuery("#searchresultMap").fadeOut();
     jQuery('#sessioninput').fadeOut();
@@ -84,7 +84,7 @@ function seqregionSearchPopup(query, from, to, blast) {
 
 function seqregionSearchwithCoord(query, coord, from, to, blast) {
     jQuery('#seqnameh1').html(query);
-
+    seqregname = null;
     jQuery("#searchresult").fadeOut();
     jQuery("#searchresultMap").fadeOut();
     jQuery('#sessioninput').fadeOut();
@@ -127,7 +127,7 @@ function seqregionSearchwithCoord(query, coord, from, to, blast) {
 
 function search(query, from, to, blast) {
     jQuery('#seqnameh1').html(query);
-
+    seqregname = null;
 
     if (track_list) {
         jQuery.cookie('trackslist', track_list.toJSON(), {  path: '/', expires: 10});
@@ -558,17 +558,17 @@ function getReferences(show) {
                         dispOnMap(show, maximumLengthname, maximumsequencelength);
 
                     } else {
-                        setMapMarkerLeft();
-                        setMapMarkerTop(getBegin());
-                        setMapMarkerHeight(getEnd() - getBegin())
+//                        setMapMarkerLeft();
+//                        setMapMarkerTop(getBegin());
+//                        setMapMarkerHeight(getEnd() - getBegin())
                     }
 
                 }
                 else {
                     getMarkers();
-                    setMapMarkerLeft();
-                    setMapMarkerTop(getBegin());
-                    setMapMarkerHeight(getEnd() - getBegin())
+//                    setMapMarkerLeft();
+//                    setMapMarkerTop(getBegin());
+//                    setMapMarkerHeight(getEnd() - getBegin())
                 }
 
             }
