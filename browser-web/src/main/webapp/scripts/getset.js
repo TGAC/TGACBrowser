@@ -162,7 +162,8 @@ function setMapMarkerTop(top) {
 }
 
 function setMapMarkerHeight(height) {
-    var mapheight = height * parseFloat(refheight) / sequencelength;
+    var ref = jQuery("#" + seqregname)
+    var mapheight = height * parseFloat(ref.css('height')) / sequencelength;
     jQuery("#mapmarker").animate({"height": mapheight}, 100);
 }
 

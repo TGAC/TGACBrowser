@@ -57,26 +57,7 @@ function seqregionSearchPopup(query, from, to, blast) {
         {'doOnSuccess': function (json) {
             jQuery("#searchresultMap").fadeOut();
 
-            if (json.chromosome == true) {
-                jQuery("#searchresult").fadeOut();
-                getReferences(json);
-                jQuery("#searchresultMap").fadeIn();
-                if (json.html == "one") {
-                    drawBrowser(json, from, to, blast);
-                    getMarkers()
-                    setMapMarkerLeft();
-                    setMapMarkerTop(getBegin());
-                    setMapMarkerHeight(getEnd() - getBegin())
-                }
-            } else if (json.html == "one") {
-                jQuery("#searchresult").fadeOut();
-                drawBrowser(json, from, to, blast)
-            } else if (json.html == "seqregion") {
-                makeSeqRegionList(json, from, to, blast)
-            }
-            else {
-                drawBrowser(json, from, to, blast)
-            }
+            ajax_processing(json, from, to, blast)
         }
         });
 
@@ -104,21 +85,7 @@ function seqregionSearchwithCoord(query, coord, from, to, blast) {
         'seqregionSearchSequenceWithCoord',
         {'query': query, 'coord': coord, 'url': ajaxurl},
         {'doOnSuccess': function (json) {
-            if (json.chromosome == true) {
-                jQuery("#searchresult").fadeOut();
-                getReferences(json);
-                jQuery("#searchresultMap").fadeIn();
-                if (json.html == "one") {
-                    drawBrowser(json, from, to, blast);
-                    getMarkers()
-                    setMapMarkerLeft();
-                    setMapMarkerTop(getBegin());
-                    setMapMarkerHeight(getEnd() - getBegin())
-                }
-            } else if (json.html == "one") {
-                jQuery("#searchresult").fadeOut();
-                drawBrowser(json, from, to, blast)
-            }
+            ajax_processing(json, from, to, blast)
         }
         });
 
@@ -155,29 +122,7 @@ function search(query, from, to, blast) {
             jQuery('#currentposition').hide();
             jQuery("#searchresultMap").fadeOut();
 
-            if (json.chromosome == true) {
-                jQuery("#searchresult").fadeOut();
-                getReferences(json);
-                jQuery("#searchresultMap").fadeIn();
-                if (json.html == "one") {
-                    drawBrowser(json, from, to, blast);
-                    setMapMarkerLeft();
-                    getMarkers()
-                    setMapMarkerTop(getBegin());
-                    setMapMarkerHeight(getEnd() - getBegin())
-                }
-            } else if (json.html == "one") {
-                drawBrowser(json, from, to, blast);
-            }
-            else if (json.html == "seqregion") {
-                makeSeqRegionList(json, from, to, blast)
-            }
-            else if (json.html == "gene" || json.html == "GO" || json.html == "transcript") {
-                makeFeatureList(json, from, to)
-            }
-            else {
-//                window.location.replace("index.jsp?query=" + json.seqregname);
-            }
+            ajax_processing(json, from, to, blast)
         }
         });
 }
@@ -506,7 +451,7 @@ function fileUploadSuccess() {
     alert("upload done");
 }
 
-function getReferences(show) {
+function getReferences(callback) {
     Fluxion.doAjax(
         'dnaSequenceService',
         'searchSeqRegionforMap',
@@ -540,44 +485,23 @@ function getReferences(show) {
                     }
                     var top = parseInt(jQuery("#map").css('top')) + parseInt(jQuery("#map").css('height')) - (height + 20);
                     if (seqregname == json.seqregion[referenceLength].name) {
-                        jQuery("#refmap").append("<div onclick='jumpToHere(event);' class='refmap' id='" + json.seqregion[referenceLength].name + "' style='left: " + left + "px; width:" + width + "px; height:" + height + "px;'></div>");
+                        jQuery("#refmap").append("<div length=" + json.seqregion[referenceLength].length + " onclick='jumpToHere(event);' class='refmap' id='" + json.seqregion[referenceLength].name + "' style='left: " + left + "px; width:" + width + "px; height:" + height + "px;'></div>");
                     }
                     else {
-                        jQuery("#refmap").append("<div onclick='jumpToOther(event, " + length + ",\"" + json.seqregion[referenceLength].name + "\",\"" + json.seqregion[referenceLength].coord + "\");' class='refmap' id='" + json.seqregion[referenceLength].name + "' style='left: " + left + "px; width:" + width + "px; height:" + height + "px;'></div>");
+                        jQuery("#refmap").append("<div length=" + json.seqregion[referenceLength].length + " onclick='jumpToOther(event, " + length + ",\"" + json.seqregion[referenceLength].name + "\",\"" + json.seqregion[referenceLength].coord + "\");' class='refmap' id='" + json.seqregion[referenceLength].name + "' style='left: " + left + "px; width:" + width + "px; height:" + height + "px;'></div>");
                     }
-                    jQuery("#refmap").append("<div style='position:absolute; bottom: 0px; left: " + (left) + "px; '>" + stringTrim(json.seqregion[referenceLength].name, width * 3) + "</div>");
+                    jQuery("#refmap").append("<div onclick='jumpToOther(event, " + length + ",\"" + json.seqregion[referenceLength].name + "\",\"" + json.seqregion[referenceLength].coord + "\");' style='position:absolute; cursor: pointer; color:blue; bottom: 0px; left: " + (left) + "px; '> <u>" + stringTrim(json.seqregion[referenceLength].name, width * 3) + "</u></div>");
                     jQuery("#map").fadeIn();
                 }
-
-                if (show) {
-                    jQuery("#searchresultMap").show;
-                    jQuery("#mapmarker").fadeIn();
-                    if (show.html != "one") {
-
-                        jQuery("#mapmarker").fadeOut();
-                        dispOnMap(show, maximumLengthname, maximumsequencelength);
-
-                    } else {
-//                        setMapMarkerLeft();
-//                        setMapMarkerTop(getBegin());
-//                        setMapMarkerHeight(getEnd() - getBegin())
-                    }
-
-                }
-                else {
-                    getMarkers();
-//                    setMapMarkerLeft();
-//                    setMapMarkerTop(getBegin());
-//                    setMapMarkerHeight(getEnd() - getBegin())
-                }
-
+            }
+            if (callback) {
+                callback();
             }
         }
         });
 }
 
-function dispOnMap(json, maximumLengthname, maximumsequencelength) {
-
+function dispOnMap(json) {
     var width = 15;
     jQuery("#searchResultLegend").html("")
     jQuery("#searchResultLegend").fadeIn();
@@ -590,16 +514,15 @@ function dispOnMap(json, maximumLengthname, maximumsequencelength) {
         jQuery("#unmapped").hide();
         jQuery("#searchResultLegend").html("")
         for (var i = 0; i < markers.length; i++) {
-
-            if(document.getElementById(markers[i].Type) == null){
+            if (document.getElementById(markers[i].Type) == null) {
                 jQuery("#searchResultLegend").append("<div class='searchResultLegend'>" +
-                    "<input checked type=checkbox name='refmapsearchmarkerseqregion' id='"+markers[i].Type+"' onClick=jQuery('."+markers[i].Type+"').toggle()> "+stringTrim(markers[i].Type, 200)+"" +
+                    "<input checked type=checkbox name='refmapsearchmarkerseqregion' id='" + markers[i].Type + "' onClick=jQuery('." + markers[i].Type + "').toggle()> " + stringTrim(markers[i].Type, 200) + "" +
                     " </div> ")
             }
 
             if (markers[i].parent) {
                 jQuery("#" + markers[i].parent).attr("onclick", "")
-                var length = maximumsequencelength * parseFloat(jQuery("#" + markers[i].parent).css('height')) / parseFloat(jQuery("#" + maximumLengthname).css('height'));
+                var length = jQuery("#" + markers[i].parent).attr("length") * parseFloat(jQuery("#" + markers[i].parent).css('height')) / parseFloat(jQuery("#" + markers[i].parent).css('height'));
                 var maptop = ((markers[i].start) * parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
                 var left = 25;
                 var mapheight = ((markers[i].end - markers[i].start) * parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
@@ -607,10 +530,10 @@ function dispOnMap(json, maximumLengthname, maximumsequencelength) {
                     mapheight = 1;
                 }
                 jQuery("#" + markers[i].parent).append("<div name='" + markers[i].name + "' " +
-                    "parent=" + markers[i].parent + " coord=" + markers[i].coord + " start= 0 end=" + (markers[i].end - markers[i].start) + " " +
+                    "parent=" + markers[i].parent + " coord=" + markers[i].coord + " start=" + markers[i].start + " end=" + markers[i].end + " " +
                     "id='" + markers[i].name + "' " +
                     "title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' " +
-                    "class='refmapsearchmarkerseqregion"+" "+  markers[i].Type +"' "+
+                    "class='refmapsearchmarkerseqregion" + " " + markers[i].Type + "' " +
                     "style='left:" + left + "px; top:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' " +
                     "onclick=clicked_func('" + markers[i].name + "'); >" +
                     "</div>");
@@ -628,14 +551,14 @@ function dispOnMap(json, maximumLengthname, maximumsequencelength) {
         var markers = json.gene;
 
         for (var i = 0; i < markers.length; i++) {
-            if(document.getElementById(markers[i].Type) == null){
+            if (document.getElementById(markers[i].Type) == null) {
                 jQuery("#searchResultLegend").append("<div class='searchResultLegend'>" +
-                    "<input checked type=checkbox name='refmapsearchmarkerseqregion' id='"+markers[i].Type+"' onClick=jQuery('."+markers[i].Type+"').toggle()> "+stringTrim(markers[i].Type, 200)+"" +
+                    "<input checked type=checkbox name='refmapsearchmarkerseqregion' id='" + markers[i].Type + "' onClick=jQuery('." + markers[i].Type + "').toggle()> " + stringTrim(markers[i].Type, 200) + "" +
                     " </div> ")
             }
 
             jQuery("#" + markers[i].parent).attr("onclick", "")
-            var length = maximumsequencelength * parseFloat(jQuery("#" + markers[i].parent).css('height')) / parseFloat(jQuery("#" + maximumLengthname).css('height'));
+            var length = jQuery("#" + markers[i].parent).attr("length") * parseFloat(jQuery("#" + markers[i].parent).css('height')) / parseFloat(jQuery("#" + markers[i].parent).css('height'));
             var maptop = ((markers[i].start) * parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
             var left = 25;
             var mapheight = ((markers[i].end - markers[i].start) * parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
@@ -645,7 +568,7 @@ function dispOnMap(json, maximumLengthname, maximumsequencelength) {
             jQuery("#" + markers[i].parent).append("<div name='" + markers[i].name + "' " +
                 "parent=" + markers[i].parent + " coord=" + markers[i].coord + " start=" + markers[i].start + " end=" + markers[i].end + " id='" + markers[i].name + "' " +
                 "title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' " +
-                "class='refmapsearchmarkergene"+" "+  markers[i].Type +"' "+
+                "class='refmapsearchmarkergene" + " " + markers[i].Type + "' " +
                 "style='left:" + left + "px; top:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' " +
                 "onclick=clicked_func('" + markers[i].name + "'); >" +
                 "</div>");
@@ -655,14 +578,14 @@ function dispOnMap(json, maximumLengthname, maximumsequencelength) {
         var markers = json.transcript;
 
         for (var i = 0; i < markers.length; i++) {
-            if(document.getElementById(markers[i].Type) == null){
+            if (document.getElementById(markers[i].Type) == null) {
                 jQuery("#searchResultLegend").append("<div class='searchResultLegend'>" +
-                    "<input checked type=checkbox name='refmapsearchmarkerseqregion' id='"+markers[i].Type+"' onClick=jQuery('."+markers[i].Type+"').toggle()> "+stringTrim(markers[i].Type, 200)+"" +
+                    "<input checked type=checkbox name='refmapsearchmarkerseqregion' id='" + markers[i].Type + "' onClick=jQuery('." + markers[i].Type + "').toggle()> " + stringTrim(markers[i].Type, 200) + "" +
                     " </div> ")
             }
 
             jQuery("#" + markers[i].parent).attr("onclick", "")
-            var length = maximumsequencelength * parseFloat(jQuery("#" + markers[i].parent).css('height')) / parseFloat(jQuery("#" + maximumLengthname).css('height'));
+            var length = jQuery("#" + markers[i].parent).attr("length") * parseFloat(jQuery("#" + markers[i].parent).css('height')) / parseFloat(jQuery("#" + markers[i].parent).css('height'));
             var maptop = ((markers[i].start) * parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
             var left = 25;
             var mapheight = ((markers[i].end - markers[i].start) * parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
@@ -672,14 +595,14 @@ function dispOnMap(json, maximumLengthname, maximumsequencelength) {
             jQuery("#" + markers[i].parent).append("<div name='" + markers[i].name + "' " +
                 "parent=" + markers[i].parent + " coord=" + markers[i].coord + " start=" + markers[i].start + " end=" + markers[i].end + " id='" + markers[i].name + "' " +
                 "title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' " +
-                "class='refmapsearchmarkertranscript"+" "+  markers[i].Type +"' "+
+                "class='refmapsearchmarkertranscript" + " " + markers[i].Type + "' " +
                 "style='left:" + left + "px; top:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' " +
                 "onclick=clicked_func('" + markers[i].name + "'); >" +
                 "</div>");
         }
 
         var markers = json.GO;
-                jQuery("#searchResultLegend").append("<div class='searchResultLegend'><input checked  type=checkbox name='refmapsearchmarkergo' onClick=jQuery('.refmapsearchmarkergo').toggle()> GO </div>")
+        jQuery("#searchResultLegend").append("<div class='searchResultLegend'><input checked  type=checkbox name='refmapsearchmarkergo' onClick=jQuery('.refmapsearchmarkergo').toggle()> GO </div>")
 
         for (var i = 0; i < markers.length; i++) {
             var length = maximumsequencelength * parseFloat(jQuery("#" + markers[i].parent).css('height')) / parseFloat(jQuery("#" + maximumLengthname).css('height'));
@@ -694,7 +617,7 @@ function dispOnMap(json, maximumLengthname, maximumsequencelength) {
                 "parent=" + markers[i].parent + " coord=" + markers[i].coord + " start=" + markers[i].start + " end=" + markers[i].end + " " +
                 "id='" + markers[i].name + "' " +
                 "title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' " +
-                "class='refmapsearchmarkergo"+" "+  markers[i].Type +"' "+
+                "class='refmapsearchmarkergo" + " " + markers[i].Type + "' " +
                 "style='left:" + left + "px; top:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' " +
                 "onclick=clicked_func('" + markers[i].name + "'); >" +
                 "</div>");
@@ -986,4 +909,46 @@ function makeFeatureList(json, from, to) {
     jQuery("#transcript_hit").tablesorter();
     jQuery("#searchnavtabs").tabs();
     jQuery("#searchresultHead").html("<h2>Search Result</h2>");
+}
+
+function ajax_processing(json, from, to, blast) {
+    jQuery("#searchresultMap").fadeOut();
+
+    if (json.chromosome == true) {
+
+        jQuery("#searchresult").fadeOut();
+        if (json.html == "one") {
+            getReferences(function () {
+
+                console.log(seqregname)
+                seqregname = json.seqregname;
+                sequencelength = json.length
+                console.log(seqregname)
+
+                drawBrowser(json, from, to, blast);
+
+                getMarkers()
+                setMapMarkerLeft();
+                setMapMarkerTop(getBegin());
+                setMapMarkerHeight(getEnd() - getBegin())
+            })
+
+        } else {
+            getReferences(function () {
+                dispOnMap(json);
+            })
+            jQuery("#searchresultMap").fadeIn();
+            jQuery("#searchresultMap").show;
+        }
+
+
+    } else if (json.html == "one") {
+        jQuery("#searchresult").fadeOut();
+        drawBrowser(json, from, to, blast)
+    } else if (json.html == "seqregion") {
+        makeSeqRegionList(json, from, to, blast)
+    }
+    else {
+        drawBrowser(json, from, to, blast)
+    }
 }
