@@ -46,7 +46,8 @@ function seqregionSearchPopup(query, from, to, blast) {
     jQuery('#tabTranscripts').html('');
     jQuery("#searchresultHead").html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>");
     jQuery("#searchresult").fadeIn();
-
+    jQuery("#map").fadeOut();
+    jQuery("#refmap").html("");
     jQuery("#sessionid").html("");
     minWidth = null;
     removeAllPopup();
@@ -74,7 +75,8 @@ function seqregionSearchwithCoord(query, coord, from, to, blast) {
     jQuery('#tabTranscripts').html('');
     jQuery("#searchresultHead").html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>");
     jQuery("#searchresult").fadeIn();
-
+    jQuery("#map").fadeOut();
+    jQuery("#refmap").html("");
     jQuery("#sessionid").html("");
     jQuery("#searchresultMap").fadeOut();
 
@@ -109,7 +111,8 @@ function search(query, from, to, blast) {
     jQuery('#tabGenes').html('');
     jQuery('#tabGO').html('');
     jQuery('#tabTranscripts').html('');
-
+    jQuery("#map").fadeOut();
+    jQuery("#refmap").html("");
     jQuery("#searchresultHead").html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>");
     jQuery("#searchresult").fadeIn();
 
@@ -468,7 +471,7 @@ function getReferences(callback) {
             }
             var width = 15;
             var distance = (parseInt(maxLen) - (width * referenceLength)) / (referenceLength + 1);
-            jQuery("#mapmarker").animate({"width": width}, 100);
+            jQuery("#mapmarker").css("width", width);
             jQuery("#refmap").html("");
             if (referenceLength > 0 && referenceLength < 50) {
                 changeCSS();
@@ -728,10 +731,6 @@ function getMarkers() {
 }
 
 function changeCSS() {
-    jQuery("#mapmarker").animate({"left": 0}, 100);
-    jQuery("#mapmarker").animate({"height": 0}, 100);
-    jQuery("#mapmarker").animate({"top": 0}, 100);
-
     jQuery("#bar_image").css('top', '210px');
     jQuery("#nav_panel").css('top', '192px');
     jQuery(".vertical-line").css('top', '264px');
@@ -914,16 +913,19 @@ function makeFeatureList(json, from, to) {
 function ajax_processing(json, from, to, blast) {
     jQuery("#searchresultMap").fadeOut();
 
-    if (json.chromosome == true) {
 
+    if (json.html == "none") {
+        jQuery("#searchresultHead").html("<center><h1>No result found.</h1></center>");
+    }
+    else if (json.chromosome == true) {
+        jQuery("#map").fadeIn();
         jQuery("#searchresult").fadeOut();
         if (json.html == "one") {
             getReferences(function () {
-
-                console.log(seqregname)
                 seqregname = json.seqregname;
                 sequencelength = json.length
-                console.log(seqregname)
+
+                jQuery("#mapmarker").fadeIn()
 
                 drawBrowser(json, from, to, blast);
 
@@ -934,6 +936,7 @@ function ajax_processing(json, from, to, blast) {
             })
 
         } else {
+            jQuery("#mapmarker").fadeOut()
             getReferences(function () {
                 dispOnMap(json);
             })

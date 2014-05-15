@@ -135,12 +135,16 @@ public class DnaSequenceService {
                 response.put("chromosome", searchStore.checkChromosome());
                 response.put("seqregion", searchStore.getSeqRegionSearch(seqName));
             } else if (queryid == 0) {
-                response.put("html", "gene");
                 response.put("gene", searchStore.getGenesSearch(seqName));
                 response.put("chromosome", searchStore.checkChromosome());
                 response.put("transcript", searchStore.getTranscriptSearch(seqName));
                 response.put("GO", searchStore.getGOSearch(seqName));
                 response.put("chromosome", searchStore.checkChromosome());
+                if(response.get("gene").toString().equals("[]") && response.get("transcript").toString().equals("[]") && response.get("GO").toString().equals("[]")){
+                    response.put("html", "none");
+                }else{
+                    response.put("html", "gene");
+                }
             } else {
                 Integer query = sequenceStore.getSeqRegion(seqName);
                 String seqRegName = sequenceStore.getSeqRegionName(query);
@@ -189,11 +193,15 @@ public class DnaSequenceService {
                     response.put("chromosome", searchStore.checkChromosome());
                     response.put("seqregion", searchStore.getSeqRegionSearch(seqName));
                 } else if (queryid == 0) {
-                    response.put("html", "gene");
                     response.put("gene", searchStore.getGenesSearch(seqName));
                     response.put("transcript", searchStore.getTranscriptSearch(seqName));
                     response.put("GO", searchStore.getGOSearch(seqName));
                     response.put("chromosome", searchStore.checkChromosome());
+                    if(response.get("gene").toString().equals("[]") && response.get("transcript").toString().equals("[]") && response.get("GO").toString().equals("[]")){
+                        response.put("html", "none");
+                    }else{
+                        response.put("html", "gene");
+                    }
                 }
             } else {
                 Integer query = sequenceStore.getSeqRegion(seqName);
@@ -311,7 +319,6 @@ public class DnaSequenceService {
                     response.put(trackName, SamBamService.getBAMGraphs(start, end, delta, trackId, seqName));
                 }
             } else if (trackId.contains(".gff") || trackId.contains(".GFF")) {
-                log.info("GFF");
                 count = GFFService.countGFF(start, end, delta, trackId, seqName);
                 if (count < 5000) {
                     response.put(trackName, gffService.getGFFReads(start, end, delta, trackId, seqName));
@@ -321,9 +328,7 @@ public class DnaSequenceService {
                     response.put(trackName, GFFService.getGFFGraphs(start, end, delta, trackId, seqName));
                 }
             } else if (trackId.contains(".vcf") || trackId.contains(".VCF")) {
-                log.info("\n\n\n\n\nVCF");
                 count = VCFService.countVCF(start, end, delta, trackId, seqName);
-                log.info("\n\n\n\n\nVCF "+ count);
 
                 if (count < 5000) {
                     response.put(trackName, vcfService.getVCFReads(start, end, delta, trackId, seqName));
