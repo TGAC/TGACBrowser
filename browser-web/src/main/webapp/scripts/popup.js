@@ -774,9 +774,9 @@ function fetchFasta(begin, end, track, i, j) {
                     seq = seq.substring(0, substart) + exonSeq.toUpperCase() + seq.substring(subend + 1, seq.length);
                 }
                 if(scale != 1){
-                    jQuery('#fastaoutput').html(">" + seqregname + ": " + (begin*scale).toFixed(2) + " - " + (end*scale).toFixed(2) + " <font color='green'> " + convertFasta(seq) + "</font>");
+                    jQuery('#fastaoutput').html(">" + seqregname + ": " + (begin*scale).toFixed(2)+""+unit + " - " + (end*scale).toFixed(2)+""+unit + " <font color='green'> " + convertFasta(seq) + "</font>");
                 }             else{
-                    jQuery('#fastaoutput').html(">" + seqregname + ": " + (begin) + " - " + (end) + " <font color='green'> " + convertFasta(seq) + "</font>");
+                    jQuery('#fastaoutput').html(">" + seqregname + ": " + (begin)+""+unit + " - " + (end)+""+unit + " <font color='green'> " + convertFasta(seq) + "</font>");
                 }
                 jQuery('#fastaoutput').each(function () {
                     var pattern = /([ATCG]+)/g;
@@ -788,9 +788,9 @@ function fetchFasta(begin, end, track, i, j) {
             }
             else {
                 if(scale != 1){
-                    jQuery('#fastaoutput').html(">" + seqregname + ": " + (begin*scale).toFixed(2) + " - " + (end*scale).toFixed(2) + convertFasta(seq));
+                    jQuery('#fastaoutput').html(">" + seqregname + ": " + (begin*scale).toFixed(2)+""+unit + " - " + (end*scale).toFixed(2)+""+unit + convertFasta(seq));
                 }else{
-                    jQuery('#fastaoutput').html(">" + seqregname + ": " + (begin) + " - " + (end) + convertFasta(seq));
+                    jQuery('#fastaoutput').html(">" + seqregname + ": " + (begin)+""+unit + " - " + (end)+""+unit + convertFasta(seq));
                 }
             }
             jQuery('#fastadownload').html("<button class='ui-state-default ui-corner-all' " +
