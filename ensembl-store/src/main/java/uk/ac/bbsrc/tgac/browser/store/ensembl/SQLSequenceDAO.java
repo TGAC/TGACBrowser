@@ -349,7 +349,7 @@ public class SQLSequenceDAO implements SequenceStore {
             }
             return unit;
         } catch (EmptyResultDataAccessException e) {
-            throw new IOException(" getSeqlength no result found");
+            throw new IOException("  getUnit no result found");
 
         }
     }
@@ -366,7 +366,23 @@ public class SQLSequenceDAO implements SequenceStore {
             }
             return scale;
         } catch (EmptyResultDataAccessException e) {
-            throw new IOException(" getSeqlength no result found");
+            throw new IOException(" getScale no result found");
+        }
+    }
+
+    public String getLink() throws IOException {
+        try {
+            List<Map<String, Object>> maps = template.queryForList(Get_Database_information, new Object[]{});
+            String link = "";
+            for (Map map : maps) {
+                String metakey = map.get("meta_key").toString();
+                if (metakey.contains("external_browser")) {
+                    link = map.get("meta_value").toString();
+                }
+            }
+            return link;
+        } catch (EmptyResultDataAccessException e) {
+            throw new IOException(" getLink no result found");
         }
     }
 

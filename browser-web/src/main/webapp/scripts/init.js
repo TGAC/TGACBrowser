@@ -44,6 +44,8 @@ var chromosome = false;
 var scale = "";
 var unit = "bp";
 
+var link = null;
+
 function setBlast() {
     if (jQuery("#blastType").text().indexOf('local') >= 0) {
 

@@ -210,6 +210,7 @@ function metaData() {
             chromosome = json.chr;
             unit = json.unit ? json.unit : "bp";
             scale = json.scale ? json.scale : 1;
+            link = json.link ? json.link : null;
             jQuery(".unit").html(unit)
         }
         });

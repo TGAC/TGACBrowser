@@ -411,8 +411,12 @@ public class DnaSequenceService {
             response.put("chr", searchStore.checkChromosome());
             if(sequenceStore.getScale().length() > 0){
                 response.put("scale", sequenceStore.getScale());
-            } if(sequenceStore.getUnit().length() > 0){
+            }
+            if(sequenceStore.getUnit().length() > 0){
                 response.put("unit", sequenceStore.getUnit());
+            }
+            if(sequenceStore.getLink().length() > 0){
+                response.put("link", sequenceStore.getLink());
             }
 
             return response;
