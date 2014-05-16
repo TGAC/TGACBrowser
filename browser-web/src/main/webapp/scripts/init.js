@@ -41,6 +41,8 @@ var grouplist = [];
 var tracks = [];
 var tracklocation = [];
 var chromosome = false;
+var scale = "";
+var unit = "bp";
 
 function setBlast() {
     if (jQuery("#blastType").text().indexOf('local') >= 0) {
@@ -415,7 +417,10 @@ function displayCursorPosition() {
     jQuery(document).mousemove(function (e) {
         mouseX = e.pageX;
         mouseY = e.pageY;
-        var pos = parseInt(getBegin()) + Math.round((( (e.pageX) * (getEnd() - getBegin())) / jQuery(window).width()) + getBegin());
+        var pos = ((getBegin() * scale) +
+            (Math.round(
+                ((e.pageX * (getEnd() - getBegin())) / jQuery(window).width()) + getBegin()) * scale)).toFixed(2)
+            + "" + unit;
         jQuery('#currentposition').html(pos);
 
         jQuery('#currentposition').css({
@@ -439,108 +444,134 @@ function displayCursorPosition() {
 //Display cordinates as percentage
 //Display cordinates as percentage
 function dispSeqCoord() {
-    var diff = parseInt(parseInt(sequencelength) / 20);
-    var bp = "";
-    if (diff > 100000000) {
-        diff = (diff / 100000000);
-        bp = "G";
-    }
-    else if (diff > 1000000) {
-        diff = (diff / 1000000);
-        bp = "M";
-    }
-    else if (diff > 1000) {
-        diff = diff / 1000;
-        bp = "K";
-    }
+    if (unit.toLowerCase() == "bp") {
+        var diff = parseInt(parseInt(sequencelength) / 20);
+        var bp = "";
+        if (diff > 100000000) {
+            diff = (diff / 100000000);
+            bp = "G";
+        }
+        else if (diff > 1000000) {
+            diff = (diff / 1000000);
+            bp = "M";
+        }
+        else if (diff > 1000) {
+            diff = diff / 1000;
+            bp = "K";
+        }
 
-    diff = parseInt(diff);
-    jQuery("#zoomoutbig").attr('title', "Zoom Out(" + diff + "" + bp + ")");
-    jQuery("#zoominbig").attr('title', "Zoom In(" + +diff + "" + bp + ")");
-    var diff = parseInt(parseInt(sequencelength) / 40);
-    var bp = "";
-    if (diff > 100000000) {
-        diff = (diff / 100000000);
-        bp = "G";
-    }
-    else if (diff > 1000000) {
-        diff = (diff / 1000000);
-        bp = "M";
-    }
-    else if (diff > 1000) {
-        diff = diff / 1000;
-        bp = "K";
-    }
-    jQuery("#zoomoutsmall").attr('title', "Zoom Out(" + diff + "" + bp + ")");
-    jQuery("#zoominsmall").attr('title', "Zoom In(" + +diff + "" + bp + ")");
-    var len = sequencelength;
-    jQuery('#SeqLenStart').html(0);
+        diff = parseInt(diff);
+        jQuery("#zoomoutbig").attr('title', "Zoom Out(" + diff + "" + bp + ")");
+        jQuery("#zoominbig").attr('title', "Zoom In(" + +diff + "" + bp + ")");
+        var diff = parseInt(parseInt(sequencelength) / 40);
+        var bp = "";
+        if (diff > 100000000) {
+            diff = (diff / 100000000);
+            bp = "Gbp";
+        }
+        else if (diff > 1000000) {
+            diff = (diff / 1000000);
+            bp = "Mbp";
+        }
+        else if (diff > 1000) {
+            diff = diff / 1000;
+            bp = "Kbp";
+        }
+        jQuery("#zoomoutsmall").attr('title', "Zoom Out(" + diff + "" + bp + ")");
+        jQuery("#zoominsmall").attr('title', "Zoom In(" + +diff + "" + bp + ")");
+        var len = sequencelength;
+        jQuery('#SeqLenStart').html(0);
 
-    var diff = parseInt(parseInt(len) / 4);
-    var bp = "";
-    if (diff > 100000000) {
-        diff = (diff / 100000000);
-        bp = "G";
-    }
-    else if (diff > 1000000) {
-        diff = (diff / 1000000);
-        bp = "M";
-    }
-    else if (diff > 1000) {
-        diff = diff / 1000;
-        bp = "K";
-    }
-    jQuery('#SeqLen25').html(parseFloat(diff).toFixed(2) + "" + bp);
+        var diff = parseInt(parseInt(len) / 4);
+        var bp = "";
+        if (diff > 100000000) {
+            diff = (diff / 100000000);
+            bp = "Gbp";
+        }
+        else if (diff > 1000000) {
+            diff = (diff / 1000000);
+            bp = "Mbp";
+        }
+        else if (diff > 1000) {
+            diff = diff / 1000;
+            bp = "Kbp";
+        }
+        jQuery('#SeqLen25').html(parseFloat(diff) + "" + bp);
 
-    var diff = parseInt(parseInt(len) / 2);
-    var bp = "";
-    if (diff > 100000000) {
-        diff = (diff / 100000000);
-        bp = "G";
-    }
-    else if (diff > 1000000) {
-        diff = (diff / 1000000);
-        bp = "M";
-    }
-    else if (diff > 1000) {
-        diff = diff / 1000;
-        bp = "K";
-    }
+        var diff = parseInt(parseInt(len) / 2);
+        var bp = "";
+        if (diff > 100000000) {
+            diff = (diff / 100000000);
+            bp = "Gbp";
+        }
+        else if (diff > 1000000) {
+            diff = (diff / 1000000);
+            bp = "Mbp";
+        }
+        else if (diff > 1000) {
+            diff = diff / 1000;
+            bp = "Kbp";
+        }
 
-    jQuery('#SeqLenMid').html(parseFloat(diff).toFixed(2) + "" + bp);
-    var diff = parseInt(parseInt(len) / 4 * 3);
-    var bp = "";
-    if (diff > 100000000) {
-        diff = (diff / 100000000);
-        bp = "G";
-    }
-    else if (diff > 1000000) {
-        diff = (diff / 1000000);
-        bp = "M";
-    }
-    else if (diff > 1000) {
-        diff = diff / 1000;
-        bp = "K";
-    }
+        jQuery('#SeqLenMid').html(parseFloat(diff) + "" + bp);
+        var diff = parseInt(parseInt(len) / 4 * 3);
+        var bp = "";
+        if (diff > 100000000) {
+            diff = (diff / 100000000);
+            bp = "Gbp";
+        }
+        else if (diff > 1000000) {
+            diff = (diff / 1000000);
+            bp = "Mbp";
+        }
+        else if (diff > 1000) {
+            diff = diff / 1000;
+            bp = "Kbp";
+        }
 
-    jQuery('#SeqLen75').html(parseFloat(diff).toFixed(2) + "" + bp);
+        jQuery('#SeqLen75').html(parseFloat(diff) + "" + bp);
 
-    var diff = parseInt(parseInt(len));
-    var bp = "";
-    if (diff > 100000000) {
-        diff = (diff /100000000);
+        var diff = parseInt(parseInt(len));
+        var bp = "";
+        if (diff > 100000000) {
+            diff = (diff / 100000000);
 
-        bp = "G";
+            bp = "Gbp";
+        }
+        else if (diff > 1000000) {
+            diff = (diff / 1000000);
+            bp = "Mbp";
+        }
+        else if (diff > 1000) {
+            diff = diff / 1000;
+            bp = "Kbp";
+        }
+        jQuery('#SeqLenEnd').html(parseFloat(diff).toFixed(2) + "" + bp);
+    } else {
+
+        var diff = parseInt(parseInt(sequencelength) / 20);
+
+        diff = parseInt(diff);
+        jQuery("#zoomoutbig").attr('title', "Zoom Out(" + diff + "" + unit + ")");
+        jQuery("#zoominbig").attr('title', "Zoom In(" + +diff + "" + unit + ")");
+        jQuery("#zoomoutsmall").attr('title', "Zoom Out(" + diff + "" + unit + ")");
+        jQuery("#zoominsmall").attr('title', "Zoom In(" + +diff + "" + unit + ")");
+        var len = sequencelength;
+        jQuery('#SeqLenStart').html(0);
+
+        jQuery('#SeqLen25').html(parseFloat(diff).toFixed(2) + "" + unit);
+
+
+        jQuery('#SeqLenMid').html(parseFloat(diff).toFixed(2) + "" + unit);
+        var diff = parseInt(parseInt(len) / 4 * 3);
+
+        jQuery('#SeqLen75').html(parseFloat(diff).toFixed(2) + "" + unit);
+
+        var diff = parseInt(parseInt(len));
+
+        jQuery('#SeqLenEnd').html(parseFloat(diff).toFixed(2) + "" + unit);
+
     }
-    else if (diff > 1000000) {
-        diff = (diff / 1000000);
-        bp = "M";
-    }
-    else if (diff > 1000) {
-        diff = diff / 1000;
-        bp = "K";
-    }
-    jQuery('#SeqLenEnd').html(parseFloat(diff).toFixed(2) + "" + bp);
 
 }
 
@@ -556,7 +587,6 @@ function dispCoord(seqStart, seqEnd) {
         setMapMarkerTop(getBegin());
     }
 }
-
 
 
 function checkSession() {

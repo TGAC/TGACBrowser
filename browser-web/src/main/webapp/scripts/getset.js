@@ -126,10 +126,18 @@ function getBegin() {
 
 function setBegin(begin) {
     if (parseInt(begin) > 0) {
+        var begin_scale = (begin)*scale;
+        if(begin_scale % 1 != 0){
+             begin_scale = (begin_scale).toFixed(2)
+        }
         jQuery("#begin").val(parseInt(begin));
+        jQuery("#begin_scale").val(begin_scale);
+
     }
     else {
         jQuery("#begin").val(parseInt(1));
+        jQuery("#begin_scale").val(parseInt(1));
+
     }
     jQuery("#begin").size(begin.length);
 }
@@ -145,12 +153,21 @@ function getEnd() {
 
 function setEnd(end) {
     if (parseInt(end) <= sequencelength) {
+        var end_scale = (end)*scale;
+
+        if(end_scale % 1 != 0){
+            end_scale = (end_scale).toFixed(2)
+        }
+
         jQuery("#end").val(parseInt(end));
+        jQuery("#end_scale").val(end_scale);
     }
     else {
         jQuery("#end").val(sequencelength);
+        jQuery("#end_scale").val((sequencelength*scale).toFixed(2));
     }
     jQuery("#end").size(end.length);
+
 
 }
 

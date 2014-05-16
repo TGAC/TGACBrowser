@@ -123,6 +123,17 @@ function seqBar(seqStart, seqEnd) {
     }
 }
 
+
+function jumpToSeqFromGo() {
+    var begin = jQuery("#begin_scale").val()/scale;
+    var end = jQuery("#end_scale").val()/scale;
+    setBegin(begin)
+    setEnd(end)
+
+    jumpToSeq();
+}
+
+
 function jumpToSeq() {
     var begin = getBegin();
     var end = getEnd();

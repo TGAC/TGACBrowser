@@ -56,13 +56,23 @@ function newpopup(track, i, j) {
     jQuery('#blastselector').hide();
     jQuery("#popuptrack").html(stringTrim(window['track_list' + track].display_label, 180, jQuery("#popuptrack").attr('class')));
 
-    var position = window[track][i].start + position_func(window[track][i]);
+    var position = "";
+    if (scale != 1) {
+        position = (window[track][i].start*scale).toFixed(2)+""+unit + position_func(window[track][i]);
+    }   else{
+        position = (window[track][i].start)+""+unit + position_func(window[track][i]);
+
+    }
     var endposition;
 
     function position_func(test) {
         if (test.end) {
             endposition = test.end;
-            return "-" + test.end
+            if (scale != 1) {
+                return "-" + (test.end*scale).toFixed(2)+""+unit
+            }   else{
+                return "-" + (test.end)+""+unit
+            }
         }
         else {
             endposition = parseInt(test.start) + 1;
@@ -179,7 +189,11 @@ function removeDragPopup() {
 // create drag popup
 function newDragpopup(begin, end, binary) {
 
-    jQuery("#cordinate").html("<b>" + (begin) + "-" + (end) + "</b>");
+    if (scale != 1) {
+        jQuery("#cordinate").html("<b>" + (begin*scale).toFixed(2)+""+unit + "-" + (end*scale).toFixed(2)+""+unit + "</b>");
+    }   else{
+        jQuery("#cordinate").html("<b>" + (begin)+""+unit + "-" + (end)+""+unit + "</b>");
+    }
     jQuery("#fetchFASTA").html('<span title="Fasta" class="ui-button ui-fasta" onclick=fetchFasta(' + begin + ',' + end + ');></span>');
     jQuery("#fetchBLAST").html('<span title="Blast" class="ui-button ui-blast" onclick=preBlast(' + begin + ',' + end + ',' + '\"#popup\");></span>');
     jQuery("#CenterHere").html('<span title="Zoom Here" class="ui-button ui-icon ui-icon-zoomin" onclick=zoomHere(' + begin + ',' + end + ');></span>');
@@ -759,7 +773,11 @@ function fetchFasta(begin, end, track, i, j) {
                     var exonSeq = seq.substring(substart, subend);
                     seq = seq.substring(0, substart) + exonSeq.toUpperCase() + seq.substring(subend + 1, seq.length);
                 }
-                jQuery('#fastaoutput').html(">" + seqregname + ": " + begin + " - " + end + " <font color='green'> " + convertFasta(seq) + "</font>");
+                if(scale != 1){
+                    jQuery('#fastaoutput').html(">" + seqregname + ": " + (begin*scale).toFixed(2) + " - " + (end*scale).toFixed(2) + " <font color='green'> " + convertFasta(seq) + "</font>");
+                }             else{
+                    jQuery('#fastaoutput').html(">" + seqregname + ": " + (begin) + " - " + (end) + " <font color='green'> " + convertFasta(seq) + "</font>");
+                }
                 jQuery('#fastaoutput').each(function () {
                     var pattern = /([ATCG]+)/g;
                     var before = '<span style="color: red;">';
@@ -769,7 +787,11 @@ function fetchFasta(begin, end, track, i, j) {
 
             }
             else {
-                jQuery('#fastaoutput').html(">" + seqregname + ": " + begin + " - " + end + convertFasta(seq));
+                if(scale != 1){
+                    jQuery('#fastaoutput').html(">" + seqregname + ": " + (begin*scale).toFixed(2) + " - " + (end*scale).toFixed(2) + convertFasta(seq));
+                }else{
+                    jQuery('#fastaoutput').html(">" + seqregname + ": " + (begin) + " - " + (end) + convertFasta(seq));
+                }
             }
             jQuery('#fastadownload').html("<button class='ui-state-default ui-corner-all' " +
                 "onclick=fastaFile('" + seq + "'," + begin + "," + end + ") \">Prepare Download Sequence File</button>");

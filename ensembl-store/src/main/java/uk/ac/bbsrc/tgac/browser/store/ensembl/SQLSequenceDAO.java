@@ -337,6 +337,38 @@ public class SQLSequenceDAO implements SequenceStore {
         }
     }
 
+    public String getUnit() throws IOException {
+        try {
+            List<Map<String, Object>> maps = template.queryForList(Get_Database_information, new Object[]{});
+            String unit = "";
+            for (Map map : maps) {
+                String metakey = map.get("meta_key").toString();
+                if (metakey.contains("unit")) {
+                    unit =  map.get("meta_value").toString();
+                }
+            }
+            return unit;
+        } catch (EmptyResultDataAccessException e) {
+            throw new IOException(" getSeqlength no result found");
+
+        }
+    }
+
+    public String getScale() throws IOException {
+        try {
+            List<Map<String, Object>> maps = template.queryForList(Get_Database_information, new Object[]{});
+            String scale = "";
+            for (Map map : maps) {
+                String metakey = map.get("meta_key").toString();
+                if (metakey.contains("scale")) {
+                    scale = map.get("meta_value").toString();
+                }
+            }
+            return scale;
+        } catch (EmptyResultDataAccessException e) {
+            throw new IOException(" getSeqlength no result found");
+        }
+    }
 
     public Integer getSeqRegionforone(String searchQuery) throws IOException {
         try {

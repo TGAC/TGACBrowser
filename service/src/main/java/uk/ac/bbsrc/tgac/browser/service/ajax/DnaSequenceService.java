@@ -409,6 +409,12 @@ public class DnaSequenceService {
         try {
             response.put("metainfo", sequenceStore.getdbinfo());
             response.put("chr", searchStore.checkChromosome());
+            if(sequenceStore.getScale().length() > 0){
+                response.put("scale", sequenceStore.getScale());
+            } if(sequenceStore.getUnit().length() > 0){
+                response.put("unit", sequenceStore.getUnit());
+            }
+
             return response;
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.

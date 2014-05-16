@@ -61,13 +61,24 @@
                             <table>
                                 <tr>
                                     <td>
-                                        <input type="text" id="begin" size="5" class="jump">
+                                        <input type="text" id="begin_scale" size="5" class="jump"> <span class="unit"></span>
                                     </td>
                                     <td>
-                                        <input type="text" id="end" size="5" class="jump">
+                                        <input type="text" id="end_scale" size="5" class="jump"> <span class="unit"></span>
                                     </td>
                                     <td>
-                                        <div onclick="jumpToSeq()" class="divbutton"> Go</div>
+                                        <div onclick="jumpToSeqFromGo()" class="divbutton"> Go</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="text" id="begin" size="5" class="jump" style="visibility: hidden">
+                                    </td>
+                                    <td>
+                                        <input type="text" id="end" size="5" class="jump" style="visibility: hidden">
+                                    </td>
+                                    <td>
+
                                     </td>
                                 </tr>
                             </table>

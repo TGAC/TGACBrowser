@@ -208,6 +208,9 @@ function metaData() {
         {'doOnSuccess': function (json) {
             jQuery("#dbinfo").html("Species Name: <i>" + json.metainfo[0].name + "</i> Database Version: " + json.metainfo[0].version);
             chromosome = json.chr;
+            unit = json.unit ? json.unit : "bp";
+            scale = json.scale ? json.scale : 1;
+            jQuery(".unit").html(unit)
         }
         });
     return chromosome;

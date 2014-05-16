@@ -90,17 +90,31 @@ function findminwidth() {
 function browser_coordinates() {
 
     var temp = "";
-    jQuery("#vertical0").html(temp + Math.round(getBegin()));
-    jQuery("#vertical1").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.1)));
-    jQuery("#vertical2").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.2)));
-    jQuery("#vertical3").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.3)));
-    jQuery("#vertical4").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.4)));
-    jQuery("#vertical5").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.5)));
-    jQuery("#vertical6").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.6)));
-    jQuery("#vertical7").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.7)));
-    jQuery("#vertical8").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.8)));
-    jQuery("#vertical9").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.9)));
-    jQuery("#vertical10").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()))));
+    if (scale != 1) {
+        jQuery("#vertical0").html(temp + ((getBegin()) * scale).toFixed(2) + "" + unit);
+        jQuery("#vertical1").html(temp + ((parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.1)) * scale).toFixed(2) + "" + unit);
+        jQuery("#vertical2").html(temp + ((parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.2)) * scale).toFixed(2) + "" + unit);
+        jQuery("#vertical3").html(temp + ((parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.3)) * scale).toFixed(2) + "" + unit);
+        jQuery("#vertical4").html(temp + ((parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.4)) * scale).toFixed(2) + "" + unit);
+        jQuery("#vertical5").html(temp + ((parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.5)) * scale).toFixed(2) + "" + unit);
+        jQuery("#vertical6").html(temp + ((parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.6)) * scale).toFixed(2) + "" + unit);
+        jQuery("#vertical7").html(temp + ((parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.7)) * scale).toFixed(2) + "" + unit);
+        jQuery("#vertical8").html(temp + ((parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.8)) * scale).toFixed(2) + "" + unit);
+        jQuery("#vertical9").html(temp + ((parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.9)) * scale).toFixed(2) + "" + unit);
+        jQuery("#vertical10").html(temp + ((parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()))) * scale).toFixed(2) + "" + unit);
+    } else {
+        jQuery("#vertical0").html(temp + Math.round(getBegin()) + "" + unit);
+        jQuery("#vertical1").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.1)) + "" + unit);
+        jQuery("#vertical2").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.2)) + "" + unit);
+        jQuery("#vertical3").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.3)) + "" + unit);
+        jQuery("#vertical4").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.4)) + "" + unit);
+        jQuery("#vertical5").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.5)) + "" + unit);
+        jQuery("#vertical6").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.6)) + "" + unit);
+        jQuery("#vertical7").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.7)) + "" + unit);
+        jQuery("#vertical8").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.8)) + "" + unit);
+        jQuery("#vertical9").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.9)) + "" + unit);
+        jQuery("#vertical10").html(temp + Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()))) + "" + unit);
+    }
 }
 
 function trackToggle(trackname) {
@@ -532,7 +546,7 @@ function convertSeqtoBLAST(seq, qseq) {
 function processURL(urlParam) {
 
     if (jQuery.urlParam("query") != null && jQuery.urlParam("from") != null && jQuery.urlParam("to") != null && jQuery.urlParam("coord") != null && jQuery.urlParam("blasttrack") != null) {
-        seqregionSearchwithCoord(urlParam("query"), urlParam("coord"), urlParam("from"), urlParam("to"),  urlParam("blasttrack"))
+        seqregionSearchwithCoord(urlParam("query"), urlParam("coord"), urlParam("from"), urlParam("to"), urlParam("blasttrack"))
     }
     else if (jQuery.urlParam("query") != null && jQuery.urlParam("from") != null && jQuery.urlParam("to") != null && jQuery.urlParam("blasttrack") != null) {
         seqregionSearchPopup(urlParam("query"), urlParam("from"), urlParam("to"), urlParam("blasttrack"))
@@ -548,7 +562,7 @@ function processURL(urlParam) {
     }
     else if (jQuery.urlParam("query") != null) {
         search(jQuery.urlParam("query"))
-    }  else if (jQuery("#search").val().length >0) {
+    } else if (jQuery("#search").val().length > 0) {
         search(jQuery("#search").val())
     } else {
         getReferences(true)

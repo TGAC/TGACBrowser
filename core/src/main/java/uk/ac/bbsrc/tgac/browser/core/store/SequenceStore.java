@@ -52,6 +52,9 @@ public interface SequenceStore extends Store {
 
     public JSONArray getTableswithanalysis_id() throws IOException;
     public JSONArray getdbinfo() throws IOException;
+    public String getUnit() throws IOException;
+    public String getScale() throws IOException;
+
     public String getDomains(String geneid) throws IOException;
     public String getSeq(String query, int from, int to) throws IOException;
     public JSONArray getSeqRegionSearchMap(String query) throws IOException;
