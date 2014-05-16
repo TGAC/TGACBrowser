@@ -446,7 +446,7 @@ function displayCursorPosition() {
 //Display cordinates as percentage
 //Display cordinates as percentage
 function dispSeqCoord() {
-    if (unit.toLowerCase() == "bp") {
+    if (scale == 1) {
         var diff = parseInt(parseInt(sequencelength) / 20);
         var bp = "";
         if (diff > 100000000) {
@@ -553,25 +553,31 @@ function dispSeqCoord() {
 
         var diff = parseInt(parseInt(sequencelength) / 20);
 
-        diff = parseInt(diff);
-        jQuery("#zoomoutbig").attr('title', "Zoom Out(" + diff + "" + unit + ")");
-        jQuery("#zoominbig").attr('title', "Zoom In(" + +diff + "" + unit + ")");
-        jQuery("#zoomoutsmall").attr('title', "Zoom Out(" + diff + "" + unit + ")");
-        jQuery("#zoominsmall").attr('title', "Zoom In(" + +diff + "" + unit + ")");
+        jQuery("#zoomoutbig").attr('title', "Zoom Out(" + (diff*scale).toFixed(2) + "" + unit + ")");
+        jQuery("#zoominbig").attr('title', "Zoom In(" + +(diff*scale).toFixed(2) + "" + unit + ")");
+
+        diff = parseInt(parseInt(sequencelength) / 40);
+        jQuery("#zoomoutsmall").attr('title', "Zoom Out(" + (diff*scale).toFixed(2) + "" + unit + ")");
+        jQuery("#zoominsmall").attr('title', "Zoom In(" + +(diff*scale).toFixed(2) + "" + unit + ")");
+
         var len = sequencelength;
         jQuery('#SeqLenStart').html(0);
 
-        jQuery('#SeqLen25').html(parseFloat(diff).toFixed(2) + "" + unit);
+        var diff = parseInt(parseInt(len) / 4);
+
+        jQuery('#SeqLen25').html(parseFloat(diff*scale).toFixed(2) + "" + unit);
 
 
-        jQuery('#SeqLenMid').html(parseFloat(diff).toFixed(2) + "" + unit);
+        var diff = parseInt(parseInt(len) / 2);
+
+        jQuery('#SeqLenMid').html(parseFloat(diff*scale).toFixed(2) + "" + unit);
         var diff = parseInt(parseInt(len) / 4 * 3);
 
-        jQuery('#SeqLen75').html(parseFloat(diff).toFixed(2) + "" + unit);
+        jQuery('#SeqLen75').html(parseFloat(diff*scale).toFixed(2) + "" + unit);
 
         var diff = parseInt(parseInt(len));
 
-        jQuery('#SeqLenEnd').html(parseFloat(diff).toFixed(2) + "" + unit);
+        jQuery('#SeqLenEnd').html(parseFloat(diff*scale).toFixed(2) + "" + unit);
 
     }
 
