@@ -736,7 +736,7 @@ function getMarkers() {
 
 function changeCSS() {
     jQuery("#bar_image").css('top', '210px');
-    jQuery("#nav_panel").css('top', '192px');
+    jQuery("#nav_panel").css('top', '228px');
     jQuery(".vertical-line").css('top', '264px');
     jQuery("#bg_layer").css('top', '230px');
     jQuery("#draggable").css('top', '229px');
