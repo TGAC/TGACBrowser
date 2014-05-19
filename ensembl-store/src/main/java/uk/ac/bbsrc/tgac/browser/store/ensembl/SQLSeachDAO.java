@@ -82,9 +82,9 @@ public class SQLSeachDAO implements SearchStore {
 
     public static final String GET_SEQ_FROM_SEQ_REGION_ID = "SELECT sequence FROM dna WHERE seq_region_id = ?";
     public static final String GET_SEQ_REGION_ID_FROM_NAME = "SELECT seq_region_id FROM seq_region WHERE name  = ?";
-    public static final String GET_SEQ_REGION_ID_SEARCH = "SELECT s.seq_region_id, s.name, s.length, cs.name as Type, s.coord_system_id as coord FROM seq_region s, coord_system cs WHERE s.name like ? and cs.coord_system_id = s.coord_system_id;";
+    public static final String GET_SEQ_REGION_ID_SEARCH = "SELECT s.seq_region_id, s.name, s.length, cs.name as Type, s.coord_system_id as coord FROM seq_region s, coord_system cs WHERE s.name like ? and cs.coord_system_id = s.coord_system_id LIMIT 100;";
 //    public static final String GET_SEQ_REGION_ID_SEARCH = "SELECT * FROM seq_region WHERE name like ? limit 100";
-public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_region_id, s.name, s.length, cs.name as Type, s.coord_system_id as coord FROM seq_region s, coord_system cs WHERE s.name = ? and cs.coord_system_id = s.coord_system_id;";
+public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_region_id, s.name, s.length, cs.name as Type, s.coord_system_id as coord FROM seq_region s, coord_system cs WHERE s.name = ? and cs.coord_system_id = s.coord_system_id limit 100;";
 
     public static final String GET_SIZE_SEQ_REGION_ID_SEARCH = "SELECT count(length) FROM seq_region WHERE name like ?";
     public static final String GET_SEQ_REGION_ID_SEARCH_all = "SELECT * FROM seq_region WHERE coord_system_id = ?";
@@ -96,8 +96,8 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
     public static final String GET_SEQ_REGION_ATTRIB_FROM_ID = "SELECT * FROM seq_region_attrib WHERE seq_region_id = ? and attrib_type_id = 3";
 
 
-    public static final String GET_GENE_SEARCH = "SELECT gene_id, analysis_id, seq_region_start, seq_region_end, seq_region_id, description FROM gene WHERE description like ?";
-    public static final String GET_TRANSCRIPT_SEARCH = "SELECT transcript_id, analysis_id, seq_region_start, seq_region_end, seq_region_id, description FROM transcript WHERE description LIKE ?";
+    public static final String GET_GENE_SEARCH = "SELECT gene_id, analysis_id, seq_region_start, seq_region_end, seq_region_id, description FROM gene WHERE description like ? LIMIT 100";
+    public static final String GET_TRANSCRIPT_SEARCH = "SELECT transcript_id, analysis_id, seq_region_start, seq_region_end, seq_region_id, description FROM transcript WHERE description LIKE ? LIMIT 100";
     public static final String GET_transcript = "SELECT transcript_id, seq_region_start, seq_region_end,description,seq_region_strand FROM transcript where gene_id =? ORDER BY seq_region_start ASC";
     //  public static final String GET_transcript = "SELECT * FROM transcript where seq_region_id =? AND analysis_id = ? AND ((seq_region_start > ? AND seq_region_end < ?) OR (seq_region_start < ? AND seq_region_end > ?) OR (seq_region_end > ? AND seq_region_end < ?) OR (seq_region_start > ? AND seq_region_start < ?))";
     public static final String GET_Genes = "SELECT gene_id,seq_region_start,seq_region_end, description,seq_region_strand FROM gene where seq_region_id =? and analysis_id = ? ";//AND ((seq_region_start > ? AND seq_region_end < ?) OR (seq_region_start < ? AND seq_region_end > ?) OR (seq_region_end > ? AND seq_region_end < ?) OR (seq_region_start > ? AND seq_region_start < ?))";

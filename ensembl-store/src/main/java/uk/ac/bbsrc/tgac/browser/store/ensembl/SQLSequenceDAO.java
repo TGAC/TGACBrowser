@@ -68,7 +68,7 @@ public class SQLSequenceDAO implements SequenceStore {
 
     public static final String GET_SEQ_REGION_ID_SEARCH = "SELECT s.seq_region_id, s.name, s.length, cs.name as Type FROM seq_region s, coord_system cs WHERE s.name like ? and cs.coord_system_id = s.coord_system_id;";
 
-    public static final String GET_SIZE_SEQ_REGION_ID_SEARCH = "SELECT count(length) FROM seq_region WHERE name like ?";
+    public static final String GET_SIZE_SEQ_REGION_ID_SEARCH = "SELECT name FROM seq_region WHERE name like ? limit 10";
     public static final String GET_SIZE_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT count(length) FROM seq_region WHERE name = ?";
     public static final String GET_SEQ_REGION_ID_SEARCH_all = "SELECT * FROM seq_region WHERE coord_system_id = ?";
     public static final String GET_SEQ_REGION_NAME_FROM_ID = "SELECT name FROM seq_region WHERE seq_region_id = ?";
@@ -224,8 +224,8 @@ public class SQLSequenceDAO implements SequenceStore {
 
     public int getSeqRegionearchsize(String searchQuery) throws IOException {
         try {
-            int maps = template.queryForObject(GET_SIZE_SEQ_REGION_ID_SEARCH, new Object[]{'%' + searchQuery + '%'}, Integer.class);
-            return maps;
+            List<Map<String, Object>> maps = template.queryForList(GET_SIZE_SEQ_REGION_ID_SEARCH, new Object[]{'%' + searchQuery + '%'});
+            return maps.size();
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
             throw new IOException("seqregion search size result not found" + e.getMessage());
@@ -234,8 +234,8 @@ public class SQLSequenceDAO implements SequenceStore {
 
     public int getSeqRegionearchsizeformatch(String searchQuery) throws IOException {
         try {
-            int maps = template.queryForObject(GET_SIZE_SEQ_REGION_ID_SEARCH, new Object[]{searchQuery}, Integer.class);
-            return maps;
+            List<Map<String, Object>> maps = template.queryForList(GET_SIZE_SEQ_REGION_ID_SEARCH, new Object[]{searchQuery} );
+            return maps.size();
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
             throw new IOException("seqregion search size result not found" + e.getMessage());
