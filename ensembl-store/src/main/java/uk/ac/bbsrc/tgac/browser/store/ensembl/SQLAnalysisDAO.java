@@ -174,7 +174,7 @@ public class SQLAnalysisDAO implements AnalysisStore {
                 annotationid.put("name", map.get("name")+"-"+map.get("version"));
                 annotationid.put("id", "cs" + map.get("coord_system_id"));
                 annotationid.put("desc", "Coordinate System Rank-" + map.get("rank"));
-                annotationid.put("disp", "0");
+                annotationid.put("disp", 1);
                 annotationid.put("display_label", map.get("name")+"-"+map.get("version"));
                 annotationid.put("merge", "0");
                 annotationid.put("label", "0");

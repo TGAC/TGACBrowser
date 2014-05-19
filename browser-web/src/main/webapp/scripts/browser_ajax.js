@@ -780,7 +780,6 @@ function drawBrowser(json, from, to, blast) {
     trackList(track_list);
 
     minWidth = findminwidth();
-
     if (maxLen > minWidth) {
         if (from && to) {
             if (parseInt(from) < parseInt(to)) {
@@ -814,13 +813,6 @@ function drawBrowser(json, from, to, blast) {
     dispSeqCoord();
 
     displayCursorPosition();
-
-    if (json.coord_sys.indexOf('chromosome') >= 0) {
-        getReferences();
-    }
-    else {
-        chromosome = false;
-    }
 
     loadDefaultTrack(track_list);
 
