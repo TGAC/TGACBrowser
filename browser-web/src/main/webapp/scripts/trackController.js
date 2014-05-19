@@ -854,7 +854,7 @@ function dispTrack(div, trackName, className) {
                 var track_desc = track[track_len].desc;
                 var top;
                 if (coord || track[track_len].layer) {
-                    top = (track[track_len].layer) * 10;
+                    top = (track[track_len].layer) * 10 + 15;
                     if (track[track_len].layer > j) {
                         j = track[track_len].layer;
                     }

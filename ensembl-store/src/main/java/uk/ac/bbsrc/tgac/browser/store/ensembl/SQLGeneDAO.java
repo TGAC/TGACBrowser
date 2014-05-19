@@ -541,7 +541,7 @@ public class SQLGeneDAO implements GeneStore {
                         start_pos = temp;
                     }
 
-                    eachTrack.put("layer", util.stackLayerInt(ends_gene, start_pos, delta, end_pos));
+                    eachGene.put("layer", util.stackLayerInt(ends_gene, start_pos, delta, end_pos));
                     ends_gene = util.stackLayerList(ends_gene, start_pos, delta, end_pos);
 
                     eachGene.put("domain", 0);
