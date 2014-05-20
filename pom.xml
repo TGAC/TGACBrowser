@@ -238,6 +238,11 @@
             <id>springsource-snapshot</id>
             <url>http://repository.springsource.com/maven/bundles/snapshot</url>
         </repository>
+        <repository>
+            <id>biojava-maven-repo</id>
+            <name>BioJava repository</name>
+            <url>http://www.biojava.org/download/maven/</url>
+        </repository>
     </repositories>
 
     <pluginRepositories>
@@ -316,6 +321,12 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.6.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.biojava</groupId>
+            <artifactId>biojava3-core</artifactId>
+            <version>3.0.4</version>
         </dependency>
     </dependencies>
 

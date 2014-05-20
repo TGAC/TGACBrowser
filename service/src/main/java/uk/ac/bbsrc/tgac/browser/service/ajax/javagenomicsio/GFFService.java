@@ -25,6 +25,9 @@
 
 package uk.ac.bbsrc.tgac.browser.service.ajax.javagenomicsio;
 
+import com.googlecode.ehcache.annotations.Cacheable;
+import com.googlecode.ehcache.annotations.KeyGenerator;
+import com.googlecode.ehcache.annotations.Property;
 import edu.unc.genomics.*;
 import edu.unc.genomics.io.GFFFileReader;
 import net.sf.json.JSONArray;

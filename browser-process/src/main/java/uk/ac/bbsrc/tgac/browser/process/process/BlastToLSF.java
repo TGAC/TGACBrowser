@@ -104,11 +104,11 @@ public class BlastToLSF extends AbstractTgacLsfProcess {
             String misc_params = "";
             blast_type = parameters.get(type);
             misc_params = parameters.get(params);
-            String blastBinary = "/data/workarea/bianx/blast+/" + blast_type + " ";
+            String blastBinary = "<path-to-BLAST>" + blast_type + " ";
             getLog().debug("Executing " + getName() + " with the following parameters: " + parameters.toString() + " " + misc_params);
 
             StringBuilder sb = new StringBuilder();
-            File file = new File("/scratch/tgacbrowser/" + parameters.get(blastAccession).toString() + ".fa");
+            File file = new File("<path-to-fasta>" + parameters.get(blastAccession).toString() + ".fa");
 
             FileWriter writer = new FileWriter(file, true);
 
@@ -117,13 +117,13 @@ public class BlastToLSF extends AbstractTgacLsfProcess {
             output.print(getSeq(parameters.get(blastAccession).toString()));
 
             output.close();
-            sb.append("perl /data/workarea/tgacbrowser/BLASTCommand.pl " +
+            sb.append("perl <path-to-perl>/BLASTCommand.pl " +
                     "'" + parameters.get(type) + "' " +
                     "'" + parameters.get(blastDB) + "' " +
                     "'" + parameters.get(blastAccession) + "' " +
                     "'" + parameters.get(params) + "' " +
                     "'" + parameters.get(format) + "' " +
-                    "> /scratch/tgacbrowser/" + parameters.get(blastAccession) + ".txt");
+                    "> <path-to-IO-dir>/" + parameters.get(blastAccession) + ".txt");
             return sb.toString();
         } catch (Exception e) {
             return ("Exception: " + e.getMessage());
@@ -145,7 +145,7 @@ public class BlastToLSF extends AbstractTgacLsfProcess {
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
 
-            Connection conn = DriverManager.getConnection("jdbc:mysql://tgac-db1.nbi.ac.uk:3306/thankia_blast_manager", "tgacbrowser", "tgac_bioinf");
+            Connection conn = DriverManager.getConnection("jdbc:mysql://db-host:3306/db-name", "usrname", "pwd");
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("select blast_seq from blast_params where id_blast=\"" + id + "\"");
 

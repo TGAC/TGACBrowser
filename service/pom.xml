@@ -180,6 +180,18 @@
         </dependency>
 
 
+        <dependency>
+            <groupId>org.biojava</groupId>
+            <artifactId>biojava3-core</artifactId>
+            <version>3.0.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.biojava</groupId>
+            <artifactId>biojava3-genome</artifactId>
+            <version>3.0.4</version>
+        </dependency>
+
     </dependencies>
 
     <properties>
