@@ -411,9 +411,11 @@ public class SQLGeneDAO implements GeneStore {
                 for (int j = 0; j < maps_one.size(); j++) {
                     List<Map<String, Object>> maps_two = template.queryForList(GET_GENE_SIZE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId});
                     if (maps_two.size() > 0) {
+                        long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
+                        long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
                         List<Integer> ends = new ArrayList<Integer>();
                         ends.add(0, 0);
-                        assemblyTracks.addAll(getGeneLevel(start_pos + Integer.parseInt(maps_one.get(j).get("asm_start").toString()), getGenes(Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, start, end), start, end, delta));
+                        assemblyTracks.addAll(getGeneLevel(start_pos + Integer.parseInt(maps_one.get(j).get("asm_start").toString()), getGenes(Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end), start, end, delta));
                     } else {
                         long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
                         long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
@@ -492,15 +494,7 @@ public class SQLGeneDAO implements GeneStore {
                     eachTrack.put("start", start_add + Integer.parseInt(filteredgenes.getJSONObject(i).get("transcript_start").toString()));
                     eachTrack.put("end", start_add + Integer.parseInt(filteredgenes.getJSONObject(i).get("transcript_end").toString()));
 
-                    if (filteredgenes.getJSONObject(i).get("start_exon_id").toString().equals(filteredgenes.getJSONObject(i).get("exon_id").toString())) {
-                        eachTrack.put("transcript_start", Integer.parseInt(filteredgenes.getJSONObject(i).get("exon_start").toString()) + Integer.parseInt(filteredgenes.getJSONObject(i).get("translation_start").toString()));
 
-                    }
-
-                    if (filteredgenes.getJSONObject(i).get("end_exon_id").toString().equals(filteredgenes.getJSONObject(i).get("exon_id").toString())) {
-                        eachTrack.put("transcript_end", Integer.parseInt(filteredgenes.getJSONObject(i).get("exon_end").toString()) - Integer.parseInt(filteredgenes.getJSONObject(i).get("translation_end").toString()));
-
-                    }
                     eachTrack.put("desc", filteredgenes.getJSONObject(i).get("transcript_name"));
                     int start_pos = Integer.parseInt(filteredgenes.getJSONObject(i).get("transcript_start").toString());
                     int end_pos = Integer.parseInt(filteredgenes.getJSONObject(i).get("transcript_end").toString());
@@ -562,6 +556,17 @@ public class SQLGeneDAO implements GeneStore {
                 eachExon.put("id", filteredgenes.getJSONObject(i).get("exon_id"));
                 eachExon.put("start", start_add + Integer.parseInt(filteredgenes.getJSONObject(i).get("exon_start").toString()));
                 eachExon.put("end", start_add + Integer.parseInt(filteredgenes.getJSONObject(i).get("exon_end").toString()));
+
+                if (filteredgenes.getJSONObject(i).get("start_exon_id").toString().equals(filteredgenes.getJSONObject(i).get("exon_id").toString())) {
+                    eachTrack.put("transcript_start", Integer.parseInt(filteredgenes.getJSONObject(i).get("exon_start").toString()) + Integer.parseInt(filteredgenes.getJSONObject(i).get("translation_start").toString()));
+
+                }
+
+                if (filteredgenes.getJSONObject(i).get("end_exon_id").toString().equals(filteredgenes.getJSONObject(i).get("exon_id").toString())) {
+                    eachTrack.put("transcript_end", Integer.parseInt(filteredgenes.getJSONObject(i).get("exon_end").toString()) - Integer.parseInt(filteredgenes.getJSONObject(i).get("translation_end").toString()));
+
+                }
+
                 exonList.add(eachExon);
 
                 lastsize = thissize;
