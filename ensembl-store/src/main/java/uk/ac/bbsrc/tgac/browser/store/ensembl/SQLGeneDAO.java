@@ -412,8 +412,10 @@ public class SQLGeneDAO implements GeneStore {
                     List<Map<String, Object>> maps_two = template.queryForList(GET_GENE_SIZE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId});
                     if (maps_two.size() > 0) {
                         List<Integer> ends = new ArrayList<Integer>();
+                        long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
+                        long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
                         ends.add(0, 0);
-                        assemblyTracks.addAll(getGeneLevel(start_pos + Integer.parseInt(maps_one.get(j).get("asm_start").toString()), getGenes(Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, start, end), start, end, delta));
+                        assemblyTracks.addAll(getGeneLevel(start_pos + Integer.parseInt(maps_one.get(j).get("asm_start").toString()), getGenes(Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end), start, end, delta));
                     } else {
                         long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
                         long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
