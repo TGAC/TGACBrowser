@@ -492,15 +492,7 @@ public class SQLGeneDAO implements GeneStore {
                     eachTrack.put("start", start_add + Integer.parseInt(filteredgenes.getJSONObject(i).get("transcript_start").toString()));
                     eachTrack.put("end", start_add + Integer.parseInt(filteredgenes.getJSONObject(i).get("transcript_end").toString()));
 
-                    if (filteredgenes.getJSONObject(i).get("start_exon_id").toString().equals(filteredgenes.getJSONObject(i).get("exon_id").toString())) {
-                        eachTrack.put("transcript_start", Integer.parseInt(filteredgenes.getJSONObject(i).get("exon_start").toString()) + Integer.parseInt(filteredgenes.getJSONObject(i).get("translation_start").toString()));
 
-                    }
-
-                    if (filteredgenes.getJSONObject(i).get("end_exon_id").toString().equals(filteredgenes.getJSONObject(i).get("exon_id").toString())) {
-                        eachTrack.put("transcript_end", Integer.parseInt(filteredgenes.getJSONObject(i).get("exon_end").toString()) - Integer.parseInt(filteredgenes.getJSONObject(i).get("translation_end").toString()));
-
-                    }
                     eachTrack.put("desc", filteredgenes.getJSONObject(i).get("transcript_name"));
                     int start_pos = Integer.parseInt(filteredgenes.getJSONObject(i).get("transcript_start").toString());
                     int end_pos = Integer.parseInt(filteredgenes.getJSONObject(i).get("transcript_end").toString());
@@ -562,6 +554,14 @@ public class SQLGeneDAO implements GeneStore {
                 eachExon.put("id", filteredgenes.getJSONObject(i).get("exon_id"));
                 eachExon.put("start", start_add + Integer.parseInt(filteredgenes.getJSONObject(i).get("exon_start").toString()));
                 eachExon.put("end", start_add + Integer.parseInt(filteredgenes.getJSONObject(i).get("exon_end").toString()));
+                if (filteredgenes.getJSONObject(i).get("start_exon_id").toString().equals(filteredgenes.getJSONObject(i).get("exon_id").toString())) {
+                    eachTrack.put("transcript_start", Integer.parseInt(filteredgenes.getJSONObject(i).get("exon_start").toString()) + Integer.parseInt(filteredgenes.getJSONObject(i).get("translation_start").toString()));
+                }
+
+                if (filteredgenes.getJSONObject(i).get("end_exon_id").toString().equals(filteredgenes.getJSONObject(i).get("exon_id").toString())) {
+                    eachTrack.put("transcript_end", Integer.parseInt(filteredgenes.getJSONObject(i).get("exon_end").toString()) - Integer.parseInt(filteredgenes.getJSONObject(i).get("translation_end").toString()));
+
+                }
                 exonList.add(eachExon);
 
                 lastsize = thissize;
