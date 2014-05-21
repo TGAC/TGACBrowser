@@ -482,7 +482,7 @@ function dispSeqCoord() {
         jQuery("#zoomoutsmall").attr('title', "Zoom Out(" + diff + "" + bp + ")");
         jQuery("#zoominsmall").attr('title', "Zoom In(" + +diff + "" + bp + ")");
         var len = sequencelength;
-        jQuery('#SeqLenStart').html(0);
+        jQuery('#SeqLenStart').html(0+""+bp);
 
         var diff = parseInt(parseInt(len) / 4);
         var bp = "";
