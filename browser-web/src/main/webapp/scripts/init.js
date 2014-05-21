@@ -482,7 +482,7 @@ function dispSeqCoord() {
         jQuery("#zoomoutsmall").attr('title', "Zoom Out(" + diff + "" + bp + ")");
         jQuery("#zoominsmall").attr('title', "Zoom In(" + +diff + "" + bp + ")");
         var len = sequencelength;
-        jQuery('#SeqLenStart').html(0);
+        jQuery('#SeqLenStart').html(0 +""+bp);
 
         var diff = parseInt(parseInt(len) / 4);
         var bp = "";
@@ -498,7 +498,7 @@ function dispSeqCoord() {
             diff = diff / 1000;
             bp = "Kbp";
         }
-        jQuery('#SeqLen25').html(parseFloat(diff) + "" + bp);
+        jQuery('#SeqLen25').html(parseFloat(diff).toFixed(2) + "" + bp);
 
         var diff = parseInt(parseInt(len) / 2);
         var bp = "";
@@ -515,7 +515,7 @@ function dispSeqCoord() {
             bp = "Kbp";
         }
 
-        jQuery('#SeqLenMid').html(parseFloat(diff) + "" + bp);
+        jQuery('#SeqLenMid').html(parseFloat(diff).toFixed(2) + "" + bp);
         var diff = parseInt(parseInt(len) / 4 * 3);
         var bp = "";
         if (diff > 100000000) {
@@ -531,7 +531,7 @@ function dispSeqCoord() {
             bp = "Kbp";
         }
 
-        jQuery('#SeqLen75').html(parseFloat(diff) + "" + bp);
+        jQuery('#SeqLen75').html(parseFloat(diff).toFixed(2) + "" + bp);
 
         var diff = parseInt(parseInt(len));
         var bp = "";
