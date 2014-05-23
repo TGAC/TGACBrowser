@@ -2429,7 +2429,7 @@ span.counter {
     position: absolute;
     border-left: 1px solid #000000;
     border-right: 1px solid #000000;
-    background: url("../images/browser/gene.png") repeat-x center center;
+    /*background: url("../images/browser/gene.png") repeat-x center center;*/
     height: 10px;
 }
 
@@ -2720,3 +2720,64 @@ border: 1px solid gray;
 #unmapped:hover{
     z-index: 1999;
 }
+
+.reverse{
+    width: 0px;
+    height: 0px;
+    border-right: 10px solid transparent;
+    border-top: 5px solid white;
+    border-left: 0px solid white;
+    border-bottom: 5px solid white;
+    position: absolute;
+    z-index: 999;
+}
+
+.forward {
+    width: 0px;
+    height: 0px;
+    border-right: 0px solid white;
+    border-top: 5px solid white;
+    border-left: 10px solid transparent;
+    border-bottom: 5px solid white;
+    position: absolute;
+    z-index: 999;
+}
+
+
+.chevron {
+    position: absolute;
+    text-align: center;
+    padding: 1px;
+    margin-bottom: 6px;
+    height: 0px;
+    width: 100px;
+}
+
+.chevron:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 51%;
+    background: black;
+    -webkit-transform: skew(0deg, -6deg);
+    -moz-transform: skew(0deg, -6deg);
+    -ms-transform: skew(0deg, -6deg);
+    -o-transform: skew(0deg, -6deg);
+    transform: skew(0deg, -6deg);
+}
+.chevron:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 50%;
+    background: black;
+    -webkit-transform: skew(0deg, 6deg);
+    -moz-transform: skew(0deg, 6deg);
+    -ms-transform: skew(0deg, 6deg);
+    -o-transform: skew(0deg, 6deg);
+    transform: skew(0deg, 6deg);
+}​
