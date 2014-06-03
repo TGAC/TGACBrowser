@@ -535,7 +535,7 @@ function dispGeneExon(track, genestrand, className, div) {
     var utrtrackClass = "utr " + className + "_utr";
 
 
-    var geneexons = track.Exons;
+    var geneexons = sortResults("start", "asc", track.Exons);
     var genetranscript = track;
 
 
@@ -544,10 +544,10 @@ function dispGeneExon(track, genestrand, className, div) {
         var last = null, current = null;
         var strand = genestrand;
 
-        var spanclass = "ui-icon ui-icon-carat-1-e";
+        var spanclass = "forward";
 
         if (strand == -1 || strand == "-1") {
-            spanclass = "ui-icon ui-icon-carat-1-w";
+            spanclass = "reverse";
         }
 
         var newStart_temp = getBegin();
@@ -558,7 +558,7 @@ function dispGeneExon(track, genestrand, className, div) {
         var start = newStart_temp - partial;
         var end = newEnd_temp + partial;
         var exon_len = geneexons.length;
-        var last_exon = 0;
+        var last_exon = null;
         var startposition = 0;
         var stopposition = 0;
         while (exon_len--) {
@@ -587,30 +587,30 @@ function dispGeneExon(track, genestrand, className, div) {
                 transcript_end = genetranscript.transcript_end;
             }
 
-            if (exon_len - 1 >= 0 && geneexons[exon_len - 1].end < newStart_temp && exon_len + 1 < geneexons.length && geneexons[exon_len + 1].start > newEnd_temp) {
 
-                startposition = ((newStart_temp - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                stopposition = ((getEnd() - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                track_html += "<div style=\"position:absolute; z-index; 999; TOP:" + (top - 3) + "px; left:" + (startposition + 20) + "px; \" class=\"" + spanclass + "\"></div>";
-                track_html += "<div style=\"position:absolute; z-index; 999; TOP:" + (top - 3) + "px; left:" + (stopposition - 20) + "px; \" class=\"" + spanclass + "\"></div>";
-            }
 
             if (transcript_start && transcript_end) {
                 if (exon_start > transcript_end && exon_stop > transcript_end) {
                     startposition = ((exon_start - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                     stopposition = (exon_stop - exon_start ) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
-                    if (last != null) {
-                        jQuery("<span>").attr({
-                            'class': spanclass,
-                            'style': "position: absolute; TOP:" + (top - 3) + "px; left:" + (startposition - 20) + "px "
-                        }).appendTo(div);
 
-                    }
 
                     jQuery("<div>").attr({
                         'class': utrtrackClass,
                         'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
                     }).appendTo(div);
+
+                    if(stopposition > 10){
+                        if(spanclass == "forward"){
+                            startposition = startposition+ (stopposition-8)
+
+                        }
+                    jQuery("<div>").attr({
+                            'class':spanclass+" 1",
+                            'style': "TOP:" + top + "px; LEFT:" + startposition + "px;"
+                        }).appendTo(div);
+                    }
+
 
                     last = current;
                 }
@@ -623,6 +623,18 @@ function dispGeneExon(track, genestrand, className, div) {
                         'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
                     }).appendTo(div);
 
+
+                    if(stopposition > 10){
+                        if(spanclass == "forward"){
+                            startposition = startposition+ (stopposition-8)
+
+                        }
+                        jQuery("<div>").attr({
+                            'class':spanclass+" 2",
+                            'style': "TOP:" + top + "px; LEFT:" + startposition + "px;"
+                        }).appendTo(div);
+                    }
+
                     last = current;
                 }
                 else if (exon_start < transcript_start && exon_stop > transcript_end) {
@@ -634,6 +646,18 @@ function dispGeneExon(track, genestrand, className, div) {
                         'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
                     }).appendTo(div);
 
+                    if(stopposition > 10){
+                        if(spanclass == "forward"){
+                            startposition = startposition+ (stopposition-8)
+
+                        }
+                        jQuery("<div>").attr({
+                            'class':spanclass+" 3",
+                            'style': "TOP:" + top + "px; LEFT:" + startposition + "px;"
+                        }).appendTo(div);
+                    }
+
+
                     startposition = ((transcript_end - newStart_temp) - 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                     stopposition = (exon_stop - transcript_end + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
@@ -643,12 +667,35 @@ function dispGeneExon(track, genestrand, className, div) {
                         'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
                     }).appendTo(div);
 
+                    if(stopposition > 10){
+                        if(spanclass == "forward"){
+                            startposition = startposition+ (stopposition-8)
+
+                        }
+                        jQuery("<div>").attr({
+                            'class':spanclass+" 4",
+                            'style': "TOP:" + top + "px; LEFT:" + startposition + "px;"
+                        }).appendTo(div);
+                    }
+
+
                     startposition = ((transcript_start - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                     stopposition = (transcript_end - transcript_start ) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
                     jQuery("<div>").attr({
                         'class': trackClass,
                         'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
                     }).appendTo(div);
+
+                    if(stopposition > 10){
+                        if(spanclass == "forward"){
+                            startposition = startposition+ (stopposition-8)
+
+                        }
+                        jQuery("<div>").attr({
+                            'class':spanclass+" 5",
+                            'style': "TOP:" + top + "px; LEFT:" + startposition + "px;"
+                        }).appendTo(div);
+                    }
 
                     last = current;
                 }
@@ -661,6 +708,18 @@ function dispGeneExon(track, genestrand, className, div) {
                         'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
                     }).appendTo(div);
 
+//                    if(stopposition > 10){
+//                        if(spanclass == "forward"){
+//                            startposition = startposition+ (stopposition-8)
+//
+//                        }
+//                        jQuery("<div>").attr({
+//                            'class':spanclass+" 6",
+//                            'style': "TOP:" + top + "px; LEFT:" + startposition + "px;"
+//                        }).appendTo(div);
+//                    }
+
+
                     startposition = ((transcript_start - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                     stopposition = (exon_stop - transcript_start ) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
@@ -669,6 +728,17 @@ function dispGeneExon(track, genestrand, className, div) {
                         'class': trackClass,
                         'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
                     }).appendTo(div);
+
+                    if(stopposition > 10){
+                        if(spanclass == "forward"){
+                            startposition = startposition+ (stopposition-8)
+                        }
+                        jQuery("<div>").attr({
+                            'class':spanclass+" 7",
+                            'style': "TOP:" + top + "px; LEFT:" + startposition + "px;"
+                        }).appendTo(div);
+                    }
+
 
                     last = current;
                 }
@@ -682,6 +752,18 @@ function dispGeneExon(track, genestrand, className, div) {
                         'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
                     }).appendTo(div);
 
+                    if(stopposition > 10){
+                        if(spanclass == "forward"){
+                            startposition = startposition+ (stopposition-8)
+
+                        }
+                        jQuery("<div>").attr({
+                            'class':spanclass+" 8",
+                            'style': "TOP:" + top + "px; LEFT:" + startposition + "px;"
+                        }).appendTo(div);
+                    }
+
+
                     startposition = ((exon_start - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                     stopposition = (transcript_end - exon_start) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
@@ -689,6 +771,18 @@ function dispGeneExon(track, genestrand, className, div) {
                         'class': trackClass,
                         'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
                     }).appendTo(div);
+
+                    if(stopposition > 10){
+                        if(spanclass == "forward"){
+                            startposition = startposition+ (stopposition-8)
+
+                        }
+                        jQuery("<div>").attr({
+                            'class':spanclass+" 9",
+                            'style': "TOP:" + top + "px; LEFT:" + startposition + "px;"
+                        }).appendTo(div);
+                    }
+
 
                     last = current;
                 }
@@ -702,16 +796,21 @@ function dispGeneExon(track, genestrand, className, div) {
                         'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
                     }).appendTo(div);
 
-                    last = current;
-                }
-                if (last != null || geneexons.length == 1) {
-                    if ((startposition - 20) > (transcript_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2) {
-                        jQuery("<span>").attr({
-                            'class': spanclass,
-                            'style': "cursor:pointer; position:absolute; z-index; 999; TOP:" + (top - 3) + "px; left:" + (startposition - 20) + "px "
+                    if(stopposition > 10){
+                        if(spanclass == "forward"){
+                            startposition = startposition+ (stopposition-8)
+
+                        }
+                        jQuery("<div>").attr({
+                            'class':spanclass+" 10",
+                            'style': "TOP:" + top + "px; LEFT:" + startposition + "px;"
                         }).appendTo(div);
                     }
+
+
+                    last = current;
                 }
+//
             }
             else {
                 startposition = ((exon_start - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
@@ -723,23 +822,40 @@ function dispGeneExon(track, genestrand, className, div) {
                     'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
                 }).appendTo(div);
 
-                if (last_exon > 0 && exon_len > 1) {
-                    var marker_pos = (startposition - last_exon) / 2;
-                    if (startposition < last_exon) {
-                        marker_pos = (last_exon - startposition) / 2;
-                        marker_pos = parseInt(startposition) - parseInt(marker_pos);
-                    }
-                    else {
-                        marker_pos = parseInt(marker_pos) + parseInt(startposition) - 8;
-                    }
-                    jQuery("<span>").attr({
-                        'class': spanclass,
-                        'style': "cursor:pointer; position:absolute; z-index; 999; TOP:" + (top - 3) + "px; left:" + (marker_pos) + "px "
-                    }).appendTo(div);
+                if(stopposition > 10){
+                    if(spanclass == "forward"){
+                        startposition = startposition+ (stopposition-8)
 
+                    }
+                    jQuery("<div>").attr({
+                        'class':spanclass+" 11",
+                        'style': "TOP:" + top + "px; LEFT:" + startposition + "px;"
+                    }).appendTo(div);
                 }
+
+
+
             }
-            last_exon = parseInt(startposition) + parseInt(stopposition);
+//            if(last_exon != null && exon_len != geneexons.length){
+//                console.log(exon_stop+":"+last_exon)
+//                startposition = ((exon_stop - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+//                stopposition = (last_exon-exon_stop) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+//
+//
+//                var angle = parseInt(5/(stopposition/2));
+//                console.log("angle "+angle)
+//                var temp = jQuery("<div>").attr({
+//                    'class': "chevron",
+//                    'style': "TOP:" + (top+3) + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
+//                }).appendTo(div);
+//
+////                temp.before.style("-webkit-transform: skew(0deg, -"+angle+"deg); -moz-transform: skew(0deg, -"+angle+"deg); -ms-transform: skew(0deg, -"+angle+"deg);-o-transform: skew(0deg, -"+angle+"deg); transform: skew(0deg, -"+angle+"deg)")
+////                temp.after.style("-webkit-transform: skew(0deg, "+angle+"deg); -moz-transform: skew(0deg, "+angle+"deg); -ms-transform: skew(0deg, "+angle+"deg);-o-transform: skew(0deg, "+angle+"deg); transform: skew(0deg, "+angle+"deg)")
+//
+//            }
+
+            last_exon = parseInt(exon_start);
+
         }
 
         return track_html;
@@ -1386,4 +1502,11 @@ function dispGraphHeat(div, trackName, className) {
     }
 }
 
+function sortResults(prop, asc, array) {
+    array = array.sort(function (a, b) {
+        if (asc) return (a[prop] > b[prop]);
+        else return (b[prop] > a[prop]);
+    });
+    return array;
+}
 
