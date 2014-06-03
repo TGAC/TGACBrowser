@@ -476,6 +476,9 @@ function getReferences(callback) {
             var width = 15;
             var distance = (parseInt(maxLen) - (width * referenceLength)) / (referenceLength + 1);
             jQuery("#mapmarker").css("width", width);
+            jQuery("#mapmarker").hide()
+
+
             jQuery("#refmap").html("");
             if (referenceLength > 0 && referenceLength < 50) {
                 changeCSS();
@@ -921,7 +924,7 @@ function ajax_processing(json, from, to, blast) {
                 seqregname = json.seqregname;
                 sequencelength = json.length
 
-                jQuery("#mapmarker").fadeIn()
+                jQuery("#mapmarker").show()
 
                 drawBrowser(json, from, to, blast);
 
@@ -932,7 +935,7 @@ function ajax_processing(json, from, to, blast) {
             })
 
         } else {
-            jQuery("#mapmarker").fadeOut()
+            jQuery("#mapmarker").hide()
             getReferences(function () {
                 dispOnMap(json);
             })

@@ -258,6 +258,30 @@ function auto_drag() {
 
 
 function setNavPanel() {
+    console.log("setnavpanel")
+//    var left = 0;
+//    var height = parseFloat(jQuery("#sequence").position().top) - (parseFloat(jQuery("#draggable").position().top) + parseFloat(jQuery("#draggable").css("height"))) + "px solid #cccccc";
+//    console.log("setnavpanel h"+height)
+//
+//    var border_left = parseFloat(jQuery("#draggable").css("left")) - left + "px solid transparent";
+//    console.log("setnavpanel bl"+border_left)
+//
+//    var width = jQuery("#draggable").css("width");
+//    console.log("setnavpanel w"+width)
+//
+//    var diff = (parseFloat(maxLen) - (parseFloat(jQuery("#draggable").css("width")) + parseFloat(jQuery("#draggable").css("left"))))
+//
+//    console.log("setnavpanel d"+diff)
+//
+//    if (diff < 0) {
+//        diff = 0;
+//    }
+//    var border_right = (diff) + "px solid transparent";
+//    jQuery("#nav_panel").animate({left: left}, { duration: 300, queue: false});
+//    jQuery("#nav_panel").animate({width: width}, { duration: 300, queue: false});
+//    jQuery("#nav_panel").animate({borderBottom: height}, { duration: 300, queue: false});
+//    jQuery("#nav_panel").animate({borderLeft: border_left}, { duration: 300, queue: false});
+//    jQuery("#nav_panel").animate({borderRight: (border_right)}, { duration: 300, queue: false});
     var left = 0;
     var height = parseFloat(jQuery("#sequence").position().top) - (parseFloat(jQuery("#draggable").position().top) + parseFloat(jQuery("#draggable").css("height"))) + "px solid #cccccc";
     var border_left = parseFloat(jQuery("#draggable").css("left")) - left + "px solid transparent";
@@ -272,6 +296,7 @@ function setNavPanel() {
     jQuery("#nav_panel").animate({borderBottom: height}, { duration: 300, queue: false});
     jQuery("#nav_panel").animate({borderLeft: border_left}, { duration: 300, queue: false});
     jQuery("#nav_panel").animate({borderRight: (border_right)}, { duration: 300, queue: false});
+
 }
 
 
