@@ -836,22 +836,23 @@ function dispGeneExon(track, genestrand, className, div) {
 
 
             }
-            if(last_exon != null && exon_len != geneexons.length){
-                console.log(exon_stop+":"+last_exon)
-                startposition = ((exon_stop - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                stopposition = (last_exon-exon_stop) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
-
-
-                var angle = parseInt(5/(stopposition/2));
-                var temp = jQuery("<div>").attr({
-                    'class': "chevron",
-                    'style': "TOP:" + (top+3) + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
-                }).appendTo(div);
-
-//                temp.before.style("-webkit-transform: skew(0deg, -"+angle+"deg); -moz-transform: skew(0deg, -"+angle+"deg); -ms-transform: skew(0deg, -"+angle+"deg);-o-transform: skew(0deg, -"+angle+"deg); transform: skew(0deg, -"+angle+"deg)")
-//                temp.after.style("-webkit-transform: skew(0deg, "+angle+"deg); -moz-transform: skew(0deg, "+angle+"deg); -ms-transform: skew(0deg, "+angle+"deg);-o-transform: skew(0deg, "+angle+"deg); transform: skew(0deg, "+angle+"deg)")
-
-            }
+//            if(last_exon != null && exon_len != geneexons.length){
+//                console.log(exon_stop+":"+last_exon)
+//                startposition = ((exon_stop - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+//                stopposition = (last_exon-exon_stop) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+//
+//
+//                var angle = parseInt(5/(stopposition/2));
+//                console.log("angle "+angle)
+//                var temp = jQuery("<div>").attr({
+//                    'class': "chevron",
+//                    'style': "TOP:" + (top+3) + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
+//                }).appendTo(div);
+//
+////                temp.before.style("-webkit-transform: skew(0deg, -"+angle+"deg); -moz-transform: skew(0deg, -"+angle+"deg); -ms-transform: skew(0deg, -"+angle+"deg);-o-transform: skew(0deg, -"+angle+"deg); transform: skew(0deg, -"+angle+"deg)")
+////                temp.after.style("-webkit-transform: skew(0deg, "+angle+"deg); -moz-transform: skew(0deg, "+angle+"deg); -ms-transform: skew(0deg, "+angle+"deg);-o-transform: skew(0deg, "+angle+"deg); transform: skew(0deg, "+angle+"deg)")
+//
+//            }
 
             last_exon = parseInt(exon_start);
 

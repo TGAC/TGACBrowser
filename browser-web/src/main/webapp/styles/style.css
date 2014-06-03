@@ -2429,7 +2429,7 @@ span.counter {
     position: absolute;
     border-left: 1px solid #000000;
     border-right: 1px solid #000000;
-    /*background: url("../images/browser/gene.png") repeat-x center center;*/
+    background: url("../images/browser/gene.png") repeat-x center center;
     height: 10px;
 }
 
