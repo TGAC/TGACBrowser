@@ -538,8 +538,10 @@ public class DnaSequenceService {
      */
     public JSONObject loadMarker(HttpSession session, JSONObject json) {
         JSONObject response = new JSONObject();
+        String coord = json.getString("coord");
+
         try {
-            response.put("marker", sequenceStore.getMarker());
+            response.put("marker", sequenceStore.getMarker(coord));
 
             return response;
         } catch (IOException e) {

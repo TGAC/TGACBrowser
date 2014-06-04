@@ -65,7 +65,7 @@ public interface SequenceStore extends Store {
     public Integer getSeqRegionforone(String searchQuery) throws IOException;
     public Integer getSeqRegionCoordId(String query) throws IOException;
 
-    public JSONArray getMarker() throws IOException;
+    public JSONArray getMarker(String coord) throws IOException;
     public String getCoordSys(String query) throws Exception;
 
 }

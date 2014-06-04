@@ -713,7 +713,7 @@ function getMarkers() {
     Fluxion.doAjax(
         'dnaSequenceService',
         'loadMarker',
-        {'url': ajaxurl},
+        {'coord':coord, 'url': ajaxurl},
         {'doOnSuccess': function (json) {
             var markers = json.marker;
             var height = jQuery("#" + seqregname).css('height');
