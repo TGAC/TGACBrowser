@@ -573,8 +573,8 @@ function format_numbers(number){
     var diff = parseInt(number);
     var bp = "";
 
-    if (diff > 100000000) {
-        diff = (diff / 100000000);
+    if (diff > 1000000000) {
+        diff = (diff / 1000000000);
         bp = "Gbp";
     }
     else if (diff > 1000000) {

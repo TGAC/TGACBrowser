@@ -55,8 +55,8 @@ function setDragableWidth(width) {
     });
     var diff = parseInt((getEnd() - getBegin()) * 0.90);
     var bp = "bp";
-    if (diff > 100000000) {
-        diff = (diff / 1000000);
+    if (diff > 1000000000) {
+        diff = (diff / 1000000000);
         bp = "Gbp";
     }
     else if (diff > 1000000) {

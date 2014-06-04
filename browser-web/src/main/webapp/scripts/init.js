@@ -309,8 +309,8 @@ function onLoad() {
             }
 
             var bp = "bp";
-            if (diff > 100000000) {
-                diff = (diff / 1000000);
+            if (diff > 1000000000) {
+                diff = (diff / 1000000000);
                 bp = "Gb";
             }
             else if (diff > 1000000) {
@@ -449,8 +449,8 @@ function dispSeqCoord() {
     if (scale == 1) {
         var diff = parseInt(parseInt(sequencelength) / 20);
         var bp = "";
-        if (diff > 100000000) {
-            diff = (diff / 100000000);
+        if (diff > 1000000000) {
+            diff = (diff / 1000000000);
             bp = "G";
         }
         else if (diff > 1000000) {
@@ -467,8 +467,8 @@ function dispSeqCoord() {
         jQuery("#zoominbig").attr('title', "Zoom In(" + +diff + "" + bp + ")");
         var diff = parseInt(parseInt(sequencelength) / 40);
         var bp = "";
-        if (diff > 100000000) {
-            diff = (diff / 100000000);
+        if (diff > 1000000000) {
+            diff = (diff / 1000000000);
             bp = "Gbp";
         }
         else if (diff > 1000000) {
@@ -486,8 +486,8 @@ function dispSeqCoord() {
 
         var diff = parseInt(parseInt(len) / 4);
         var bp = "";
-        if (diff > 100000000) {
-            diff = (diff / 100000000);
+        if (diff > 1000000000) {
+            diff = (diff / 1000000000);
             bp = "Gbp";
         }
         else if (diff > 1000000) {
@@ -502,8 +502,8 @@ function dispSeqCoord() {
 
         var diff = parseInt(parseInt(len) / 2);
         var bp = "";
-        if (diff > 100000000) {
-            diff = (diff / 100000000);
+        if (diff > 1000000000) {
+            diff = (diff / 1000000000);
             bp = "Gbp";
         }
         else if (diff > 1000000) {
@@ -518,8 +518,8 @@ function dispSeqCoord() {
         jQuery('#SeqLenMid').html(parseFloat(diff).toFixed(2) + "" + bp);
         var diff = parseInt(parseInt(len) / 4 * 3);
         var bp = "";
-        if (diff > 100000000) {
-            diff = (diff / 100000000);
+        if (diff > 1000000000) {
+            diff = (diff / 1000000000);
             bp = "Gbp";
         }
         else if (diff > 1000000) {
@@ -535,8 +535,8 @@ function dispSeqCoord() {
 
         var diff = parseInt(parseInt(len));
         var bp = "";
-        if (diff > 100000000) {
-            diff = (diff / 100000000);
+        if (diff > 1000000000) {
+            diff = (diff / 1000000000);
 
             bp = "Gbp";
         }
