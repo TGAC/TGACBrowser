@@ -347,9 +347,7 @@ public class SQLAssemblyDAO implements AssemblyStore {
             } else {
                 trackList = recursiveAssembly(0, id, trackId, delta, start, end);
             }
-            if (trackList.size() == 0) {
-                trackList.add("getHit no result found");
-            }
+
             return trackList;
         } catch (Exception e) {
             e.printStackTrace();
