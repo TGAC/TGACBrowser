@@ -58,10 +58,87 @@ function tracklistopenclose() {
     }
 }
 
+// Generate automated tracks divs for each track
 
-// Generate automated tracks lists and divs for each track
+function tracks_div(Tracklist) {
+    var i = 0;
+
+    jQuery("#tracks").html("<div id='mergedtrack_wrapper' class='feature_tracks' style=\"display:none\">  " +
+        "<div align='left' class='handle'>" +
+        "<table>" +
+        "<tr>" +
+        "<td><b>Merged Track  </b></td>" +
+        "<td><div class=\"ui-icon ui-icon-comment\" onclick=toogleLabelMerged();> </div></td>" +
+        "<td><div class='closehandle ui-icon ui-icon-close' onclick=removeMergedTrack()></div></td>" +
+        "<td><div id= \"mergelabel\" align='left'></div></td>" +
+        "</tr>" +
+        "</table>" +
+        "</div>" +
+        "<div id=\"mergedtrack\" style=\"display:none\" > </div>" +
+        "</div>");
+
+    jQuery("#mergedtrack_wrapper").resizable({
+        handles: "s",
+        alsoResize: "#mergedtrack",
+        minHeight: "50px",
+        borderBottom: '1px solid black'
+    });
+
+
+    for (i = 0; i < Tracklist.length; i++) {
+        jQuery("#tracks").append("<div id='" + Tracklist[i].name + "_wrapper' class='feature_tracks' style=\"display:none; max-height:110px; overflow-x: hidden;\">" +
+            "</div>");
+
+
+        if (Tracklist[i].web && Tracklist[i].web.label == false) {
+            window['track_list' + Tracklist[i].name].label_show = false;
+            jQuery("#" + Tracklist[i].name + "_wrapper").append("<div align='left' class='handle'>" +
+                "<table>" +
+                "<tr>" +
+                "<td><div class='closehandle ui-icon ui-icon-close' onclick=removeTrack(\"" + Tracklist[i].name + "_div\",\"" + Tracklist[i].name + "\");></div></td>" +
+                "</tr>" +
+                "</table>" +
+                "</div>" +
+                "<div id='" + Tracklist[i].name + "_div' class='feature_tracks' style=\"display:none; top:0px;\" > " + Tracklist[i].name + "</div>"
+            );
+        } else {
+            jQuery("#" + Tracklist[i].name + "_wrapper").append("<div align='left' class='handle'>" +
+                "<table>" +
+                "<tr>" +
+                "<td><b>" + Tracklist[i].display_label + "</b></td>" +
+                "<td><div class=\"ui-icon ui-icon-comment\" onclick=toogleLabel(\"" + Tracklist[i].name + "\");> </div></td>" + checkGene(Tracklist[i].name) +
+                "<td><div class='closehandle ui-icon ui-icon-close' onclick=removeTrack(\"" + Tracklist[i].name + "_div\",\"" + Tracklist[i].name + "\");></div></td>" +
+                "</tr>" +
+                "</table>" +
+                "</div>" +
+                "<div id='" + Tracklist[i].name + "_div' class='feature_tracks' style=\"display:none; top:10px;\" > " + Tracklist[i].name + "</div>"
+            );
+        }
+
+        jQuery(function () {
+            jQuery("#" + Tracklist[i].name + "_wrapper").resizable({
+                handles: "s",
+                minHeight: "50px",
+                borderBottom: '1px solid black'
+            });
+        });
+    }
+
+
+    function checkGene(track) {
+        if (track.toLowerCase().indexOf('gene') >= 0 || track.toLowerCase().indexOf("gff") >= 0) {
+            return "<td><div title='Expand/Shrink' class=\"closehandle ui-icon ui-icon-carat-2-n-s\" onclick=toogleTrackView(\"" + track + "\");> </div></td>"
+        }
+        else {
+            return "";
+        }
+    }
+
+}
+// Generate automated tracks lists for each track
 
 function trackList(tracklist) {
+
     var Tracklist = tracklist;
     for (var i = 0; i < Tracklist.length; i++) {
 
@@ -74,11 +151,14 @@ function trackList(tracklist) {
             merge: Tracklist[i].merge,
             label: Tracklist[i].label,
             graph: Tracklist[i].graph,
-            graphtype : null,
+            graphtype: null,
 
-        label_show: true
+            label_show: true
         }
     }
+
+    tracks_div(tracklist);
+    tracks_css(tracklist);
 
     var tracks = "<table width=100%> <tr>";
     var mergeTrack = "<table width=100%> <tr>";
@@ -88,14 +168,23 @@ function trackList(tracklist) {
         if (Tracklist[i].web && Tracklist[i].web.trackgroup) {
 
             if (document.getElementById("group" + Tracklist[i].web.trackgroup) == null) {
-
                 jQuery("#tracklist").append("<div style='padding: 5px; margin: 10px; position: relative; border: 1px solid lightgray; top: 10px' id='group" + Tracklist[i].web.trackgroup + "'> <b>" + Tracklist[i].web.trackgroup + "</b> <p></div>")
                 jQuery("#mergetracklist").append("<div style='padding: 5px;  margin: 10px; position: relative; border: 1px solid lightgray; top: 10px' id='mergegroup" + Tracklist[i].web.trackgroup + "'><b>" + Tracklist[i].web.trackgroup + "</b> <p></div>")
-
             }
 
-            jQuery("#group" + Tracklist[i].web.trackgroup).append("<div style=\"position: relative; width: 70%; word-wrap: break-word;\" title='" + Tracklist[i].desc + "'><input type=\"checkbox\" id='" + Tracklist[i].name + "Checkbox' name='" + Tracklist[i].name + "-" + Tracklist[i].id + "'  onClick=loadTrackAjax(\"" + Tracklist[i].id + "\",\"" + Tracklist[i].name + "\"); />  " + Tracklist[i].display_label + " </div> <p> ");
-            jQuery("#mergegroup" + Tracklist[i].web.trackgroup).append("<div style=\"position: relative; width: 70%; word-wrap: break-word;\" id='" + Tracklist[i].name + "span'> <input type=\"checkbox\" disabled id='" + Tracklist[i].name + "mergedCheckbox' name='" + Tracklist[i].name + "mergedCheckbox' onClick=mergeTrack(\"" + Tracklist[i].name + "\"); value=" + Tracklist[i].name + " >" + Tracklist[i].display_label + "  </div> <p>");
+            jQuery("<div>").attr({
+                'style': "position: relative; width: 70%; word-wrap: break-word;",
+                'id': Tracklist[i].name+"span",
+                'title': Tracklist[i].desc
+            }).html("<input type=\"checkbox\"  id='" + Tracklist[i].name + "Checkbox' name='" + Tracklist[i].name + "Checkbox' onClick=loadTrackAjax(\"" + Tracklist[i].id + "\",\"" + Tracklist[i].name + "\"); value=" + Tracklist[i].name + " >" + Tracklist[i].display_label)
+                .appendTo("#group" + Tracklist[i].web.trackgroup);
+
+            jQuery("<div>").attr({
+                'style': "position: relative; width: 70%; word-wrap: break-word;",
+                'id': Tracklist[i].name+"span",
+                'title': Tracklist[i].desc
+            }).html("<input type=\"checkbox\" disabled id='" + Tracklist[i].name + "mergeCheckbox' name='" + Tracklist[i].name + "mergeCheckbox' onClick=mergeTrack(\"" + Tracklist[i].name + "\"); value=" + Tracklist[i].name + " >" + Tracklist[i].display_label)
+                .appendTo("#mergegroup" + Tracklist[i].web.trackgroup);
 
         } else {
             if (document.getElementById("nogroup") == null) {
@@ -107,14 +196,32 @@ function trackList(tracklist) {
 
             }
 
-            jQuery("#nogroup-table").append(" <td><div style=\"position: relative; width: 70%; word-wrap: break-word;\" title='" + Tracklist[i].desc + "'><input type=\"checkbox\" id='" + Tracklist[i].name + "Checkbox' name='" + Tracklist[i].name + "-" + Tracklist[i].id + "'  onClick=loadTrackAjax(\"" + Tracklist[i].id + "\",\"" + Tracklist[i].name + "\"); />  " + Tracklist[i].display_label + " </div></td>");
-            jQuery("#nomergegroup-table").append("<td><div style=\"position: relative; width: 70%; word-wrap: break-word;\" id='" + Tracklist[i].name + "span'> <input type=\"checkbox\" disabled id='" + Tracklist[i].name + "mergedCheckbox' name='" + Tracklist[i].name + "mergedCheckbox' onClick=mergeTrack(\"" + Tracklist[i].name + "\"); value=" + Tracklist[i].name + " >" + Tracklist[i].display_label + "  </div> </td>");
+            jQuery("<div>").attr({
+                'style': "position: relative; width: 70%; word-wrap: break-word;",
+                'id': Tracklist[i].name+"span",
+                'title': Tracklist[i].desc
+            }).html("<input type=\"checkbox\"  id='" + Tracklist[i].name + "Checkbox' name='" + Tracklist[i].name + "Checkbox' onClick=loadTrackAjax(\"" + Tracklist[i].id + "\",\"" + Tracklist[i].name + "\"); value=" + Tracklist[i].name + " >" + Tracklist[i].display_label)   .appendTo("#nogroup-table");
+
+            jQuery("<div>").attr({
+                'style': "position: relative; width: 70%; word-wrap: break-word;",
+                'id': Tracklist[i].name+"span",
+                'title': Tracklist[i].desc
+            }).html("<input type=\"checkbox\" disabled id='" + Tracklist[i].name + "mergeCheckbox' name='" + Tracklist[i].name + "mergeCheckbox' onClick=mergeTrack(\"" + Tracklist[i].name + "\"); value=" + Tracklist[i].name + " >" + Tracklist[i].display_label)
+                .appendTo("#nomergegroup-table");
+
             if ((i + 1) % 3 == 0) {
                 jQuery("#nogroup-table").append("</tr> <tr>");
                 jQuery("#nomergegroup-table").append("</tr> <tr>");
             }
         }
+    }
+}
 
+// Generate automated css classes for tracks
+
+function tracks_css(Tracklist) {
+
+    for (var i = 0; i < Tracklist.length; i++) {
         if (Tracklist[i].web && Tracklist[i].web.colour) {
 
             if (Tracklist[i].name.toLowerCase().indexOf("snp") >= 0) {
@@ -189,76 +296,6 @@ function trackList(tracklist) {
                 jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_graph{ border:1px solid black; background:" + colour + ";} </style>").appendTo("head");
                 jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_heatgraph{ background:" + colour + ";} </style>").appendTo("head");
             }
-        }
-    }
-
-    jQuery("#tracks").html("<div id='mergedtrack_wrapper' class='feature_tracks' style=\"display:none\">  " +
-        "<div align='left' class='handle'>" +
-        "<table>" +
-        "<tr>" +
-        "<td><b>Merged Track  </b></td>" +
-        "<td><div class=\"ui-icon ui-icon-comment\" onclick=toogleLabelMerged();> </div></td>" +
-        "<td><div class='closehandle ui-icon ui-icon-close' onclick=removeMergedTrack()></div></td>" +
-        "<td><div id= \"mergelabel\" align='left'></div></td>" +
-        "</tr>" +
-        "</table>" +
-        "</div>" +
-        "<div id=\"mergedtrack\" style=\"display:none\" > </div>" +
-        "</div>");
-
-    jQuery("#mergedtrack_wrapper").resizable({
-        handles: "s",
-        alsoResize: "#mergedtrack",
-        minHeight: "50px",
-        borderBottom: '1px solid black'
-    });
-
-    for (i = 0; i < Tracklist.length; i++) {
-
-        jQuery("#tracks").append("<div id='" + Tracklist[i].name + "_wrapper' class='feature_tracks' style=\"display:none; max-height:110px; overflow-x: hidden;\">" +
-            "</div>");
-
-        if (Tracklist[i].web && Tracklist[i].web.label == false) {
-            window['track_list' + Tracklist[i].name].label_show = false;
-            jQuery("#" + Tracklist[i].name + "_wrapper").append("<div align='left' class='handle'>" +
-                "<table>" +
-                "<tr>" +
-                "<td><div class='closehandle ui-icon ui-icon-close' onclick=removeTrack(\"" + Tracklist[i].name + "_div\",\"" + Tracklist[i].name + "\");></div></td>" +
-                "</tr>" +
-                "</table>" +
-                "</div>" +
-                "<div id='" + Tracklist[i].name + "_div' class='feature_tracks' style=\"display:none; top:0px;\" > " + Tracklist[i].name + "</div>"
-            );
-        } else {
-            jQuery("#" + Tracklist[i].name + "_wrapper").append("<div align='left' class='handle'>" +
-                "<table>" +
-                "<tr>" +
-                "<td><b>" + Tracklist[i].display_label + "</b></td>" +
-                "<td><div class=\"ui-icon ui-icon-comment\" onclick=toogleLabel(\"" + Tracklist[i].name + "\");> </div></td>" + checkGene(Tracklist[i].name) +
-                "<td><div class='closehandle ui-icon ui-icon-close' onclick=removeTrack(\"" + Tracklist[i].name + "_div\",\"" + Tracklist[i].name + "\");></div></td>" +
-                "</tr>" +
-                "</table>" +
-                "</div>" +
-                "<div id='" + Tracklist[i].name + "_div' class='feature_tracks' style=\"display:none; top:10px;\" > " + Tracklist[i].name + "</div>"
-            );
-        }
-
-        jQuery(function () {
-            jQuery("#" + Tracklist[i].name + "_wrapper").resizable({
-                handles: "s",
-                minHeight: "50px",
-                borderBottom: '1px solid black'
-            });
-        });
-    }
-
-
-    function checkGene(track) {
-        if (track.toLowerCase().indexOf('gene') >= 0 || track.toLowerCase().indexOf("gff") >= 0) {
-            return "<td><div title='Expand/Shrink' class=\"closehandle ui-icon ui-icon-carat-2-n-s\" onclick=toogleTrackView(\"" + track + "\");> </div></td>"
-        }
-        else {
-            return "";
         }
     }
 }

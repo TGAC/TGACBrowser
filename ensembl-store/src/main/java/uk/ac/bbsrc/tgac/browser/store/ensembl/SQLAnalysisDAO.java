@@ -74,6 +74,9 @@ public class SQLAnalysisDAO implements AnalysisStore {
     public static final String GET_Coords_sys_API = "SELECT coord_system_id,name,rank, version FROM coord_system where rank > ?";
     public static final String GET_Coord_systemid_FROM_ID = "SELECT coord_system_id FROM seq_region WHERE seq_region_id = ?";
     public static final String GET_RANK_for_COORD_SYSTEM_ID = "SELECT rank FROM coord_system where coord_system_id =?";
+    public static final String GET_DISTINCT_ANALYSIS_ID_FROM_GENE = "SELECT DISTINCT analysis_id from gene where analysis_id = ? LIMIT 1";
+    public static final String GET_DISTINCT_ANALYSIS_ID_FROM_DAF = "SELECT DISTINCT analysis_id from dna_align_feature where analysis_id = ? LIMIT 1";
+    public static final String GET_DISTINCT_ANALYSIS_ID_FROM_Repeat = "SELECT DISTINCT analysis_id from repeat_feature where analysis_id = ? LIMIT 1";
 
     private JdbcTemplate template;
 
@@ -139,7 +142,7 @@ public class SQLAnalysisDAO implements AnalysisStore {
 
             for (Map map : maps) {
                 JSONObject annotationid = new JSONObject();
-                annotationid.put("name", map.get("name").toString().replaceAll("\\s+", "_").replaceAll("[.]", "_"));
+
 
                 try{
                     JSONObject explrObject = JSONObject.fromObject(map.get("web_data"));
@@ -155,6 +158,21 @@ public class SQLAnalysisDAO implements AnalysisStore {
                 catch (Exception e){
                     annotationid.put("id", map.get("id"));
                 }
+
+                if(presentInGene(map.get("id").toString())){
+                    annotationid.put("name", map.get("name").toString().replaceAll("\\s+", "_").replaceAll("[.]", "_")+"_gene");
+
+                } else   if(presentInDAF(map.get("id").toString())){
+                    annotationid.put("name", map.get("name").toString().replaceAll("\\s+", "_").replaceAll("[.]", "_"));
+
+                } else if(presentInRepeat(map.get("id").toString())){
+                    annotationid.put("name", map.get("name").toString().replaceAll("\\s+", "_").replaceAll("[.]", "_")+"_repeat");
+
+                } else {
+                    annotationid.put("name", map.get("name").toString().replaceAll("\\s+", "_").replaceAll("[.]", "_"));
+
+                }
+
 
                 annotationid.put("desc", map.get("description"));
                 annotationid.put("disp", map.get("displayable"));
@@ -203,6 +221,33 @@ public class SQLAnalysisDAO implements AnalysisStore {
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
             throw new IOException("Logic name not found for analysis id " + id + "-" + e.getMessage());
+        }
+    }
+
+    private boolean presentInGene(String id){
+        List<Map<String, Object>> distinct_id = template.queryForList(GET_DISTINCT_ANALYSIS_ID_FROM_GENE, new Object[]{id});
+        if(distinct_id.size() > 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    private boolean presentInDAF(String id){
+        List<Map<String, Object>> distinct_id = template.queryForList(GET_DISTINCT_ANALYSIS_ID_FROM_DAF, new Object[]{id});
+        if(distinct_id.size() > 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    private boolean presentInRepeat(String id){
+        List<Map<String, Object>> distinct_id  = template.queryForList(GET_DISTINCT_ANALYSIS_ID_FROM_Repeat, new Object[]{id});
+        if(distinct_id.size() > 0){
+            return true;
+        }else{
+            return false;
         }
     }
 }
