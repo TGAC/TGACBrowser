@@ -539,9 +539,26 @@ public class DnaSequenceService {
     public JSONObject loadMarker(HttpSession session, JSONObject json) {
         JSONObject response = new JSONObject();
         String coord = json.getString("coord");
+        String query = json.getString("query");
 
         try {
-            response.put("marker", sequenceStore.getMarker(coord));
+            response.put("marker", sequenceStore.getMarker(query, coord));
+
+            return response;
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return JSONUtils.SimpleJSONError(e.getMessage());
+        }
+    }
+
+    public JSONObject loadMarkerForRegion(HttpSession session, JSONObject json) {
+        JSONObject response = new JSONObject();
+        String coord = json.getString("coord");
+        String query = json.getString("query");
+        long start = json.getLong("start");
+        long end = json.getLong("end");
+        try {
+            response.put("marker", sequenceStore.getMarkerforRegion(query, coord, start, end));
 
             return response;
         } catch (IOException e) {

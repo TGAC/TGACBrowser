@@ -76,6 +76,7 @@ public class SQLSequenceDAO implements SequenceStore {
 
     public static final String GET_SEQ_LENGTH_FROM_ID = "SELECT length FROM seq_region WHERE seq_region_id = ?";
     public static final String GET_SEQ_LENGTH_FROM_ID_AND_COORD = "SELECT length FROM seq_region WHERE seq_region_id = ? and coord_system_id = ?";
+    public static final String GET_SEQ_LENGTH_FROM_NAME_AND_COORD = "SELECT length FROM seq_region WHERE name = ? and coord_system_id = ?";
 
     public static final String GET_SEQ_REGION_ID_SEARCH_For_One = "SELECT seq_region_id FROM seq_region WHERE name = ?";
 
@@ -100,7 +101,7 @@ public class SQLSequenceDAO implements SequenceStore {
     public static final String GET_coord_attrib_chr = "SELECT * FROM coord_system where name like ? || attrib like ?";
 
     //  public static final String GET_GENOME_MARKER = "SELECT * from marker_feature";
-    public static final String GET_GENOME_MARKER = "select mf.marker_feature_id as id, sr.name as reference, mf.marker_id as marker_id, mf.seq_region_start as start, mf.seq_region_end as end, mf.analysis_id as analysis_id from marker_feature mf, seq_region sr where mf.seq_region_id = sr.seq_region_id and sr.coord_system_id = ?;";
+    public static final String GET_GENOME_MARKER = "select mf.marker_feature_id as id, sr.name as reference, mf.marker_id as marker_id, mf.seq_region_start as start, mf.seq_region_end as end, mf.analysis_id as analysis_id from marker_feature mf, seq_region sr where mf.seq_region_id = sr.seq_region_id  and sr.name = ? and sr.coord_system_id = ? and (mf.seq_region_start >= ? and mf.seq_region_end <= ?);";
 
     public static final String GET_Tables_with_analysis_id_column = "SELECT DISTINCT TABLE_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE COLUMN_NAME IN ('analysis_id') AND TABLE_SCHEMA='wrightj_brachypodium_distachyon_core_10_63_12'";
     public static final String Check_feature_available = "SELECT DISTINCT analysis_id from ";// + var1;
@@ -579,10 +580,37 @@ public class SQLSequenceDAO implements SequenceStore {
         }
     }
 
-    public JSONArray getMarker(String coord) throws IOException {
+    public JSONArray getMarker(String query,String coord) throws IOException {
         try {
             JSONArray markerList = new JSONArray();
-            List<Map<String, Object>> maps = template.queryForList(GET_GENOME_MARKER, new Object[]{coord});
+            long from = 0;
+            long to = 0;
+            int no_of_tracks = 0;
+                           int length = 0;
+              length =  template.queryForObject(GET_SEQ_LENGTH_FROM_NAME_AND_COORD, new Object[]{query,coord}, Integer.class);
+            int diff = length / 100;
+
+            for (int i = 1; i <= 100; i++) {
+                JSONObject eachTrack = new JSONObject();
+                to = (i * diff);
+                no_of_tracks = countMarker(query, coord, from, to);
+                eachTrack.put("start", from);
+                eachTrack.put("end", to);
+                eachTrack.put("graph", no_of_tracks);
+                markerList.add(eachTrack);
+                from = to;
+            }
+            return markerList;
+        } catch (EmptyResultDataAccessException e) {
+            throw new IOException("getMarker no result found");
+
+        }
+    }
+
+    public JSONArray getMarkerforRegion(String query,String coord, long start, long end) throws IOException {
+        try {
+            JSONArray markerList = new JSONArray();
+            List<Map<String, Object>> maps = template.queryForList(GET_GENOME_MARKER, new Object[]{query,coord, start, end});
             for (Map map : maps) {
                 markerList.add(map);
             }
@@ -591,6 +619,11 @@ public class SQLSequenceDAO implements SequenceStore {
             throw new IOException("getMarker no result found");
 
         }
+    }
+
+    public int countMarker(String query,String coord, long start, long end){
+        List<Map<String, Object>> maps = template.queryForList(GET_GENOME_MARKER, new Object[]{query,coord, start, end});
+        return maps.size();
     }
 
 

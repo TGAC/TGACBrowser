@@ -709,29 +709,71 @@ function clicked_func(element) {
     jQuery("#searchresult").css('left', jQuery("#" + parent_main).css('left'))
 }
 
-function getMarkers() {
+function getMarkers(query) {
     Fluxion.doAjax(
         'dnaSequenceService',
         'loadMarker',
-        {'coord':coord, 'url': ajaxurl},
+        {'query': query,'coord':coord, 'url': ajaxurl},
         {'doOnSuccess': function (json) {
             var markers = json.marker;
             var height = jQuery("#" + seqregname).css('height');
-            var width = 15;
+
+            var max = Math.max.apply(Math, markers.map(function (o) {
+                return o.graph;
+            }));
+
+            var width = 15
+
             for (var i = 0; i < markers.length; i++) {
-                var length = sequencelength * parseFloat(jQuery("#" + markers[i].reference).css('height')) / parseFloat(jQuery("#" + seqregname).css('height'));
-                var maptop = parseFloat(jQuery("#" + markers[i].reference).css('height')) + parseInt(jQuery("#" + markers[i].reference).css('bottom')) - (parseInt(markers[i].end) * parseFloat(jQuery("#" + markers[i].reference).css('height')) / length);
-                var left = parseInt(jQuery("#" + markers[i].reference).position().left) + parseInt(20);
-                var mapheight = parseFloat(jQuery("#" + markers[i].reference).css('height')) / length;
+                var length = sequencelength * parseFloat(jQuery("#" + seqregname).css('height')) / parseFloat(jQuery("#" + seqregname).css('height'));
+                var maptop = parseFloat(jQuery("#" + seqregname).css('height')) + parseInt(jQuery("#" + seqregname).css('bottom')) - (parseInt(markers[i].end) * parseFloat(jQuery("#" + seqregname).css('height')) / length);
+                var left = parseInt(jQuery("#" + seqregname).position().left) + parseInt(20);
+                var mapheight = parseFloat(jQuery("#" + seqregname).css('height')) / markers.length;
                 if (mapheight < 1) {
                     mapheight = 1;
                 }
-                if (seqregname == markers[i].reference) {
-                    jQuery("#refmap").append("<div title='" + markers[i].reference + ":" + markers[i].start + "' class='refmapmarker'  style='left:" + left + "px; bottom:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick='setBegin(" + markers[i].start + "); setEnd(" + parseInt(parseInt(markers[i].start) + parseInt(1)) + "); jumpToSeq();'></div>");
+                var opacity = markers[i].graph*1/max;
+
+
+                jQuery("#refmap").append("<div title='" + markers[i].start + ":" + markers[i].end + "' class='refmapmarker'  style='opacity:"+opacity+"; left:" + left + "px; bottom:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;'  onclick=loadMarker(" + markers[i].start + "," + parseInt(markers[i].end)+");></div>");
+
+            }
+        }
+        });
+}
+
+function loadMarker(start,end){
+    jQuery("#marker_div").html("");
+    setBegin(start);
+    setEnd(end);
+    jumpToSeq();
+
+    Fluxion.doAjax(
+        'dnaSequenceService',
+        'loadMarkerForRegion',
+        {'query': seqregname, 'start': start, 'end':end, 'coord':coord, 'url': ajaxurl},
+        {'doOnSuccess': function (json) {
+            var markers = json.marker;
+            var height = jQuery("#" + seqregname).css('height');
+
+            var height = 20
+            var newStart_temp = getBegin();
+            var newEnd_temp = getEnd();
+            var maxLen_temp = jQuery("#canvas").css("width");
+
+            for (var i = 0; i < markers.length; i++) {
+
+                var track_start = markers[i].start;
+                var track_stop = markers[i].end ?  markers[i].end : parseInt( markers[i].start) + 1;
+
+                var startposition =(track_start - newStart_temp) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp);
+                var stopposition = (track_stop - track_start + 1) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp);
+
+                if(stopposition < 1) {
+                    stopposition = 1
                 }
-                else {
-                    jQuery("#refmap").append("<div  title='" + markers[i].reference + ":" + markers[i].start + "' class='refmapmarker'  style='left:" + left + "px; bottom:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' onclick='window.location.replace(\"index.jsp?query=" + markers[i].reference + "&from=" + markers[i].start + "&to=" + parseInt(parseInt(markers[i].start) + parseInt(1)) + "\");' ></div>");
-                }
+                jQuery("#marker_div").append("<div title='" + markers[i].start + ":" + markers[i].end + "' class='refmapmarker-sequence'  style='background: black; position: absolute; top:0px; left:" + startposition + "px;  width:" +stopposition + "px; height:" + height + "px;'></div>");
+
             }
         }
         });
@@ -928,7 +970,7 @@ function ajax_processing(json, from, to, blast) {
 
                 drawBrowser(json, from, to, blast);
 
-                getMarkers()
+                getMarkers(json.seqregname)
                 setMapMarkerLeft();
                 setMapMarkerTop(getBegin());
                 setMapMarkerHeight(getEnd() - getBegin())

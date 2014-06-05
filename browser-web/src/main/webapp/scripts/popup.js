@@ -866,6 +866,8 @@ function removeMenu() {
 
 
 function removeAllPopup() {
+    jQuery("#marker_div").html("");
+
     removeMenu();
     removePopup();
     removeDragPopup();

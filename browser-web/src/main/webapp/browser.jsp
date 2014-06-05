@@ -195,6 +195,7 @@
             <div id="sequence">
 
                 <center>
+                    <div id="marker_div" style="position: absolute; top: 0px; left: 0px; height: 20px; width: 100%;"></div>
                     <div id="sequenceString"></div>
                     <div id="translation_div"></div>
                 </center>

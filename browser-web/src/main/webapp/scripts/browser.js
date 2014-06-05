@@ -328,6 +328,7 @@ function trackDrag() {
     }
 }
 function updateJSON() {
+
     var from, to;
     var partial = (getEnd() - getBegin()) / 2;
     from = Math.ceil(parseInt(getEnd()) - partial);
