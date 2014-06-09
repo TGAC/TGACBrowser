@@ -1166,7 +1166,7 @@ function dispVCF(div, trackName, className) {
                         stopposition = 2;
                     }
 
-                    label = track[track_len].ref + "<br>" + track[track_len].alt;
+                    label = stringColour(track[track_len].ref.toString()) + "<br>" + stringColour(track[track_len].alt.toString());
 
                     jQuery("<div>").attr({
                         'id': trackName + "" + track_len,
@@ -1214,7 +1214,8 @@ function dispVCF(div, trackName, className) {
                         stopposition = 2;
                     }
 
-                    label = track[track_len].ref + "<br>" + track[track_len].alt;
+                    label = stringColour(track[track_len].ref.toString()) + "<br>" + stringColour(track[track_len].alt.toString());
+                    console.log(label)
 
                     jQuery("<div>").attr({
                         'id': trackName + "" + track_len,

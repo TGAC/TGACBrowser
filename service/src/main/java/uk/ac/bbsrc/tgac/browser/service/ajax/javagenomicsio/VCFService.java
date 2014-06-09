@@ -138,6 +138,7 @@ public class VCFService {
                     eachEntry.put("filter", entry.getFilter());
                     eachEntry.put("genotype", entry.getGenotypes());
                     eachEntry.put("ref",entry.getRef());
+                    eachEntry.put("desc", entry.getRef()+":"+entry.getAlt()+" "+entry.getInfoString());
 
 
                     VCF.add(eachEntry);
