@@ -40,10 +40,10 @@ function removeMenu() {
 
 function removePopup() {
 
+    jQuery("#popup").fadeOut("");
     jQuery("#popuptrack").html("");
     jQuery("#position").html("");
     jQuery("#Detail").html("");
-    jQuery("#popup").fadeOut("");
     jQuery('#EditTrack').hide();
     jQuery('#blastselector').hide();
     jQuery('#popup_hanging').hide();
@@ -51,6 +51,7 @@ function removePopup() {
 
 // create a new for each track
 function newpopup(track, i, j) {
+    console.log(track+" "+i+" "+j)
     removePopup()
     var width = jQuery("#popup").width();
     jQuery('#blastselector').hide();

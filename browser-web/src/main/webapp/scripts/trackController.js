@@ -303,7 +303,23 @@ function dispBLASTindel(j, blast_start) {
 
 
 function dispGenes(div, track, expand, className) {
-    var labeltoogle = "display : in-line;";
+    var d = new Date();
+    console.log(d.getMinutes() + ":" + d.getSeconds() + ":" + d.getMilliseconds())
+
+    var track_div = document.getElementById(track + "_div")
+
+    var new_div = document.createElement("div");
+    new_div.style.height = "10px";
+    new_div.style.position = "absolute";
+
+
+    var label_div = document.createElement("div");
+    label_div.style.overflow = "hidden"
+    label_div.style.textOverflow = "ellipsis";
+    label_div.style.zindex = 999;
+
+
+    var labeltoogle = "in-line;";
     var labelclass = "label" + track;
     var track_html = [];
     var max = 110;
@@ -311,7 +327,7 @@ function dispGenes(div, track, expand, className) {
     trackClass = "exon";
 
     if (window['track_list' + track].label == 0) {
-        labeltoogle = "display : none;";
+        labeltoogle = "none"
     }
 
     if (jQuery('input[name=' + track + 'mergedCheckbox]').is(':checked')) {
@@ -427,6 +443,7 @@ function dispGenes(div, track, expand, className) {
                     'onmouseOut': 'trackmouseout()'
                 }).appendTo(div);
 
+
                 jQuery("<div>").attr({
                     'class': "tracklabel " + labelclass,
                     'style': labeltoogle + " z-index: 999; overflow: hidden;text-overflow: ellipsis;",
@@ -476,40 +493,78 @@ function dispGenes(div, track, expand, className) {
                     var startposition = (gene_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                     var stopposition = (gene_stop - gene_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
+                    var clone_new_div= new_div.cloneNode(true)
 
-                    var temp = jQuery("<div>").attr({
-                        'id': track + "" + len,
-                        'class': trackClass + " " + className,
-                        'style': "position:absolute;  cursor:pointer; height: 10px; TOP:" + top + "px; LEFT:" + startposition + "px; width :" + stopposition + "px;",
-                        'title': label,
-                        'onClick': "trackClick('" + track + "'," + len + "," + transcript_len + ")"
-                    }).appendTo(div);
+                    clone_new_div.className = trackClass + " " + className;
+                    clone_new_div.id = track + "" + len;
+                    clone_new_div.style.width = stopposition + "px";
+                    clone_new_div.style.top = top + "px";
 
+                    clone_new_div.style.left = startposition + "px";
+                    clone_new_div.title = label;
 
-                    jQuery("<div>").attr({
-                        'class': "tracklabel " + labelclass,
-                        'style': labeltoogle + " z-index: 999; overflow: hidden;text-overflow: ellipsis;",
-                        'title': label
-                    }).html("<p>" + label + "</p>").appendTo(temp);
+                    clone_new_div.onclick = (function () {
+                        var current_len = len;
+                        var current_transcript_len = transcript_len;
+                        return function () {
+                            trackClick(track, current_len, current_transcript_len);
+                        }
+                    })();
 
+                    track_div.appendChild(clone_new_div)
+                    var clone_label_div= label_div.cloneNode(true)
+
+                    clone_label_div.className = "tracklabel " + labelclass;
+
+                    clone_label_div.style.display = labeltoogle
+
+                    clone_label_div.title = label;
+                    clone_label_div.textContent = label
+
+                    new_div.appendChild(clone_label_div);
 
                     if (stopposition > 10) {
-                        dispGeneExon(genes[len].transcript[transcript_len], genes[len].strand, className, div);
+                        dispGeneExon(genes[len].transcript[transcript_len], genes[len].strand, className, div, track);
                     }
                     else {
-                        jQuery("<div>").attr({
-                            'id': track + "" + len,
-                            'class': "exon " + className + "_exon",
-                            'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width :" + stopposition + "px; height:10px; "
-                        }).appendTo(div);
+
+                        var new_div = document.createElement("div");
+
+                        new_div.style.height = "10px";
+                        new_div.style.position = "absolute";
+
+                        new_div.className = "exon " + className + "_exon";
+                        new_div.style.width = stopposition + "px";
+                        new_div.style.top = top + "px";
+
+                        new_div.style.left = startposition + "px";
+                        new_div.title = label;
+
+                        track_div.appendChild(new_div)
                     }
 
-                    jQuery("<div>").attr({
-                        'id': track + "" + len,
-                        'class': "track",
-                        'style': "z-index: 999; height: 10px; TOP:" + top + "px; LEFT:" + startposition + "px; width :" + stopposition + "px; ",
-                        'onClick': "trackClick('" + track + "'," + len + "," + transcript_len + ")"
-                    }).appendTo(div);
+                    var clone_new_div= new_div.cloneNode(true)
+
+
+
+                    clone_new_div.className = "track";
+                    clone_new_div.style.width = stopposition + "px";
+                    clone_new_div.style.top = top + "px";
+
+                    clone_new_div.style.left = startposition + "px";
+                    clone_new_div.style.zIndex = "999"
+
+                    clone_new_div.title = label;
+
+                    clone_new_div.onclick = (function () {
+                        var current_len = len;
+                        var current_transcript_len = transcript_len;
+
+                        return function () {
+                            trackClick(track, current_len, current_transcript_len);
+                        }
+                    })();
+                    track_div.appendChild(clone_new_div)
 
 
                 }
@@ -528,9 +583,16 @@ function dispGenes(div, track, expand, className) {
 
     }
 
+    var d = new Date();
+    console.log(d.getMinutes() + ":" + d.getSeconds() + ":" + d.getMilliseconds())
+
 }
 
-function dispGeneExon(track, genestrand, className, div) {
+function dispGeneExon(track, genestrand, className, div, trackName) {
+
+    var track_div = document.getElementById(trackName + "_div")
+
+
     var trackClass = "exon " + className + "_exon";
     var utrtrackClass = "utr " + className + "_utr";
 
@@ -562,6 +624,7 @@ function dispGeneExon(track, genestrand, className, div) {
         var startposition = 0;
         var stopposition = 0;
         while (exon_len--) {
+
             var exon_start;
             var exon_stop;
             if (geneexons[exon_len].start < geneexons[exon_len].end) {
@@ -588,27 +651,31 @@ function dispGeneExon(track, genestrand, className, div) {
             }
 
 
-
             if (transcript_start && transcript_end) {
                 if (exon_start > transcript_end && exon_stop > transcript_end) {
                     startposition = ((exon_start - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                     stopposition = (exon_stop - exon_start ) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
-                    jQuery("<div>").attr({
-                        'class': utrtrackClass,
-                        'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
-                    }).appendTo(div);
+                    var new_div = document.createElement("div");
+                    new_div.className = utrtrackClass;
+                    new_div.style.width = stopposition + "px";
+                    new_div.style.top = top + "px";
+                    new_div.style.left = startposition + "px";
+                    track_div.appendChild(new_div)
 
-                    if(stopposition > 10){
-                        if(spanclass == "forward"){
-                            startposition = startposition+ (stopposition-8)
+                    if (stopposition > 10) {
+                        if (spanclass == "forward") {
+                            startposition = startposition + (stopposition - 8)
 
                         }
-                    jQuery("<div>").attr({
-                            'class':spanclass+" 1",
-                            'style': "TOP:" + top + "px; LEFT:" + startposition + "px;"
-                        }).appendTo(div);
+
+
+                        var new_div = document.createElement("div");
+                        new_div.className = spanclass;
+                        new_div.style.top = top + "px";
+                        new_div.style.left = startposition + "px";
+                        track_div.appendChild(new_div)
                     }
 
 
@@ -618,21 +685,25 @@ function dispGeneExon(track, genestrand, className, div) {
                     startposition = ((exon_start - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                     stopposition = (exon_stop - exon_start) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
-                    jQuery("<div>").attr({
-                        'class': utrtrackClass,
-                        'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
-                    }).appendTo(div);
+                    var new_div = document.createElement("div");
+                    new_div.className = utrtrackClass;
+                    new_div.style.width = stopposition + "px";
+                    new_div.style.top = top + "px";
+                    new_div.style.left = startposition + "px";
+                    track_div.appendChild(new_div)
 
 
-                    if(stopposition > 10){
-                        if(spanclass == "forward"){
-                            startposition = startposition+ (stopposition-8)
+                    if (stopposition > 10) {
+                        if (spanclass == "forward") {
+                            startposition = startposition + (stopposition - 8)
 
                         }
-                        jQuery("<div>").attr({
-                            'class':spanclass+" 2",
-                            'style': "TOP:" + top + "px; LEFT:" + startposition + "px;"
-                        }).appendTo(div);
+
+                        var new_div = document.createElement("div");
+                        new_div.className = spanclass;
+                        new_div.style.top = top + "px";
+                        new_div.style.left = startposition + "px";
+                        track_div.appendChild(new_div)
                     }
 
                     last = current;
@@ -641,41 +712,48 @@ function dispGeneExon(track, genestrand, className, div) {
                     startposition = ((exon_start - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                     stopposition = (transcript_start - exon_start) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
-                    jQuery("<div>").attr({
-                        'class': utrtrackClass,
-                        'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
-                    }).appendTo(div);
+                    var new_div = document.createElement("div");
+                    new_div.className = utrtrackClass;
+                    new_div.style.width = stopposition + "px";
+                    new_div.style.top = top + "px";
+                    new_div.style.left = startposition + "px";
+                    track_div.appendChild(new_div)
 
-                    if(stopposition > 10){
-                        if(spanclass == "forward"){
-                            startposition = startposition+ (stopposition-8)
+                    if (stopposition > 10) {
+                        if (spanclass == "forward") {
+                            startposition = startposition + (stopposition - 8)
 
                         }
-                        jQuery("<div>").attr({
-                            'class':spanclass+" 3",
-                            'style': "TOP:" + top + "px; LEFT:" + startposition + "px;"
-                        }).appendTo(div);
+
+                        var new_div = document.createElement("div");
+                        new_div.className = spanclass;
+                        new_div.style.top = top + "px";
+                        new_div.style.left = startposition + "px";
+                        track_div.appendChild(new_div)
                     }
 
 
                     startposition = ((transcript_end - newStart_temp) - 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                     stopposition = (exon_stop - transcript_end + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
+                    var new_div = document.createElement("div");
+                    new_div.className = utrtrackClass;
+                    new_div.style.width = stopposition + "px";
+                    new_div.style.top = top + "px";
+                    new_div.style.left = startposition + "px";
+                    track_div.appendChild(new_div)
 
-                    jQuery("<div>").attr({
-                        'class': utrtrackClass,
-                        'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
-                    }).appendTo(div);
-
-                    if(stopposition > 10){
-                        if(spanclass == "forward"){
-                            startposition = startposition+ (stopposition-8)
+                    if (stopposition > 10) {
+                        if (spanclass == "forward") {
+                            startposition = startposition + (stopposition - 8)
 
                         }
-                        jQuery("<div>").attr({
-                            'class':spanclass+" 4",
-                            'style': "TOP:" + top + "px; LEFT:" + startposition + "px;"
-                        }).appendTo(div);
+
+                        var new_div = document.createElement("div");
+                        new_div.className = spanclass;
+                        new_div.style.top = top + "px";
+                        new_div.style.left = startposition + "px";
+                        track_div.appendChild(new_div)
                     }
 
 
@@ -686,15 +764,17 @@ function dispGeneExon(track, genestrand, className, div) {
                         'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
                     }).appendTo(div);
 
-                    if(stopposition > 10){
-                        if(spanclass == "forward"){
-                            startposition = startposition+ (stopposition-8)
+                    if (stopposition > 10) {
+                        if (spanclass == "forward") {
+                            startposition = startposition + (stopposition - 8)
 
                         }
-                        jQuery("<div>").attr({
-                            'class':spanclass+" 5",
-                            'style': "TOP:" + top + "px; LEFT:" + startposition + "px;"
-                        }).appendTo(div);
+
+                        var new_div = document.createElement("div");
+                        new_div.className = spanclass;
+                        new_div.style.top = top + "px";
+                        new_div.style.left = startposition + "px";
+                        track_div.appendChild(new_div)
                     }
 
                     last = current;
@@ -703,40 +783,34 @@ function dispGeneExon(track, genestrand, className, div) {
                     startposition = ((exon_start - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                     stopposition = (transcript_start - exon_start) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
-                    jQuery("<div>").attr({
-                        'class': utrtrackClass,
-                        'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
-                    }).appendTo(div);
-
-//                    if(stopposition > 10){
-//                        if(spanclass == "forward"){
-//                            startposition = startposition+ (stopposition-8)
-//
-//                        }
-//                        jQuery("<div>").attr({
-//                            'class':spanclass+" 6",
-//                            'style': "TOP:" + top + "px; LEFT:" + startposition + "px;"
-//                        }).appendTo(div);
-//                    }
+                    var new_div = document.createElement("div");
+                    new_div.className = utrtrackClass;
+                    new_div.style.width = stopposition + "px";
+                    new_div.style.top = top + "px";
+                    new_div.style.left = startposition + "px";
+                    track_div.appendChild(new_div)
 
 
                     startposition = ((transcript_start - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                     stopposition = (exon_stop - transcript_start ) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
-                    jQuery("<div>").attr({
-                        'class': trackClass,
-                        'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
-                    }).appendTo(div);
+                    var new_div = document.createElement("div");
+                    new_div.className = trackClass;
+                    new_div.style.width = stopposition + "px";
+                    new_div.style.top = top + "px";
+                    new_div.style.left = startposition + "px";
+                    track_div.appendChild(new_div)
 
-                    if(stopposition > 10){
-                        if(spanclass == "forward"){
-                            startposition = startposition+ (stopposition-8)
+                    if (stopposition > 10) {
+                        if (spanclass == "forward") {
+                            startposition = startposition + (stopposition - 8)
                         }
-                        jQuery("<div>").attr({
-                            'class':spanclass+" 7",
-                            'style': "TOP:" + top + "px; LEFT:" + startposition + "px;"
-                        }).appendTo(div);
+                        var new_div = document.createElement("div");
+                        new_div.className = spanclass;
+                        new_div.style.top = top + "px";
+                        new_div.style.left = startposition + "px";
+                        track_div.appendChild(new_div)
                     }
 
 
@@ -747,40 +821,49 @@ function dispGeneExon(track, genestrand, className, div) {
                     stopposition = (exon_stop - transcript_end) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
-                    jQuery("<div>").attr({
-                        'class': utrtrackClass,
-                        'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
-                    }).appendTo(div);
+                    var new_div = document.createElement("div");
+                    new_div.className = utrtrackClass;
+                    new_div.style.width = stopposition + "px";
+                    new_div.style.top = top + "px";
+                    new_div.style.left = startposition + "px";
+                    track_div.appendChild(new_div)
 
-                    if(stopposition > 10){
-                        if(spanclass == "forward"){
-                            startposition = startposition+ (stopposition-8)
+                    if (stopposition > 10) {
+                        if (spanclass == "forward") {
+                            startposition = startposition + (stopposition - 8)
 
                         }
-                        jQuery("<div>").attr({
-                            'class':spanclass+" 8",
-                            'style': "TOP:" + top + "px; LEFT:" + startposition + "px;"
-                        }).appendTo(div);
+
+                        var new_div = document.createElement("div");
+                        new_div.className = spanclass;
+                        new_div.style.top = top + "px";
+                        new_div.style.left = startposition + "px";
+                        track_div.appendChild(new_div)
                     }
 
 
                     startposition = ((exon_start - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                     stopposition = (transcript_end - exon_start) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
-                    jQuery("<div>").attr({
-                        'class': trackClass,
-                        'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
-                    }).appendTo(div);
 
-                    if(stopposition > 10){
-                        if(spanclass == "forward"){
-                            startposition = startposition+ (stopposition-8)
+                    var new_div = document.createElement("div");
+                    new_div.className = trackClass;
+                    new_div.style.width = stopposition + "px";
+                    new_div.style.top = top + "px";
+                    new_div.style.left = startposition + "px";
+                    track_div.appendChild(new_div)
+
+                    if (stopposition > 10) {
+                        if (spanclass == "forward") {
+                            startposition = startposition + (stopposition - 8)
 
                         }
-                        jQuery("<div>").attr({
-                            'class':spanclass+" 9",
-                            'style': "TOP:" + top + "px; LEFT:" + startposition + "px;"
-                        }).appendTo(div);
+
+                        var new_div = document.createElement("div");
+                        new_div.className = spanclass;
+                        new_div.style.top = top + "px";
+                        new_div.style.left = startposition + "px";
+                        track_div.appendChild(new_div)
                     }
 
 
@@ -791,20 +874,24 @@ function dispGeneExon(track, genestrand, className, div) {
                     stopposition = (exon_stop - exon_start) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
-                    jQuery("<div>").attr({
-                        'class': trackClass,
-                        'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
-                    }).appendTo(div);
+                    var new_div = document.createElement("div");
+                    new_div.className = trackClass;
+                    new_div.style.width = stopposition + "px";
+                    new_div.style.top = top + "px";
+                    new_div.style.left = startposition + "px";
+                    track_div.appendChild(new_div)
 
-                    if(stopposition > 10){
-                        if(spanclass == "forward"){
-                            startposition = startposition+ (stopposition-8)
+                    if (stopposition > 10) {
+                        if (spanclass == "forward") {
+                            startposition = startposition + (stopposition - 8)
 
                         }
-                        jQuery("<div>").attr({
-                            'class':spanclass+" 10",
-                            'style': "TOP:" + top + "px; LEFT:" + startposition + "px;"
-                        }).appendTo(div);
+
+                        var new_div = document.createElement("div");
+                        new_div.className = spanclass;
+                        new_div.style.top = top + "px";
+                        new_div.style.left = startposition + "px";
+                        track_div.appendChild(new_div)
                     }
 
 
@@ -817,42 +904,28 @@ function dispGeneExon(track, genestrand, className, div) {
                 stopposition = (exon_stop - exon_start) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
-                jQuery("<div>").attr({
-                    'class': trackClass,
-                    'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
-                }).appendTo(div);
+                var new_div = document.createElement("div");
+                new_div.className = trackClass;
+                new_div.style.width = stopposition + "px";
+                new_div.style.top = top + "px";
+                new_div.style.left = startposition + "px";
+                track_div.appendChild(new_div)
 
-                if(stopposition > 10){
-                    if(spanclass == "forward"){
-                        startposition = startposition+ (stopposition-8)
+                if (stopposition > 10) {
+                    if (spanclass == "forward") {
+                        startposition = startposition + (stopposition - 8)
 
                     }
-                    jQuery("<div>").attr({
-                        'class':spanclass+" 11",
-                        'style': "TOP:" + top + "px; LEFT:" + startposition + "px;"
-                    }).appendTo(div);
+
+                    var new_div = document.createElement("div");
+                    new_div.className = spanclass;
+                    new_div.style.top = top + "px";
+                    new_div.style.left = startposition + "px";
+                    track_div.appendChild(new_div)
                 }
 
 
-
             }
-//            if(last_exon != null && exon_len != geneexons.length){
-//                console.log(exon_stop+":"+last_exon)
-//                startposition = ((exon_stop - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-//                stopposition = (last_exon-exon_stop) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
-//
-//
-//                var angle = parseInt(5/(stopposition/2));
-//                console.log("angle "+angle)
-//                var temp = jQuery("<div>").attr({
-//                    'class': "chevron",
-//                    'style': "TOP:" + (top+3) + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
-//                }).appendTo(div);
-//
-////                temp.before.style("-webkit-transform: skew(0deg, -"+angle+"deg); -moz-transform: skew(0deg, -"+angle+"deg); -ms-transform: skew(0deg, -"+angle+"deg);-o-transform: skew(0deg, -"+angle+"deg); transform: skew(0deg, -"+angle+"deg)")
-////                temp.after.style("-webkit-transform: skew(0deg, "+angle+"deg); -moz-transform: skew(0deg, "+angle+"deg); -ms-transform: skew(0deg, "+angle+"deg);-o-transform: skew(0deg, "+angle+"deg); transform: skew(0deg, "+angle+"deg)")
-//
-//            }
 
             last_exon = parseInt(exon_start);
 
@@ -1219,7 +1292,7 @@ function dispVCF(div, trackName, className) {
 
                     jQuery("<div>").attr({
                         'id': trackName + "" + track_len,
-                        'class': trackClass +" "+className,
+                        'class': trackClass + " " + className,
                         'style': "font-family: 'Courier New',Courier,monospace; font-size: 13px; " + border + " " + modi_style + " TOP:" + top + "px; LEFT:" + (startposition) + "px; width:" + (stopposition) + "px;",
                         'onClick': "trackClick(\"" + trackName + "\",\"" + track_len + "\")"
                     }).appendTo(div);
