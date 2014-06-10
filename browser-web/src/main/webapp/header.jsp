@@ -60,6 +60,7 @@
     <script type="text/javascript" src="<c:url value='/scripts/sequenceController.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/trackController.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/expressionTrackController.js'/>"></script>
+    <script type="text/javascript" src="<c:url value='/scripts/graphicalTrackController.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/popup.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/getset.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/utils.js'/>"></script>
