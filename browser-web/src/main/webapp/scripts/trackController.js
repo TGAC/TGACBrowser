@@ -36,11 +36,11 @@ function getStart(track_start) {
 
 function toogleLabel(trackName) {
     if (window['track_list' + trackName].label == 1) {
+
         window['track_list' + trackName].label = 0
     }
     else {
         window['track_list' + trackName].label = 1
-
     }
     jQuery(".label" + trackName).toggle();
 }
@@ -92,7 +92,7 @@ function trackClick(track, i, j) {
 
 }
 
-function trackmouseover(track, i, j) {
+function trackmouseover(track, i) {
 
     jQuery("#trackmouseoverhead").html("<h2>" + window[track][i].desc + "</h2>");
     jQuery("#trackmouseoverbody").html(window[track][i].transcript.length + "transcript for Gene");
@@ -432,23 +432,50 @@ function dispGenes(div, track, expand, className) {
                 var startposition = (gene_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                 var stopposition = (gene_stop - gene_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
+                var clone_new_div= new_div.cloneNode(true)
 
-                var temp = jQuery("<div>").attr({
-                    'id': track + "" + len,
-                    'class': trackClass + " " + className + "_exon",
-                    'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width :" + stopposition + "px;",
-                    'title': label,
-                    'onClick': "trackClick(\"" + track + "\",\"" + len + "\")",
-                    'onmouseOver': "trackmouseover(\"" + track + "\",\"" + len + "\")",
-                    'onmouseOut': 'trackmouseout()'
-                }).appendTo(div);
+                clone_new_div.className = trackClass + " " + className+"_exon";
+                clone_new_div.id = track + "" + len;
+                clone_new_div.style.width = stopposition + "px";
+                clone_new_div.style.top = top + "px";
+
+                clone_new_div.style.left = startposition + "px";
+                clone_new_div.title = label;
+
+                clone_new_div.onclick = (function () {
+                    var current_len = len;
+                    var current_transcript_len = transcript_len;
+                    return function () {
+                        trackClick(track, current_len, current_transcript_len);
+                    }
+                })();
+                clone_new_div.onmouseOver = (function () {
+                    var current_len = len;
+                    return function () {
+                        trackmouseover(track, current_len);
+                    }
+                })();
+
+                clone_new_div.onmouseOut = (function () {
+                    return function () {
+                        trackmouseout();
+                    }
+                })();
+
+                track_div.appendChild(clone_new_div)
 
 
-                jQuery("<div>").attr({
-                    'class': "tracklabel " + labelclass,
-                    'style': labeltoogle + " z-index: 999; overflow: hidden;text-overflow: ellipsis;",
-                    'title': label
-                }).html("<p class='track_label'>" + label + "</p>").appendTo(temp);
+
+                var clone_label_div= label_div.cloneNode(true)
+
+                clone_label_div.className = "tracklabel " + labelclass;
+
+                clone_label_div.style.display = labeltoogle
+
+                clone_label_div.title = label;
+                clone_label_div.textContent = label
+
+                clone_new_div.appendChild(clone_label_div);
             }
         }
         else {
@@ -521,7 +548,7 @@ function dispGenes(div, track, expand, className) {
                     clone_label_div.title = label;
                     clone_label_div.textContent = label
 
-                    new_div.appendChild(clone_label_div);
+                    clone_new_div.appendChild(clone_label_div);
 
                     if (stopposition > 10) {
                         dispGeneExon(genes[len].transcript[transcript_len], genes[len].strand, className, div, track);
@@ -599,6 +626,8 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
 
     var geneexons = sortResults("start", "asc", track.Exons);
     var genetranscript = track;
+    var top = genetranscript.layer * 20 + 15;
+
 
 
     if (geneexons.length > 0) {
@@ -611,6 +640,20 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
         if (strand == -1 || strand == "-1") {
             spanclass = "reverse";
         }
+
+
+        var new_utr_div = document.createElement("div");
+        new_utr_div.className = utrtrackClass;
+        new_utr_div.style.top = top + "px";
+
+        var new_span_div = document.createElement("div");
+        new_span_div.className = spanclass;
+        new_span_div.style.top = top + "px";
+
+        var new_track_div = document.createElement("div");
+        new_track_div.className = trackClass;
+        new_track_div.style.top = top + "px";
+
 
         var newStart_temp = getBegin();
         var newEnd_temp = getEnd();
@@ -636,7 +679,6 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
                 exon_stop = geneexons[exon_len].start;
             }
 
-            var top = genetranscript.layer * 20 + 15;
             current = exon_start;
             var transcript_start;
             var transcript_end;
@@ -656,13 +698,12 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
                     startposition = ((exon_start - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                     stopposition = (exon_stop - exon_start ) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
+                    var clone_utr_div= new_utr_div.cloneNode(true)
 
-                    var new_div = document.createElement("div");
-                    new_div.className = utrtrackClass;
-                    new_div.style.width = stopposition + "px";
-                    new_div.style.top = top + "px";
-                    new_div.style.left = startposition + "px";
-                    track_div.appendChild(new_div)
+                    clone_utr_div.style.width = stopposition + "px";
+                    clone_utr_div.style.left = startposition + "px";
+                    track_div.appendChild(clone_utr_div)
+
 
                     if (stopposition > 10) {
                         if (spanclass == "forward") {
@@ -671,11 +712,10 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
                         }
 
 
-                        var new_div = document.createElement("div");
-                        new_div.className = spanclass;
-                        new_div.style.top = top + "px";
-                        new_div.style.left = startposition + "px";
-                        track_div.appendChild(new_div)
+                        var clone_span_div= new_span_div.cloneNode(true)
+
+                        clone_span_div.style.left = startposition + "px";
+                        clone_span_div.appendChild(clone_span_div)
                     }
 
 
@@ -685,12 +725,11 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
                     startposition = ((exon_start - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                     stopposition = (exon_stop - exon_start) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
-                    var new_div = document.createElement("div");
-                    new_div.className = utrtrackClass;
-                    new_div.style.width = stopposition + "px";
-                    new_div.style.top = top + "px";
-                    new_div.style.left = startposition + "px";
-                    track_div.appendChild(new_div)
+                    var clone_utr_div= new_utr_div.cloneNode(true)
+
+                    clone_utr_div.style.width = stopposition + "px";
+                    clone_utr_div.style.left = startposition + "px";
+                    track_div.appendChild(clone_utr_div)
 
 
                     if (stopposition > 10) {
@@ -699,11 +738,11 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
 
                         }
 
-                        var new_div = document.createElement("div");
-                        new_div.className = spanclass;
-                        new_div.style.top = top + "px";
-                        new_div.style.left = startposition + "px";
-                        track_div.appendChild(new_div)
+
+                        var clone_span_div= new_span_div.cloneNode(true)
+
+                        clone_span_div.style.left = startposition + "px";
+                        clone_span_div.appendChild(clone_span_div)
                     }
 
                     last = current;
@@ -712,12 +751,11 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
                     startposition = ((exon_start - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                     stopposition = (transcript_start - exon_start) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
-                    var new_div = document.createElement("div");
-                    new_div.className = utrtrackClass;
-                    new_div.style.width = stopposition + "px";
-                    new_div.style.top = top + "px";
-                    new_div.style.left = startposition + "px";
-                    track_div.appendChild(new_div)
+                    var clone_utr_div= new_utr_div.cloneNode(true)
+
+                    clone_utr_div.style.width = stopposition + "px";
+                    clone_utr_div.style.left = startposition + "px";
+                    track_div.appendChild(clone_utr_div)
 
                     if (stopposition > 10) {
                         if (spanclass == "forward") {
@@ -725,23 +763,22 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
 
                         }
 
-                        var new_div = document.createElement("div");
-                        new_div.className = spanclass;
-                        new_div.style.top = top + "px";
-                        new_div.style.left = startposition + "px";
-                        track_div.appendChild(new_div)
+
+                        var clone_span_div= new_span_div.cloneNode(true)
+
+                        clone_span_div.style.left = startposition + "px";
+                        clone_span_div.appendChild(clone_span_div)
                     }
 
 
                     startposition = ((transcript_end - newStart_temp) - 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                     stopposition = (exon_stop - transcript_end + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
-                    var new_div = document.createElement("div");
-                    new_div.className = utrtrackClass;
-                    new_div.style.width = stopposition + "px";
-                    new_div.style.top = top + "px";
-                    new_div.style.left = startposition + "px";
-                    track_div.appendChild(new_div)
+                    var clone_utr_div= new_utr_div.cloneNode(true)
+
+                    clone_utr_div.style.width = stopposition + "px";
+                    clone_utr_div.style.left = startposition + "px";
+                    track_div.appendChild(clone_utr_div)
 
                     if (stopposition > 10) {
                         if (spanclass == "forward") {
@@ -749,11 +786,11 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
 
                         }
 
-                        var new_div = document.createElement("div");
-                        new_div.className = spanclass;
-                        new_div.style.top = top + "px";
-                        new_div.style.left = startposition + "px";
-                        track_div.appendChild(new_div)
+
+                        var clone_span_div= new_span_div.cloneNode(true)
+
+                        clone_span_div.style.left = startposition + "px";
+                        clone_span_div.appendChild(clone_span_div)
                     }
 
 
@@ -770,11 +807,11 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
 
                         }
 
-                        var new_div = document.createElement("div");
-                        new_div.className = spanclass;
-                        new_div.style.top = top + "px";
-                        new_div.style.left = startposition + "px";
-                        track_div.appendChild(new_div)
+
+                        var clone_span_div= new_span_div.cloneNode(true)
+
+                        clone_span_div.style.left = startposition + "px";
+                        clone_span_div.appendChild(clone_span_div)
                     }
 
                     last = current;
@@ -783,34 +820,32 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
                     startposition = ((exon_start - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                     stopposition = (transcript_start - exon_start) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
-                    var new_div = document.createElement("div");
-                    new_div.className = utrtrackClass;
-                    new_div.style.width = stopposition + "px";
-                    new_div.style.top = top + "px";
-                    new_div.style.left = startposition + "px";
-                    track_div.appendChild(new_div)
+                    var clone_utr_div= new_utr_div.cloneNode(true)
+
+                    clone_utr_div.style.width = stopposition + "px";
+                    clone_utr_div.style.left = startposition + "px";
+                    track_div.appendChild(clone_utr_div)
 
 
                     startposition = ((transcript_start - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
                     stopposition = (exon_stop - transcript_start ) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
-                    var new_div = document.createElement("div");
-                    new_div.className = trackClass;
-                    new_div.style.width = stopposition + "px";
-                    new_div.style.top = top + "px";
-                    new_div.style.left = startposition + "px";
-                    track_div.appendChild(new_div)
+                    var clone_track_div= new_track_div.cloneNode(true)
+
+                    clone_track_div.style.width = stopposition + "px";
+                    clone_track_div.style.left = startposition + "px";
+                    track_div.appendChild(clone_track_div)
 
                     if (stopposition > 10) {
                         if (spanclass == "forward") {
                             startposition = startposition + (stopposition - 8)
                         }
-                        var new_div = document.createElement("div");
-                        new_div.className = spanclass;
-                        new_div.style.top = top + "px";
-                        new_div.style.left = startposition + "px";
-                        track_div.appendChild(new_div)
+
+                        var clone_span_div= new_span_div.cloneNode(true)
+
+                        clone_span_div.style.left = startposition + "px";
+                        clone_span_div.appendChild(clone_span_div)
                     }
 
 
@@ -821,12 +856,11 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
                     stopposition = (exon_stop - transcript_end) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
-                    var new_div = document.createElement("div");
-                    new_div.className = utrtrackClass;
-                    new_div.style.width = stopposition + "px";
-                    new_div.style.top = top + "px";
-                    new_div.style.left = startposition + "px";
-                    track_div.appendChild(new_div)
+                    var clone_utr_div= new_utr_div.cloneNode(true)
+
+                    clone_utr_div.style.width = stopposition + "px";
+                    clone_utr_div.style.left = startposition + "px";
+                    track_div.appendChild(clone_utr_div)
 
                     if (stopposition > 10) {
                         if (spanclass == "forward") {
@@ -834,11 +868,11 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
 
                         }
 
-                        var new_div = document.createElement("div");
-                        new_div.className = spanclass;
-                        new_div.style.top = top + "px";
-                        new_div.style.left = startposition + "px";
-                        track_div.appendChild(new_div)
+
+                        var clone_span_div= new_span_div.cloneNode(true)
+
+                        clone_span_div.style.left = startposition + "px";
+                        clone_span_div.appendChild(clone_span_div)
                     }
 
 
@@ -846,12 +880,12 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
                     stopposition = (transcript_end - exon_start) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
-                    var new_div = document.createElement("div");
-                    new_div.className = trackClass;
-                    new_div.style.width = stopposition + "px";
-                    new_div.style.top = top + "px";
-                    new_div.style.left = startposition + "px";
-                    track_div.appendChild(new_div)
+                    var clone_track_div= new_track_div.cloneNode(true)
+
+                    clone_track_div.style.width = stopposition + "px";
+                    clone_track_div.style.left = startposition + "px";
+                    track_div.appendChild(clone_track_div)
+
 
                     if (stopposition > 10) {
                         if (spanclass == "forward") {
@@ -859,11 +893,11 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
 
                         }
 
-                        var new_div = document.createElement("div");
-                        new_div.className = spanclass;
-                        new_div.style.top = top + "px";
-                        new_div.style.left = startposition + "px";
-                        track_div.appendChild(new_div)
+
+                        var clone_span_div= new_span_div.cloneNode(true)
+
+                        clone_span_div.style.left = startposition + "px";
+                        clone_span_div.appendChild(clone_span_div)
                     }
 
 
@@ -874,12 +908,12 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
                     stopposition = (exon_stop - exon_start) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
-                    var new_div = document.createElement("div");
-                    new_div.className = trackClass;
-                    new_div.style.width = stopposition + "px";
-                    new_div.style.top = top + "px";
-                    new_div.style.left = startposition + "px";
-                    track_div.appendChild(new_div)
+                    var clone_track_div= new_track_div.cloneNode(true)
+
+                    clone_track_div.style.width = stopposition + "px";
+                    clone_track_div.style.left = startposition + "px";
+                    track_div.appendChild(clone_track_div)
+
 
                     if (stopposition > 10) {
                         if (spanclass == "forward") {
@@ -887,11 +921,11 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
 
                         }
 
-                        var new_div = document.createElement("div");
-                        new_div.className = spanclass;
-                        new_div.style.top = top + "px";
-                        new_div.style.left = startposition + "px";
-                        track_div.appendChild(new_div)
+
+                        var clone_span_div= new_span_div.cloneNode(true)
+
+                        clone_span_div.style.left = startposition + "px";
+                        clone_span_div.appendChild(clone_span_div)
                     }
 
 
@@ -904,12 +938,12 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
                 stopposition = (exon_stop - exon_start) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
 
-                var new_div = document.createElement("div");
-                new_div.className = trackClass;
-                new_div.style.width = stopposition + "px";
-                new_div.style.top = top + "px";
-                new_div.style.left = startposition + "px";
-                track_div.appendChild(new_div)
+                var clone_track_div= new_track_div.cloneNode(true)
+
+                clone_track_div.style.width = stopposition + "px";
+                clone_track_div.style.left = startposition + "px";
+                track_div.appendChild(clone_track_div)
+
 
                 if (stopposition > 10) {
                     if (spanclass == "forward") {
@@ -917,11 +951,11 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
 
                     }
 
-                    var new_div = document.createElement("div");
-                    new_div.className = spanclass;
-                    new_div.style.top = top + "px";
-                    new_div.style.left = startposition + "px";
-                    track_div.appendChild(new_div)
+
+                    var clone_span_div= new_span_div.cloneNode(true)
+
+                    clone_span_div.style.left = startposition + "px";
+                    clone_span_div.appendChild(clone_span_div)
                 }
 
 
@@ -939,9 +973,25 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
 
 function dispTrack(div, trackName, className) {
 
+
+    var d = new Date();
+    console.log(d.getMinutes() + ":" + d.getSeconds() + ":" + d.getMilliseconds())
+    var track_div = document.getElementById(trackName + "_div")
+
+    var new_div = document.createElement("div");
+    new_div.style.height = "5px";
+    new_div.style.position = "absolute";
+
+
+    var label_div = document.createElement("div");
+    label_div.style.overflow = "hidden"
+    label_div.style.textOverflow = "ellipsis";
+    label_div.style.zindex = 999;
+
+
     var labelclass = "label" + trackName;
     var modi_style;
-    var labeltoogle = "display : in-line;";
+    var labeltoogle = "in-line;";
     var trackId;
     var trackClass, label;
     var track_html = [];
@@ -956,10 +1006,11 @@ function dispTrack(div, trackName, className) {
         trackClass = "track";
     }
 
+
     var j = 0;
 
     if (window['track_list' + trackName].label == 0) {
-        labeltoogle = "display : none;";
+        labeltoogle = "none;";
     }
 
     if (jQuery('input[name=' + trackName + 'mergedCheckbox]').is(':checked')) {
@@ -979,6 +1030,7 @@ function dispTrack(div, trackName, className) {
         jQuery(div).fadeIn();
         jQuery("#" + trackName + "_wrapper").fadeIn();
     }
+
 
 
     if (!window[trackName] || window[trackName] == "loading") {
@@ -1025,6 +1077,9 @@ function dispTrack(div, trackName, className) {
             var spanclass = "ui-icon ui-icon-carat-1-e";
             var border = "";
 
+            var top;
+
+
             while (track_len--) {
 
                 var strand = track[track_len].strand;
@@ -1037,11 +1092,11 @@ function dispTrack(div, trackName, className) {
                 var track_start = track[track_len].start;
                 var track_stop = track[track_len].end ? track[track_len].end : parseInt(track[track_len].start) + 1;
 
-                if (track[track_len].flag) {
-                    border = "border: 1px solid black;";
-                }
+
                 var track_desc = track[track_len].desc;
-                var top;
+
+
+
                 if (coord || track[track_len].layer) {
                     top = (track[track_len].layer) * 10 + 15;
                     if (track[track_len].layer > j) {
@@ -1051,18 +1106,17 @@ function dispTrack(div, trackName, className) {
                 else {
                     top = ((track_len) % (layers) + 1) * 20 + 15;
                 }
-                if (track[track_len].colour) {
-                    modi_style = 'background:' + track[track_len].colour + "; ";
-                }
-                else {
-                    modi_style = '';
-                }
+
+
+
                 var startposition = (track_start - newStart_temp) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen_temp) / 2;
                 var stopposition = (track_stop - track_start + 1) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp);
 
                 if (stopposition < 2) {
                     stopposition = 2;
                 }
+
+
 
                 if (trackName.toLowerCase().indexOf("snp") >= 0) {
                     spanclass = "";
@@ -1080,20 +1134,40 @@ function dispTrack(div, trackName, className) {
                     label = track_start + "-" + track_stop;
                 }
 
-                var temp = jQuery("<div>").attr({
-                    'id': trackName + "" + track_len,
-                    'class': trackClass + " " + className,
-                    'style': border + "" + modi_style + "TOP:" + top + "px; LEFT:" + (startposition) + "px; width:" + (stopposition) + "px;",
-                    'title': label,
-                    'onClick': "trackClick(\"" + trackName + "\",\"" + track_len + "\")"
-                }).appendTo(div);
+                var clone_new_div= new_div.cloneNode(true)
 
-                jQuery("<div>").attr({
-                    'class': "tracklabel " + labelclass,
-                    'style': labeltoogle + " z-index: 999; overflow: hidden;text-overflow: ellipsis;",
-                    'title': label
-                }).html(label).appendTo(temp);
+                clone_new_div.className = trackClass + " " + className;
+                clone_new_div.id = trackName + "" + track_len;
+                clone_new_div.style.width = stopposition + "px";
+                clone_new_div.style.top = top + "px";
 
+                clone_new_div.style.left = startposition + "px";
+                clone_new_div.title = label;
+
+                clone_new_div.onclick = (function () {
+                    var current_len = track_len;
+                    return function () {
+                        trackClick(trackName, current_len);
+                    }
+                })();
+                if (track[track_len].colour) {
+                    clone_new_div.style.background = track[track_len].colour;
+                }
+
+                if (track[track_len].flag) {
+                    clone_new_div.style.border = "1px solid black;";
+                }
+
+                track_div.appendChild(clone_new_div)
+
+                var clone_label_div= label_div.cloneNode(true)
+
+                clone_label_div.className = "tracklabel " + labelclass;
+
+                clone_label_div.style.display = labeltoogle
+                clone_label_div.title = label;
+                clone_label_div.textContent = label
+                clone_new_div.appendChild(clone_label_div);
 
                 if (track[track_len].cigars && stopposition > 50) {
                     jQuery(dispCigarLine(track[track_len].cigars, track[track_len].start, top)).appendTo(div);
@@ -1104,7 +1178,7 @@ function dispTrack(div, trackName, className) {
             }
         }
         else if (track.length >= 10000) {
-            dispGraph(div, trackName, trackId)
+            dispGraph(div, trackName, className)
         }
     }
 
@@ -1118,6 +1192,10 @@ function dispTrack(div, trackName, className) {
         jQuery("#" + trackName + "_wrapper").children(".ui-resizable-handle").removeClass("resize-arrow")
 
     }
+
+    var d = new Date();
+    console.log(d.getMinutes() + ":" + d.getSeconds() + ":" + d.getMilliseconds())
+
 }
 
 function dispVCF(div, trackName, className) {
