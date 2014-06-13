@@ -238,6 +238,12 @@ function onLoad() {
                     jQuery(this).css("top", parseInt(jQuery(this).parent().position().top) - parseInt(jQuery(window).scrollTop()) + (parseInt(jQuery("#wrapper").position().top) + parseInt(jQuery("#sequence").css('height'))) + (parseInt(jQuery("#canvas").position().top)) + 5);
                     jQuery(this).css("position", 'fixed');
                 });
+
+                jQuery(".marker_class").each(function (i) {
+                    jQuery(this).css("left", '-50%');
+                    jQuery(this).css("top", parseInt(jQuery(this).parent().position().top) - parseInt(jQuery(window).scrollTop()) + (parseInt(jQuery("#wrapper").position().top) + parseInt(jQuery("#sequence").css('height'))) + (parseInt(jQuery("#canvas").position().top)) + 5);
+                    jQuery(this).css("position", 'fixed');
+                });
             },
             stop: function () {
                 jQuery(".handle").css("position", 'absolute');

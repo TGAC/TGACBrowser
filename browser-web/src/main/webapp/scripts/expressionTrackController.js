@@ -363,7 +363,6 @@ function dispGraphBed(div, trackName, trackId, className) {
 }
 
 
-
 function sortResults(prop, asc, array) {
     array = array.sort(function (a, b) {
         if (asc) return (a[prop] > b[prop]);
@@ -372,9 +371,8 @@ function sortResults(prop, asc, array) {
     return array;
 }
 
-function marker(max, div){
+function marker(max, div) {
 
-           console.log("marker "+max)
     var width = jQuery("#wrapper").width(),
         height = 80;
 
@@ -386,18 +384,18 @@ function marker(max, div){
     if (start < 0) {
         left = (1 - start) * parseInt(width) / end * 3 / 4;
     }
-
+    jQuery(div).append("<div id=marker_div class='marker_class' style='left: 0px; position: absolute; width: " + width + "px; height:" + height + "px; top:0px;'></div> ")
     var top = 0;
-
+    div = "#marker_div"
     var svg = d3.select(div).append("svg")
-        .style("position","absolute")
+        .style("position", "absolute")
+        .attr("class", "scale_marker")
         .style("left", "0")
         .attr("width", width)
         .attr("bottom", "0")
         .attr("height", height + 20)
         .append("g")
         .attr("transform", "translate(0,20)");
-
 
 
     //select 10 positions to be displayed on x axis
@@ -408,15 +406,13 @@ function marker(max, div){
 
     }
 
-    console.log(marker_legend)
-
     var markertext = svg.selectAll('text.marker')
         .data(marker_legend);
 
     markertext.enter().append('svg:text')
-        .attr("class", "text marker")
+        .attr("class", "text scale_marker")
         .attr('x', function (d) {
-            return  (width/2)+10;
+            return  (width / 2) + 10;
         })
         .attr('y', function (d) {
             return  height - (d * height / max) + parseInt(5);
@@ -432,15 +428,15 @@ function marker(max, div){
     var marker = svg.selectAll("tick.marker")
         .data(marker_legend);
     marker.enter().insert("svg:line")
-        .attr("class", "tick tickmarker")
+        .attr("class", "tick scale_marker")
         .attr("x1", function (d) {
-            return  width/2;
+            return  width / 2;
         })
         .attr("y1", function (d) {
             return  height - (d * height / max);
         })
         .attr("x2",function (d) {
-            return  (width/2)+5;
+            return  (width / 2) + 5;
         }).attr("y2", function (d) {
             return  height - (d * height / max);
         })
@@ -451,15 +447,15 @@ function marker(max, div){
     var marker_base = svg.selectAll("line.bottom")
         .data([1]);
     marker_base.enter().insert("svg:line")
-        .attr("class", "line marker base")
+        .attr("class", "line marker base scale_marker")
         .attr("x1", function (d) {
-            return  width/2;
+            return  width / 2;
         })
         .attr("y1", function (d) {
             return  0;
         })
         .attr("x2",function (d) {
-            return  width/2;
+            return  width / 2;
         }).attr("y2", function (d) {
             return  height;
         })
