@@ -170,6 +170,9 @@ function posGraphWig(div, trackName, trackId, className) {
     jQuery(div).css('height', '70px');
     jQuery(div).fadeIn();
     jQuery("#" + trackName + "_wrapper").fadeIn();
+
+
+    marker(max, div)
 }
 
 function negGraphWig(div, trackName, trackId, className) {
@@ -303,6 +306,9 @@ function negGraphWig(div, trackName, trackId, className) {
     jQuery(div).css('height', '70px');
     jQuery(div).fadeIn();
     jQuery("#" + trackName + "_wrapper").fadeIn();
+
+
+    marker(min, div)
 }
 
 function dispGraphBed(div, trackName, trackId, className) {
@@ -364,4 +370,100 @@ function sortResults(prop, asc, array) {
         else return (b[prop] > a[prop]);
     });
     return array;
+}
+
+function marker(max, div){
+
+           console.log("marker "+max)
+    var width = jQuery("#wrapper").width(),
+        height = 80;
+
+    var partial = (parseInt(getEnd()) - parseInt(getBegin())) / 2;
+    var start = parseInt(getBegin()) - parseInt(partial)
+    var end = parseInt(getEnd()) + parseInt(partial);
+
+    var left = 0;
+    if (start < 0) {
+        left = (1 - start) * parseInt(width) / end * 3 / 4;
+    }
+
+    var top = 0;
+
+    var svg = d3.select(div).append("svg")
+        .style("position","absolute")
+        .style("left", "0")
+        .attr("width", width)
+        .attr("bottom", "0")
+        .attr("height", height + 20)
+        .append("g")
+        .attr("transform", "translate(0,20)");
+
+
+
+    //select 10 positions to be displayed on x axis
+    var marker_legend = [];
+
+    for (var i = 1; i <= 5; i++) {
+        marker_legend.push((max / 5) * i);
+
+    }
+
+    console.log(marker_legend)
+
+    var markertext = svg.selectAll('text.marker')
+        .data(marker_legend);
+
+    markertext.enter().append('svg:text')
+        .attr("class", "text marker")
+        .attr('x', function (d) {
+            return  (width/2)+10;
+        })
+        .attr('y', function (d) {
+            return  height - (d * height / max) + parseInt(5);
+        })
+        .attr('text-anchor', 'begin')
+        .style("font-size", "10px")
+        .text(function (d, i) {
+            return d.toFixed(2);
+        });
+
+
+    // lines at bottom of diagram to show the positions
+    var marker = svg.selectAll("tick.marker")
+        .data(marker_legend);
+    marker.enter().insert("svg:line")
+        .attr("class", "tick tickmarker")
+        .attr("x1", function (d) {
+            return  width/2;
+        })
+        .attr("y1", function (d) {
+            return  height - (d * height / max);
+        })
+        .attr("x2",function (d) {
+            return  (width/2)+5;
+        }).attr("y2", function (d) {
+            return  height - (d * height / max);
+        })
+        .attr('stroke', function () {
+            return "black";
+        });
+
+    var marker_base = svg.selectAll("line.bottom")
+        .data([1]);
+    marker_base.enter().insert("svg:line")
+        .attr("class", "line marker base")
+        .attr("x1", function (d) {
+            return  width/2;
+        })
+        .attr("y1", function (d) {
+            return  0;
+        })
+        .attr("x2",function (d) {
+            return  width/2;
+        }).attr("y2", function (d) {
+            return  height;
+        })
+        .attr('stroke', function () {
+            return "black";
+        });
 }
