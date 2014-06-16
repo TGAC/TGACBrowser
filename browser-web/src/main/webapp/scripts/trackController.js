@@ -518,7 +518,7 @@ function dispGenes(div, track, expand, className) {
 
 
                     var startposition = (gene_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                    var stopposition = (gene_stop - gene_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                    var stopposition = (gene_stop - gene_start) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
 
                     var clone_new_div= new_div.cloneNode(true)
 
@@ -715,7 +715,7 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
                         var clone_span_div= new_span_div.cloneNode(true)
 
                         clone_span_div.style.left = startposition + "px";
-                        clone_span_div.appendChild(clone_span_div)
+                        track_div.appendChild(clone_span_div)
                     }
 
 
@@ -742,7 +742,7 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
                         var clone_span_div= new_span_div.cloneNode(true)
 
                         clone_span_div.style.left = startposition + "px";
-                        clone_span_div.appendChild(clone_span_div)
+                        track_div.appendChild(clone_span_div)
                     }
 
                     last = current;
@@ -767,7 +767,7 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
                         var clone_span_div= new_span_div.cloneNode(true)
 
                         clone_span_div.style.left = startposition + "px";
-                        clone_span_div.appendChild(clone_span_div)
+                        track_div.appendChild(clone_span_div)
                     }
 
 
@@ -790,7 +790,7 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
                         var clone_span_div= new_span_div.cloneNode(true)
 
                         clone_span_div.style.left = startposition + "px";
-                        clone_span_div.appendChild(clone_span_div)
+                        track_div.appendChild(clone_span_div)
                     }
 
 
@@ -811,7 +811,7 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
                         var clone_span_div= new_span_div.cloneNode(true)
 
                         clone_span_div.style.left = startposition + "px";
-                        clone_span_div.appendChild(clone_span_div)
+                        track_div.appendChild(clone_span_div)
                     }
 
                     last = current;
@@ -845,7 +845,7 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
                         var clone_span_div= new_span_div.cloneNode(true)
 
                         clone_span_div.style.left = startposition + "px";
-                        clone_span_div.appendChild(clone_span_div)
+                        track_div.appendChild(clone_span_div)
                     }
 
 
@@ -872,7 +872,7 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
                         var clone_span_div= new_span_div.cloneNode(true)
 
                         clone_span_div.style.left = startposition + "px";
-                        clone_span_div.appendChild(clone_span_div)
+                        track_div.appendChild(clone_span_div)
                     }
 
 
@@ -897,7 +897,7 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
                         var clone_span_div= new_span_div.cloneNode(true)
 
                         clone_span_div.style.left = startposition + "px";
-                        clone_span_div.appendChild(clone_span_div)
+                        track_div.appendChild(clone_span_div)
                     }
 
 
@@ -925,7 +925,7 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
                         var clone_span_div= new_span_div.cloneNode(true)
 
                         clone_span_div.style.left = startposition + "px";
-                        clone_span_div.appendChild(clone_span_div)
+                        track_div.appendChild(clone_span_div)
                     }
 
 
@@ -955,7 +955,7 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
                     var clone_span_div= new_span_div.cloneNode(true)
 
                     clone_span_div.style.left = startposition + "px";
-                    clone_span_div.appendChild(clone_span_div)
+                    track_div.appendChild(clone_span_div)
                 }
 
 
