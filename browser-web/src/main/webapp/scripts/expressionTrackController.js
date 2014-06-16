@@ -130,7 +130,7 @@ function posGraphWig(div, trackName, trackId, className) {
                 else {
                     tempx = ((parseInt(last_start) + parseInt(diff))) * space;
                 }
-                var tempy = height; //(parseInt(max)*(41-parseInt(patharray[i]))/41);
+                var tempy = height;
                 pathinfo.push({ x: tempx, y: tempy});
 
                 if (start > 0) {
@@ -172,7 +172,7 @@ function posGraphWig(div, trackName, trackId, className) {
     jQuery("#" + trackName + "_wrapper").fadeIn();
 
 
-    marker(max, div)
+    marker_pos(max, div)
 }
 
 function negGraphWig(div, trackName, trackId, className) {
@@ -308,7 +308,7 @@ function negGraphWig(div, trackName, trackId, className) {
     jQuery("#" + trackName + "_wrapper").fadeIn();
 
 
-    marker(min, div)
+    marker_neg(min, div)
 }
 
 function dispGraphBed(div, trackName, trackId, className) {
@@ -371,7 +371,7 @@ function sortResults(prop, asc, array) {
     return array;
 }
 
-function marker(max, div) {
+function marker_pos(max, div) {
 
     var width = jQuery("#wrapper").width(),
         height = 80;
@@ -384,9 +384,9 @@ function marker(max, div) {
     if (start < 0) {
         left = (1 - start) * parseInt(width) / end * 3 / 4;
     }
-    jQuery(div).append("<div id=marker_div class='marker_class' style='left: 0px; position: absolute; width: " + width + "px; height:" + height + "px; top:0px;'></div> ")
+    jQuery(div).append("<div id='"+div.replace('#',"")+"marker_div' class='marker_class' style='left: 0px; position: absolute; width: " + width + "px; height:" + height + "px; top:0px;'></div> ")
     var top = 0;
-    div = "#marker_div"
+    div = div+"marker_div"
     var svg = d3.select(div).append("svg")
         .style("position", "absolute")
         .attr("class", "scale_marker")
@@ -439,6 +439,99 @@ function marker(max, div) {
             return  (width / 2) + 5;
         }).attr("y2", function (d) {
             return  height - (d * height / max);
+        })
+        .attr('stroke', function () {
+            return "black";
+        });
+
+    var marker_base = svg.selectAll("line.bottom")
+        .data([1]);
+    marker_base.enter().insert("svg:line")
+        .attr("class", "line marker base scale_marker")
+        .attr("x1", function (d) {
+            return  width / 2;
+        })
+        .attr("y1", function (d) {
+            return  0;
+        })
+        .attr("x2",function (d) {
+            return  width / 2;
+        }).attr("y2", function (d) {
+            return  height;
+        })
+        .attr('stroke', function () {
+            return "black";
+        });
+}
+
+function marker_neg(max, div) {
+
+    var width = jQuery("#wrapper").width(),
+        height = 80;
+
+    var partial = (parseInt(getEnd()) - parseInt(getBegin())) / 2;
+    var start = parseInt(getBegin()) - parseInt(partial)
+    var end = parseInt(getEnd()) + parseInt(partial);
+
+    var left = 0;
+    if (start < 0) {
+        left = (1 - start) * parseInt(width) / end * 3 / 4;
+    }
+    jQuery(div).append("<div id='"+div.replace('#',"")+"marker_div' class='marker_class_neg' style='left: 0px; position: absolute; width: " + width + "px; height:" + height + "px; top:0px;'></div> ")
+    var top = 0;
+    div = div+"marker_div"
+    var svg = d3.select(div).append("svg")
+        .style("position", "absolute")
+        .attr("class", "scale_marker_neg")
+        .style("left", "0")
+        .attr("width", width)
+        .attr("bottom", "0")
+        .attr("height", height + 20)
+        .append("g")
+        .attr("transform", "translate(0,0)");
+
+
+    //select 10 positions to be displayed on x axis
+    var marker_legend = [];
+
+    for (var i = 1; i <= 5; i++) {
+        marker_legend.push((max / 5) * i);
+
+    }
+
+    var markertext = svg.selectAll('text.marker')
+        .data(marker_legend);
+
+    markertext.enter().append('svg:text')
+        .attr("class", "text scale_marker")
+        .attr('x', function (d) {
+            return  (width / 2) + 10;
+        })
+        .attr('y', function (d) {
+            return  (d * height / max) + parseInt(5);
+        })
+        .attr('text-anchor', 'begin')
+        .style("font-size", "10px")
+        .text(function (d, i) {
+            return d.toFixed(2);
+        });
+
+
+    // lines at bottom of diagram to show the positions
+    var marker = svg.selectAll("tick.marker")
+        .data(marker_legend);
+    marker.enter().insert("svg:line")
+        .attr("class", "tick scale_marker")
+        .attr("x1", function (d) {
+            return  width / 2;
+        })
+        .attr("y1", function (d) {
+            return  (d * height / max);
+        })
+        .attr("x2",function (d) {
+            return  (width / 2) + 5;
+        }).attr("y2", function (d) {
+            return  (d * height / max);
         })
         .attr('stroke', function () {
             return "black";
