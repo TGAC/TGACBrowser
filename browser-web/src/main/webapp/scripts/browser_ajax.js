@@ -794,6 +794,9 @@ function changeCSS() {
 }
 
 function drawBrowser(json, from, to, blast) {
+
+    var url = "/"+jQuery('#title').text()+"/index.jsp?query=" + json.seqregname + "&coord=" + json.coord_sys
+
     jQuery("#searchresultMap").html("")
     jQuery("#tracklist").html("")
     jQuery("#searchresult").fadeOut();
@@ -837,6 +840,8 @@ function drawBrowser(json, from, to, blast) {
                 setBegin(to);
                 setEnd(parseInt(from));
             }
+
+            url += "&&from=" + from + "&&to=" + to
         }
         else {
             setBegin((sequencelength - minWidth) / 2);
@@ -857,7 +862,9 @@ function drawBrowser(json, from, to, blast) {
 
     }
 
-    dispSeqCoord();
+    window.history.pushState(json.seqregname, jQuery('#title').text()+"-"+json.seqregname,url)
+
+        dispSeqCoord();
 
     displayCursorPosition();
 
