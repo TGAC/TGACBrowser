@@ -479,6 +479,7 @@ function getReferences(callback) {
             jQuery("#mapmarker").hide()
 
 
+            json.seqregion.sort(naturalSort)
             jQuery("#refmap").html("");
             if (referenceLength > 0 && referenceLength < 50) {
                 changeCSS();
@@ -991,6 +992,8 @@ function ajax_processing(json, from, to, blast) {
         drawBrowser(json, from, to, blast)
     } else if (json.html == "seqregion") {
         makeSeqRegionList(json, from, to, blast)
+    }else if (json.html == "gene") {
+        makeFeatureList(json, from, to, blast)
     }
     else {
         drawBrowser(json, from, to, blast)

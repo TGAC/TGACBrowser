@@ -24,13 +24,13 @@
     <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery.tablesorter.min.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery.drawinglibrary.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery.cookie.js'/>"></script>
-    <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jcanvas.min.js'/>"></script>
+    <%--<script type="text/javascript" src="<c:url value='/scripts/jquery/js/jcanvas.min.js'/>"></script>--%>
 
-    <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery.drawinglibrary.js'/>"></script>
-    <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery.svg.min.js'/>"></script>
-    <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery.svgdom.min.js'/>"></script>
-    <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery.svg.pack.js'/>"></script>
-    <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery-ui.js'/>"></script>
+    <%--<script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery.drawinglibrary.js'/>"></script>--%>
+    <%--<script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery.svg.min.js'/>"></script>--%>
+    <%--<script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery.svgdom.min.js'/>"></script>--%>
+    <%--<script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery.svg.pack.js'/>"></script>--%>
+    <%--<script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery-ui.js'/>"></script>--%>
 
     <%--BioJS--%>
     <script type="text/javascript" src="<c:url value='/scripts/BioJS/Biojs.js'/>"></script>
@@ -67,6 +67,7 @@
     <script type="text/javascript" src="<c:url value='/scripts/browser_ajax.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/uploadTrackController.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/tracksManager.js'/>"></script>
+    <script type="text/javascript" src="<c:url value='/scripts/natural_sort.js'/>"></script>
 
     <title>${initParam.pageTitle}</title>
     <script type="text/javascript">
