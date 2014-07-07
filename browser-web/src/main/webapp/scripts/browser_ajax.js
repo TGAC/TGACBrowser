@@ -795,6 +795,7 @@ function changeCSS() {
 
 function drawBrowser(json, from, to, blast) {
     jQuery("#searchresultMap").html("")
+    jQuery("#tracklist").html("")
     jQuery("#searchresult").fadeOut();
     seq = json.html;
     sequencelength = json.seqlength;
