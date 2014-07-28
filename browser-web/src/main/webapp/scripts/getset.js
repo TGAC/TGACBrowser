@@ -131,7 +131,7 @@ function setBegin(begin) {
              begin_scale = (begin_scale).toFixed(2)
         }
         jQuery("#begin").val(parseInt(begin));
-        jQuery("#begin_scale").val(begin_scale);
+        jQuery("#begin_scale").val(parseInt(begin_scale));
 
     }
     else {
@@ -160,7 +160,7 @@ function setEnd(end) {
         }
 
         jQuery("#end").val(parseInt(end));
-        jQuery("#end_scale").val(end_scale);
+        jQuery("#end_scale").val(parseInt(end_scale));
     }
     else {
         jQuery("#end").val(sequencelength);

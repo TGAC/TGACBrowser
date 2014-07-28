@@ -62,6 +62,7 @@ function seqBar(seqStart, seqEnd) {
 
     var temp = seqEnd - seqStart;
     var seqLen = visualLength(temp);
+    console.log(seqLen+" "+maxLen)
     if (parseFloat(seqLen) <= (parseFloat(maxLen)) && jQuery("#fasta").html().indexOf('true') >= 0) {
         selectionStart = seqStart;
         selectionEnd = seqEnd;
@@ -135,6 +136,7 @@ function jumpToSeqFromGo() {
 
 
 function jumpToSeq() {
+    console.log("jumptoseq")
     var begin = getBegin();
     var end = getEnd();
 
@@ -151,29 +153,43 @@ function jumpToSeq() {
         alert("Ending position need to be bigger than Starting position");
     }
     else {
-        if ((parseInt(end) - parseInt(begin)) < minWidth) {
-            var diff = minWidth - (parseInt(end) - parseInt(begin));
+        console.log("else")
 
-            var tempbegin = parseInt(getBegin() - (diff / 2))
-            var tempend = parseInt(parseInt(getEnd()) + parseInt(diff / 2))
-            if (parseInt(tempbegin) < 0) {
-                tempend = tempend + (-(tempbegin));
-                tempbegin = 0;
-            }
-            if (parseInt(tempend) > len) {
-                tempbegin = tempbegin - (tempend - len);
-                tempend = len;
-            }
+        console.log(begin)
+        console.log(end)
 
-            setBegin(tempbegin);
-            setEnd(tempend);
-        }
+        console.log(minWidth)
+//        if ((parseInt(end) - parseInt(begin)) < minWidth) {
+//
+//            console.log("if")
+//            var diff = minWidth - (parseInt(end) - parseInt(begin));
+//
+//            var tempbegin = parseInt(getBegin() - (diff / 2))
+//            var tempend = parseInt(parseInt(getEnd()) + parseInt(diff / 2))
+//            if (parseInt(tempbegin) < 0) {
+//                tempend = tempend + (-(tempbegin));
+//                tempbegin = 0;
+//            }
+//            if (parseInt(tempend) > len) {
+//                tempbegin = tempbegin - (tempend - len);
+//                tempend = len;
+//            }
+//
+//            setBegin(tempbegin);
+//            setEnd(tempend);
+//        }
 
-        var begin = getBegin();
+        var begin = getBegin()-1;
         var end = getEnd();
+
+        console.log(begin)
+        console.log(len)
+        console.log(maxLen)
         var seqStart = parseInt(begin) * parseInt(maxLen) / len;
         var seqEnd = parseInt(end) * parseInt(maxLen) / len;
         var width = parseFloat(seqEnd) - parseFloat(seqStart);
+        console.log(seqStart)
+
         removeAllPopup();
         setDragableLeft(seqStart);
         setDragableWidth(width);
@@ -194,12 +210,12 @@ function translate(sequence) {
 
         var seq = sequence.substring(j, sequence.length);
         space = (parseFloat(maxLen) - (visualLength(seq.length) / 3)) / parseFloat(seq.length / 3);
-
+        var width = maxLen / (getEnd()-getBegin() + 1)
         var i = 0;
         for (i; i <= seq.length - 3; i = i + 3) {
             var chunk = seq.substring(i, i + 3);
-            var left = (parseInt(i*10)+parseInt(j*10));
-            ptn_seq += "<span class=\"span_str aminoacid-str\" style=\"border: 1px solid gray; LEFT: "+left+"px; width:30px\">&nbsp;";
+            var left = (parseInt(i*width)+parseInt(j*width));
+            ptn_seq += "<span class=\"span_str aminoacid-str\" style=\"border: 1px solid gray; width:"+(width*3)+"px; LEFT: "+left+"px; \">&nbsp;";
             if (chunk.indexOf("N") > -1) {
                 ptn_seq += "X";
             }

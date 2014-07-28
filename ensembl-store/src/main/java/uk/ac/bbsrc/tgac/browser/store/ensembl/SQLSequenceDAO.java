@@ -447,7 +447,7 @@ public class SQLSequenceDAO implements SequenceStore {
             if (from < 0) {
                 from = 0;
             }
-            seq = template.queryForObject(GET_Seq_API, new Object[]{from, (to-from),query}, String.class);
+            seq = template.queryForObject(GET_Seq_API, new Object[]{from, (to-from)+1,query}, String.class);
 
             return seq;//.substring(from-1, to-1);
         } catch (EmptyResultDataAccessException e) {

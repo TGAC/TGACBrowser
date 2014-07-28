@@ -106,19 +106,19 @@
                                      class="browserimage"
                                      height=70% alt="Forward" title="Move Right">&nbsp;&nbsp;
                                 <img src='images/browser/zoomin.png' id="zoominbig"
-                                     onclick="zoomIn(parseInt(sequencelength/20));"
+                                     onclick="zoomIn(parseInt(getEnd()-getBegin())/10);"
                                      class="browserimage"
                                      height=70% alt="ZoomIn" title="Zoom In">
                                 <img src='images/browser/zoomin.png' id="zoominsmall"
-                                     onclick="zoomIn(parseInt(sequencelength/40));"
+                                     onclick="zoomIn(parseInt(getEnd()-getBegin())/20);"
                                      class="browserimage browserimagesmall"
                                      height=40% alt="Zoomin" title="Zoom In">&nbsp;
                                 <img src='images/browser/zoomout.png' id="zoomoutsmall"
-                                     onclick="zoomOut(parseInt(sequencelength/40));"
+                                     onclick="zoomOut(parseInt(getEnd()-getBegin())/20);"
                                      class="browserimage browserimagesmall"
                                      height=40% alt="Zoomout" title='Zoom Out'>
                                 <img src='images/browser/zoomout.png' id="zoomoutbig"
-                                     onclick="zoomOut(parseInt(sequencelength/20));"
+                                     onclick="zoomOut(parseInt(getEnd()-getBegin())/10);"
                                      class="browserimage"
                                      height=70% alt="Zoomout" title="Zoom Out">&nbsp;&nbsp;
                                 <img src='images/browser/selectall.png' onclick="expand();" class="browserimage"

@@ -34,21 +34,22 @@
 function stringColour(temp) {
     var letters = temp.split('');
     var newSeq = "";
+    var width = maxLen / (getEnd()-getBegin() + 1)
     for (var i = 0; i < letters.length; i++) {
         if (letters[i] == 'A') {
-            newSeq += "<span class=\"span_str\" style=\"background:#ff8c00; LEFT: " + (i * 10) + "px;\">" + letters[i] + "</span>";
+            newSeq += "<span class=\"span_str\" style=\"background:#ff8c00; width: "+width+"px; LEFT: " + (i * width) + "px;\">" + letters[i] + "</span>";
         }
         else if (letters[i] == 'C') {
-            newSeq += "<span class=\"span_str\" style=\"background:green; left: " + (i * 10) + "px;\">" + letters[i] + "</span>";
+            newSeq += "<span class=\"span_str\" style=\"background:green; width: "+width+"px; left: " + (i * width) + "px;\">" + letters[i] + "</span>";
         }
         else if (letters[i] == 'G') {
-            newSeq += "<span class=\"span_str\" style=\"background:blue; left: " + (i * 10) + "px;\">" + letters[i] + "</span>";
+            newSeq += "<span class=\"span_str\" style=\"background:blue; width: "+width+"px; left: " + (i * width) + "px;\">" + letters[i] + "</span>";
         }
         else if (letters[i] == 'T') {
-            newSeq += "<span class=\"span_str\" style=\"background:red; left:  " + (i * 10) + "px;\">" + letters[i] + "</span>";
+            newSeq += "<span class=\"span_str\" style=\"background:red; width: "+width+"px; left:  " + (i * width) + "px;\">" + letters[i] + "</span>";
         }
         else {
-            newSeq += "<span class=\"span_str\" style=\"background:black; left:  " + (i * 10) + "px;\">" + letters[i] + "</span>";
+            newSeq += "<span class=\"span_str\" style=\"background:black; width: "+width+"px; left:  " + (i * width) + "px;\">" + letters[i] + "</span>";
         }
     }
     return newSeq;
@@ -70,21 +71,27 @@ function visualLength(temp) {
 
 function findminwidth() {
     maxLen = jQuery(window).width();
-    var seqWidth = maxLen / 10; //parseFloat(maxLen) * sequencelength / parseFloat(len);
+    var seqWidth = parseInt(maxLen*sequencelength/visualLength(sequencelength)); //maxLen / 10; //parseFloat(maxLen) * sequencelength / parseFloat(len);
     deltaWidth = parseInt(sequencelength) * 2 / parseInt(maxLen);
-    if (sequencelength < seqWidth) {
-//       still need to recode
-        seqWidth = sequencelength;
-        jQuery('#canvas').width(len)
-        jQuery('#bar_image').width(len)
-        var left = (parseInt(jQuery(window).width()) - len) / 2;
-        setbglayerLeft(left, true)
-        setbglayerWidth(len)
-        setDragableLeft(left, true)
-        setDragableWidth(len)
-        jQuery('#bar_image').animate({"left": left}, { duration: 500, queue: false});
-        jQuery('.browserimage').hide();
-    }
+
+//    if (sequencelength < seqWidth) {
+////       still need to recode
+//        seqWidth = sequencelength;
+//        jQuery('#canvas').width(visualLength(sequencelength))
+//        jQuery('#bar_image').width(visualLength(sequencelength))
+//        var left = (parseInt(jQuery(window).width()) - visualLength(sequencelength)) / 2;
+//        console.log("left "+left)
+//        console.log("width "+visualLength(sequencelength))
+//        setbglayerLeft(left, true)
+//        setbglayerWidth(visualLength(sequencelength))
+//        setDragableLeft(left, true)
+//        setDragableWidth(visualLength(sequencelength))
+//        jQuery('#bar_image').animate({"left": left}, { duration: 500, queue: false});
+//        jQuery('.browserimage').hide();
+//    }
+
+    console.log("return min width "+seqWidth)
+
     return parseInt(seqWidth);
 }
 function browser_coordinates() {

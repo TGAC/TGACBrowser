@@ -239,17 +239,17 @@ function zoomHere(begin, end) {
     var tempBegin = (begin - 1);
     var tempEnd = (end + 1);
 
-    if ((tempEnd - tempBegin) <= minWidth) {
-        var diff = minWidth - (tempEnd - tempBegin);
-
-        setBegin(parseInt(tempBegin - parseInt((diff / 2))));
-        setEnd(parseInt(tempEnd + parseInt((diff / 2))));
-
-    }
-    else {
+//    if ((tempEnd - tempBegin) <= minWidth) {
+//        var diff = minWidth - (tempEnd - tempBegin);
+//
+//        setBegin(parseInt(tempBegin - parseInt((diff / 2))));
+//        setEnd(parseInt(tempEnd + parseInt((diff / 2))));
+//
+//    }
+//    else {
         setBegin(tempBegin);
         setEnd(tempEnd);
-    }
+//    }
 
     jumpToSeq();
 

@@ -62,20 +62,30 @@ function scrollZoom(event) {
 }
 
 function zoomIn(zoom_len) {
+    console.log("zoomin")
+console.log(getBegin())
+    console.log(getEnd())
     var tempBegin = (parseInt(getBegin()) + parseInt(zoom_len));
     var tempEnd = (parseInt(getEnd()) - parseInt(zoom_len));
 
-    if ((tempEnd - tempBegin) <= minWidth) {
-        var diff = minWidth - (tempEnd - tempBegin);
+    console.log(tempBegin)
+    console.log(tempEnd)
 
-        setBegin(parseInt(tempBegin - parseInt((diff / 2))));
-        setEnd(parseInt(tempEnd + parseInt((diff / 2))));
+    console.log(tempEnd-tempBegin)
 
-    }
-    else {
+    console.log(minWidth)
+
+//    if ((tempEnd - tempBegin) <= minWidth) {
+//        var diff = minWidth - (tempEnd - tempBegin);
+//
+//        setBegin(parseInt(tempBegin - parseInt((diff / 2))));
+//        setEnd(parseInt(tempEnd + parseInt((diff / 2))));
+//
+//    }
+//    else {
         setBegin(tempBegin);
         setEnd(tempEnd);
-    }
+//    }
     jumpToSeq();
 }
 
@@ -302,10 +312,15 @@ function setNavPanel() {
 
 // Tracks can be drag
 function trackDrag() {
+
+    console.log("track drag")
     var temp = parseFloat(1) - parseFloat(jQuery('#wrapper').css("left"));
+    console.log(temp)
     if (temp > 10 || temp < -10) {
-        var beginnew = parseFloat(getBegin()) + parseFloat((newEnd - getBegin()) * temp / parseFloat(maxLen));
-        var endnew = parseFloat(getEnd()) + parseFloat((newEnd - getBegin()) * temp / parseFloat(maxLen));
+
+
+        var beginnew = parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * temp / parseFloat(maxLen));
+        var endnew = parseFloat(getEnd()) + parseFloat((getEnd() - getBegin()) * temp / parseFloat(maxLen));
 
         if (beginnew < 0) {
             endnew = endnew - beginnew;
@@ -316,6 +331,9 @@ function trackDrag() {
             beginnew = beginnew - (endnew - sequencelength);
             endnew = sequencelength;
         }
+
+        console.log(beginnew)
+        console.log(endnew)
 
         setBegin(beginnew);
         setEnd(endnew);
