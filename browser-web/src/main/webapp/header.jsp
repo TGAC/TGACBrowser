@@ -68,6 +68,7 @@
     <script type="text/javascript" src="<c:url value='/scripts/uploadTrackController.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/tracksManager.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/natural_sort.js'/>"></script>
+    <script type="text/javascript" src="<c:url value='/scripts/blast_params.js'/>"></script>
 
     <title>${initParam.pageTitle}</title>
     <script type="text/javascript">

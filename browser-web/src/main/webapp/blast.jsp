@@ -2,98 +2,168 @@
 
 <%--<h1 id="seqnameh1">Blast Search </h1>--%>
 
-<div style="position: absolute; top: 50px;left: 20px;" id="blasttextsearch">
+<div style="position: absolute; left: 20px; width: 50%; top:50px;" id="blasttextsearch">
 
     Enter sequence below in FASTA or RAW format
     <br>
     <textarea class="ui-corner-all" id="blastsearch" rows="6" cols="60"
               style="margin: 2px 2px 2px 2px; height: 100px; width: 98%; "></textarea>
 
-    </select> Blast DB
-    <div id="blastdbs" position: style="position: absolute; display: none">
-        <select name="blastdb" id="blastdb">
 
-            <c:set var="databases">${initParam.blastdblink} </c:set>
+    <table width="100%">
+        <tbody>
+        <tr>
+            <td>
+                 <b> Blast DB </b>
+            </td>
+            <td>
 
-            <c:set var="dateParts" value="${fn:split(databases, ',')}"/>
+                <div id="blastdbs"  style="position: relative; top:0px; display: none">
+                            <select name="blastdb" id="blastdb">
 
-            <c:set var="databasesloc">${initParam.blastdblocation} </c:set>
+                                <c:set var="databases">${initParam.blastdblink} </c:set>
 
-            <c:set var="datePartsloc" value="${fn:split(databasesloc, ',')}"/>
+                                <c:set var="dateParts" value="${fn:split(databases, ',')}"/>
 
+                                <c:set var="databasesloc">${initParam.blastdblocation} </c:set>
 
-            <c:forEach var="i" begin="1" end='${fn:length(dateParts)}' step="1">
-                <%--splitting by /--%>
-                <c:set var="text" value="${fn:split(datePartsloc[i-1],'/')}"/>
-                <%--considering last entry--%>
-                <c:set var="text" value="${text[fn:length(text)-1]}"/>
-                <%--index of . --%>
-                <c:set var="to" value="${fn:indexOf(text,'.' )}"/>
-                <%--substring to . --%>
-                <c:set var="filename" value="${fn:substring(text,0,to) }"/>
-
-                <option id=${dateParts[i-1]} value=
-                "${datePartsloc[i-1]}:${dateParts[i-1]}">${filename}</option>
-            </c:forEach>
+                                <c:set var="datePartsloc" value="${fn:split(databasesloc, ',')}"/>
 
 
-        </select>
-        Type
-        <select name="blast_type" id="blast_type">
-            <option value="blastn"> blastn</option>
-            <option value="tblastn">tblastn</option>
-            <option value="blastx">blastx</option>
-        </select>
+                                <c:forEach var="i" begin="1" end='${fn:length(dateParts)}' step="1">
+                                    <%--splitting by /--%>
+                                    <c:set var="text" value="${fn:split(datePartsloc[i-1],'/')}"/>
+                                    <%--considering last entry--%>
+                                    <c:set var="text" value="${text[fn:length(text)-1]}"/>
+                                    <%--index of . --%>
+                                    <c:set var="to" value="${fn:indexOf(text,'.' )}"/>
+                                    <%--substring to . --%>
+                                    <c:set var="filename" value="${fn:substring(text,0,to) }"/>
 
-        <input type=checkbox id='filter' name='filter' checked> Include Repeats
-        <button class="ui-state-default ui-corner-all"
-                onclick=blastFilter()>
-            BLAST
-        </button>
-
-        <button class="ui-state-default ui-corner-all"
-                onclick="resetBLAST()">
-            Clear
-        </button>
-
-    </div>
+                                    <option id=${dateParts[i-1]} value=
+                                    "${datePartsloc[i-1]}:${dateParts[i-1]}">${filename}</option>
+                                </c:forEach>
 
 
-    <br>
+                            </select>
 
-    <div id="ncbiblastdbs" style="position: absolute; display: none">
-        NCBI BLAST
-        <select name="blastdb" id="ncbiblastdb">
-            <option value=nr>nr</option>
-            <option value=est_human>est_human</option>
-            <option value=est_mouse>nr</option>
-            <option value=est_others>est_others</option>
-            <option value=htg>htg</option>
-            <option value=gss>gss</option>
-            <option value=pataa>pataa</option>
-            <option value=patnt>patnt</option>
-        </select>
+                    </div>
+                <div id="ncbiblastdbs" style="position: absolute; display: none"> NCBI BLAST
+                    <select name="blastdb" id="ncbiblastdb">
+                        <option value="nr">nr</option>
+                        <option value="est_human">est_human</option>
+                        <option value="est_mouse">nr</option>
+                        <option value="est_others">est_others</option>
+                        <option value="htg">htg</option>
+                        <option value="gss">gss</option>
+                        <option value="pataa">pataa</option>
+                        <option value="patnt">patnt</option>
+                    </select>
+                </div>
 
-        Type
-        <select name="blast_type" id="ncbi_blast_type">
-            <option value="blastn"> blastn</option>
-            <option value="tblastn">tblastn</option>
+            </td>
+            <td>
+                <button class="ui-state-default ui-corner-all" onclick="blastFilter()">
+                    BLAST
+                </button>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <b> Type   </b>
+            </td>
+            <td>
+                <select name="blast_type" id="blast_type" onchange="setBLASTParams()">
+                    <option value="blastn"> blastn</option>
+                    <option value="tblastn">tblastn</option>
+                    <option value="blastx">blastx</option>
+                </select>
 
-        </select>
-        <button class="ui-state-default ui-corner-all"
-                onclick="blastSearch(jQuery('#blastsearch').val(), jQuery('#ncbiblastdb').val(),jQuery('#ncbi_blast_type').val());">
-            NCBI BLAST
-        </button>
+            </td>
+            <td>
+                <button class="ui-state-default ui-corner-all" onclick="resetBLAST()">
+                    Clear
+                </button>
+            </td>
+        </tr>
 
-        <button class="ui-state-default ui-corner-all"
-                onclick="blastTrackSearch(jQuery('#blastsearch').val(), 0, 100, 10, jQuery('#ncbiblastdb').val(),jQuery('#ncbi_blast_type').val());">
-            NCBI BLAST Track
-            test
-        </button>
-    </div>
+        <tr>
+            <td colspan="3"><b> Advanced Parameters: </b>
+            </td>
+        </tr>
+        <tr>
+            <td> Repeats</td>
+            <td>
+                <input type="checkbox" id="filter" name="filter" checked=""> Include Repeats
+            </td>
+        </tr>
+        <tr>
+            <td>
+            </td>
+            <td>
 
 
+            </td>
+        </tr>
+        <tr valign=top>
+            <td>  <b> Scoring Parameter  </b></td>
+            <td>
+                <div id=blastn_para>
+                    <table>
+                        <tbody>
+                        <tr>
+                            <td> Match/Mismatch</td>
+                            <td> <select name="match-mismatch" id="match-mismatch">
+                                <option value="1,-2">1, -2 </option>
+                                <option value="1,-3">1, -3 </option>
+                                <option value="1,-4">1, -4 </option>
+                                <option value="2,-3">2, -3 </option>
+                                <option value="4,-5">4, -5 </option>
+                                <option value="1,-1">1, -1 </option>
+                            </select></td>
+                        </tr>
+                        <tr>
+                            <td> Gap Costs</td>
+                            <td>
+                                <select name="gap_cost" id="gap_cost">
+                                    <option value="5,2">Existence: 5 Extension: 2 </option>
+                                    <option value="2,2">Existence: 2 Extension: 2 </option>
+                                    <option value="1,2">Existence: 1 Extension: 2 </option>
+                                    <option value="0,2">Existence: 0 Extension: 2 </option>
+                                    <option value="3,1">Existence: 3 Extension: 1 </option>
+                                    <option value="2,1">Existence: 2 Extension: 1 </option>
+                                    <option value="1,1">Existence: 1 Extension: 1 </option>
+                                </select>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <br>
+                <div id="blastp_para" style="display: none;">
+                    <b>Matrix</b>
+                    <select name="matrix" id="matrix" onchange="setBLASTPenalty()">
+                        <option value="PAM30">PAM-30</option>
+                        <option value="PAM70">PAM-70</option>
+                        <option value="PAM250">PAM-250</option>
+                        <option value="BLOSUM80" selected>BLOSUM-80</option>
+                        <option value="BLOSUM62">BLOSUM-62</option>
+                        <option value="BLOSUM45">BLOSUM-45</option>
+                        <option value="BLOSUM50">BLOSUM-50</option>
+                        <option value="BLOSUM90">BLOSUM-90</option>
+                    </select>
+                    <br>
+                    <b>Gap Costs:</b>
+                    <div id="penalty_div">
+
+                    </div>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 </div>
+
 <div id="seqresult">
 
     <span id="ruler"></span>
@@ -108,33 +178,56 @@
 
 <div id="blast_list">
     <div style="position: relative; background: none repeat scroll 0% 0% gray; font-size: 14px; margin-left: -5px; margin-right: -5px; margin-top: -5px;">
-    <center>
-    <b>BLAST History</b>
-    </center></div>
+        <center>
+            <b>BLAST History</b>
+        </center>
+    </div>
 </div>
 
 <script type="text/javascript">
     var seq;
-    function blastFilter(){
+    function blastFilter() {
 
         var dbs = jQuery('#blastdb').val()
 
         var type = jQuery('#blast_type').val();
-                var params = "-num_threads  4 ";
-                if(jQuery("#filter").attr('checked'))
-                {
-                    if(jQuery('#blast_type').val().indexOf('tblastn') >= 0 || jQuery('#blast_type').val().indexOf('blastx') >= 0){
-                        params += " -seg no";
-                    }
-                    else {
-                        params += " -dust no";
-                    }
-                }
-                blastSearch(jQuery('#blastsearch').val(),dbs,type,params);
+        var params = "-num_threads  4 ";
+        if (jQuery("#filter").attr('checked')) {
+            if (jQuery('#blast_type').val().indexOf('tblastn') >= 0 || jQuery('#blast_type').val().indexOf('blastx') >= 0) {
+                params += " -seg no";
+            }
+            else {
+                params += " -dust no";
+            }
+        }
+
+        if (jQuery('#blast_type').val().indexOf('blastn') == 0){
+
+            var match_mismatch = jQuery("#match-mismatch").val();
+            var gap = jQuery("#gap_cost").val();
+            console.log(match_mismatch)
+            console.log(gap)
+
+            params += " -reward "+match_mismatch.split(",")[0]+" -penalty "+match_mismatch.split(",")[1]+" -gapopen "+gap.split(",")[0]+" -gapextend "+gap.split(",")[1];
+        }
+        else{
+            var matrix = jQuery("#matrix").val();
+            var gap = jQuery("#penalty").val();
+            console.log(matrix)
+            console.log(gap)
+
+            params += " -matrix "+matrix+" -gapopen "+gap.split(",")[0]+" -gapextend "+gap.split(",")[1];
+        }
+
+        blastSearch(jQuery('#blastsearch').val(), dbs, type, params);
     }
+
+
+
     jQuery(document).ready(function () {
         getUrlVars();
         setBlast();
+        setBLASTParams();
         var testTextBox = jQuery('#search');
         var code = null;
         testTextBox.keypress(function (e) {

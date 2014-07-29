@@ -216,6 +216,7 @@ pre.wrap {
 #content {
     clear: both;
     height: 100%;
+    width: 100%;
 }
 
 #footer {
@@ -1921,7 +1922,7 @@ span.counter {
 
 #blastresult {
     position: relative;
-    top: 300px;
+    top: 350px;
 }
 
 /*#popup:before{*/
