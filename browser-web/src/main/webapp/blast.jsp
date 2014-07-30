@@ -14,40 +14,40 @@
         <tbody>
         <tr>
             <td>
-                 <b> Blast DB </b>
+                <b> Blast DB </b>
             </td>
             <td>
 
-                <div id="blastdbs"  style="position: relative; top:0px; display: none">
-                            <select name="blastdb" id="blastdb">
+                <div id="blastdbs" style="position: relative; top:0px; display: none">
+                    <select name="blastdb" id="blastdb">
 
-                                <c:set var="databases">${initParam.blastdblink} </c:set>
+                        <c:set var="databases">${initParam.blastdblink} </c:set>
 
-                                <c:set var="dateParts" value="${fn:split(databases, ',')}"/>
+                        <c:set var="dateParts" value="${fn:split(databases, ',')}"/>
 
-                                <c:set var="databasesloc">${initParam.blastdblocation} </c:set>
+                        <c:set var="databasesloc">${initParam.blastdblocation} </c:set>
 
-                                <c:set var="datePartsloc" value="${fn:split(databasesloc, ',')}"/>
-
-
-                                <c:forEach var="i" begin="1" end='${fn:length(dateParts)}' step="1">
-                                    <%--splitting by /--%>
-                                    <c:set var="text" value="${fn:split(datePartsloc[i-1],'/')}"/>
-                                    <%--considering last entry--%>
-                                    <c:set var="text" value="${text[fn:length(text)-1]}"/>
-                                    <%--index of . --%>
-                                    <c:set var="to" value="${fn:indexOf(text,'.' )}"/>
-                                    <%--substring to . --%>
-                                    <c:set var="filename" value="${fn:substring(text,0,to) }"/>
-
-                                    <option id=${dateParts[i-1]} value=
-                                    "${datePartsloc[i-1]}:${dateParts[i-1]}">${filename}</option>
-                                </c:forEach>
+                        <c:set var="datePartsloc" value="${fn:split(databasesloc, ',')}"/>
 
 
-                            </select>
+                        <c:forEach var="i" begin="1" end='${fn:length(dateParts)}' step="1">
+                            <%--splitting by /--%>
+                            <c:set var="text" value="${fn:split(datePartsloc[i-1],'/')}"/>
+                            <%--considering last entry--%>
+                            <c:set var="text" value="${text[fn:length(text)-1]}"/>
+                            <%--index of . --%>
+                            <c:set var="to" value="${fn:indexOf(text,'.' )}"/>
+                            <%--substring to . --%>
+                            <c:set var="filename" value="${fn:substring(text,0,to) }"/>
 
-                    </div>
+                            <option id=${dateParts[i-1]} value=
+                            "${datePartsloc[i-1]}:${dateParts[i-1]}">${filename}</option>
+                        </c:forEach>
+
+
+                    </select>
+
+                </div>
                 <div id="ncbiblastdbs" style="position: absolute; display: none"> NCBI BLAST
                     <select name="blastdb" id="ncbiblastdb">
                         <option value="nr">nr</option>
@@ -70,7 +70,7 @@
         </tr>
         <tr>
             <td>
-                <b> Type   </b>
+                <b> Type </b>
             </td>
             <td>
                 <select name="blast_type" id="blast_type" onchange="setBLASTParams()">
@@ -106,33 +106,33 @@
             </td>
         </tr>
         <tr valign=top>
-            <td>  <b> Scoring Parameter  </b></td>
+            <td><b> Scoring Parameter </b></td>
             <td>
                 <div id=blastn_para>
                     <table>
                         <tbody>
                         <tr>
                             <td> Match/Mismatch</td>
-                            <td> <select name="match-mismatch" id="match-mismatch">
-                                <option value="1,-2">1, -2 </option>
-                                <option value="1,-3">1, -3 </option>
-                                <option value="1,-4">1, -4 </option>
-                                <option value="2,-3">2, -3 </option>
-                                <option value="4,-5">4, -5 </option>
-                                <option value="1,-1">1, -1 </option>
+                            <td><select name="match-mismatch" id="match-mismatch">
+                                <option value="1,-2">1, -2</option>
+                                <option value="1,-3">1, -3</option>
+                                <option value="1,-4">1, -4</option>
+                                <option value="2,-3">2, -3</option>
+                                <option value="4,-5">4, -5</option>
+                                <option value="1,-1">1, -1</option>
                             </select></td>
                         </tr>
                         <tr>
                             <td> Gap Costs</td>
                             <td>
                                 <select name="gap_cost" id="gap_cost">
-                                    <option value="5,2">Existence: 5 Extension: 2 </option>
-                                    <option value="2,2">Existence: 2 Extension: 2 </option>
-                                    <option value="1,2">Existence: 1 Extension: 2 </option>
-                                    <option value="0,2">Existence: 0 Extension: 2 </option>
-                                    <option value="3,1">Existence: 3 Extension: 1 </option>
-                                    <option value="2,1">Existence: 2 Extension: 1 </option>
-                                    <option value="1,1">Existence: 1 Extension: 1 </option>
+                                    <option value="5,2">Existence: 5 Extension: 2</option>
+                                    <option value="2,2">Existence: 2 Extension: 2</option>
+                                    <option value="1,2">Existence: 1 Extension: 2</option>
+                                    <option value="0,2">Existence: 0 Extension: 2</option>
+                                    <option value="3,1">Existence: 3 Extension: 1</option>
+                                    <option value="2,1">Existence: 2 Extension: 1</option>
+                                    <option value="1,1">Existence: 1 Extension: 1</option>
                                 </select>
                             </td>
                         </tr>
@@ -140,6 +140,7 @@
                     </table>
                 </div>
                 <br>
+
                 <div id="blastp_para" style="display: none;">
                     <b>Matrix</b>
                     <select name="matrix" id="matrix" onchange="setBLASTPenalty()">
@@ -154,10 +155,30 @@
                     </select>
                     <br>
                     <b>Gap Costs:</b>
+
                     <div id="penalty_div">
 
                     </div>
                 </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Word Size:
+            </td>
+            <td>
+                <div id="word_size_div">
+
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Short Queries:
+            </td>
+            <td>
+                <input type="checkbox" id="short_seq" onchange="toogleParams()"> Automatically adjust parameters for
+                short input sequences.
             </td>
         </tr>
         </tbody>
@@ -192,36 +213,45 @@
 
         var type = jQuery('#blast_type').val();
         var params = "-num_threads  4 ";
-        if (jQuery("#filter").attr('checked')) {
+        if (jQuery("#short_seq").attr('checked')) {
             if (jQuery('#blast_type').val().indexOf('tblastn') >= 0 || jQuery('#blast_type').val().indexOf('blastx') >= 0) {
-                params += " -seg no";
+                params += " -seg no -word_size 3";
             }
             else {
-                params += " -dust no";
+                params += " -dust no -word_size 7";
             }
+        } else {
+            if (jQuery("#filter").attr('checked')) {
+                if (jQuery('#blast_type').val().indexOf('tblastn') >= 0 || jQuery('#blast_type').val().indexOf('blastx') >= 0) {
+                    params += " -seg no";
+                }
+                else {
+                    params += " -dust no";
+                }
+            }
+
+            if (jQuery('#blast_type').val().indexOf('blastn') == 0) {
+
+                var match_mismatch = jQuery("#match-mismatch").val();
+                var gap = jQuery("#gap_cost").val();
+                console.log(match_mismatch)
+                console.log(gap)
+
+                params += " -reward " + match_mismatch.split(",")[0] + " -penalty " + match_mismatch.split(",")[1] + " -gapopen " + gap.split(",")[0] + " -gapextend " + gap.split(",")[1];
+            }
+            else {
+                var matrix = jQuery("#matrix").val();
+                var gap = jQuery("#penalty").val();
+                console.log(matrix)
+                console.log(gap)
+
+                params += " -matrix " + matrix + " -gapopen " + gap.split(",")[0] + " -gapextend " + gap.split(",")[1];
+            }
+
+            params += " -word_size " + jQuery("#word_size").val();
         }
-
-        if (jQuery('#blast_type').val().indexOf('blastn') == 0){
-
-            var match_mismatch = jQuery("#match-mismatch").val();
-            var gap = jQuery("#gap_cost").val();
-            console.log(match_mismatch)
-            console.log(gap)
-
-            params += " -reward "+match_mismatch.split(",")[0]+" -penalty "+match_mismatch.split(",")[1]+" -gapopen "+gap.split(",")[0]+" -gapextend "+gap.split(",")[1];
-        }
-        else{
-            var matrix = jQuery("#matrix").val();
-            var gap = jQuery("#penalty").val();
-            console.log(matrix)
-            console.log(gap)
-
-            params += " -matrix "+matrix+" -gapopen "+gap.split(",")[0]+" -gapextend "+gap.split(",")[1];
-        }
-
         blastSearch(jQuery('#blastsearch').val(), dbs, type, params);
     }
-
 
 
     jQuery(document).ready(function () {

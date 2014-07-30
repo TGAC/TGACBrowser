@@ -16,6 +16,7 @@ function setBLASTParams(){
     }
 
     setBLASTPenalty();
+    setWordSize()
 }
 
 
@@ -59,4 +60,47 @@ function gen_penalties(penalties){
     }
     penalty_string += "</select>";
         jQuery("#penalty_div").html(penalty_string)
+}
+
+function setWordSize(){
+    var blastn = [16,20,24,28,32,48,64,128,256];
+    var blastp = [3,2];
+
+    if (jQuery('#blast_type').val().indexOf('blastn') == 0) {
+        gen_wordsize(blastn)
+    }
+    else {
+        gen_wordsize(blastp)
+    }
+}
+
+function gen_wordsize(word_size){
+    var word_string = "<select name='word_size' id='word_size'>"
+    for(var i=0; i<word_size.length; i++){
+        word_string += "<option value='"+word_size[i]+"'> "+word_size[i]+"</option>";
+    }
+    word_string += "</select>";
+
+    jQuery("#word_size_div").html(word_string)
+
+}
+
+function toogleParams(){
+    if(jQuery("#short_seq").attr('checked')){
+        jQuery("#word_size").attr("disabled", true)
+        jQuery("#gap_cost").attr("disabled", true)
+        jQuery("#match-mismatch").attr("disabled", true)
+        jQuery("#penalty").attr("disabled", true)
+        jQuery("#matrix").attr("disabled", true)
+        jQuery("#filter").attr("disabled", true)
+
+    }else{
+        jQuery("#word_size").attr("disabled", false)
+        jQuery("#gap_cost").attr("disabled", false)
+        jQuery("#match-mismatch").attr("disabled", false)
+        jQuery("#penalty").attr("disabled", false)
+        jQuery("#matrix").attr("disabled", false)
+        jQuery("#filter").attr("disabled", false)
+
+    }
 }
