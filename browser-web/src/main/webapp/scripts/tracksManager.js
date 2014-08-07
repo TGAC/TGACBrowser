@@ -86,28 +86,28 @@ function tracks_div(Tracklist) {
 
 
     for (i = 0; i < Tracklist.length; i++) {
-        jQuery("#tracks").append("<div id='" + Tracklist[i].name + "_wrapper' class='feature_tracks' style=\"display:none; max-height:110px; overflow-x: hidden;\">" +
+        jQuery("#tracks").append("<div onmouseover=showLabel('"+Tracklist[i].name+"') onmouseout=hideLabel('"+Tracklist[i].name+"') id='" + Tracklist[i].name + "_wrapper' class='feature_tracks' style=\"display:none; max-height:110px; overflow-x: hidden;\">" +
             "</div>");
 
 
         if (Tracklist[i].web && Tracklist[i].web.label == false) {
             window['track_list' + Tracklist[i].name].label_show = false;
-            jQuery("#" + Tracklist[i].name + "_wrapper").append("<div align='left' class='handle'>" +
+            jQuery("#" + Tracklist[i].name + "_wrapper").append("<div align='left' id='"+ Tracklist[i].name +"_handle' class='handle'>" +
                 "<table>" +
                 "<tr>" +
-                "<td><div class='closehandle ui-icon ui-icon-close' onclick=removeTrack(\"" + Tracklist[i].name + "_div\",\"" + Tracklist[i].name + "\");></div></td>" +
+                "<td><div class='extra_handle closehandle ui-icon ui-icon-close' onclick=removeTrack(\"" + Tracklist[i].name + "_div\",\"" + Tracklist[i].name + "\"); style=\"display: none;\"></div></td>" +
                 "</tr>" +
                 "</table>" +
                 "</div>" +
                 "<div id='" + Tracklist[i].name + "_div' class='feature_tracks' style=\"display:none; top:0px;\" > " + Tracklist[i].name + "</div>"
             );
         } else {
-            jQuery("#" + Tracklist[i].name + "_wrapper").append("<div align='left' class='handle'>" +
+            jQuery("#" + Tracklist[i].name + "_wrapper").append("<div id='"+ Tracklist[i].name +"_handle' align='left' class='handle'>" +
                 "<table>" +
                 "<tr>" +
                 "<td><b>" + Tracklist[i].display_label + "</b></td>" +
-                "<td><div class=\"ui-icon ui-icon-comment\" onclick=toogleLabel(\"" + Tracklist[i].name + "\");> </div></td>" + checkGene(Tracklist[i].name) +
-                "<td><div class='closehandle ui-icon ui-icon-close' onclick=removeTrack(\"" + Tracklist[i].name + "_div\",\"" + Tracklist[i].name + "\");></div></td>" +
+                "<td><div class=\"extra_handle ui-icon ui-icon-comment\" onclick=toogleLabel(\"" + Tracklist[i].name + "\"); style=\"display: none;\"> </div></td>" + checkGene(Tracklist[i].name) +
+                "<td><div class='extra_handle closehandle ui-icon ui-icon-close' onclick=removeTrack(\"" + Tracklist[i].name + "_div\",\"" + Tracklist[i].name + "\"); style=\"display: none;\"></div></td>" +
                 "</tr>" +
                 "</table>" +
                 "</div>" +
@@ -127,7 +127,7 @@ function tracks_div(Tracklist) {
 
     function checkGene(track) {
         if (track.toLowerCase().indexOf('gene') >= 0 || track.toLowerCase().indexOf("gff") >= 0) {
-            return "<td><div title='Expand/Shrink' class=\"closehandle ui-icon ui-icon-carat-2-n-s\" onclick=toogleTrackView(\"" + track + "\");> </div></td>"
+            return "<td><div title='Expand/Shrink' class=\"extra_handle closehandle ui-icon ui-icon-carat-2-n-s\" onclick=toogleTrackView(\"" + track + "\"); style=\"display: none;\"> </div></td>"
         }
         else {
             return "";
@@ -513,5 +513,23 @@ function unSelectAllCheckbox() {
     }
     trackToggle("all")
 }
+
+function showLabel(track){
+    console.log("showlabel "+track)
+    var id = "#"+track+"_handle"
+      jQuery(id).addClass("handle-hover")
+    console.log(jQuery(id).closest("tr").find(".extra_handle"))
+    jQuery(id).find(".extra_handle").show()
+
+}
+function hideLabel(track){
+    console.log("hidelabel "+track)
+
+    var id = "#"+track+"_handle"
+    jQuery(id).removeClass("handle-hover")
+    jQuery(id).find(".extra_handle").hide()
+
+}
+
 
 
