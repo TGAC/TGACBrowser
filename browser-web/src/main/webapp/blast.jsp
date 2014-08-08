@@ -197,8 +197,8 @@
 <div id="blastresult" style="display: none">
 </div>
 
-<div id="blast_list">
-    <div style="position: relative; background: none repeat scroll 0% 0% gray; font-size: 14px; margin-left: -5px; margin-right: -5px; margin-top: -5px;">
+<div id="blast_list" class="panel panel-primary">
+    <div style="position: relative;  font-size: 14px;" class="panel-heading">
         <center>
             <b>BLAST History</b>
         </center>

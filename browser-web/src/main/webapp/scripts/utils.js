@@ -420,7 +420,18 @@ function backup_tracks_removed(track, i) {
 
 function parseBLAST(json) {
     jQuery('#blastresult').fadeIn();
-    jQuery('#blastresult').append("<table style=\"display: none;\" class='list' id='blasttable" + json.id + "'> <thead> " +
+
+    var panel = jQuery("<div>").attr({
+        'class': "blastresult panel panel-default",
+        'id':"blastresult" + json.id,
+        'style': "style=display: none;"
+    }).appendTo('#blastresult');
+
+    jQuery("<div>").attr({
+        'class': "panel-heading"
+    }).html("Result: " + json.id).appendTo(panel);
+
+    jQuery(panel).append("<table class='table' id='blasttable" + json.id+"'> <thead> " +
         "<tr><th> Query id </th> <th> Subject id </th>  <th> % identity </th>   <th> alignment length </th>  <th> mismatches </th>  <th> gap openings </th>  <th> q.start </th>  <th> q.end </th>  <th> s.start </th>  <th> s.end </th> <th> e-value </th> <th> bit score </th> <th> Subject db </th><th> Download Sequence </th>        </tr>        </thead>        <tbody>        </tbody>    </table>")
 
     for (var i = 0; i < json.html.length; i++) {
@@ -464,13 +475,14 @@ function resetBLAST() {
 }
 
 function toogleTable(id) {
-    jQuery("th.header").closest("table").hide();
-    jQuery("#blasttable" + id).show()
+    jQuery('.blastresult').hide();
+
+    jQuery("#blastresult" + id).show()
 }
 
 function deleteTable(id) {
 
-    jQuery("#blasttable" + id).remove()
+    jQuery("#blastresult" + id).remove()
     jQuery("#" + id).remove()
 }
 
