@@ -424,7 +424,7 @@ function parseBLAST(json) {
     var panel = jQuery("<div>").attr({
         'class': "blastresult panel panel-default",
         'id':"blastresult" + json.id,
-        'style': "style=display: none;"
+        'style': "display: none;"
     }).appendTo('#blastresult');
 
     jQuery("<div>").attr({
