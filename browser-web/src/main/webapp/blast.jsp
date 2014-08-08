@@ -62,11 +62,7 @@
                 </div>
 
             </td>
-            <td>
-                <button class="ui-state-default ui-corner-all" onclick="blastFilter()">
-                    BLAST
-                </button>
-            </td>
+
         </tr>
         <tr>
             <td>
@@ -80,11 +76,7 @@
                 </select>
 
             </td>
-            <td>
-                <button class="ui-state-default ui-corner-all" onclick="resetBLAST()">
-                    Clear
-                </button>
-            </td>
+
         </tr>
 
         <tr>
@@ -179,6 +171,18 @@
             <td>
                 <input type="checkbox" id="short_seq" onchange="toogleParams()"> Automatically adjust parameters for
                 short input sequences.
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button class="btn btn-primary" onclick="blastFilter()">
+                    BLAST
+                </button>
+            </td>
+            <td>
+                <button class="btn btn-default" onclick="resetBLAST()">
+                    Clear
+                </button>
             </td>
         </tr>
         </tbody>
