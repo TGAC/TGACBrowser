@@ -106,7 +106,9 @@ function submitBlastTask(query, db, format, type, start, end, hit, params) {
           });
   ajaxurl = '/' + jQuery('#title').text() + '/' + jQuery('#title').text() + '/fluxion.ajax';
   jQuery("#blast_list").append("<div style=\"height:50px;\" id='" + id + "' class='blast_list_node list-group-item list-group-item-info'> <b>BLAST job " + id + " </b> <img style='position: relative;' src='./images/browser/loading_big.gif' height=15px alt='Loading'></div>")
-  Fluxion.doAjax(
+  jQuery("#blast_no").html(jQuery("#blast_list").children().size())
+
+    Fluxion.doAjax(
           'blastservice',
           'submitBlastTask',
           {'url': ajaxurl, 'querystring': query, 'blastdb': db, 'location': link, 'BlastAccession': id, 'format': format, "type": type, "params": params},

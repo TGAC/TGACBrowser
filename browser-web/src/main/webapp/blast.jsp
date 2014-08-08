@@ -175,11 +175,15 @@
         </tr>
         <tr>
             <td>
+
+            </td>
+            <td>
+
+            </td>
+            <td>
                 <button class="btn btn-primary" onclick="blastFilter()">
                     BLAST
                 </button>
-            </td>
-            <td>
                 <button class="btn btn-default" onclick="resetBLAST()">
                     Clear
                 </button>
@@ -201,12 +205,14 @@
 <div id="blastresult" style="display: none">
 </div>
 
-<div id="blast_list" class="panel panel-primary">
+<div id="blast_list_div" class="panel panel-primary">
     <div style="position: relative;  font-size: 14px;" class="panel-heading">
         <center>
-            <b>BLAST History</b>
+            <b>BLAST History</b> <span id="blast_no" class="badge "></span>
         </center>
     </div>
+    <div id="blast_list" style="overflow: auto; height: 160px;">
+        </div>
 </div>
 
 <script type="text/javascript">
