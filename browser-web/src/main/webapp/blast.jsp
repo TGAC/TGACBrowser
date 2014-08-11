@@ -209,10 +209,18 @@
     var seq;
     function blastFilter() {
 
+
         var dbs = jQuery('#blastdb').val()
+        var count = jQuery("#blastsearch").val().match(/>/g);
+        var params = "-num_threads  4 ";
+
+        if(count != null && count.length > 0){
+            var no_of_seq = parseInt(100/count.length)
+            params += "-num_alignments "+no_of_seq+" ";
+        }
 
         var type = jQuery('#blast_type').val();
-        var params = "-num_threads  4 ";
+
         if (jQuery("#short_seq").attr('checked')) {
             if (jQuery('#blast_type').val().indexOf('tblastn') >= 0 || jQuery('#blast_type').val().indexOf('blastx') >= 0) {
                 params += " -seg no -word_size 3";
