@@ -82,7 +82,7 @@ public class SQLSeachDAO implements SearchStore {
 
     public static final String GET_SEQ_FROM_SEQ_REGION_ID = "SELECT sequence FROM dna WHERE seq_region_id = ?";
     public static final String GET_SEQ_REGION_ID_FROM_NAME = "SELECT seq_region_id FROM seq_region WHERE name  = ?";
-    public static final String GET_SEQ_REGION_ID_SEARCH = "SELECT s.seq_region_id, s.name, s.length, cs.name as Type, s.coord_system_id as coord FROM seq_region s, coord_system cs WHERE s.name like ? and cs.coord_system_id = s.coord_system_id LIMIT 100;";
+    public static final String GET_SEQ_REGION_ID_SEARCH = "SELECT s.seq_region_id, s.name, s.length, cs.name as Type, s.coord_system_id as coord FROM seq_region s, coord_system cs WHERE cs.coord_system_id = s.coord_system_id and  s.name like ? LIMIT 100;";
 //    public static final String GET_SEQ_REGION_ID_SEARCH = "SELECT * FROM seq_region WHERE name like ? limit 100";
 public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_region_id, s.name, s.length, cs.name as Type, s.coord_system_id as coord FROM seq_region s, coord_system cs WHERE s.name = ? and cs.coord_system_id = s.coord_system_id limit 100;";
 
