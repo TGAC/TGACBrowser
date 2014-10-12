@@ -62,7 +62,9 @@ public class BlastToLSF extends AbstractTgacLsfProcess {
 
 
     public BlastToLSF() {
-        setQueueName("cho_blast");
+        setQueueName("webservices");
+
+
 
         blastAccession = new FlagParameter("BlastAccession");
         // blastQuery = new FlagParameter("querystring");
@@ -100,15 +102,15 @@ public class BlastToLSF extends AbstractTgacLsfProcess {
         try {
             log.info("\n\nget command\n");
 
-            String blast_type = "";
+//            String blast_type = "";
             String misc_params = "";
-            blast_type = parameters.get(type);
+//            blast_type = parameters.get(type);
             misc_params = parameters.get(params);
-            String blastBinary = "/data/workarea/bianx/blast+/" + blast_type + " ";
+//            String blastBinary = "/data/workarea/bianx/blast+/" + blast_type + " ";
             getLog().debug("Executing " + getName() + " with the following parameters: " + parameters.toString() + " " + misc_params);
 
             StringBuilder sb = new StringBuilder();
-            File file = new File("/scratch/tgacbrowser/" + parameters.get(blastAccession).toString() + ".fa");
+            File file = new File("/tgac/services/browser/working/" + parameters.get(blastAccession).toString() + ".fa");
 
             FileWriter writer = new FileWriter(file, true);
 
@@ -117,13 +119,13 @@ public class BlastToLSF extends AbstractTgacLsfProcess {
             output.print(getSeq(parameters.get(blastAccession).toString()));
 
             output.close();
-            sb.append("perl /data/workarea/tgacbrowser/BLASTCommand.pl " +
+            sb.append("perl /tgac/services/browser/software/script/BLAST/BLASTCommand.pl " +
                     "'" + parameters.get(type) + "' " +
                     "'" + parameters.get(blastDB) + "' " +
                     "'" + parameters.get(blastAccession) + "' " +
                     "'" + parameters.get(params) + "' " +
                     "'" + parameters.get(format) + "' " +
-                    "> /scratch/tgacbrowser/" + parameters.get(blastAccession) + ".txt");
+                    "> /tgac/services/browser/working/" + parameters.get(blastAccession) + ".txt");
             return sb.toString();
         } catch (Exception e) {
             return ("Exception: " + e.getMessage());

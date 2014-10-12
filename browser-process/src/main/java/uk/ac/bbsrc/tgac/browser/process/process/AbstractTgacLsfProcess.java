@@ -25,6 +25,8 @@
 
 package uk.ac.bbsrc.tgac.browser.process.process;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.ac.ebi.fgpt.conan.lsf.AbstractLSFProcess;
 import uk.ac.ebi.fgpt.conan.model.ConanParameter;
 
@@ -43,23 +45,23 @@ import java.util.Map;
  * @since 0.1.6
  */
 public abstract class AbstractTgacLsfProcess extends AbstractLSFProcess {
-  private String bsubPath = "/export/lsf/7.0/linux2.6-glibc2.3-x86_64/bin/bsub -o out";// -R 'select[pg<1.0 && ut < 5]'";
+    private String bsubPath = "/export/lsf/7.0/linux2.6-glibc2.3-x86_64/bin/bsub -o out";// -R 'select[pg<1.0 && ut < 5]'";
 
-  @Override
-  protected String getLSFOutputFilePath(Map<ConanParameter, String> parameters) throws IllegalArgumentException {
-    final File parentDir = new File(System.getProperty("user.home"));
+    @Override
+    protected String getLSFOutputFilePath(Map<ConanParameter, String> parameters) throws IllegalArgumentException {
+        final File parentDir = new File("/tgac/services/browser/working/");
 
-    // files to write output to
-    File outputDir = new File(parentDir, ".conan");
+        // files to write output to
+        File outputDir = new File(parentDir, ".conan");
 
-    for (ConanParameter parameter : parameters.keySet()) {
-      if (parameter.getName().contains("Accession")) {
-        outputDir = new File(new File(parentDir, ".conan"), parameters.get(parameter));
-        break;
-      }
+        for (ConanParameter parameter : parameters.keySet()) {
+            if (parameter.getName().contains("Accession")) {
+                outputDir = new File(new File(parentDir, ".conan"), parameters.get(parameter));
+                break;
+            }
+        }
+
+        // lsf output file
+        return new File(outputDir, getName() + ".lsfoutput.txt").getAbsolutePath();
     }
-
-    // lsf output file
-    return new File(outputDir, getName() + ".lsfoutput.txt").getAbsolutePath();
-  }
 }

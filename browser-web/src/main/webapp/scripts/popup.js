@@ -51,7 +51,7 @@ function removePopup() {
 
 // create a new for each track
 function newpopup(track, i, j) {
-    console.log(track+" "+i+" "+j)
+    console.log(track + " " + i + " " + j)
     removePopup()
     var width = jQuery("#popup").width();
     jQuery('#blastselector').hide();
@@ -59,9 +59,9 @@ function newpopup(track, i, j) {
 
     var position = "";
     if (scale != 1) {
-        position = (window[track][i].start*scale).toFixed(2)+""+unit + position_func(window[track][i]);
-    }   else{
-        position = (window[track][i].start)+""+unit + position_func(window[track][i]);
+        position = (window[track][i].start * scale).toFixed(2) + "" + unit + position_func(window[track][i]);
+    } else {
+        position = (window[track][i].start) + "" + unit + position_func(window[track][i]);
 
     }
     var endposition;
@@ -70,9 +70,9 @@ function newpopup(track, i, j) {
         if (test.end) {
             endposition = test.end;
             if (scale != 1) {
-                return "-" + (test.end*scale).toFixed(2)+""+unit
-            }   else{
-                return "-" + (test.end)+""+unit
+                return "-" + (test.end * scale).toFixed(2) + "" + unit
+            } else {
+                return "-" + (test.end) + "" + unit
             }
         }
         else {
@@ -120,14 +120,14 @@ function newpopup(track, i, j) {
         jQuery("#EditDescription").html('<span title="Edit" class="ui-button ui-icon ui-icon-pencil" onclick=showEditDesc(\"' + track + '\",\'' + i + '\');></span>');
         jQuery("#deleteTrack").html('<span title="Remove" class="ui-button ui-icon ui-icon-trash" onclick=deleteTrack(\"' + track + '\",\'' + i + '\');></span>');
         jQuery("#flagTrack").html('<span title="Flag" class="ui-button ui-icon ui-icon-flag" onclick=flagTrack(\"' + track + '\",\'' + i + '\');></span>');
-        if(window['track_list' + track].id.toString().indexOf("cs") >=0){
-            if(link != null){
-                jQuery("#Detail").html("<a target='_blank' href='../"+link+"/index.jsp?query=" + window[track][i].desc+"' > "+stringTrim(window[track][i].desc, width)+ "</a>");
+        if (window['track_list' + track].id.toString().indexOf("cs") >= 0) {
+            if (link != null) {
+                jQuery("#Detail").html("<a target='_blank' href='../" + link + "/index.jsp?query=" + window[track][i].desc + "' > " + stringTrim(window[track][i].desc, width) + "</a>");
 
-            }else{
-            jQuery("#Detail").html("<a target='_blank' href='index.jsp?query=" + window[track][i].desc+"&&coord="+window['track_list' + track].id.replace("cs", "")+"' > "+stringTrim(window[track][i].desc, width)+ "</a>");
+            } else {
+                jQuery("#Detail").html("<a target='_blank' href='index.jsp?query=" + window[track][i].desc + "&&coord=" + window['track_list' + track].id.replace("cs", "") + "' > " + stringTrim(window[track][i].desc, width) + "</a>");
             }
-        }   else{
+        } else {
             jQuery("#Detail").html(stringTrim(window[track][i].desc, width));
         }
 
@@ -196,9 +196,9 @@ function removeDragPopup() {
 function newDragpopup(begin, end, binary) {
 
     if (scale != 1) {
-        jQuery("#cordinate").html("<b>" + (begin*scale).toFixed(2)+""+unit + "-" + (end*scale).toFixed(2)+""+unit + "</b>");
-    }   else{
-        jQuery("#cordinate").html("<b>" + (begin)+""+unit + "-" + (end)+""+unit + "</b>");
+        jQuery("#cordinate").html("<b>" + (begin * scale).toFixed(2) + "" + unit + "-" + (end * scale).toFixed(2) + "" + unit + "</b>");
+    } else {
+        jQuery("#cordinate").html("<b>" + (begin) + "" + unit + "-" + (end) + "" + unit + "</b>");
     }
     jQuery("#fetchFASTA").html('<span title="Fasta" class="ui-button ui-fasta" onclick=fetchFasta(' + begin + ',' + end + ');></span>');
     jQuery("#fetchBLAST").html('<span title="Blast" class="ui-button ui-blast" onclick=preBlast(' + begin + ',' + end + ',' + '\"#popup\");></span>');
@@ -247,8 +247,8 @@ function zoomHere(begin, end) {
 //
 //    }
 //    else {
-        setBegin(tempBegin);
-        setEnd(tempEnd);
+    setBegin(tempBegin);
+    setEnd(tempEnd);
 //    }
 
     jumpToSeq();
@@ -779,10 +779,10 @@ function fetchFasta(begin, end, track, i, j) {
                     var exonSeq = seq.substring(substart, subend);
                     seq = seq.substring(0, substart) + exonSeq.toUpperCase() + seq.substring(subend + 1, seq.length);
                 }
-                if(scale != 1){
-                    jQuery('#fastaoutput').html(">" + seqregname + ": " + (begin*scale).toFixed(2)+""+unit + " - " + (end*scale).toFixed(2)+""+unit + " <font color='green'> " + convertFasta(seq) + "</font>");
-                }             else{
-                    jQuery('#fastaoutput').html(">" + seqregname + ": " + (begin)+""+unit + " - " + (end)+""+unit + " <font color='green'> " + convertFasta(seq) + "</font>");
+                if (scale != 1) {
+                    jQuery('#fastaoutput').html(">" + seqregname + ": " + (begin * scale).toFixed(2) + "" + unit + " - " + (end * scale).toFixed(2) + "" + unit + " <font color='green'> " + convertFasta(seq) + "</font>");
+                } else {
+                    jQuery('#fastaoutput').html(">" + seqregname + ": " + (begin) + "" + unit + " - " + (end) + "" + unit + " <font color='green'> " + convertFasta(seq) + "</font>");
                 }
                 jQuery('#fastaoutput').each(function () {
                     var pattern = /([ATCG]+)/g;
@@ -793,10 +793,10 @@ function fetchFasta(begin, end, track, i, j) {
 
             }
             else {
-                if(scale != 1){
-                    jQuery('#fastaoutput').html(">" + seqregname + ": " + (begin*scale).toFixed(2)+""+unit + " - " + (end*scale).toFixed(2)+""+unit + convertFasta(seq));
-                }else{
-                    jQuery('#fastaoutput').html(">" + seqregname + ": " + (begin)+""+unit + " - " + (end)+""+unit + convertFasta(seq));
+                if (scale != 1) {
+                    jQuery('#fastaoutput').html(">" + seqregname + ": " + (begin * scale).toFixed(2) + "" + unit + " - " + (end * scale).toFixed(2) + "" + unit + convertFasta(seq));
+                } else {
+                    jQuery('#fastaoutput').html(">" + seqregname + ": " + (begin) + "" + unit + " - " + (end) + "" + unit + convertFasta(seq));
                 }
             }
             jQuery('#fastadownload').html("<button class='ui-state-default ui-corner-all' " +

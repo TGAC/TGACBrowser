@@ -913,7 +913,7 @@ Object.extend(Array.prototype, {
     return (inline !== false ? this : this.toArray())._reverse();
   },
 
-  reduce: function() {
+  reduce2: function() {
     return this.length > 1 ? this : this[0];
   },
 
