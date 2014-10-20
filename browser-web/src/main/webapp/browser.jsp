@@ -31,7 +31,7 @@
         <div id="refmap"></div>
         <div id="mapmarker">
         </div>
-        <div id="unmapped" style="position: absolute; right: 0px;"></div>
+        <div id="unmapped" style="bottom: 0; display: block; max-height: 500px; position: fixed; right: 0;"></div>
 
     </div>
     <div id="searchresult">
