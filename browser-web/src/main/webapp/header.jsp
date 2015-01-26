@@ -14,6 +14,8 @@
 
     <link REL="SHORTCUT ICON" href="<c:url value='/images/browser/tgac_logo.png'/>">
 
+    <link rel="stylesheet" href="<c:url value='/styles/bootstrap-css/css/bootstrap-theme.min.css'/>" type="text/css">
+    <link rel="stylesheet" href="<c:url value='/styles/bootstrap-css/css/bootstrap.min.css'/>" type="text/css">
     <link rel="stylesheet" href="<c:url value='/styles/style.css'/>" type="text/css">
 
     <script type="text/javascript" src="<c:url value='/scripts/scriptaculous/prototype.js'/>"></script>

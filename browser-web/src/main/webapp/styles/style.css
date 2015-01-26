@@ -2043,9 +2043,9 @@ span.counter {
 }
 
 .handle {
-    background: none repeat scroll 0 0 #4682b4;
-    border: 1px solid black;
-    border-radius: 5px 5px 5px 5px;
+    /*background: none repeat scroll 0 0 lightgray;*/
+    border: 2px solid transparent;
+    /*border-radius: 5px 5px 5px 5px;*/
     cursor: move;
     display: inline-block;
     font-family: arial;
@@ -2055,6 +2055,12 @@ span.counter {
     position: absolute;
     top: 5px;
     z-index: 999;
+}
+
+.handle-hover {
+    background: none repeat scroll 0 0 lightgray;
+    border: 2px solid gray;
+    border-radius: 5px 5px 5px 5px;
 }
 
 .closehandle {
@@ -2384,7 +2390,7 @@ span.counter {
 }
 .popuptrack{
     font:bold 15px Arial;
-    color: blue;
+    color: gray;
 }
 
 .bubbleright {
@@ -2679,13 +2685,13 @@ span.deleteicon input {
     text-overflow: ellipsis;
 }
 
-#blast_list{
-    background: none repeat scroll 0 0 lightgray;
-    border: 1px solid gray;
-    border-radius: 5px 5px 5px 5px;
+#blast_list_div{
+    /*background: none repeat scroll 0 0 lightgray;*/
+    /*border: 1px solid gray;*/
+    /*border-radius: 5px 5px 5px 5px;*/
     max-height: 80%;
-    overflow-y: scroll;
-    padding: 5px;
+    /*overflow-y: auto;*/
+    /*padding: 5px;*/
     position: fixed;
     right: 10px;
     width: 250px;

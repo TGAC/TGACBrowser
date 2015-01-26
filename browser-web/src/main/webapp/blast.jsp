@@ -62,11 +62,7 @@
                 </div>
 
             </td>
-            <td>
-                <button class="ui-state-default ui-corner-all" onclick="blastFilter()">
-                    BLAST
-                </button>
-            </td>
+
         </tr>
         <tr>
             <td>
@@ -80,11 +76,7 @@
                 </select>
 
             </td>
-            <td>
-                <button class="ui-state-default ui-corner-all" onclick="resetBLAST()">
-                    Clear
-                </button>
-            </td>
+
         </tr>
 
         <tr>
@@ -181,6 +173,22 @@
                 short input sequences.
             </td>
         </tr>
+        <tr>
+            <td>
+
+            </td>
+            <td>
+
+            </td>
+            <td>
+                <button class="btn btn-primary" onclick="blastFilter()">
+                    BLAST
+                </button>
+                <button class="btn btn-default" onclick="resetBLAST()">
+                    Clear
+                </button>
+            </td>
+        </tr>
         </tbody>
     </table>
 </div>
@@ -197,12 +205,14 @@
 <div id="blastresult" style="display: none">
 </div>
 
-<div id="blast_list">
-    <div style="position: relative; background: none repeat scroll 0% 0% gray; font-size: 14px; margin-left: -5px; margin-right: -5px; margin-top: -5px;">
+<div id="blast_list_div" class="panel panel-primary">
+    <div style="position: relative;  font-size: 14px;" class="panel-heading">
         <center>
-            <b>BLAST History</b>
+            <b>BLAST History</b> <span id="blast_no" class="badge "></span>
         </center>
     </div>
+    <div id="blast_list" style="overflow: auto; height: 160px;">
+        </div>
 </div>
 
 <script type="text/javascript">
