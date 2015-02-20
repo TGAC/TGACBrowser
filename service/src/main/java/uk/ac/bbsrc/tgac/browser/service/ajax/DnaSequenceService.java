@@ -579,7 +579,7 @@ public class DnaSequenceService {
         String query = json.getString("query");
 
         try {
-//            response.put("marker", sequenceStore.getMarker(query, coord));
+            response.put("marker", sequenceStore.getMarker(query, coord));
 
             return response;
         } catch (Exception e) {
@@ -588,6 +588,12 @@ public class DnaSequenceService {
         }
     }
 
+    /**
+     *
+     * @param session an HTTPSession comes from ajax call
+     * @param json    json object with key parameters sent from ajax call
+     * @return        JSONObject with marker information
+     */
     public JSONObject loadMarkerForRegion(HttpSession session, JSONObject json) {
         JSONObject response = new JSONObject();
         String coord = json.getString("coord");
