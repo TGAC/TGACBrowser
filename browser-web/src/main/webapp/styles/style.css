@@ -2118,6 +2118,7 @@ span.counter {
     height: 10px;
     position: absolute;
     z-index: 100;
+    background: blue;
 }
 
 .track_label {
@@ -2316,6 +2317,7 @@ span.counter {
     position: absolute;
     cursor: pointer;
     height: 5px;
+    min-width: 1px;
 }
 
 /*.track:hover {*/
