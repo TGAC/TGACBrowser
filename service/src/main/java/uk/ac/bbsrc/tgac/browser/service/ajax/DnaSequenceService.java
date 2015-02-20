@@ -595,7 +595,7 @@ public class DnaSequenceService {
         long start = json.getLong("start");
         long end = json.getLong("end");
         try {
-//            response.put("marker", sequenceStore.getMarkerforRegion(query, coord, start, end));
+            response.put("marker", sequenceStore.getMarkerforRegion(query, coord, start, end));
 
             return response;
         } catch (Exception e) {
