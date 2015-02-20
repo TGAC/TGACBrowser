@@ -311,7 +311,14 @@ public class DnaSequenceService {
                 response.put(trackName, BigWigService.getWig(start, end, delta, trackId, seqName));
             } else if (trackId.contains(".sam") || trackId.contains(".bam")) {
                 count = SamBamService.countBAM(start, end, delta, trackId, seqName);
-                if (count < 5000) {
+
+                log.info("\n\n\nBAM count "+ count);
+
+
+                if (count ==0) {
+                    response.put(trackName, "getHit no result found");
+
+                } else if (count < 5000) {
                     response.put(trackName, samBamService.getBAMReads(start, end, delta, trackId, seqName));
                 } else {
                     response.put("type", "graph");
@@ -320,7 +327,12 @@ public class DnaSequenceService {
                 }
             } else if (trackId.contains(".gff") || trackId.contains(".GFF")) {
                 count = GFFService.countGFF(start, end, delta, trackId, seqName);
-                if (count < 5000) {
+                log.info("\n\n\nGFF count "+ count);
+
+                if (count ==0) {
+                    response.put(trackName, "getHit no result found");
+
+                } else if (count < 5000) {
                     response.put(trackName, gffService.getGFFReads(start, end, delta, trackId, seqName));
                 } else {
                     response.put("type", "graph");
@@ -330,7 +342,13 @@ public class DnaSequenceService {
             } else if (trackId.contains(".vcf") || trackId.contains(".VCF")) {
                 count = VCFService.countVCF(start, end, delta, trackId, seqName);
 
-                if (count < 5000) {
+                log.info("\n\n\nVCF count "+ count);
+
+
+                if (count ==0) {
+                    response.put(trackName, "getHit no result found");
+
+                } else if (count < 5000) {
                     response.put(trackName, vcfService.getVCFReads(start, end, delta, trackId, seqName));
                 } else {
                     response.put("type", "graph");
@@ -341,7 +359,11 @@ public class DnaSequenceService {
                 response.put(trackName, SamBamService.getBed(start, end, delta, trackId, seqName));
             } else if (trackId.indexOf("cs") >= 0) {
                 count = assemblyStore.countAssembly(queryid, trackId, start, end);
-                if (count < 5000) {
+                log.info("\n\n\nassembly count "+ count);
+                if (count ==0) {
+                    response.put(trackName, "getHit no result found");
+
+                } else if (count < 5000) {
                     response.put(trackName, assemblyStore.getAssembly(queryid, trackId, delta, start, end));
                 } else if (count < 50000) {
                     response.put("type", "graph");
@@ -354,7 +376,12 @@ public class DnaSequenceService {
                 }
             } else if (analysisStore.getLogicNameByAnalysisId(Integer.parseInt(trackId)).matches("(?i).*repeat.*")) {
                 count = repeatStore.countRepeat(queryid, trackId, start, end);
-                if (count < 5000) {
+                log.info("\n\n\nrepeat count "+ count);
+
+                if (count ==0) {
+                    response.put(trackName, "getHit no result found");
+
+                } else if (count < 5000) {
                     response.put(trackName, repeatStore.processRepeat(repeatStore.getRepeat(queryid, trackId, start, end), start, end, delta, queryid, trackId));
                 } else {
                     response.put("type", "graph");
@@ -363,7 +390,12 @@ public class DnaSequenceService {
                 }
             } else if (analysisStore.getLogicNameByAnalysisId(Integer.parseInt(trackId)).matches("(?i).*gene.*")) {
                 count = geneStore.countGene(queryid, trackId, start, end);
-                if (count < 1000) {
+
+
+                log.info("\n\n\ngene count "+ count);
+                if (count ==0) {
+                    response.put(trackName, "getGene no result found");
+                } else if (count < 1000) {
                     response.put(trackName, geneStore.processGenes(geneStore.getGenes(queryid, trackId,  start, end), start, end, delta, queryid, trackId));
                 } else {
                     response.put("type", "graph");
@@ -372,7 +404,12 @@ public class DnaSequenceService {
                 }
             } else {
                 count = dafStore.countHit(queryid, trackId, start, end);
-                if (count < 5000) {
+
+                log.info("\n\n\nhit count "+ count);
+
+                if (count ==0) {
+                    response.put(trackName, "getHit no result found");
+                } else if (count < 5000) {
                     response.put(trackName, dafStore.processHit(dafStore.getHit(queryid, trackId, start, end), start, end, delta, queryid, trackId));
                 } else {
                     response.put("type", "graph");
@@ -542,10 +579,10 @@ public class DnaSequenceService {
         String query = json.getString("query");
 
         try {
-            response.put("marker", sequenceStore.getMarker(query, coord));
+//            response.put("marker", sequenceStore.getMarker(query, coord));
 
             return response;
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             return JSONUtils.SimpleJSONError(e.getMessage());
         }
@@ -558,10 +595,10 @@ public class DnaSequenceService {
         long start = json.getLong("start");
         long end = json.getLong("end");
         try {
-            response.put("marker", sequenceStore.getMarkerforRegion(query, coord, start, end));
+//            response.put("marker", sequenceStore.getMarkerforRegion(query, coord, start, end));
 
             return response;
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             return JSONUtils.SimpleJSONError(e.getMessage());
         }

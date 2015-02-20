@@ -83,9 +83,10 @@ public class SQLGeneDAO implements GeneStore {
     public static final String GET_Transcript_name_from_ID = "SELECT description FROM transcript where transcript_id =?";
     public static final String GET_GO_for_Genes = "select value from gene_attrib where gene_id = ?";
     public static final String GET_GO_for_Transcripts = "select value from transcript_attrib where transcript_id =  ?";
+    public static final String GET_Coord_systemid_FROM_ID = "SELECT coord_system_id FROM seq_region WHERE seq_region_id = ?";
 
     public static final String GET_Assembly_for_reference = "SELECT * FROM assembly where asm_seq_region_id =?";
-//    public static final String GET_Gene_by_view = "select g.gene_id, g.seq_region_start as gene_start, g.seq_region_end as gene_end, g.seq_region_strand as gene_strand, g. description as gene_name, t.transcript_id, t.seq_region_start as transcript_start, t.seq_region_end as transcript_end, t.description as transcript_name, e.exon_id, e.seq_region_start as exon_start, e.seq_region_end as exon_end from gene g, transcript t, exon_transcript et, exon e where t.gene_id = g.gene_id and t.transcript_id = et.transcript_id and et.exon_id = e.exon_id and  g.seq_region_id = ? and g.analysis_id = ? order by g.seq_region_start;";//"select * from gene_view where seq_region_id = ? and analysis_id = ?;";//
+    //    public static final String GET_Gene_by_view = "select g.gene_id, g.seq_region_start as gene_start, g.seq_region_end as gene_end, g.seq_region_strand as gene_strand, g. description as gene_name, t.transcript_id, t.seq_region_start as transcript_start, t.seq_region_end as transcript_end, t.description as transcript_name, e.exon_id, e.seq_region_start as exon_start, e.seq_region_end as exon_end from gene g, transcript t, exon_transcript et, exon e where t.gene_id = g.gene_id and t.transcript_id = et.transcript_id and et.exon_id = e.exon_id and  g.seq_region_id = ? and g.analysis_id = ? order by g.seq_region_start;";//"select * from gene_view where seq_region_id = ? and analysis_id = ?;";//
 //
     public static final String GET_Gene_by_view = "SELECT g.gene_id, g.seq_region_start AS gene_start, g.seq_region_end AS gene_end, g.seq_region_strand AS gene_strand, g. description AS gene_name, " +
             "t.transcript_id, t.seq_region_start AS transcript_start, t.seq_region_end AS transcript_end, t.description AS transcript_name, " +
@@ -100,6 +101,21 @@ public class SQLGeneDAO implements GeneStore {
             "LEFT JOIN translation tl ON tl.transcript_id = t.transcript_id " +
             "WHERE g.seq_region_id = ? AND g.analysis_id = ? " +
             "AND t.gene_id = g.gene_id AND t.transcript_id = et.transcript_id AND et.exon_id = e.exon_id  AND  ((g.seq_region_start >= ? AND g.seq_region_end <= ?) OR (g.seq_region_start <= ? AND g.seq_region_end >= ?) OR (g.seq_region_end >= ?  AND  g.seq_region_start <= ?) OR (g.seq_region_start <= ? AND g.seq_region_end >= ?)) " +
+            "order by g.seq_region_start";
+
+    public static final String GET_Gene_view_by_id = "SELECT g.gene_id, g.seq_region_start AS gene_start, g.seq_region_end AS gene_end, g.seq_region_strand AS gene_strand, g. description AS gene_name, " +
+            "t.transcript_id, t.seq_region_start AS transcript_start, t.seq_region_end AS transcript_end, t.description AS transcript_name, " +
+            "e.exon_id, e.seq_region_start AS exon_start, e.seq_region_end AS exon_end, " +
+            "IF(tl.start_exon_id = e.exon_id, IF(g.seq_region_strand = \"-1\",e.seq_region_end - tl.seq_start, e.seq_region_start+tl.seq_start),NULL) AS translation_start, " +
+            "IF(tl.end_exon_id = e.exon_id, IF(g.seq_region_strand = \"-1\",e.seq_region_end - tl.seq_end, e.seq_region_start+tl.seq_end),NULL) AS translation_end," +
+            "tl.translation_id " +
+            "FROM gene g " +
+            "LEFT JOIN transcript t ON t.gene_id = g.gene_id " +
+            "LEFT JOIN exon_transcript et ON t.transcript_id = et.transcript_id " +
+            "LEFT JOIN exon e ON et.exon_id = e.exon_id " +
+            "LEFT JOIN translation tl ON tl.transcript_id = t.transcript_id " +
+            "WHERE g.gene_id = ?  " +
+            "AND t.gene_id = g.gene_id AND t.transcript_id = et.transcript_id AND et.exon_id = e.exon_id  " +
             "order by g.seq_region_start";
 
     private JdbcTemplate template;
@@ -156,6 +172,8 @@ public class SQLGeneDAO implements GeneStore {
      * @throws IOException
      */
     public JSONArray recursiveGeneGraph(int start_pos, int id, String trackId, long start, long end) throws IOException {
+        log.info("\n\n\n recursiveGeneGraph " + trackId + " " + id);
+
         try {
             JSONArray assemblyTracks = new JSONArray();
             List<Map<String, Object>> maps_one = template.queryForList(GET_Assembly_for_reference, new Object[]{id});
@@ -219,6 +237,7 @@ public class SQLGeneDAO implements GeneStore {
      * @throws IOException
      */
     public JSONArray getGeneGraphLevel(int start_pos, int id, String trackId, long start, long end) throws IOException {
+        log.info("\n\n\n getGeneGraphLevel " + trackId + " " + id);
         try {
             JSONArray trackList = new JSONArray();
             long from = start;
@@ -256,6 +275,8 @@ public class SQLGeneDAO implements GeneStore {
      * @throws IOException
      */
     public JSONArray getGeneGraph(int id, String trackId, long start, long end) throws IOException {
+        log.info("\n\n\n getGeneGraph " + trackId + " " + id);
+
         try {
 
             JSONArray trackList = new JSONArray();
@@ -294,22 +315,40 @@ public class SQLGeneDAO implements GeneStore {
      * @return number of gene per region
      * @throws Exception
      */
-    public int countRecursiveGene(int id, String trackId, long start, long end) throws Exception {
+    public int countRecursiveGene(String query, int id, String trackId, long start, long end) throws Exception {
+        log.info("\n\n\n countRecursiveGenes " + trackId + " " + id);
+
         try {
             int gene_size = 0;
-            List<Map<String, Object>> maps_one = template.queryForList(GET_Assembly_for_reference, new Object[]{id});
 
-            if (maps_one.size() > 0) {
-                for (int j = 0; j < maps_one.size(); j++) {
-                    long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-                    long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-                    if (template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end}, Integer.class) > 0) {
-                        gene_size += template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end}, Integer.class);
-                    } else {
-                        gene_size += countRecursiveGene(Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end);
-                    }
+            String new_query = query + ")";
+            log.info("\n\n new query = " + query);
+            int coord = 0;
+            String GET_Gene_SIZE_SLICE_IN = "SELECT COUNT(gene_id) FROM gene where seq_region_id " +
+                    new_query +
+                    " and analysis_id = " + trackId;
+
+
+            int size = template.queryForInt(GET_Gene_SIZE_SLICE_IN, new Object[]{});
+            if (size > 0) {
+                gene_size += size;//template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end}, Integer.class);
+                coord = template.queryForInt(GET_Coord_systemid_FROM_ID, new Object[]{id});
+                log.info("\n\n cood_gene" + coord);
+            } else {
+                String SQL = "SELECT count(cmp_seq_region_id) from assembly where asm_seq_region_id " + query + ")";
+                log.info("\n\n countquery = " + SQL);
+                int count = template.queryForInt(SQL, new Object[]{});
+                String cmp_seq_region_id = "select cmp_seq_region_id from assembly where asm_seq_region_id = " + id + " limit 1";
+
+                id = template.queryForInt(cmp_seq_region_id, new Object[]{});
+                if (count > 0) {
+                    query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id " + query + ")";
+                    log.info("\n\n new query = " + query);
+                    gene_size += countRecursiveGene(query, id, trackId, 0, 0);
                 }
             }
+            log.info("\n\n\ngene count gene_size" + gene_size);
+
 
             return gene_size;
         } catch (Exception e) {
@@ -329,10 +368,14 @@ public class SQLGeneDAO implements GeneStore {
      * @throws Exception
      */
     public int countGene(int id, String trackId, long start, long end) throws Exception {
+
+        log.info("\n\n\n countGenes " + trackId + " " + id);
+
         try {
             int gene_size = template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{id, trackId, start, end}, Integer.class);
             if (gene_size == 0) {
-                gene_size = countRecursiveGene(id, trackId, start, end);
+                String query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id = " + id;
+                gene_size = countRecursiveGene(query, id, trackId, start, end);
             }
             return gene_size;
         } catch (Exception e) {
@@ -369,6 +412,29 @@ public class SQLGeneDAO implements GeneStore {
             throw new IOException("Get gene " + e.getMessage());
         }
     }
+
+
+    public List<Map<String, Object>> getGenes(String query, int id, String trackId, long start, long end) throws IOException {
+        log.info("\n\n\n getGenes new " + query + " " + trackId + " " + id + " " + start + " " + end);
+
+        query = query + ")";
+
+        try {
+
+
+            String GET_Gene_by_view = "SELECT g.gene_id " +
+                    "FROM gene g " +
+                    "WHERE g.seq_region_id " + query + " AND g.analysis_id = " + trackId +
+                    " order by g.seq_region_start";
+
+
+            return template.queryForList(GET_Gene_by_view, new Object[]{});
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new IOException("Get gene " + e.getMessage());
+        }
+    }
+
 
     /**
      * Gets transcript information
@@ -407,30 +473,30 @@ public class SQLGeneDAO implements GeneStore {
      * @return JSONArray with Gene information
      * @throws IOException
      */
-    public JSONArray recursiveGene(int start_pos, int id, String trackId, long start, long end, int delta) throws IOException {
+    public JSONArray recursiveGene(String query, int start_pos, int id, String trackId, long start, long end, int delta) throws IOException {
+        log.info("\n\n\n recursiveGenes " + id + " " + trackId);
         try {
             JSONArray assemblyTracks = new JSONArray();
-            List<Map<String, Object>> maps_one = template.queryForList(GET_Assembly_for_reference, new Object[]{id});
-            if (maps_one.size() > 0) {
-                for (int j = 0; j < maps_one.size(); j++) {
+            String new_query = query + ")";
 
-                    int asm_start = Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-                    int asm_end = Integer.parseInt(maps_one.get(j).get("asm_end").toString());
+            String GET_Gene_SIZE_SLICE_IN = "SELECT COUNT(gene_id) FROM gene where seq_region_id " +
+                    new_query +
+                    " and analysis_id = " + trackId;
 
-                    List<Map<String, Object>> maps_two = template.queryForList(GET_GENE_SIZE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId});
-                    if (maps_two.size() > 0) {
-                        List<Integer> ends = new ArrayList<Integer>();
-                        long track_start = start - asm_start;
-                        long track_end = end - asm_end;
-                        ends.add(0, 0);
-                        assemblyTracks.addAll(getGeneLevel(start_pos + asm_start, getGenes(Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end), start, end, delta));
-                    } else {
-                        long track_start = start - asm_start;
-                        long track_end = end - asm_end;
-                        List<Integer> ends = new ArrayList<Integer>();
-                        ends.add(0, 0);
-                        assemblyTracks.addAll(recursiveGene(start_pos + asm_start, Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end, delta));
-                    }
+
+            int size = template.queryForInt(GET_Gene_SIZE_SLICE_IN, new Object[]{});
+            if (size > 0) {
+
+                assemblyTracks.addAll(getGeneLevel(start_pos, getGenes(query, 0, trackId, 0, 0), start, end, delta, id));
+            } else {
+                String SQL = "SELECT count(cmp_seq_region_id) from assembly where asm_seq_region_id " + query + ")";
+                log.info("\n\n countquery = " + SQL);
+                int count = template.queryForInt(SQL, new Object[]{});
+
+                if (count > 0) {
+                    query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id " + query + ")";
+                    log.info("\n\n new query = " + query);
+                    assemblyTracks.addAll(recursiveGene(query, start_pos, id, trackId, 0, 0, delta));
                 }
             }
 
@@ -448,7 +514,7 @@ public class SQLGeneDAO implements GeneStore {
      * Get gene Level tracks
      *
      * @param start_add
-     * @param genes
+     * @param new_genes
      * @param start
      * @param end
      * @param delta
@@ -457,7 +523,11 @@ public class SQLGeneDAO implements GeneStore {
      */
 
 
-    public JSONArray getGeneLevel(int start_add, List<Map<String, Object>> genes, long start, long end, int delta) throws Exception {
+    public JSONArray getGeneLevel(int start_add, List<Map<String, Object>> new_genes, long start, long end, int delta, long id) throws Exception {
+
+
+        log.info("\n\n\n getGeneLevel "+start_add+" "+id+" "+delta);
+
         try {
             JSONArray GeneList = new JSONArray();
             JSONObject eachGene = new JSONObject();
@@ -480,93 +550,108 @@ public class SQLGeneDAO implements GeneStore {
 
             List<Map<String, Object>> domains;
 
-            for (int i = 0; i < genes.size(); i++) {
+            log.info("geneeeees " + new_genes);
 
-                if (!transcript_id.equalsIgnoreCase(genes.get(i).get("transcript_id").toString())) {
-                    if (!transcript_id.equalsIgnoreCase("")) {
-                        eachTrack.put("Exons", exonList);
-                        transcriptList.add(eachTrack);
+            for (int j = 0; j < new_genes.size(); j++) {
+
+                List<Map<String, Object>> genes = template.queryForList(GET_Gene_view_by_id, new Object[]{new_genes.get(j).get("gene_id")});
+
+                String GET_Gene_addition = "SELECT if(g.seq_region_id =  "+id+", 0 , test7(g.seq_region_id,  "+id+"))  AS gene_start "+
+                "FROM gene g " +
+                "WHERE g.gene_id = "+new_genes.get(j).get("gene_id");
+
+
+                int start_addition =  template.queryForInt(GET_Gene_addition, new Object[]{});
+
+                for (int i = 0; i < genes.size(); i++) {
+                    if (!transcript_id.equalsIgnoreCase(genes.get(i).get("transcript_id").toString())) {
+                        if (!transcript_id.equalsIgnoreCase("")) {
+                            eachTrack.put("Exons", exonList);
+                            transcriptList.add(eachTrack);
+                        }
+                        transcript_id = genes.get(i).get("transcript_id").toString();
+                        exonList = new JSONArray();
+
+                        eachTrack = new JSONObject();
+
+                        eachTrack.put("id", genes.get(i).get("transcript_id"));
+                        eachTrack.put("start", start_addition+start_add + Integer.parseInt(genes.get(i).get("transcript_start").toString()));
+                        eachTrack.put("end", start_addition+start_add + Integer.parseInt(genes.get(i).get("transcript_end").toString()));
+
+
+                        eachTrack.put("desc", genes.get(i).get("transcript_name"));
+                        int start_pos = Integer.parseInt(genes.get(i).get("transcript_start").toString());
+                        int end_pos = Integer.parseInt(genes.get(i).get("transcript_end").toString());
+                        if (start_pos > end_pos) {
+                            int temp = end_pos;
+                            end_pos = start_pos;
+                            start_pos = temp;
+                        }
+
+                        eachTrack.put("layer", util.stackLayerInt(ends, start_pos, delta, end_pos));
+                        ends = util.stackLayerList(ends, start_pos, delta, end_pos);
+
+                        eachTrack.put("domain", 0);
+                        domains = getTranscriptsGO(genes.get(i).get("transcript_id").toString());
+                        for (Map domain : domains) {
+                            eachTrack.put("domain", domain.get("value"));
+                        }
+                        eachTrack.put("flag", false);
                     }
-                    transcript_id = genes.get(i).get("transcript_id").toString();
-                    exonList = new JSONArray();
+                    if (!gene_id.equalsIgnoreCase(genes.get(i).get("gene_id").toString())) {
+                        if (!gene_id.equalsIgnoreCase("")) {
+                            eachGene.put("transcript", transcriptList);
+                            GeneList.add(eachGene);
+                        }
+                        gene_id = genes.get(i).get("gene_id").toString();
+                        transcriptList = new JSONArray();
+                        eachGene.put("id", genes.get(i).get("gene_id"));
+                        eachGene.put("start", start_addition+start_add + Integer.parseInt(genes.get(i).get("gene_start").toString()));
+                        eachGene.put("end", start_addition+start_add + Integer.parseInt(genes.get(i).get("gene_end").toString()));
+                        eachGene.put("desc", genes.get(i).get("gene_name"));
+                        eachGene.put("strand", genes.get(i).get("gene_strand"));
+                        eachGene.put("test", start_addition);
 
-                    eachTrack = new JSONObject();
 
-                    eachTrack.put("id", genes.get(i).get("transcript_id"));
-                    eachTrack.put("start", start_add + Integer.parseInt(genes.get(i).get("transcript_start").toString()));
-                    eachTrack.put("end", start_add + Integer.parseInt(genes.get(i).get("transcript_end").toString()));
+                        int start_pos = Integer.parseInt(genes.get(i).get("gene_start").toString());
+                        int end_pos = Integer.parseInt(genes.get(i).get("gene_end").toString());
+                        if (start_pos > end_pos) {
+                            int temp = end_pos;
+                            end_pos = start_pos;
+                            start_pos = temp;
+                        }
 
+                        eachGene.put("layer", util.stackLayerInt(ends_gene, start_pos, delta, end_pos));
+                        ends_gene = util.stackLayerList(ends_gene, start_pos, delta, end_pos);
 
-                    eachTrack.put("desc", genes.get(i).get("transcript_name"));
-                    int start_pos = Integer.parseInt(genes.get(i).get("transcript_start").toString());
-                    int end_pos = Integer.parseInt(genes.get(i).get("transcript_end").toString());
-                    if (start_pos > end_pos) {
-                        int temp = end_pos;
-                        end_pos = start_pos;
-                        start_pos = temp;
+                        eachGene.put("domain", 0);
+                        domains = getGenesAttribs(genes.get(i).get("gene_id").toString());
+                        for (Map domain : domains) {
+                            eachGene.put("domain", domain.get("value"));
+                        }
+                        if (lastsize < 2 && layer > 2) {
+                            layer = 1;
+                        }
+                        if (thissize > 1) {
+                            layer = 1;
+                        }
+                        layer++;
                     }
 
-                    eachTrack.put("layer", util.stackLayerInt(ends, start_pos, delta, end_pos));
-                    ends = util.stackLayerList(ends, start_pos, delta, end_pos);
+                    JSONObject eachExon = new JSONObject();
+                    eachExon.put("id", genes.get(i).get("exon_id"));
+                    eachExon.put("start", start_addition+start_add + Integer.parseInt(genes.get(i).get("exon_start").toString()));
+                    eachExon.put("end", start_addition+start_add + Integer.parseInt(genes.get(i).get("exon_end").toString()));
+//                    eachTrack.put("transcript_start", start_addition+Integer.parseInt(genes.get(i).get("translation_start").toString()));
+//                    eachTrack.put("transcript_end", start_addition+Integer.parseInt(genes.get(i).get("translation_start").toString()));
 
-                    eachTrack.put("domain", 0);
-                    domains = getTranscriptsGO(genes.get(i).get("transcript_id").toString());
-                    for (Map domain : domains) {
-                        eachTrack.put("domain", domain.get("value"));
-                    }
-                    eachTrack.put("flag", false);
+                    exonList.add(eachExon);
+
+                    lastsize = thissize;
                 }
-                if (!gene_id.equalsIgnoreCase(genes.get(i).get("gene_id").toString())) {
-                    if (!gene_id.equalsIgnoreCase("")) {
-                        eachGene.put("transcript", transcriptList);
-                        GeneList.add(eachGene);
-                    }
-                    gene_id = genes.get(i).get("gene_id").toString();
-                    transcriptList = new JSONArray();
-                    eachGene.put("id", genes.get(i).get("gene_id"));
-                    eachGene.put("start", start_add + Integer.parseInt(genes.get(i).get("gene_start").toString()));
-                    eachGene.put("end", start_add + Integer.parseInt(genes.get(i).get("gene_end").toString()));
-                    eachGene.put("desc", genes.get(i).get("gene_name"));
-                    eachGene.put("strand", genes.get(i).get("gene_strand"));
-
-                    int start_pos = Integer.parseInt(genes.get(i).get("gene_start").toString());
-                    int end_pos = Integer.parseInt(genes.get(i).get("gene_end").toString());
-                    if (start_pos > end_pos) {
-                        int temp = end_pos;
-                        end_pos = start_pos;
-                        start_pos = temp;
-                    }
-
-                    eachGene.put("layer", util.stackLayerInt(ends_gene, start_pos, delta, end_pos));
-                    ends_gene = util.stackLayerList(ends_gene, start_pos, delta, end_pos);
-
-                    eachGene.put("domain", 0);
-                    domains = getGenesAttribs(genes.get(i).get("gene_id").toString());
-                    for (Map domain : domains) {
-                        eachGene.put("domain", domain.get("value"));
-                    }
-                    if (lastsize < 2 && layer > 2) {
-                        layer = 1;
-                    }
-                    if (thissize > 1) {
-                        layer = 1;
-                    }
-                    layer++;
-                }
-
-                JSONObject eachExon = new JSONObject();
-                eachExon.put("id", genes.get(i).get("exon_id"));
-                eachExon.put("start", start_add + Integer.parseInt(genes.get(i).get("exon_start").toString()));
-                eachExon.put("end", start_add + Integer.parseInt(genes.get(i).get("exon_end").toString()));
-                eachTrack.put("transcript_start", genes.get(i).get("translation_start"));
-                eachTrack.put("transcript_end", genes.get(i).get("translation_start"));
-
-                exonList.add(eachExon);
-
-                lastsize = thissize;
             }
 
-            if (genes.size() > 0) {
+            if (new_genes.size() > 0) {
                 eachTrack.put("Exons", exonList);
                 transcriptList.add(eachTrack);
                 eachGene.put("transcript", transcriptList);
@@ -592,7 +677,7 @@ public class SQLGeneDAO implements GeneStore {
      * @throws Exception
      */
     public JSONArray processGenes(List<Map<String, Object>> genes, long start, long end, int delta, int id, String trackId) throws Exception {
-
+        log.info("\n\n\nprocess genes");
         try {
             JSONArray GeneList = new JSONArray();
             List<Integer> ends = new ArrayList<Integer>();
@@ -600,10 +685,12 @@ public class SQLGeneDAO implements GeneStore {
             if (template.queryForObject(GET_GENE_SIZE, new Object[]{id, trackId}, Integer.class) > 0) {
                 if (genes.size() > 0) {
                     ends.add(0, 0);
-                    GeneList = getGeneLevel(0, genes, start, end, delta);
+                    GeneList = getGeneLevel(0, genes, start, end, delta, id);
                 }
             } else {
-                GeneList = recursiveGene(0, id, trackId, start, end, delta);
+                String query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id = " + id + " and asm_start >= " + start + " and asm_end <= " + end;
+
+                GeneList = recursiveGene(query, 0, id, trackId, start, end, delta);
             }
             if (GeneList.size() == 0) {
                 int length = template.queryForObject(GET_length_from_seqreg_id, new Object[]{id}, Integer.class);
