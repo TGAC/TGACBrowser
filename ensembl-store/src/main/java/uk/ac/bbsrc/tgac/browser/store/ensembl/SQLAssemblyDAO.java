@@ -131,7 +131,7 @@ public class SQLAssemblyDAO implements AssemblyStore {
                     if (track_end > Integer.parseInt(maps_one.get(j).get("asm_end").toString())) {
                         track_end = Integer.parseInt(maps_one.get(j).get("asm_end").toString());
                     }
-                    int no_of_tracks = template.queryForObject(GET_ASSEMBLY_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId.replace("cs", ""), track_start, track_end, track_start, track_end, track_end, track_end, track_start, track_start}, Integer.class);
+                    int no_of_tracks = template.queryForObject(GET_ASSEMBLY_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end, track_start, track_end, track_end, track_end, track_start, track_start}, Integer.class);
 
                     if (no_of_tracks < 1) {
                         start_pos += Integer.parseInt(maps_one.get(j).get("asm_start").toString());
@@ -166,13 +166,13 @@ public class SQLAssemblyDAO implements AssemblyStore {
             JSONArray trackList = new JSONArray();
             long from = start;
             long to = 0;
-            int no_of_tracks = template.queryForObject(GET_ASSEMBLY_SIZE_SLICE, new Object[]{id, trackId.replace("cs", ""), start, end, start, end, end, end, start, start}, Integer.class);
+            int no_of_tracks = template.queryForObject(GET_ASSEMBLY_SIZE_SLICE, new Object[]{id, trackId, start, end, start, end, end, end, start, start}, Integer.class);
 
             if (no_of_tracks > 0) {
                 for (int i = 1; i <= 200; i++) {
                     JSONObject eachTrack = new JSONObject();
                     to = start + (i * (end - start) / 200);
-                    no_of_tracks = template.queryForObject(GET_ASSEMBLY_SIZE_SLICE, new Object[]{id, trackId.replace("cs", ""), from, to, from, to, to, to, from, from}, Integer.class);
+                    no_of_tracks = template.queryForObject(GET_ASSEMBLY_SIZE_SLICE, new Object[]{id, trackId, from, to, from, to, to, to, from, from}, Integer.class);
                     eachTrack.put("start", start_pos + from);
                     eachTrack.put("end", start_pos + to);
                     eachTrack.put("graph", no_of_tracks);
@@ -200,12 +200,81 @@ public class SQLAssemblyDAO implements AssemblyStore {
      * @throws IOException
      */
     public JSONArray getAssemblyGraph(int id, String trackId, long start, long end) throws IOException {
+        log.info("\n\n c getAssemblyGraph "+id+" "+" "+trackId);
+
+
         try {
+            trackId = trackId.replace("cs", "");
+
             JSONArray trackList = new JSONArray();
+            String query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id = " + id;
 
             long from = start;
             long to = 0;
             int no_of_tracks = 0;
+            String new_query = query + ")";
+            log.info("\n\n new query = " + query);
+            String GET_ASSEMBLY_SIZE_SLICE_IN = "SELECT COUNT(cmp_seq_region_id) FROM assembly, seq_region where asm_seq_region_id " +
+                    new_query +
+                    " and cmp_seq_region_id = seq_region_id and coord_system_id = " + trackId;
+
+            int size = template.queryForInt(GET_ASSEMBLY_SIZE_SLICE_IN, new Object[]{});
+
+            if (size > 0) {
+                log.info("\n\n c getAssemblyGraph if "+id+" "+" "+trackId);
+
+
+                for (int i = 1; i <= 200; i++) {
+                    JSONObject eachTrack = new JSONObject();
+                    to = start + (i * (end - start) / 200);
+                    no_of_tracks = countAssembly(id, trackId, from, to);
+                    eachTrack.put("start", from);
+                    eachTrack.put("end", to);
+                    eachTrack.put("graph", no_of_tracks);
+                    eachTrack.put("id", id);
+                    trackList.add(eachTrack);
+                    from = to;
+                }
+
+            } else {
+
+                log.info("\n\n c getAssemblyGraph else "+id+" "+" "+trackId);
+
+
+                GET_ASSEMBLY_SIZE_SLICE_IN = "SELECT * FROM assembly where asm_seq_region_id " +
+                        new_query;
+
+                List<Map<String, Object>> list = template.queryForList(GET_ASSEMBLY_SIZE_SLICE_IN, new Object[]{});
+
+                for (int i = 0; i < list.size(); i++) {
+                    JSONObject eachTrack = new JSONObject();
+
+                    GET_ASSEMBLY_SIZE_SLICE_IN = "SELECT COUNT(cmp_seq_region_id) FROM assembly, seq_region where asm_seq_region_id = " +
+                            list.get(i).get("cmp_seq_region_id");
+
+
+                    eachTrack.put("start", list.get(i).get("asm_start"));
+                    eachTrack.put("end", list.get(i).get("asm_end"));
+                    eachTrack.put("graph", template.queryForInt(GET_ASSEMBLY_SIZE_SLICE_IN, new Object[]{}));
+                    eachTrack.put("id", id);
+                    trackList.add(eachTrack);
+                    from = to;
+                }
+
+
+//                String SQL = "SELECT count(cmp_seq_region_id) from assembly where asm_seq_region_id " + query + ")";
+//                log.info("\n\n countquery = " + SQL);
+//                int count = template.queryForInt(SQL, new Object[]{});
+//                String cmp_seq_region_id = "select cmp_seq_region_id from assembly where asm_seq_region_id = " + id + " limit 1";
+//
+//                id = template.queryForInt(cmp_seq_region_id, new Object[]{});
+//                if (count > 0) {
+//                    query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id " + query + ")";
+//                    log.info("\n\n new query = " + query);
+//                    hit_size += countRecursiveAssembly(query, id, trackId, 0, 0);
+//                }
+            }
+
 
             for (int i = 1; i <= 200; i++) {
                 JSONObject eachTrack = new JSONObject();
@@ -274,29 +343,57 @@ public class SQLAssemblyDAO implements AssemblyStore {
      * @return number of assembly per region
      * @throws Exception
      */
-    public int countRecursiveAssembly(int id, String trackId, long start, long end) throws Exception {
+    public int countRecursiveAssembly(String query, int id, String trackId, long start, long end) throws Exception {
+        log.info("\n\n count recursive assembly "+query+" "+id+" "+" "+trackId);
+
         int hit_size = 0;
         try {
-            List<Map<String, Object>> maps_one = template.queryForList(GET_Assembly_for_reference_SIZE_SLICE, new Object[]{id, start, end, start, end, end, end, start, start});
 
-            if (maps_one.size() > 0) {
-                main:
-                for (int j = 0; j < maps_one.size(); j++) {
-                    long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-                    long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
+            String new_query = query + ")";
+            log.info("\n\n new query = " + query);
+            String GET_ASSEMBLY_SIZE_SLICE_IN = "SELECT COUNT(cmp_seq_region_id) FROM assembly, seq_region where asm_seq_region_id " +
+                    new_query +
+                    " and cmp_seq_region_id = seq_region_id and coord_system_id = " + trackId;
 
-                    int count = template.queryForObject(GET_ASSEMBLY_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId.replace("cs", ""), track_start, track_end, track_start, track_end, track_end, track_end, track_start, track_start}, Integer.class);
+            int size = template.queryForInt(GET_ASSEMBLY_SIZE_SLICE_IN, new Object[]{});
 
-                    if (count < 1) {
-                        hit_size += countRecursiveAssembly(Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId.replace("cs", ""), track_start, track_end);
-                    } else if (count > 5000) {
-                        hit_size = count;
-                        break main;
-                    } else {
-                        hit_size += count;
-                    }
+            if (size > 0) {
+                hit_size += size;//template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end}, Integer.class);
+            } else {
+                String SQL = "SELECT count(cmp_seq_region_id) from assembly where asm_seq_region_id " + query + ")";
+                log.info("\n\n countquery = " + SQL);
+                int count = template.queryForInt(SQL, new Object[]{});
+                String cmp_seq_region_id = "select cmp_seq_region_id from assembly where asm_seq_region_id = " + id + " limit 1";
+
+                id = template.queryForInt(cmp_seq_region_id, new Object[]{});
+                if (count > 0) {
+                    query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id " + query + ")";
+                    log.info("\n\n new query = " + query);
+                    hit_size += countRecursiveAssembly(query, id, trackId, 0, 0);
                 }
             }
+
+
+//            List<Map<String, Object>> maps_one = template.queryForList(GET_Assembly_for_reference_SIZE_SLICE, new Object[]{id, start, end, start, end, end, end, start, start});
+//
+//            if (maps_one.size() > 0) {
+//                main:
+//                for (int j = 0; j < maps_one.size(); j++) {
+//                    long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
+//                    long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
+//
+//                    int count = template.queryForObject(GET_ASSEMBLY_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId.replace("cs", ""), track_start, track_end, track_start, track_end, track_end, track_end, track_start, track_start}, Integer.class);
+//
+//                    if (count < 1) {
+//                        hit_size += countRecursiveAssembly(Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId.replace("cs", ""), track_start, track_end);
+//                    } else if (count > 5000) {
+//                        hit_size = count;
+//                        break main;
+//                    } else {
+//                        hit_size += count;
+//                    }
+//                }
+//            }
             return hit_size;
         } catch (Exception e) {
             e.printStackTrace();
@@ -316,10 +413,13 @@ public class SQLAssemblyDAO implements AssemblyStore {
      */
     public int countAssembly(int id, String trackId, long start, long end) throws Exception {
         try {
-            int hit_size = template.queryForObject(GET_ASSEMBLY_SIZE_SLICE, new Object[]{id, trackId.replace("cs", ""), start, end, start, end, end, end, start, start}, Integer.class);
+            log.info("\n\n count assembly "+id+" "+" "+trackId);
+            trackId = trackId.replace("cs", "");
+            int hit_size = template.queryForObject(GET_ASSEMBLY_SIZE_SLICE, new Object[]{id, trackId, start, end, start, end, end, end, start, start}, Integer.class);
 
             if (hit_size == 0) {
-                hit_size = countRecursiveAssembly(id, trackId, start, end);
+                String query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id = " + id;
+                hit_size = countRecursiveAssembly(query, id, trackId, start, end);
             }
             return hit_size;
         } catch (Exception e) {
@@ -341,7 +441,9 @@ public class SQLAssemblyDAO implements AssemblyStore {
     public JSONArray getAssembly(int id, String trackId, int delta, long start, long end) throws Exception {
         try {
             JSONArray trackList = new JSONArray();
-            List<Map<String, Object>> maps = template.queryForList(GET_Assembly, new Object[]{id, trackId.replace("cs", ""), start, end, start, end, end, end, start, start});
+            trackId = trackId.replace("cs", "");
+
+            List<Map<String, Object>> maps = template.queryForList(GET_Assembly, new Object[]{id, trackId, start, end, start, end, end, end, start, start});
             if (maps.size() > 0) {
                 trackList = getAssemblyLevel(0, maps, delta);
             } else {
@@ -375,7 +477,7 @@ public class SQLAssemblyDAO implements AssemblyStore {
                 for (int j = 0; j < maps_one.size(); j++) {
                     long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
                     long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-                    List<Map<String, Object>> maps_two = template.queryForList(GET_Assembly, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId.replace("cs", ""), track_start, track_end, track_start, track_end, track_end, track_end, track_start, track_start});
+                    List<Map<String, Object>> maps_two = template.queryForList(GET_Assembly, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end, track_start, track_end, track_end, track_end, track_start, track_start});
                     if (maps_two.size() > 0) {
                         assemblyTracks.addAll(getAssemblyLevel(start_pos + Integer.parseInt(maps_one.get(j).get("asm_start").toString()), maps_two, delta));
                     } else {
