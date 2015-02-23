@@ -323,7 +323,6 @@ public class SQLGeneDAO implements GeneStore {
 
             String new_query = query + ")";
             log.info("\n\n new query = " + query);
-            int coord = 0;
             String GET_Gene_SIZE_SLICE_IN = "SELECT COUNT(gene_id) FROM gene where seq_region_id " +
                     new_query +
                     " and analysis_id = " + trackId;
@@ -332,8 +331,6 @@ public class SQLGeneDAO implements GeneStore {
             int size = template.queryForInt(GET_Gene_SIZE_SLICE_IN, new Object[]{});
             if (size > 0) {
                 gene_size += size;//template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end}, Integer.class);
-                coord = template.queryForInt(GET_Coord_systemid_FROM_ID, new Object[]{id});
-                log.info("\n\n cood_gene" + coord);
             } else {
                 String SQL = "SELECT count(cmp_seq_region_id) from assembly where asm_seq_region_id " + query + ")";
                 log.info("\n\n countquery = " + SQL);
