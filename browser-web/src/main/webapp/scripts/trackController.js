@@ -1513,3 +1513,39 @@ function dispCigar(cigars, start, top) {
     return track_html;
 }
 
+function float_top(div, margin) {
+    var top = 35; // top value for next row
+    var rows = [];
+
+    var children = document.getElementById(jQuery(div).attr("id")).children
+    for (var c = 0; c < children.length; c++) {
+        var ok = false;
+        var child = children[c];
+        var cr = child.getBoundingClientRect();
+        for (var i = 0; i < rows.length; i++) {
+            if (cr.left > parseInt(rows[i].right) + parseInt(5)) {
+                rows[i].right = cr.right;
+                child.style.top = rows[i].top + "px";
+                ok = true;
+                break;
+            }
+            if (cr.right < parseInt(rows[i].left) - 5) {
+                rows[i].left = cr.left;
+                child.style.top = rows[i].top + "px";
+                ok = true;
+                break;
+            }
+        }
+        if (!ok) {
+            // add new row
+            rows.push({
+                top: top,
+                right: cr.right,
+                left: cr.left
+            });
+            child.style.top = top + "px";
+            top += child.getBoundingClientRect().height + margin;
+        }
+    }
+}
+

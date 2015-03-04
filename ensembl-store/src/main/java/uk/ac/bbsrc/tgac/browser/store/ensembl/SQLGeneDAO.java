@@ -553,7 +553,7 @@ public class SQLGeneDAO implements GeneStore {
 
                 List<Map<String, Object>> genes = template.queryForList(GET_Gene_view_by_id, new Object[]{new_genes.get(j).get("gene_id")});
 
-                String GET_Gene_addition = "SELECT if(g.seq_region_id =  "+id+", 0 , test7(g.seq_region_id,  "+id+"))  AS gene_start "+
+                String GET_Gene_addition = "SELECT if(g.seq_region_id =  "+id+", 0 , get_ref_coord(g.seq_region_id,  "+id+"))  AS gene_start "+
                 "FROM gene g " +
                 "WHERE g.gene_id = "+new_genes.get(j).get("gene_id");
 

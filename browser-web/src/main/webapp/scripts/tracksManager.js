@@ -322,7 +322,7 @@ function loadDefaultTrack(tracklist) {
                 jQuery('#' + Tracklist[i].name + 'Checkbox').attr('checked', true);
                 mergeTrackList(Tracklist[i].name);
 
-                var partial = (getEnd() - getBegin()) + ((getEnd() - getBegin()) / 2);
+                var partial = ((getEnd() - getBegin()) / 2);
                 var start = (getBegin() - partial);
                 var end = parseInt(getEnd()) + parseFloat(partial);
                 if (start < 0) {
