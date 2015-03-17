@@ -426,7 +426,7 @@ public class BlastService {
     public String getTaskSQL(String taskId) throws Exception {
         String result = null;
         Class.forName("com.mysql.jdbc.Driver").newInstance();
-        Connection conn = DriverManager.getConnection("jdbc:mysql://london.nbi.bbsrc.ac.uk:3306/conan", "conan", "conan");
+        Connection conn = DriverManager.getConnection("jdbc:mysql://n78048.nbi.ac.uk:3306/tgac_browser_conan", "tgacbrowser", "tgac_bioinf");
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery("select STATE from CONAN_TASKS where NAME=\"" + taskId + "\"");
         while (rs.next()) {

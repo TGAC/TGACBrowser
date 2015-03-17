@@ -1242,7 +1242,7 @@ function dispVCF(div, trackName, className) {
             jQuery("#" + trackName + "_wrapper").fadeIn();
         }
     }
-    else if (window[trackName][0] == "getHit no result found") {
+    else if (window[trackName] == "getHit no result found") {
         if (div.indexOf("mergedtrack") <= 0) {
             jQuery('#' + trackName + 'Checkbox').attr('checked', false);
             jQuery(div).html();

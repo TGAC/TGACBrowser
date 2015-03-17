@@ -138,12 +138,17 @@ public class VCFService {
                     eachEntry.put("filter", entry.getFilter());
                     eachEntry.put("genotype", entry.getGenotypes());
                     eachEntry.put("ref",entry.getRef());
-                    eachEntry.put("desc", entry.getRef()+":"+entry.getAlt()+" "+entry.getInfoString());
+                    eachEntry.put("desc", entry.getRef()+":"+entry.getAlt().toString()+" "+entry.getInfoString());
 
 
                     VCF.add(eachEntry);
 
                 }
+
+            }
+
+            if(VCF.size() == 0){
+                    VCF.add("getHit no result found");
             }
             return VCF;
         } catch (Exception e) {

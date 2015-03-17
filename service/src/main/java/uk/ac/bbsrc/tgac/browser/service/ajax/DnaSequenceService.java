@@ -345,10 +345,11 @@ public class DnaSequenceService {
                 log.info("\n\n\nVCF count "+ count);
 
 
-                if (count ==0) {
-                    response.put(trackName, "getHit no result found");
-
-                } else if (count < 5000) {
+//                if (count ==0) {
+//                    response.put(trackName, "getHit no result found");
+//
+//                } else
+                if (count < 5000) {
                     response.put(trackName, vcfService.getVCFReads(start, end, delta, trackId, seqName));
                 } else {
                     response.put("type", "graph");
