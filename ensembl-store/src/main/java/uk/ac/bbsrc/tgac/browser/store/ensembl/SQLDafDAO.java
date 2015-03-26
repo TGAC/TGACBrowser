@@ -120,34 +120,36 @@ public class SQLDafDAO implements DafStore {
             List<Map<String, Object>> maps_one = template.queryForList(GET_Assembly_for_reference, new Object[]{id});
             if (maps_one.size() > 0) {
                 for (int j = 0; j < maps_one.size(); j++) {
+                    int asm_start = Integer.parseInt(maps_one.get(j).get("asm_start").toString());
+                    int asm_end = Integer.parseInt(maps_one.get(j).get("asm_end").toString());
                     long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
                     long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
                     if (track_start < 0) {
                         track_start = 0;
                     }
-                    if (track_end > Integer.parseInt(maps_one.get(j).get("asm_end").toString())) {
+                    if (track_end > asm_end) {
                         track_end = Integer.parseInt(maps_one.get(j).get("asm_end").toString());
                     }
                     int no_of_tracks = template.queryForObject(GET_HIT_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end}, Integer.class);
                     if (no_of_tracks > 0) {
                         List<Integer> ends = new ArrayList<Integer>();
                         ends.add(0, 0);
-                        track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-                        track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
+                        track_start = start - asm_start;
+                        track_end = end - asm_start;
                         if (track_start < 0) {
                             track_start = 0;
                         }
-                        if (track_end > Integer.parseInt(maps_one.get(j).get("asm_end").toString())) {
-                            track_end = Integer.parseInt(maps_one.get(j).get("asm_end").toString());
+                        if (track_end > asm_end) {
+                            track_end = asm_end;
                         }
                         assemblyTracks.addAll(getHitGraphLevel(Integer.parseInt(maps_one.get(j).get("asm_start").toString()), Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end));
                     } else {
-                        track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-                        track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
+                        track_start = start - asm_start;
+                        track_end = end - asm_start;
                         if (track_start < 0) {
                             track_start = 0;
                         }
-                        if (track_end > Integer.parseInt(maps_one.get(j).get("asm_end").toString())) {
+                        if (track_end > asm_end) {
                             track_end = Integer.parseInt(maps_one.get(j).get("asm_end").toString());
                         }
                         List<Integer> ends = new ArrayList<Integer>();
@@ -255,22 +257,46 @@ public class SQLDafDAO implements DafStore {
      * @param end
      * @return number of hit per region
      */
-    public int countRecursiveHit(int id, String trackId, long start, long end) throws Exception {
+    public int countRecursiveHit(String query, int id, String trackId, long start, long end) throws Exception {
         try {
             int hit_size = 0;
             List<Map<String, Object>> maps_one = template.queryForList(GET_Assembly_for_reference, new Object[]{id});
 
-            if (maps_one.size() > 0) {
-                for (int j = 0; j < maps_one.size(); j++) {
-                    long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-                    long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-                    if (template.queryForObject(GET_HIT_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end}, Integer.class) > 0) {
-                        hit_size += template.queryForObject(GET_HIT_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end}, Integer.class);
-                    } else {
-                        hit_size += countRecursiveHit(Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end);
-                    }
+            String new_query = query + ")";
+
+            String GET_DAF_SIZE_SLICE_IN = "SELECT COUNT(dna_align_feature_id) FROM dna_align_feature where seq_region_id " +
+                    new_query +
+                    " and analysis_id = " + trackId;
+
+            int size = template.queryForInt(GET_DAF_SIZE_SLICE_IN, new Object[]{});
+            if (size > 0) {
+                hit_size += size;//template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end}, Integer.class);
+            } else {
+                String SQL = "SELECT count(cmp_seq_region_id) from assembly where asm_seq_region_id " + query + ")";
+                log.info("\n\n countquery = " + SQL);
+                int count = template.queryForInt(SQL, new Object[]{});
+                String cmp_seq_region_id = "select cmp_seq_region_id from assembly where asm_seq_region_id = " + id + " limit 1";
+
+                id = template.queryForInt(cmp_seq_region_id, new Object[]{});
+                if (count > 0) {
+                    query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id " + query + ")";
+                    log.info("\n\n new query = " + query);
+                    hit_size += countRecursiveHit(query, id, trackId, 0, 0);
                 }
             }
+
+
+//            if (maps_one.size() > 0) {
+//                for (int j = 0; j < maps_one.size(); j++) {
+//                    long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
+//                    long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
+//                    if (template.queryForObject(GET_HIT_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end}, Integer.class) > 0) {
+//                        hit_size += template.queryForObject(GET_HIT_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end}, Integer.class);
+//                    } else {
+//                        hit_size += countRecursiveHit(Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end);
+//                    }
+//                }
+//            }
 
             return hit_size;
         } catch (Exception e) {
@@ -294,7 +320,10 @@ public class SQLDafDAO implements DafStore {
             int hit_size = template.queryForObject(GET_HIT_SIZE_SLICE, new Object[]{id, trackId, start, end}, Integer.class);
 
             if (hit_size == 0) {
-                hit_size = countRecursiveHit(id, trackId, start, end);
+
+                String query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id = " + id;
+
+                hit_size = countRecursiveHit(query, id, trackId, start, end);
             }
             return hit_size;
         } catch (Exception e) {
@@ -302,6 +331,8 @@ public class SQLDafDAO implements DafStore {
             throw new Exception("Count Hit " + e.getMessage());
         }
     }
+
+
 
     //
 //    @Cacheable(cacheName = "hitCache",
@@ -325,7 +356,41 @@ public class SQLDafDAO implements DafStore {
      * @throws IOException
      */
     public List<Map<String, Object>> getHit(int id, String trackId, long start, long end) throws IOException {
-        return template.queryForList(GET_HIT, new Object[]{id, trackId, start, end, start, end, end, end, start, start});
+        try {
+
+//            public static final String GET_HIT = "SELECT dna_align_feature_id as id,cast(seq_region_start as signed) as start, cast(seq_region_end as signed) as end,seq_region_strand as strand,hit_start as hitstart, hit_end as hitend, hit_name as 'desc', cigar_line as cigarline FROM dna_align_feature where seq_region_id =? and analysis_id = ? AND ((seq_region_start >= ? AND seq_region_end <= ?) OR (seq_region_start <= ? AND seq_region_end >= ?) OR (seq_region_end >= ? AND seq_region_end <= ?) OR (seq_region_start >= ? AND seq_region_start <= ?)) ORDER BY (end-start) desc"; //seq_region_start ASC";//" AND ((hit_start >= ? AND hit_end <= ?) OR (hit_start <= ? AND hit_end >= ?) OR (hit_end >= ? AND hit_end <= ?) OR (hit_start >= ? AND hit_start <= ?))";
+
+
+            String GET_HIT = "SELECT dna_align_feature_id as id,cast(seq_region_start as signed) as start, cast(seq_region_end as signed) as end,seq_region_strand as strand,hit_start as hitstart, hit_end as hitend, hit_name as 'desc', cigar_line as cigarline " +
+                    "FROM dna_align_feature " +
+                    "WHERE seq_region_id = " + id + " AND analysis_id = " + trackId + " and ((seq_region_start >= "+start+" AND seq_region_end <= "+end+") OR (seq_region_start <= "+start+" AND seq_region_end >= "+end+") OR (seq_region_end >= "+end+"  AND  seq_region_start <= "+end+") OR (seq_region_start <= "+start+" AND seq_region_end >= "+start+"))"+
+                    " order by seq_region_start";
+
+            return template.queryForList(GET_HIT, new Object[]{});     } catch (Exception e) {
+            e.printStackTrace();
+            throw new IOException("Get DAF " + e.getMessage());
+        }
+    }
+
+    public List<Map<String, Object>> getHit(String query, int id, String trackId, long start, long end) throws IOException {
+        log.info("\n\n\n getGenes new " + query + " " + trackId + " " + id + " " + start + " " + end);
+
+        query = query + ")";
+
+        try {
+
+
+            String GET_HIT = "SELECT dna_align_feature_id as id,cast(seq_region_start as signed) as start, cast(seq_region_end as signed) as end,seq_region_strand as strand,hit_start as hitstart, hit_end as hitend, hit_name as 'desc', cigar_line as cigarline " +
+                    "FROM dna_align_feature " +
+                    "WHERE seq_region_id " + query + " AND analysis_id = " + trackId +
+                    " order by seq_region_start";
+
+
+            return template.queryForList(GET_HIT, new Object[]{});
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new IOException("Get gene " + e.getMessage());
+        }
     }
 
     /**
@@ -341,30 +406,34 @@ public class SQLDafDAO implements DafStore {
      * @return JSONArray with Hit information
      * @throws IOException
      */
-    public JSONArray recursiveHit(int start_pos, int id, String trackId, long start, long end, int delta) throws IOException {
+    public JSONArray recursiveHit(String query, int start_pos, int id, String trackId, long start, long end, int delta) throws IOException {
         try {
             JSONArray assemblyTracks = new JSONArray();
-            List<Map<String, Object>> maps_one = template.queryForList(GET_Assembly_for_reference, new Object[]{id});
-            if (maps_one.size() > 0) {
-                for (int j = 0; j < maps_one.size(); j++) {
-                    List<Map<String, Object>> maps_two = template.queryForList(GET_HIT_SIZE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId});
-                    if (maps_two.size() > 0) {
-                        List<Integer> ends = new ArrayList<Integer>();
-                        ends.add(0, 0);
-                        long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-                        long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-                        assemblyTracks.addAll(getHitLevel(start_pos + Integer.parseInt(maps_one.get(j).get("asm_start").toString()), getHit(Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end), start, end, delta));
-                    } else {
-                        long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-                        long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-                        List<Integer> ends = new ArrayList<Integer>();
-                        ends.add(0, 0);
-                        assemblyTracks.addAll(recursiveHit(start_pos + Integer.parseInt(maps_one.get(j).get("asm_start").toString()), Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end, delta));
-                    }
+            String new_query = query + ")";
 
+            String GET_DAF_SIZE_SLICE_IN = "SELECT COUNT(dna_align_feature_id) FROM dna_align_feature where seq_region_id " +
+                    new_query +
+                    " and analysis_id = " + trackId;
+
+
+            int size = template.queryForInt(GET_DAF_SIZE_SLICE_IN, new Object[]{});
+            if (size > 0) {
+
+                assemblyTracks.addAll(getHitLevel(start_pos, getHit(query, 0, trackId, 0, 0), start, end, delta, id));
+            } else {
+                String SQL = "SELECT count(cmp_seq_region_id) from assembly where asm_seq_region_id " + query + ")";
+                log.info("\n\n countquery = " + SQL);
+                int count = template.queryForInt(SQL, new Object[]{});
+
+                if (count > 0) {
+                    query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id " + query + ")";
+                    log.info("\n\n new query = " + query);
+                    assemblyTracks.addAll(recursiveHit(query, start_pos, id, trackId, 0, 0, delta));
                 }
             }
+
             return assemblyTracks;
+
         } catch (Exception e) {
             e.printStackTrace();
             throw new IOException("recursivetHit no result found " + e.getMessage());
@@ -382,19 +451,28 @@ public class SQLDafDAO implements DafStore {
      * @return JSONArray with Assembly information
      * @throws Exception
      */
-    public JSONArray getHitLevel(int start_pos, List<Map<String, Object>> maps_two, long start, long end, int delta) throws Exception {
+    public JSONArray getHitLevel(int start_pos, List<Map<String, Object>> maps_two, long start, long end, int delta, long id) throws Exception {
         try {
             List<Integer> ends = new ArrayList<Integer>();
             ends.add(0, 0);
             JSONObject eachTrack_temp = new JSONObject();
             JSONArray hitTracks = new JSONArray();
+
+
+
             for (Map map_temp : maps_two) {
+                String GET_HIT_addition = "SELECT if(seq_region_id =  "+id+", 0 , get_ref_coord(seq_region_id,  "+id+"))  AS start "+
+                        "FROM dna_align_feature " +
+                        "WHERE dna_align_feature_id = "+map_temp.get("id");
+
+                int start_addition =  template.queryForInt(GET_HIT_addition, new Object[]{});
+
                 int track_start = start_pos + Integer.parseInt(map_temp.get("start").toString()) - 1;
                 int track_end = start_pos + Integer.parseInt(map_temp.get("end").toString()) - 1;
                 if (track_start >= start && track_end <= end || track_start <= start && track_end >= end || track_end >= start && track_end <= end || track_start >= start && track_start <= end) {
                     eachTrack_temp.put("id", map_temp.get("id"));
-                    eachTrack_temp.put("start", track_start);
-                    eachTrack_temp.put("end", track_end);
+                    eachTrack_temp.put("start", start_addition+track_start);
+                    eachTrack_temp.put("end", start_addition+track_end);
                     eachTrack_temp.put("flag", false);
                     if (map_temp.get("cigarline") != null) {
                         eachTrack_temp.put("cigarline", map_temp.get("cigarline").toString());
@@ -437,11 +515,13 @@ public class SQLDafDAO implements DafStore {
 
                 if (maps.size() > 0) {
                     ends.add(0, 0);
-                    trackList = getHitLevel(0, maps, start, end, delta);
+                    trackList = getHitLevel(0, maps, start, end, delta, id);
                 } else {
                 }
             } else {
-                trackList = recursiveHit(0, id, trackId, start, end, delta);
+                String query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id = " + id + " and ((seq_region_start >= "+start+" AND seq_region_end <= "+end+") OR (seq_region_start <= "+start+" AND seq_region_end >= "+end+") OR (seq_region_end >= "+end+"  AND  seq_region_start <= "+end+") OR (seq_region_start <= "+start+" AND seq_region_end >= "+start+"))";
+
+                trackList = recursiveHit(query, 0, id, trackId, start, end, delta);
             }
             if (trackList.size() == 0) {
                 int length = template.queryForObject(GET_length_from_seqreg_id, new Object[]{id}, Integer.class);
