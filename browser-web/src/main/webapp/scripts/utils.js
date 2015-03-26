@@ -459,8 +459,8 @@ function blastToogle() {
 }
 
 function resetBLAST() {
-    jQuery('#blasttable tbody').html("");
-    jQuery('#blastresult').fadeOut();
+    jQuery('#blasttextsearch').html("");
+    //jQuery('#blastresult').fadeOut();
 }
 
 function toogleTable(id) {
