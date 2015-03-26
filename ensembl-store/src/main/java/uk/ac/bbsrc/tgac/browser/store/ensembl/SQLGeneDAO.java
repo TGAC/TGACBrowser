@@ -405,7 +405,7 @@ public class SQLGeneDAO implements GeneStore {
         try {
             String GET_Gene_by_view = "SELECT g.gene_id " +
                     "FROM gene g " +
-                    "WHERE g.seq_region_id = " + id + " AND g.analysis_id = " + trackId + " and g.seq_region_start >= " + start + " and g.seq_region_end <= " + end+
+                    "WHERE g.seq_region_id = " + id + " AND g.analysis_id = " + trackId + " and ((g.seq_region_start >= "+start+" AND g.seq_region_end <= "+end+") OR (g.seq_region_start <= "+start+" AND g.seq_region_end >= "+end+") OR (g.seq_region_end >= "+end+"  AND  g.seq_region_start <= "+end+") OR (g.seq_region_start <= "+start+" AND g.seq_region_end >= "+start+")) "+
                     " order by g.seq_region_start";
 
             return template.queryForList(GET_Gene_by_view, new Object[]{});
@@ -690,7 +690,7 @@ public class SQLGeneDAO implements GeneStore {
                     GeneList = getGeneLevel(0, genes, start, end, delta, id);
                 }
             } else {
-                String query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id = " + id + " and asm_start >= " + start + " and asm_end <= " + end;
+                String query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id = " + id + " and ((seq_region_start >= "+start+" AND seq_region_end <= "+end+") OR (seq_region_start <= "+start+" AND seq_region_end >= "+end+") OR (seq_region_end >= "+end+"  AND  seq_region_start <= "+end+") OR (seq_region_start <= "+start+" AND seq_region_end >= "+start+"))";
 
                 GeneList = recursiveGene(query, 0, id, trackId, start, end, delta);
             }
