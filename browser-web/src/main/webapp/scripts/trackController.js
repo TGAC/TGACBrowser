@@ -316,6 +316,8 @@ function dispGenes(div, track, expand, className) {
     var label_div = document.createElement("div");
     label_div.style.overflow = "hidden"
     label_div.style.textOverflow = "ellipsis";
+    label_div.style.position = "relative"
+    label_div.style.top = "10px"
     label_div.style.zindex = 999;
 
 
@@ -985,6 +987,8 @@ function dispTrack(div, trackName, className) {
 
     var label_div = document.createElement("div");
     label_div.style.overflow = "hidden"
+    label_div.style.position = "relative"
+    label_div.style.top = "10px"
     label_div.style.textOverflow = "ellipsis";
     label_div.style.zindex = 999;
 
@@ -1160,7 +1164,9 @@ function dispTrack(div, trackName, className) {
 
                 track_div.appendChild(clone_new_div)
 
-                if(track.length < 100){var clone_label_div= label_div.cloneNode(true)
+                if(track.length < 100){
+
+                    var clone_label_div= label_div.cloneNode(true)
 
                 clone_label_div.className = "tracklabel " + labelclass;
 

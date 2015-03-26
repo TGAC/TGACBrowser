@@ -403,7 +403,12 @@ public class SQLGeneDAO implements GeneStore {
 
     public List<Map<String, Object>> getGenes(int id, String trackId, long start, long end) throws IOException {
         try {
-            return template.queryForList(GET_Gene_by_view, new Object[]{id, trackId, start, end, start, end, end, end, start, start});
+            String GET_Gene_by_view = "SELECT g.gene_id " +
+                    "FROM gene g " +
+                    "WHERE g.seq_region_id = " + id + " AND g.analysis_id = " + trackId + " and g.seq_region_start >= " + start + " and g.seq_region_end <= " + end+
+                    " order by g.seq_region_start";
+
+            return template.queryForList(GET_Gene_by_view, new Object[]{});
         } catch (Exception e) {
             e.printStackTrace();
             throw new IOException("Get gene " + e.getMessage());
