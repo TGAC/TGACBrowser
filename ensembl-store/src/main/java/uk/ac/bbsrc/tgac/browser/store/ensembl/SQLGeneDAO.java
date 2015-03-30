@@ -690,7 +690,9 @@ public class SQLGeneDAO implements GeneStore {
                     GeneList = getGeneLevel(0, genes, start, end, delta, id);
                 }
             } else {
-                String query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id = " + id + " and ((seq_region_start >= "+start+" AND seq_region_end <= "+end+") OR (seq_region_start <= "+start+" AND seq_region_end >= "+end+") OR (seq_region_end >= "+end+"  AND  seq_region_start <= "+end+") OR (seq_region_start <= "+start+" AND seq_region_end >= "+start+"))";
+//                String query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id = " + id + " and ((seq_region_start >= "+start+" AND seq_region_end <= "+end+") OR (seq_region_start <= "+start+" AND seq_region_end >= "+end+") OR (seq_region_end >= "+end+"  AND  seq_region_start <= "+end+") OR (seq_region_start <= "+start+" AND seq_region_end >= "+start+"))";
+
+                String query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id = " + id + " and ((asm_start >= "+start+" AND asm_end <= "+end+") OR (asm_start <= "+start+" AND asm_end >= "+end+") OR (asm_end >= "+end+"  AND  asm_start <= "+end+") OR (asm_start <= "+start+" AND asm_end >= "+start+"))";
 
                 GeneList = recursiveGene(query, 0, id, trackId, start, end, delta);
             }

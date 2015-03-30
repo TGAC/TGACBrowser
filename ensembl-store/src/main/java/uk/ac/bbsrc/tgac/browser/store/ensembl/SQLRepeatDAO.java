@@ -100,40 +100,39 @@ public class SQLRepeatDAO implements RepeatStore {
             List<Map<String, Object>> maps_one = template.queryForList(GET_Assembly_for_reference, new Object[]{id});
             if (maps_one.size() > 0) {
                 for (int j = 0; j < maps_one.size(); j++) {
-                    long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-                    long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
+                    int asm_start = Integer.parseInt(maps_one.get(j).get("asm_start").toString());
+                    int asm_end = Integer.parseInt(maps_one.get(j).get("asm_end").toString());
+
+                    long track_start = start - asm_start;
+                    long track_end = end - asm_start;
                     if (track_start < 0) {
                         track_start = 0;
                     }
-                    if (track_end > Integer.parseInt(maps_one.get(j).get("asm_end").toString())) {
-                        track_end = Integer.parseInt(maps_one.get(j).get("asm_end").toString());
+                    if (track_end > asm_end) {
+                        track_end = asm_end;
                     }
                     int no_of_tracks = template.queryForObject(GET_REPEAT_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end}, Integer.class);
                     if (no_of_tracks > 0) {
-                        List<Integer> ends = new ArrayList<Integer>();
-                        ends.add(0, 0);
-                        track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-                        track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
+                        track_start = start - asm_start;
+                        track_end = end - asm_start;
                         if (track_start < 0) {
                             track_start = 0;
                         }
-                        if (track_end > Integer.parseInt(maps_one.get(j).get("asm_end").toString())) {
-                            track_end = Integer.parseInt(maps_one.get(j).get("asm_end").toString());
+                        if (track_end > asm_end) {
+                            track_end = asm_end;
                         }
-                        assemblyTracks.addAll(getRepeatGraphLevel(Integer.parseInt(maps_one.get(j).get("asm_start").toString()), Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end));
+                        assemblyTracks.addAll(getRepeatGraphLevel(asm_start, Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end));
                     } else {
-                        track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-                        track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
+                        track_start = start - asm_start;
+                        track_end = end - asm_start;
                         if (track_start < 0) {
                             track_start = 0;
                         }
-                        if (track_end > Integer.parseInt(maps_one.get(j).get("asm_end").toString())) {
-                            track_end = Integer.parseInt(maps_one.get(j).get("asm_end").toString());
+                        if (track_end > asm_end) {
+                            track_end = asm_end;
                         }
-                        List<Integer> ends = new ArrayList<Integer>();
-                        start_pos += Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-                        ends.add(0, 0);
-                        assemblyTracks.addAll(recursiveRepeatGraph(Integer.parseInt(maps_one.get(j).get("asm_start").toString()), Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end));
+                        start_pos += asm_start;
+                        assemblyTracks.addAll(recursiveRepeatGraph(asm_start, Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end));
                     }
 
                 }
@@ -155,6 +154,7 @@ public class SQLRepeatDAO implements RepeatStore {
      * @throws Exception
      */
     public JSONArray getRepeatGraphLevel(int start_pos, int id, String trackId, long start, long end) throws Exception {
+        log.info("\n\n\n getRepeatGraphLevel");
         try {
             JSONArray trackList = new JSONArray();
             long from = start;
@@ -189,6 +189,7 @@ public class SQLRepeatDAO implements RepeatStore {
      * @throws Exception
      */
     public JSONArray getRepeatGraph(int id, String trackId, long start, long end) throws Exception {
+        log.info("\n\n\n getRepeatGraph");
         try {
             JSONArray trackList = new JSONArray();
             long from = start;
@@ -222,21 +223,31 @@ public class SQLRepeatDAO implements RepeatStore {
      * @param end
      * @return
      */
-    public int countRecursiveRepeat(int id, String trackId, long start, long end) {
+    public int countRecursiveRepeat(String query, int id, String trackId, long start, long end) {
         int repeat_size = 0;
-        List<Map<String, Object>> maps_one = template.queryForList(GET_Assembly_for_reference, new Object[]{id});
 
-        if (maps_one.size() > 0) {
-            for (int j = 0; j < maps_one.size(); j++) {
-                long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-                long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-                if (template.queryForObject(GET_REPEAT_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end}, Integer.class) > 0) {
-                    repeat_size += template.queryForObject(GET_REPEAT_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end}, Integer.class);
-                } else {
-                    repeat_size += countRecursiveRepeat(Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end);
-                }
+        String new_query = query + ")";
+
+        String GET_REPEAT_SIZE_SLICE_IN = "SELECT COUNT(repeat_feature_id) FROM repeat_feature where seq_region_id " +
+                new_query +
+                " and analysis_id = " + trackId;
+
+        int size = template.queryForInt(GET_REPEAT_SIZE_SLICE_IN, new Object[]{});
+        if (size > 0) {
+            repeat_size += size;//template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end}, Integer.class);
+        } else {
+            String SQL = "SELECT count(cmp_seq_region_id) from assembly where asm_seq_region_id " + query + ")";
+            int count = template.queryForInt(SQL, new Object[]{});
+            String cmp_seq_region_id = "select cmp_seq_region_id from assembly where asm_seq_region_id = " + id + " limit 1";
+
+            id = template.queryForInt(cmp_seq_region_id, new Object[]{});
+            if (count > 0) {
+                query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id " + query + ")";
+                repeat_size += countRecursiveRepeat(query, id, trackId, 0, 0);
             }
         }
+
+
         return repeat_size;
     }
 
@@ -248,9 +259,11 @@ public class SQLRepeatDAO implements RepeatStore {
      * @return
      */
     public int countRepeat(int id, String trackId, long start, long end) {
+        log.info("\n\n\n countRepeat");
         int count_size = template.queryForObject(GET_REPEAT_SIZE_SLICE, new Object[]{id, trackId, start, end}, Integer.class);
         if (count_size == 0) {
-            count_size = countRecursiveRepeat(id, trackId, start, end);
+            String query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id = " + id;
+            count_size = countRecursiveRepeat(query, id, trackId, start, end);
         }
         return count_size;
     }
@@ -274,13 +287,45 @@ public class SQLRepeatDAO implements RepeatStore {
      * @throws Exception
      */
     public List<Map<String, Object>> getRepeat(int id, String trackId, long start, long end) throws Exception {
+
         try {
-            return template.queryForList(GET_REPEAT, new Object[]{id, trackId, start, end, start, end, start, end, start, end});
+
+                String GET_REPEAT = "SELECT repeat_feature_id as id,seq_region_start as start, seq_region_end as end,seq_region_strand as strand, repeat_start as repeatstart,repeat_end as repeatend, score as score " +
+                        "FROM repeat_feature " +
+                        "WHERE seq_region_id = " + id + " AND analysis_id = " + trackId + " and ((seq_region_start >= "+start+" AND seq_region_end <= "+end+") OR (seq_region_start <= "+start+" AND seq_region_end >= "+end+") OR (seq_region_end >= "+start+"  AND  seq_region_end <= "+end+") OR (seq_region_start <= "+start+" AND seq_region_start <= "+end+"))"+
+                        " order by seq_region_start";
+                return template.queryForList(GET_REPEAT, new Object[]{});
+
         } catch (Exception e){
             e.printStackTrace();
             throw new IOException("GET Repeat "+ e.getMessage());
         }
     }
+
+    /**
+     * @param id
+     * @param trackId
+     * @param start
+     * @param end
+     * @return
+     * @throws Exception
+     */
+    public List<Map<String, Object>> getRepeat(String query, int id, String trackId, long start, long end) throws Exception {
+        try {
+            query = query + ")";
+                String GET_REPEAT = "SELECT repeat_feature_id as id,seq_region_start as start, seq_region_end as end,seq_region_strand as strand, repeat_start as repeatstart,repeat_end as repeatend, score as score " +
+                        "FROM repeat_feature " +
+                        "WHERE seq_region_id  " + query + " AND analysis_id = " + trackId +
+                        " order by seq_region_start";
+
+                return template.queryForList(GET_REPEAT, new Object[]{});
+
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new IOException("GET Repeat "+ e.getMessage());
+        }
+    }
+
 
     /**
      * @param start_pos
@@ -292,28 +337,31 @@ public class SQLRepeatDAO implements RepeatStore {
      * @return
      * @throws Exception
      */
-    public JSONArray recursiveRepeat(int start_pos, int id, String trackId, long start, long end, int delta) throws Exception {
+    public JSONArray recursiveRepeat(String query, int start_pos, int id, String trackId, long start, long end, int delta) throws Exception {
         try {
             JSONArray assemblyTracks = new JSONArray();
-            List<Map<String, Object>> maps_one = template.queryForList(GET_Assembly_for_reference, new Object[]{id});
-            if (maps_one.size() > 0) {
-                for (int j = 0; j < maps_one.size(); j++) {
-                    List<Map<String, Object>> maps_two = template.queryForList(GET_REPEAT_SIZE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId});
-                    JSONObject eachTrack_temp = new JSONObject();
-                    if (maps_two.size() > 0) {
-                        List<Integer> ends = new ArrayList<Integer>();
-                        ends.add(0, 0);
-                        long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-                        long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-                        assemblyTracks.addAll(getRepeatLevel(start_pos + Integer.parseInt(maps_one.get(j).get("asm_start").toString()), getRepeat(Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end), start, end, delta));
-                    } else {
-                        long track_start = start - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-                        long track_end = end - Integer.parseInt(maps_one.get(j).get("asm_start").toString());
-                        List<Integer> ends = new ArrayList<Integer>();
-                        ends.add(0, 0);
-                        assemblyTracks.addAll(recursiveRepeat(start_pos + Integer.parseInt(maps_one.get(j).get("asm_start").toString()), Integer.parseInt(maps_one.get(j).get("cmp_seq_region_id").toString()), trackId, track_start, track_end, delta));
-                    }
 
+            String new_query = query + ")";
+
+
+            String GET_REPEAT_SIZE_SLICE_IN = "SELECT COUNT(repeat_feature_id) FROM repeat_feature where seq_region_id " +
+                    new_query +
+                    " and analysis_id = " + trackId;
+
+
+            int size = template.queryForInt(GET_REPEAT_SIZE_SLICE_IN, new Object[]{});
+            if (size > 0) {
+
+                assemblyTracks.addAll(getRepeatLevel(start_pos, getRepeat(query, 0, trackId, 0, 0), start, end, delta, id));
+            } else {
+                String SQL = "SELECT count(cmp_seq_region_id) from assembly where asm_seq_region_id " + query + ")";
+                log.info("\n\n countquery = " + SQL);
+                int count = template.queryForInt(SQL, new Object[]{});
+
+                if (count > 0) {
+                    query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id " + query + ")";
+                    log.info("\n\n new query = " + query);
+                    assemblyTracks.addAll(recursiveRepeat(query, start_pos, id, trackId, 0, 0, delta));
                 }
             }
 
@@ -333,18 +381,25 @@ public class SQLRepeatDAO implements RepeatStore {
      * @param delta
      * @return
      */
-    public JSONArray getRepeatLevel(int start_add, List<Map<String, Object>> maps, long start, long end, int delta) throws Exception {
+    public JSONArray getRepeatLevel(int start_add, List<Map<String, Object>> maps, long start, long end, int delta, long id) throws Exception {
+
         List<Integer> ends = new ArrayList<Integer>();
         JSONObject eachTrack_temp = new JSONObject();
         ends.add(0, 0);
         JSONArray trackList = new JSONArray();
         for (Map<String, Object> map : maps) {
+            String GET_HIT_addition = "SELECT if(seq_region_id =  "+id+", 0 , get_ref_coord(seq_region_id,  "+id+"))  AS start "+
+                    "FROM repeat_feature " +
+                    "WHERE repeat_feature_id = "+map.get("id");
+
+            int start_addition =  template.queryForInt(GET_HIT_addition, new Object[]{});
+
             int start_pos = start_add + Integer.parseInt(map.get("start").toString());
             int end_pos = start_add + Integer.parseInt(map.get("end").toString());
-            if (start_pos >= start && end_pos <= end || start_pos <= start && end_pos >= end || end_pos >= start && end_pos <= end || start_pos >= start && start_pos <= end) {
+              if (start_addition+start >= start && start_addition+end <= end || start_addition+start <= start && start_addition+end >= end || start_addition+end >= start && start_addition+end <= end || start_addition+start >= start && start_addition+start <= end) {
                 eachTrack_temp.put("id", map.get("id"));
-                eachTrack_temp.put("start", start_pos);
-                eachTrack_temp.put("end", end_pos);
+                eachTrack_temp.put("start", start_addition+start_pos);
+                eachTrack_temp.put("end", start_addition+end_pos);
                 eachTrack_temp.put("flag", false);
                 eachTrack_temp.put("strand", map.get("strand"));
                 eachTrack_temp.put("repeatstart", start_add + Integer.parseInt(map.get("repeatstart").toString()));
@@ -372,6 +427,7 @@ public class SQLRepeatDAO implements RepeatStore {
      */
     public JSONArray processRepeat(List<Map<String, Object>> maps, long start, long end, int delta, int id, String trackId) throws Exception {
         try {
+
             JSONArray trackList = new JSONArray();
 
             List<Integer> ends = new ArrayList<Integer>();
@@ -380,10 +436,11 @@ public class SQLRepeatDAO implements RepeatStore {
             if (template.queryForObject(GET_REPEAT_SIZE, new Object[]{id, trackId}, Integer.class) > 0) {
                 if (maps.size() > 0) {
                     ends.add(0, 0);
-                    trackList = getRepeatLevel(0, maps, start, end, delta);
+                    trackList = getRepeatLevel(0, maps, start, end, delta, id);
                 }
             } else {
-                trackList = recursiveRepeat(0, id, trackId, start, end, delta);
+                String query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id = " + id + " and ((asm_start >= "+start+" AND asm_end <= "+end+") OR (asm_start <= "+start+" AND asm_end >= "+end+") OR (asm_end >= "+start+"  AND  asm_end <= "+end+") OR (asm_start >= "+start+" AND asm_start <= "+end+"))";
+                trackList = recursiveRepeat(query, 0, id, trackId, start, end, delta);
             }
             int length = template.queryForObject(GET_length_from_seqreg_id, new Object[]{id}, Integer.class);
             int countrepeat = countRepeat(id, trackId, 0, length);

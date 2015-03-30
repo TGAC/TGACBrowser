@@ -81,7 +81,10 @@ public class SQLAssemblyDAO implements AssemblyStore {
     public static final String GET_Assembly_for_reference_SLICE = "SELECT * FROM assembly where asm_seq_region_id =? AND ( (asm_start >= ? AND asm_end <= ?) OR (asm_start <= ? AND asm_end >= ?) OR (asm_end >= ? AND asm_end <= ?) OR (asm_start >= ? AND asm_start <= ?));";
 
     public static final String COUNT_Assembly_for_reference = "SELECT count(asm_seq_region_id) FROM assembly where asm_seq_region_id =?";
-    public static final String GET_ASSEMBLY_SIZE_SLICE = "SELECT COUNT(a.asm_seq_region_id) FROM assembly a, seq_region s WHERE a.asm_seq_region_id = ? AND a.cmp_seq_region_id = s.seq_region_id AND s.coord_system_id = ? AND ( (a.asm_start >= ? AND a.asm_end <= ?) OR (a.asm_start <= ? AND a.asm_end >= ?) OR (a.asm_end >= ? AND a.asm_end <= ?) OR (a.asm_start >= ? AND a.asm_start <= ?))";
+    public static final String GET_ASSEMBLY_SIZE_SLICE = "SELECT COUNT(a.asm_seq_region_id) " +
+            "FROM assembly a, seq_region s " +
+            "WHERE a.asm_seq_region_id = ? AND a.cmp_seq_region_id = s.seq_region_id AND s.coord_system_id = ? AND ((a.asm_start >= ? AND a.asm_end <=?) OR (a.asm_start <= ? AND a.asm_end >= ?) OR (a.asm_end >= ? AND a.asm_start <= ?) OR (a.asm_start <= ? AND a.asm_end >=?)) ";
+
     public static final String GET_Coord_systemid_FROM_ID = "SELECT coord_system_id FROM seq_region WHERE seq_region_id = ?";
     public static final String GET_ASSEMBLY_SIZE_SLICE_for_ref = "SELECT count(a.asm_seq_region_id) FROM assembly a, seq_region s where a.asm_seq_region_id = ? and a.cmp_seq_region_id = s.seq_region_id and  a.asm_start >= ? and a.asm_start <= ?";
     public static final String GET_Assembly_for_reference_SIZE_SLICE = "SELECT * FROM assembly a, seq_region s WHERE a.asm_seq_region_id = ? AND a.cmp_seq_region_id = s.seq_region_id AND ( (a.asm_start >= ? AND a.asm_end <=?) OR (a.asm_start <= ? AND a.asm_end >= ?) OR (a.asm_end >= ? AND a.asm_start <= ?) OR (a.asm_start <= ? AND a.asm_end >= ?))";
@@ -445,7 +448,7 @@ public class SQLAssemblyDAO implements AssemblyStore {
             if (hit_size == 0) {
                 String query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id = " + id+" " +
 //                        "and asm_start >= "+ start +" and asm_end <= "+end;
-                " and ((asm_start >= "+ start +" and asm_end <= "+end+") or (asm_start <= "+start+" AND asm_end >= "+end+") OR (asm_end >= "+end+" AND asm_start <= "+end+") OR (asm_start <= "+start+" AND asm_end >= "+start+")) ";
+                " and ((asm_start >= "+ start +" and asm_end <= "+end+") or (asm_start <= "+start+" AND asm_end >= "+end+") OR (asm_end >= "+start+" AND asm_end <= "+end+") OR (asm_start >= "+start+" AND asm_start <= "+end+")) ";
 
                 hit_size = countRecursiveAssembly(query, id, trackId, start, end);
             }
@@ -486,8 +489,13 @@ public class SQLAssemblyDAO implements AssemblyStore {
                 List<Map<String, Object>> maps = template.queryForList(GET_Assembly, new Object[]{id, trackId, start, end, start, end, end, end, start, start});
                 trackList = getAssemblyLevel(0, maps, delta);
             } else {
-                String query = "in (select cmp_seq_region_id from assembly where asm_seq_region_id = "+id+" and " +
-                        "((asm_start >= "+ start +" and asm_end <= "+end+") or (asm_start <= "+start+" AND asm_end >= "+end+") OR (asm_end >= "+end+" AND asm_start <= "+end+") OR (asm_start <= "+start+" AND asm_end >= "+start+")) ";
+//                String query = "in (select cmp_seq_region_id from assembly where asm_seq_region_id = "+id+" and " +
+//                        "((asm_start >= "+ start +" and asm_end <= "+end+") or (asm_start <= "+start+" AND asm_end >= "+end+") OR (asm_end >= "+end+" AND asm_start <= "+end+") OR (asm_start <= "+start+" AND asm_end >= "+start+")) ";
+
+
+                String query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id = " + id + " and ((asm_start >= "+start+" AND asm_end <= "+end+") OR (asm_start <= "+start+" AND asm_end >= "+end+") OR (asm_end >= "+start+"  AND  asm_end <= "+end+") OR (asm_start >= "+start+" AND asm_start <= "+end+"))";
+
+
                 trackList = recursiveAssembly(query, 0, id, trackId, delta, start, end);
             }
 
@@ -639,10 +647,6 @@ public class SQLAssemblyDAO implements AssemblyStore {
 
             List<Map<String, Object>> maps_two = template.queryForList(query, new Object[]{});
 
-
-
-
-
             for (Map map_temp : maps_two) {
                 int asm_start_pos = Integer.parseInt(map_temp.get("asm_start").toString());
                 int asm_end_pos = Integer.parseInt(map_temp.get("asm_end").toString());
@@ -651,12 +655,9 @@ public class SQLAssemblyDAO implements AssemblyStore {
                 eachTrack_temp.put("start", start + asm_start_pos - 1);
                 eachTrack_temp.put("end", start + asm_end_pos - 1);
                 eachTrack_temp.put("flag", false);
-
                 eachTrack_temp.put("layer", util.stackLayerInt(ends, start + asm_start_pos - 1, delta, start + asm_end_pos - 1));
                 ends = util.stackLayerList(ends, start + asm_start_pos - 1, delta, start + asm_end_pos - 1);
-
                 eachTrack_temp.put("desc", map_temp.get("name"));
-//                eachTrack_temp.put("colour", map_temp.get("attrib"));
                 assemblyTracks.add(eachTrack_temp);
             }
 
