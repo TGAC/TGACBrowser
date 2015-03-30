@@ -77,7 +77,8 @@ public class SQLGeneDAO implements GeneStore {
 
 
     public static final String GET_length_from_seqreg_id = "SELECT length FROM seq_region where seq_region_id =?";
-    public static final String GET_Gene_SIZE_SLICE = "SELECT COUNT(gene_id) FROM gene where seq_region_id =? and analysis_id = ? and seq_region_start >= ? and seq_region_start <= ?";
+//    public static final String GET_Gene_SIZE_SLICE = "SELECT COUNT(gene_id) FROM gene where seq_region_id =? and analysis_id = ? and seq_region_start >= ? and seq_region_start <= ?";
+    public static final String GET_Gene_SIZE_SLICE = "SELECT COUNT(gene_id) FROM gene where seq_region_id =? and analysis_id = ? and ((seq_region_start >= ? AND seq_region_end <= ?) OR (seq_region_start <= ? AND seq_region_end >= ?) OR (seq_region_end >= ?  AND  seq_region_end <= ?) OR (seq_region_start <= ? AND seq_region_start <= ?))";
     public static final String GET_GENE_SIZE = "SELECT COUNT(gene_id) FROM gene where seq_region_id =? and analysis_id = ?";
     public static final String GET_Gene_name_from_ID = "SELECT description FROM gene where gene_id =?";
     public static final String GET_Transcript_name_from_ID = "SELECT description FROM transcript where transcript_id =?";
@@ -189,7 +190,7 @@ public class SQLGeneDAO implements GeneStore {
                     if (track_end > asm_end) {
                         track_end = asm_end;
                     }
-                    int no_of_tracks = template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end}, Integer.class);
+                    int no_of_tracks = template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end,track_start, track_end,track_start, track_end, track_start, track_end}, Integer.class);
                     if (no_of_tracks > 0) {
                         List<Integer> ends = new ArrayList<Integer>();
                         ends.add(0, 0);
@@ -242,12 +243,12 @@ public class SQLGeneDAO implements GeneStore {
             JSONArray trackList = new JSONArray();
             long from = start;
             long to = 0;
-            int no_of_tracks = template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{id, trackId, start, end}, Integer.class);
+            int no_of_tracks = template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{id, trackId, start, end,start, end,start, end,start, end}, Integer.class);
             if (no_of_tracks > 0) {
                 for (int i = 1; i <= 200; i++) {
                     JSONObject eachTrack = new JSONObject();
                     to = start + (i * (end - start) / 200);
-                    no_of_tracks = template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{id, trackId, from, to}, Integer.class);
+                    no_of_tracks = template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{id, trackId, from, to,from, to,from, to,from, to}, Integer.class);
                     eachTrack.put("start", start_pos + from);
                     eachTrack.put("end", start_pos + to);
                     eachTrack.put("graph", no_of_tracks);
@@ -282,13 +283,13 @@ public class SQLGeneDAO implements GeneStore {
             JSONArray trackList = new JSONArray();
             long from = start;
             long to;
-            int no_of_tracks = template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{id, trackId, from, end}, Integer.class);
+            int no_of_tracks = template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{id, trackId, from, end,from, end,from, end,from, end}, Integer.class);
 
             if (no_of_tracks > 0) {
                 for (int i = 1; i <= 200; i++) {
                     JSONObject eachTrack = new JSONObject();
                     to = start + (i * (end - start) / 200);
-                    no_of_tracks = template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{id, trackId, from, to}, Integer.class);
+                    no_of_tracks = template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{id, trackId, from, to,from, to,from, to,from, to}, Integer.class);
                     eachTrack.put("start", from);
                     eachTrack.put("end", to);
                     eachTrack.put("graph", no_of_tracks);
@@ -369,7 +370,7 @@ public class SQLGeneDAO implements GeneStore {
         log.info("\n\n\n countGenes " + trackId + " " + id);
 
         try {
-            int gene_size = template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{id, trackId, start, end}, Integer.class);
+            int gene_size = template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{id, trackId, start, end,start, end,start, end,start, end}, Integer.class);
             if (gene_size == 0) {
                 String query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id = " + id;
                 gene_size = countRecursiveGene(query, id, trackId, start, end);
