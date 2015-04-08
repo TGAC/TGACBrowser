@@ -564,7 +564,7 @@ public class SQLGeneDAO implements GeneStore {
                 "WHERE g.gene_id = "+new_genes.get(j).get("gene_id");
 
 
-                int start_addition =  template.queryForInt(GET_Gene_addition, new Object[]{});
+                int start_addition =  0;//template.queryForInt(GET_Gene_addition, new Object[]{});
 
                 for (int i = 0; i < genes.size(); i++) {
                     if (!transcript_id.equalsIgnoreCase(genes.get(i).get("transcript_id").toString())) {
@@ -595,10 +595,10 @@ public class SQLGeneDAO implements GeneStore {
                         ends = util.stackLayerList(ends, start_pos, delta, end_pos);
 
                         eachTrack.put("domain", 0);
-                        domains = getTranscriptsGO(genes.get(i).get("transcript_id").toString());
-                        for (Map domain : domains) {
-                            eachTrack.put("domain", domain.get("value"));
-                        }
+//                        domains = getTranscriptsGO(genes.get(i).get("transcript_id").toString());
+//                        for (Map domain : domains) {
+//                            eachTrack.put("domain", domain.get("value"));
+//                        }
                         eachTrack.put("flag", false);
                     }
                     if (!gene_id.equalsIgnoreCase(genes.get(i).get("gene_id").toString())) {
@@ -628,10 +628,10 @@ public class SQLGeneDAO implements GeneStore {
                         ends_gene = util.stackLayerList(ends_gene, start_pos, delta, end_pos);
 
                         eachGene.put("domain", 0);
-                        domains = getGenesAttribs(genes.get(i).get("gene_id").toString());
-                        for (Map domain : domains) {
-                            eachGene.put("domain", domain.get("value"));
-                        }
+//                        domains = getGenesAttribs(genes.get(i).get("gene_id").toString());
+//                        for (Map domain : domains) {
+//                            eachGene.put("domain", domain.get("value"));
+//                        }
                         if (lastsize < 2 && layer > 2) {
                             layer = 1;
                         }
@@ -645,9 +645,12 @@ public class SQLGeneDAO implements GeneStore {
                     eachExon.put("id", genes.get(i).get("exon_id"));
                     eachExon.put("start", start_addition+start_add + Integer.parseInt(genes.get(i).get("exon_start").toString()));
                     eachExon.put("end", start_addition+start_add + Integer.parseInt(genes.get(i).get("exon_end").toString()));
-//                    eachTrack.put("transcript_start", start_addition+Integer.parseInt(genes.get(i).get("translation_start").toString()));
-//                    eachTrack.put("transcript_end", start_addition+Integer.parseInt(genes.get(i).get("translation_start").toString()));
-
+                    if(genes.get(i).get("translation_start") != null){
+                        eachTrack.put("transcript_start", start_addition+Integer.parseInt(genes.get(i).get("translation_start").toString()));
+                    }
+                    if(genes.get(i).get("translation_end") != null){
+                        eachTrack.put("transcript_end", start_addition+Integer.parseInt(genes.get(i).get("translation_end").toString()));
+                    }
                     exonList.add(eachExon);
 
                     lastsize = thissize;
