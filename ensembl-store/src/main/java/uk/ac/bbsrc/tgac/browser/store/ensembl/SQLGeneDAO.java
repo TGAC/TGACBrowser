@@ -78,7 +78,7 @@ public class SQLGeneDAO implements GeneStore {
 
     public static final String GET_length_from_seqreg_id = "SELECT length FROM seq_region where seq_region_id =?";
 //    public static final String GET_Gene_SIZE_SLICE = "SELECT COUNT(gene_id) FROM gene where seq_region_id =? and analysis_id = ? and seq_region_start >= ? and seq_region_start <= ?";
-    public static final String GET_Gene_SIZE_SLICE = "SELECT COUNT(gene_id) FROM gene where seq_region_id =? and analysis_id = ? and ((seq_region_start >= ? AND seq_region_end <= ?) OR (seq_region_start <= ? AND seq_region_end >= ?) OR (seq_region_end >= ?  AND  seq_region_end <= ?) OR (seq_region_start <= ? AND seq_region_start <= ?))";
+    public static final String GET_Gene_SIZE_SLICE = "SELECT COUNT(gene_id) FROM gene where seq_region_id =? and analysis_id = ? and ((seq_region_start >= ? AND seq_region_end <= ?) OR (seq_region_start <= ? AND seq_region_end >= ?) OR (seq_region_end >= ?  AND  seq_region_end <= ?) OR (seq_region_start >= ? AND seq_region_start <= ?))";
     public static final String GET_GENE_SIZE = "SELECT COUNT(gene_id) FROM gene where seq_region_id =? and analysis_id = ?";
     public static final String GET_Gene_name_from_ID = "SELECT description FROM gene where gene_id =?";
     public static final String GET_Transcript_name_from_ID = "SELECT description FROM transcript where transcript_id =?";

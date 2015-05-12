@@ -440,11 +440,11 @@ public class SQLDafDAO implements DafStore {
                         "FROM dna_align_feature " +
                         "WHERE dna_align_feature_id = "+map_temp.get("id");
 
-                int start_addition =  template.queryForInt(GET_HIT_addition, new Object[]{});
+                int start_addition =  0;//template.queryForInt(GET_HIT_addition, new Object[]{});
 
 
-                int track_start = start_pos + Integer.parseInt(map_temp.get("start").toString()) - 1;
-                int track_end = start_pos + Integer.parseInt(map_temp.get("end").toString()) - 1;
+                int track_start = start_pos + Integer.parseInt(map_temp.get("start").toString()) ;
+                int track_end = start_pos + Integer.parseInt(map_temp.get("end").toString());
                 if (start_addition+track_start >= start && start_addition+track_end <= end || start_addition+track_start <= start && start_addition+track_end >= end || start_addition+track_end >= start && start_addition+track_end <= end || start_addition+track_start >= start && start_addition+track_start <= end) {
                     eachTrack_temp.put("id", map_temp.get("id"));
                     eachTrack_temp.put("start", start_addition+track_start);

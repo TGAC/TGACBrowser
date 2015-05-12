@@ -31,7 +31,7 @@ function trackStatement(trackClass, track, startposition, stopposition, a, top, 
 }
 
 function getStart(track_start) {
-    return (track_start - newStart_temp) * parseFloat(maxLen) / (newEnd_temp - newStart_temp) + parseFloat(maxLen) / 2;
+    return (track_start - newStart_temp) * parseFloat(maxLen) / ((newEnd_temp - newStart_temp)+1) + parseFloat(maxLen) / 2;
 }
 
 function toogleLabel(trackName) {
@@ -431,8 +431,8 @@ function dispGenes(div, track, expand, className) {
                 if (max < top) {
                     max = top;
                 }
-                var startposition = (gene_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                var stopposition = (gene_stop - gene_start + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                var startposition = (gene_start - newStart_temp) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp)+1) + parseFloat(maxLentemp) / 2;
+                var stopposition = (gene_stop - gene_start + 1) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp)+1);
 
                 var clone_new_div= new_div.cloneNode(true)
 
@@ -519,8 +519,8 @@ function dispGenes(div, track, expand, className) {
                     var top = genes[len].transcript[transcript_len].layer * 20 + 15;
 
 
-                    var startposition = (gene_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                    var stopposition = (gene_stop - gene_start) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                    var startposition = (gene_start - newStart_temp) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp)+1) + parseFloat(maxLentemp) / 2;
+                    var stopposition = (gene_stop - gene_start) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp)+1);
 
                     var clone_new_div= new_div.cloneNode(true)
 
@@ -697,8 +697,8 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
 
             if (transcript_start && transcript_end) {
                 if (exon_start > transcript_end && exon_stop > transcript_end) {
-                    startposition = ((exon_start - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                    stopposition = (exon_stop - exon_start ) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                    startposition = ((exon_start - newStart_temp)) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp)+1) + parseFloat(maxLentemp) / 2;
+                    stopposition = (exon_stop - exon_start ) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp)+1);
 
                     var clone_utr_div= new_utr_div.cloneNode(true)
 
@@ -724,8 +724,8 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
                     last = current;
                 }
                 else if (exon_start < transcript_start && exon_stop < transcript_start) {
-                    startposition = ((exon_start - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                    stopposition = (exon_stop - exon_start) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                    startposition = ((exon_start - newStart_temp)) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp)+1) + parseFloat(maxLentemp) / 2;
+                    stopposition = (exon_stop - exon_start) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp)+1);
 
                     var clone_utr_div= new_utr_div.cloneNode(true)
 
@@ -750,8 +750,8 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
                     last = current;
                 }
                 else if (exon_start < transcript_start && exon_stop > transcript_end) {
-                    startposition = ((exon_start - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                    stopposition = (transcript_start - exon_start) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                    startposition = ((exon_start - newStart_temp)) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp)+1) + parseFloat(maxLentemp) / 2;
+                    stopposition = (transcript_start - exon_start) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp)+1);
 
                     var clone_utr_div= new_utr_div.cloneNode(true)
 
@@ -773,8 +773,8 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
                     }
 
 
-                    startposition = ((transcript_end - newStart_temp) - 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                    stopposition = (exon_stop - transcript_end + 1) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                    startposition = ((transcript_end - newStart_temp) - 1) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp)+1) + parseFloat(maxLentemp) / 2;
+                    stopposition = (exon_stop - transcript_end + 1) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp)+1);
 
                     var clone_utr_div= new_utr_div.cloneNode(true)
 
@@ -796,8 +796,8 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
                     }
 
 
-                    startposition = ((transcript_start - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                    stopposition = (transcript_end - transcript_start ) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                    startposition = ((transcript_start - newStart_temp)) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp)+1) + parseFloat(maxLentemp) / 2;
+                    stopposition = (transcript_end - transcript_start ) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp)+1);
                     jQuery("<div>").attr({
                         'class': trackClass,
                         'style': "TOP:" + top + "px; LEFT:" + startposition + "px; width:" + (stopposition) + "px"
@@ -819,8 +819,8 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
                     last = current;
                 }
                 else if (exon_stop > transcript_start && exon_start < transcript_start) {
-                    startposition = ((exon_start - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                    stopposition = (transcript_start - exon_start) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                    startposition = ((exon_start - newStart_temp)) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp)+1) + parseFloat(maxLentemp) / 2;
+                    stopposition = (transcript_start - exon_start) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp)+1);
 
                     var clone_utr_div= new_utr_div.cloneNode(true)
 
@@ -829,8 +829,8 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
                     track_div.appendChild(clone_utr_div)
 
 
-                    startposition = ((transcript_start - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                    stopposition = (exon_stop - transcript_start ) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                    startposition = ((transcript_start - newStart_temp)) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp)+1) + parseFloat(maxLentemp) / 2;
+                    stopposition = (exon_stop - transcript_start ) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp)+1);
 
 
                     var clone_track_div= new_track_div.cloneNode(true)
@@ -854,8 +854,8 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
                     last = current;
                 }
                 else if (exon_stop > transcript_end && exon_start < transcript_end) {
-                    startposition = ((transcript_end - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                    stopposition = (exon_stop - transcript_end) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                    startposition = ((transcript_end - newStart_temp)) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp)+1) + parseFloat(maxLentemp) / 2;
+                    stopposition = (exon_stop - transcript_end) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp)+1);
 
 
                     var clone_utr_div= new_utr_div.cloneNode(true)
@@ -878,8 +878,8 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
                     }
 
 
-                    startposition = ((exon_start - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                    stopposition = (transcript_end - exon_start) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                    startposition = ((exon_start - newStart_temp)) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp)+1) + parseFloat(maxLentemp) / 2;
+                    stopposition = (transcript_end - exon_start) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp)+1);
 
 
                     var clone_track_div= new_track_div.cloneNode(true)
@@ -906,8 +906,8 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
                     last = current;
                 }
                 else {
-                    startposition = ((exon_start - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                    stopposition = (exon_stop - exon_start) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                    startposition = ((exon_start - newStart_temp)) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp)+1) + parseFloat(maxLentemp) / 2;
+                    stopposition = (exon_stop - exon_start) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp)+1);
 
 
                     var clone_track_div= new_track_div.cloneNode(true)
@@ -936,8 +936,8 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
 //
             }
             else {
-                startposition = ((exon_start - newStart_temp)) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                stopposition = (exon_stop - exon_start) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                startposition = ((exon_start - newStart_temp)) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp)+1) + parseFloat(maxLentemp) / 2;
+                stopposition = (exon_stop - exon_start) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp)+1);
 
 
                 var clone_track_div= new_track_div.cloneNode(true)
@@ -1113,8 +1113,8 @@ function dispTrack(div, trackName, className) {
 
 
 
-                var startposition = (track_start - newStart_temp) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen_temp) / 2;
-                var stopposition = (track_stop - track_start + 1) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp);
+                var startposition = (track_start - newStart_temp) * parseFloat(maxLen_temp) / ((newEnd_temp - newStart_temp)+1) + parseFloat(maxLen_temp) / 2;
+                var stopposition = (track_stop - track_start + 1) * parseFloat(maxLen_temp) / ((newEnd_temp - newStart_temp)+1);
 
                 if (stopposition < 2) {
                     stopposition = 2;
@@ -1316,8 +1316,8 @@ function dispVCF(div, trackName, className) {
                     else {
                         modi_style = '';
                     }
-                    var startposition = (track_start - newStart_temp) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen_temp) / 2;
-                    var stopposition = (track_stop - track_start + 1) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp);
+                    var startposition = (track_start - newStart_temp) * parseFloat(maxLen_temp) / ((newEnd_temp - newStart_temp)+1) + parseFloat(maxLen_temp) / 2;
+                    var stopposition = (track_stop - track_start + 1) * parseFloat(maxLen_temp) / ((newEnd_temp - newStart_temp)+1);
 
                     if (stopposition < 2) {
                         stopposition = 2;
@@ -1364,8 +1364,8 @@ function dispVCF(div, trackName, className) {
                     else {
                         modi_style = '';
                     }
-                    var startposition = (track_start - newStart_temp) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp) + parseFloat(maxLen_temp) / 2;
-                    var stopposition = (track_stop - track_start + 1) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp);
+                    var startposition = (track_start - newStart_temp) * parseFloat(maxLen_temp) / ((newEnd_temp - newStart_temp)+1) + parseFloat(maxLen_temp) / 2;
+                    var stopposition = (track_stop - track_start + 1) * parseFloat(maxLen_temp) / ((newEnd_temp - newStart_temp)+1);
 
                     if (stopposition < 2) {
                         stopposition = 2;
@@ -1426,28 +1426,28 @@ function dispCigarLine(cigars, start, top) {
             }
             else if (key == "I") {
                 trackClass = "insert";
-                startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                stopposition = (length) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp)+1) + parseFloat(maxLentemp) / 2;
+                stopposition = (length) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp)+1);
                 track_html += trackHTML(startposition, stopposition, top, trackClass);
                 cigar_pos = parseInt(cigar_pos) + parseInt(length)
             } else if (key == "N") {
                 trackClass = "skip";
-                startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                stopposition = (length) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp)+1) + parseFloat(maxLentemp) / 2;
+                stopposition = (length) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp)+1);
                 track_html += trackHTML(startposition, stopposition, top, trackClass);
                 cigar_pos = parseInt(cigar_pos) + parseInt(length)
             }
             else if (key == "D") {
                 trackClass = "delete";
-                startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+                startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp)+1) + parseFloat(maxLentemp) / 2;
                 stopposition = 1
                 track_html += trackHTML(startposition, stopposition, top, trackClass);
             }
 
             else if (key == "X") {
                 trackClass = "mismatch";
-                startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
-                stopposition = (length) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp)+1) + parseFloat(maxLentemp) / 2;
+                stopposition = (length) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp)+1);
                 track_html += trackHTML(startposition, stopposition, top, trackClass);
                 cigar_pos = parseInt(cigar_pos) + parseInt(length)
             }
@@ -1500,12 +1500,12 @@ function dispCigar(cigars, start, top) {
         for (var i = 0; i < cigar.length; i++) {
             var cigar_start = parseInt(cigar[i].split(":")[0]) + parseInt(start);
             var cigar_stop = cigar[i].split(":")[1];
-            var startposition = (cigar_start - newStart_temp) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp) + parseFloat(maxLentemp) / 2;
+            var startposition = (cigar_start - newStart_temp) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp)+1) + parseFloat(maxLentemp) / 2;
 
 
             var stopposition;
             if (key == "M" || key == "I" || key == "X" || key == "=") {
-                stopposition = (cigar_stop) * parseFloat(maxLentemp) / (newEnd_temp - newStart_temp);
+                stopposition = (cigar_stop) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp)+1);
             }
             else {
                 stopposition = 1;
