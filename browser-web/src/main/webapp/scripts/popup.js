@@ -90,7 +90,7 @@ function newpopup(track, i, j) {
         jQuery("#FASTAme").html('<span title="Fasta" class="ui-button ui-fasta" onclick=fetchFasta(' + window[track][i].transcript[j].start + ',' + window[track][i].transcript[j].end + ",\"" + track + "\",\"" + i + "\",\"" + j + '\");></span>');
         jQuery("#BLASTme").html('<span title="Blast" class="ui-button ui-blast" onclick=preBlast(' + window[track][i].transcript[j].start + ',' + window[track][i].transcript[j].end + ',' + '\"#popup\");></span>');
         jQuery("#ZoomHere").html('<span title="Zoom Here" class="ui-button ui-icon ui-icon-zoomin" onclick=zoomHere(' + window[track][i].transcript[j].start + ',' + window[track][i].transcript[j].end + ');></span>');
-        jQuery("#EditDescription").html('<span title="Edit" class="ui-button ui-icon ui-icon-pencil" onclick=showEditDesc(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
+        jQuery("#EditDescription").html('<span title="Edit" class="ui-button ui-icon ui-icon-pencil" onclick=showSNPs(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
         jQuery("#deleteTrack").html('<span title="Remove" class="ui-button ui-icon ui-icon-trash" onclick=deleteTrack(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
         jQuery("#flagTrack").html('<span title="Flag" class="ui-button ui-icon ui-icon-flag" onclick=flagTrack(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
         jQuery("#Linkme").html("<a target='_blank' href='" + jQuery("#linkLocation").html() + "" + window[track][i].desc + "'> <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\"></span></a>");
@@ -117,7 +117,7 @@ function newpopup(track, i, j) {
 
         }
         jQuery("#ZoomHere").html('<span title="Zoom Here" class="ui-button ui-icon ui-icon-zoomin" onclick=zoomHere(' + window[track][i].start + ',' + endposition + ');></span>');
-        jQuery("#EditDescription").html('<span title="Edit" class="ui-button ui-icon ui-icon-pencil" onclick=showEditDesc(\"' + track + '\",\'' + i + '\');></span>');
+        jQuery("#EditDescription").html('<span title="Edit" class="ui-button ui-icon ui-icon-pencil" onclick=showOtherSNPs(\"' + track + '\",\'' + i + '\');></span>');
         jQuery("#deleteTrack").html('<span title="Remove" class="ui-button ui-icon ui-icon-trash" onclick=deleteTrack(\"' + track + '\",\'' + i + '\');></span>');
         jQuery("#flagTrack").html('<span title="Flag" class="ui-button ui-icon ui-icon-flag" onclick=flagTrack(\"' + track + '\",\'' + i + '\');></span>');
         if (window['track_list' + track].id.toString().indexOf("cs") >= 0) {
@@ -385,6 +385,58 @@ function editDesc(track, i, j) {
     removePopup();
     backup_tracks(track, i);
 }
+
+function showSNPs(track, i, j) {
+
+    jQuery.colorbox({
+        width: "90%",
+        height: "100%",
+        html: "<div id=\"SNPs\"><img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'></div>"});
+
+
+
+
+    var start = window[track][i].transcript[j].start;
+    var end = window[track][i].transcript[j].end;
+    Fluxion.doAjax(
+        'dnaSequenceService',
+        'getSNPs',
+        {'id': seqregname,'start': start, 'end': end, 'coord':coord, 'url': ajaxurl},
+        {'doOnSuccess': function (json) {
+            var html_string = "<table>";
+            for (var k = 0; k < json.SNP.length; k++) {
+                html_string +=  "<tr><td>"+seqregname+"<td>"+json.SNP[i].seq_region_start+"<td>ref<td>"+json.SNP[i].cigar_line
+
+               html_string +=  "<tr><td>"+json.SNP[i].seq_region_start+"<td>"+json.SNP[i].seq_region_end+"<td>"+json.SNP[i].analysis_id+"<td>"+json.SNP[i].cigar_line
+            }
+            jQuery('#SNPs').html(html_string);
+        }
+        });
+
+    removePopup();
+}
+
+function showOtherSNPs(track, i) {
+
+    var start = window[track][i].start;
+    Fluxion.doAjax(
+        'dnaSequenceService',
+        'getOtherSNPs',
+        {'id': seqregname,'start': start, 'coord':coord, 'url': ajaxurl},
+        {'doOnSuccess': function (json) {
+            var html_string = "<table>";
+            for (var k = 0; k < json.SNP.length; k++) {
+                html_string +=  "<tr><td>"+json.SNP[i].seq_region_start+"<td>"+json.SNP[i].seq_region_end+"<td>"+json.SNP[i].analysis_id+"<td>"+json.SNP[i].cigar_line
+            }
+            jQuery('#SNPs').html(html_string);
+
+        }
+        });
+
+    removePopup();
+}
+
+
 
 // removes data from variables and display again
 function deleteTrack(track, i, j) {
