@@ -44,5 +44,7 @@ public interface DafStore extends Store {
     public JSONArray getHitGraph(int id, String trackId, long start, long end) throws IOException;
     public String getHitNamefromId(int hitID) throws IOException;
     public int countHit(int id, String trackId, long start, long end) throws Exception;
+    public JSONArray getallSNPsonGene(int query, String coord, long start, long end) throws Exception;
+    public JSONArray getallSNPsonSNP(int query, String coord, long start) throws Exception;
 
 }

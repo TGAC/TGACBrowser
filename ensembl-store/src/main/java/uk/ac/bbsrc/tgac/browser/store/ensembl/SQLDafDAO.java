@@ -509,4 +509,26 @@ public class SQLDafDAO implements DafStore {
             throw new Exception("processHit no result found " + e.getMessage());
         }
     }
+
+    public JSONArray getallSNPsonGene(int query, String coord, long start, long end) throws Exception{
+        JSONArray snpkList = new JSONArray();
+
+        String SQL_query = "select * from dna_align_feature where seq_region_id = ? and (seq_region_start >= ? and seq_region_end <= ?) and  analysis_id in (select analysis_id from analysis where logic_name like \"%SNP%\")";
+        List<Map<String, Object>> maps_one = template.queryForList(SQL_query, new Object[]{query, start, end});
+
+        snpkList.addAll(maps_one);
+        return snpkList;
+
+    }
+
+    public JSONArray getallSNPsonSNP(int query, String coord, long start) throws Exception{
+        JSONArray snpkList = new JSONArray();
+
+        String SQL_query = "select * from dna_align_feature where seq_region_id = ? and seq_region_start = ?";
+        List<Map<String, Object>> maps_one = template.queryForList(SQL_query, new Object[]{query, start});
+
+        snpkList.addAll(maps_one);
+        return snpkList;
+
+    }
 }

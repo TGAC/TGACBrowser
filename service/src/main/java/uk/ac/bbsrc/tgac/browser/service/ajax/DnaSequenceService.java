@@ -607,4 +607,54 @@ public class DnaSequenceService {
             return JSONUtils.SimpleJSONError(e.getMessage());
         }
     }
+
+
+    /**
+     *
+     * @param session an HTTPSession comes from ajax call
+     * @param json    json object with key parameters sent from ajax call
+     * @return        JSONObject with marker information
+     */
+    public JSONObject getSNPs(HttpSession session, JSONObject json) {
+        JSONObject response = new JSONObject();
+        String name = json.getString("id");
+        long start = json.getLong("start");
+        long end = json.getLong("end");
+        String coord = json.getString("coord");
+
+
+        try {
+            Integer query = sequenceStore.getSeqRegionWithCoord(name, coord);
+            response.put("SNP", dafStore.getallSNPsonGene(query, coord, start, end));
+
+            return response;
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return JSONUtils.SimpleJSONError(e.getMessage());
+        }
+    }
+
+    /**
+     *
+     * @param session an HTTPSession comes from ajax call
+     * @param json    json object with key parameters sent from ajax call
+     * @return        JSONObject with marker information
+     */
+    public JSONObject getOtherSNPs(HttpSession session, JSONObject json) {
+        JSONObject response = new JSONObject();
+        String name = json.getString("id");
+        long start = json.getLong("start");
+        String coord = json.getString("coord");
+
+
+        try {
+            Integer query = sequenceStore.getSeqRegionWithCoord(name, coord);
+            response.put("SNP", dafStore.getallSNPsonSNP(query, coord, start));
+
+            return response;
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return JSONUtils.SimpleJSONError(e.getMessage());
+        }
+    }
 }
