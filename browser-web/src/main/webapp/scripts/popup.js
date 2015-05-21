@@ -403,11 +403,11 @@ function showSNPs(track, i, j) {
         'getSNPs',
         {'id': seqregname,'start': start, 'end': end, 'coord':coord, 'url': ajaxurl},
         {'doOnSuccess': function (json) {
-            var html_string = "<table>";
+            var html_string = "<table width=100%><tr><td>#CHROM<td>POS<td>ID<td>REF<td>ALT<td>QUAL<td>FILTER<td>INFO";
             for (var k = 0; k < json.SNP.length; k++) {
-                html_string +=  "<tr><td>"+seqregname+"<td>"+json.SNP[i].seq_region_start+"<td>ref<td>"+json.SNP[i].cigar_line
+                html_string +=  "<tr><td>"+seqregname+"<td>"+json.SNP[k].seq_region_start+"<td>"+json.SNP[k].hit_name+"<td>ref<td>"+json.SNP[k].cigar_line+"<td>"+json.SNP[k].score+"<td><td>"+json.SNP[k].info
 
-               html_string +=  "<tr><td>"+json.SNP[i].seq_region_start+"<td>"+json.SNP[i].seq_region_end+"<td>"+json.SNP[i].analysis_id+"<td>"+json.SNP[i].cigar_line
+               //html_string +=  "<tr><td>"+json.SNP[i].seq_region_start+"<td>"+json.SNP[i].seq_region_end+"<td>"+json.SNP[i].analysis_id+"<td>"+json.SNP[i].cigar_line
             }
             jQuery('#SNPs').html(html_string);
         }
@@ -418,15 +418,22 @@ function showSNPs(track, i, j) {
 
 function showOtherSNPs(track, i) {
 
+    jQuery.colorbox({
+        width: "90%",
+        height: "100%",
+        html: "<div id=\"SNPs\"><img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'></div>"});
+
+
     var start = window[track][i].start;
     Fluxion.doAjax(
         'dnaSequenceService',
         'getOtherSNPs',
         {'id': seqregname,'start': start, 'coord':coord, 'url': ajaxurl},
         {'doOnSuccess': function (json) {
-            var html_string = "<table>";
+            var html_string = "<table width=100%><tr><td>#CHROM<td>POS<td>ID<td>REF<td>ALT<td>QUAL<td>FILTER<td>INFO";
             for (var k = 0; k < json.SNP.length; k++) {
-                html_string +=  "<tr><td>"+json.SNP[i].seq_region_start+"<td>"+json.SNP[i].seq_region_end+"<td>"+json.SNP[i].analysis_id+"<td>"+json.SNP[i].cigar_line
+                html_string +=  "<tr><td>"+json.SNP[k].seq_region_id+"<td>"+json.SNP[k].seq_region_start+"<td>"+json.SNP[k].hit_name+"<td>ref<td>"+json.SNP[k].cigar_line+"<td>"+json.SNP[k].score+"<td><td>"+json.SNP[k].info
+                //html_string +=  "<tr><td>"+json.SNP[i].seq_region_start+"<td>"+json.SNP[i].seq_region_end+"<td>"+json.SNP[i].analysis_id+"<td>"+json.SNP[i].cigar_line
             }
             jQuery('#SNPs').html(html_string);
 
