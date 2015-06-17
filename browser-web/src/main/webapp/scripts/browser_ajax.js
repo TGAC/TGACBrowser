@@ -388,6 +388,18 @@ function fastaFile(seq, start, end) {
 
 }
 
+function VCFFile(data) {
+    Fluxion.doAjax(
+        'fileService',
+        'saveVCF',
+        {'data': data, 'reference': seqregname, 'url': ajaxurl, 'location': path},
+        {'doOnSuccess': function (json) {
+            jQuery("#vcfdownload").html("<a href=" + json.link + " target = '_blank'>Download</a>");
+        }
+        });
+
+}
+
 function loadPreBlast(jsonid, refid) {
 
     var refseq = refid;

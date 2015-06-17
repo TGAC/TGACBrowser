@@ -313,7 +313,6 @@ public class SQLDafDAO implements DafStore {
     }
 
 
-
     //
 //    @Cacheable(cacheName = "hitCache",
 //             keyGenerator = @KeyGenerator(
@@ -339,10 +338,11 @@ public class SQLDafDAO implements DafStore {
         try {
             String GET_HIT = "SELECT dna_align_feature_id as id,cast(seq_region_start as signed) as start, cast(seq_region_end as signed) as end,seq_region_strand as strand,hit_start as hitstart, hit_end as hitend, hit_name as 'desc', cigar_line as cigarline " +
                     "FROM dna_align_feature " +
-                    "WHERE seq_region_id = " + id + " AND analysis_id = " + trackId + " and ((seq_region_start >= "+start+" AND seq_region_end <= "+end+") OR (seq_region_start <= "+start+" AND seq_region_end >= "+end+") OR (seq_region_end >= "+start+"  AND  seq_region_end <= "+end+") OR (seq_region_start <= "+start+" AND seq_region_start <= "+end+"))"+
+                    "WHERE seq_region_id = " + id + " AND analysis_id = " + trackId + " and ((seq_region_start >= " + start + " AND seq_region_end <= " + end + ") OR (seq_region_start <= " + start + " AND seq_region_end >= " + end + ") OR (seq_region_end >= " + start + "  AND  seq_region_end <= " + end + ") OR (seq_region_start <= " + start + " AND seq_region_start <= " + end + "))" +
                     " order by seq_region_start";
 
-            return template.queryForList(GET_HIT, new Object[]{});     } catch (Exception e) {
+            return template.queryForList(GET_HIT, new Object[]{});
+        } catch (Exception e) {
             e.printStackTrace();
             throw new IOException("Get DAF " + e.getMessage());
         }
@@ -436,26 +436,26 @@ public class SQLDafDAO implements DafStore {
             JSONArray hitTracks = new JSONArray();
 
             for (Map map_temp : maps_two) {
-                String GET_HIT_addition = "SELECT if(seq_region_id =  "+id+", 0 , get_ref_coord(seq_region_id,  "+id+"))  AS start "+
+                String GET_HIT_addition = "SELECT if(seq_region_id =  " + id + ", 0 , get_ref_coord(seq_region_id,  " + id + "))  AS start " +
                         "FROM dna_align_feature " +
-                        "WHERE dna_align_feature_id = "+map_temp.get("id");
+                        "WHERE dna_align_feature_id = " + map_temp.get("id");
 
-                int start_addition =  0;//template.queryForInt(GET_HIT_addition, new Object[]{});
+                int start_addition = 0;//template.queryForInt(GET_HIT_addition, new Object[]{});
 
 
-                int track_start = start_pos + Integer.parseInt(map_temp.get("start").toString()) ;
+                int track_start = start_pos + Integer.parseInt(map_temp.get("start").toString());
                 int track_end = start_pos + Integer.parseInt(map_temp.get("end").toString());
-                if (start_addition+track_start >= start && start_addition+track_end <= end || start_addition+track_start <= start && start_addition+track_end >= end || start_addition+track_end >= start && start_addition+track_end <= end || start_addition+track_start >= start && start_addition+track_start <= end) {
+                if (start_addition + track_start >= start && start_addition + track_end <= end || start_addition + track_start <= start && start_addition + track_end >= end || start_addition + track_end >= start && start_addition + track_end <= end || start_addition + track_start >= start && start_addition + track_start <= end) {
                     eachTrack_temp.put("id", map_temp.get("id"));
-                    eachTrack_temp.put("start", start_addition+track_start);
-                    eachTrack_temp.put("end", start_addition+track_end);
+                    eachTrack_temp.put("start", start_addition + track_start);
+                    eachTrack_temp.put("end", start_addition + track_end);
                     eachTrack_temp.put("flag", false);
                     if (map_temp.get("cigarline") != null) {
                         eachTrack_temp.put("cigarline", map_temp.get("cigarline").toString());
                     }
                     if (track_end - track_start > 1) {
-                        eachTrack_temp.put("layer", util.stackLayerInt(ends,Integer.parseInt(map_temp.get("start").toString()), delta, Integer.parseInt(map_temp.get("end").toString())));
-                        ends = util.stackLayerList(ends,Integer.parseInt(map_temp.get("start").toString()), delta, Integer.parseInt(map_temp.get("end").toString()));
+                        eachTrack_temp.put("layer", util.stackLayerInt(ends, Integer.parseInt(map_temp.get("start").toString()), delta, Integer.parseInt(map_temp.get("end").toString())));
+                        ends = util.stackLayerList(ends, Integer.parseInt(map_temp.get("start").toString()), delta, Integer.parseInt(map_temp.get("end").toString()));
                     }
                     eachTrack_temp.put("desc", map_temp.get("desc"));
                     hitTracks.add(eachTrack_temp);
@@ -492,7 +492,7 @@ public class SQLDafDAO implements DafStore {
                 } else {
                 }
             } else {
-                String query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id = " + id + " and ((asm_start >= "+start+" AND asm_end <= "+end+") OR (asm_start <= "+start+" AND asm_end >= "+end+") OR (asm_end >= "+start+"  AND  asm_end <= "+end+") OR (asm_start >= "+start+" AND asm_start <= "+end+"))";
+                String query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id = " + id + " and ((asm_start >= " + start + " AND asm_end <= " + end + ") OR (asm_start <= " + start + " AND asm_end >= " + end + ") OR (asm_end >= " + start + "  AND  asm_end <= " + end + ") OR (asm_start >= " + start + " AND asm_start <= " + end + "))";
                 trackList = recursiveHit(query, 0, id, trackId, start, end, delta);
             }
             if (trackList.size() == 0) {
@@ -510,23 +510,47 @@ public class SQLDafDAO implements DafStore {
         }
     }
 
-    public JSONArray getallSNPsonGene(int query, String coord, long start, long end) throws Exception{
+    public JSONArray getallSNPsonGene(int query, String coord, long start, long end) throws Exception {
         JSONArray snpkList = new JSONArray();
 
-        String SQL_query = "select * from dna_align_feature where seq_region_id = ? and (seq_region_start >= ? and seq_region_end <= ?) and  analysis_id in (select analysis_id from analysis where logic_name like \"%SNP%\")";
-        List<Map<String, Object>> maps_one = template.queryForList(SQL_query, new Object[]{query, start, end});
+        String analysis_query = "select analysis_id, display_label from analysis_description";
+        List<Map<String, Object>> analysis = template.queryForList(analysis_query, new Object[]{});
+        log.info("\n\n\n\n\nanalysis_obj " + analysis.toString());
 
+        JSONObject analysis_obj = new JSONObject();
+        for (Map map : analysis) {
+            analysis_obj.put(map.get("analysis_id"), map.get("display_label"));
+        }
+
+        log.info("\n\n\n\n\nanalysis_obj " + analysis_obj);
+//        String SQL_query = "select * from dna_align_feature where seq_region_id = ? and (seq_region_start >= ? and seq_region_end <= ?) and  analysis_id in (select analysis_id from analysis where logic_name like \"%SNP%\")";
+        String SQL_query = "select d.*, SUBSTRING(sequence,seq_region_start,1) as ref from dna_align_feature d, dna where d.seq_region_id = ? and dna.seq_region_id = d.seq_region_id and (d.seq_region_start >= ? and d.seq_region_end <= ?) and  d.analysis_id in (select analysis_id from analysis where logic_name like \"%SNP%\")";
+        List<Map<String, Object>> maps_one = template.queryForList(SQL_query, new Object[]{query, start, end});
+        for (Map map : maps_one) {
+            map.put("info", analysis_obj.get(map.get("analysis_id").toString()));
+        }
         snpkList.addAll(maps_one);
         return snpkList;
 
     }
 
-    public JSONArray getallSNPsonSNP(int query, String coord, long start) throws Exception{
+    public JSONArray getallSNPsonSNP(int query, String coord, long start) throws Exception {
         JSONArray snpkList = new JSONArray();
+        String analysis_query = "select analysis_id, display_label from analysis_description";
+        List<Map<String, Object>> analysis = template.queryForList(analysis_query, new Object[]{});
+        log.info("\n\n\n\n\nanalysis_obj " + analysis.toString());
 
-        String SQL_query = "select * from dna_align_feature where seq_region_id = ? and seq_region_start = ?";
+        JSONObject analysis_obj = new JSONObject();
+        for (Map map : analysis) {
+            analysis_obj.put(map.get("analysis_id"), map.get("display_label"));
+        }
+
+//        String SQL_query = "select * from dna_align_feature where seq_region_id = ? and seq_region_start = ?";
+        String SQL_query = "select d.*, SUBSTRING(sequence,seq_region_start,1) as ref from dna_align_feature d, dna where d.seq_region_id = ? and dna.seq_region_id = d.seq_region_id and (d.seq_region_start = ?) and  d.analysis_id in (select analysis_id from analysis where logic_name like \"%SNP%\")";
         List<Map<String, Object>> maps_one = template.queryForList(SQL_query, new Object[]{query, start});
-
+        for (Map map : maps_one) {
+            map.put("info", analysis_obj.get(map.get("analysis_id").toString()));
+        }
         snpkList.addAll(maps_one);
         return snpkList;
 

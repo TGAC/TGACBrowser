@@ -387,7 +387,7 @@ function editDesc(track, i, j) {
 }
 
 function showSNPs(track, i, j) {
-
+console.log("showSNPS")
     jQuery.colorbox({
         width: "90%",
         height: "100%",
@@ -403,20 +403,35 @@ function showSNPs(track, i, j) {
         'getSNPs',
         {'id': seqregname,'start': start, 'end': end, 'coord':coord, 'url': ajaxurl},
         {'doOnSuccess': function (json) {
-            var html_string = "<table width=100%><tr><td>#CHROM<td>POS<td>ID<td>REF<td>ALT<td>QUAL<td>FILTER<td>INFO";
+            var file_Text = "\#CHROM,POS,ID,REF,ALT,QUAL,FILTER,INFO-";
+            var html_string = "<div id=vcfdownload></div>" +
+                "" +
+                "<table class='list' id='SNP_hit' width=100%><thead><tr><th>#CHROM</th><th>POS</th><th>ID</th><th>REF</th><th>ALT</th><th>QUAL</th><th>FILTER</th><th>INFO</th></tr></thead>";
             for (var k = 0; k < json.SNP.length; k++) {
-                html_string +=  "<tr><td>"+seqregname+"<td>"+json.SNP[k].seq_region_start+"<td>"+json.SNP[k].hit_name+"<td>ref<td>"+json.SNP[k].cigar_line+"<td>"+json.SNP[k].score+"<td><td>"+json.SNP[k].info
 
-               //html_string +=  "<tr><td>"+json.SNP[i].seq_region_start+"<td>"+json.SNP[i].seq_region_end+"<td>"+json.SNP[i].analysis_id+"<td>"+json.SNP[i].cigar_line
+                file_Text += seqregname+","+json.SNP[k].seq_region_start+","+json.SNP[k].hit_name+","+json.SNP[k].ref+","+json.SNP[k].cigar_line+","+json.SNP[k].score+","+json.SNP[k].info+"-"
+                html_string +=  "<tr><td>"+seqregname+"<td>"+json.SNP[k].seq_region_start+"<td>"+json.SNP[k].hit_name+"<td>"+json.SNP[k].ref+"<td>"+json.SNP[k].cigar_line+"<td>"+json.SNP[k].score+"<td><td>"+json.SNP[k].info
+
+                if (k == json.SNP.length - 1) {
+                    html_string += "</table>";
+                    jQuery('#SNPs').html(html_string);
+                }
             }
-            jQuery('#SNPs').html(html_string);
+            //generateFileLink(file_Text)
+            file_Text = file_Text.replace(/\s+/gi, "_")
+            console.log(file_Text)
+            jQuery("#SNP_hit").tablesorter();
+            jQuery('#vcfdownload').html("<button class='ui-state-default ui-corner-all' " +
+            "onclick=VCFFile('" + file_Text + "') \">Prepare Download VCF File</button>");
+
+
         }
         });
-
     removePopup();
 }
 
 function showOtherSNPs(track, i) {
+    console.log("showOtherSNPS")
 
     jQuery.colorbox({
         width: "90%",
@@ -430,13 +445,19 @@ function showOtherSNPs(track, i) {
         'getOtherSNPs',
         {'id': seqregname,'start': start, 'coord':coord, 'url': ajaxurl},
         {'doOnSuccess': function (json) {
-            var html_string = "<table width=100%><tr><td>#CHROM<td>POS<td>ID<td>REF<td>ALT<td>QUAL<td>FILTER<td>INFO";
+            var file_Text = "\#CHROM,POS,ID,REF,ALT,QUAL,FILTER,INFO-";
+            var html_string = "<div id=vcfdownload></div>" +
+                "" +
+                "<table class='list' id='SNP_hit' width=100%><thead><tr><th>#CHROM</th><th>POS</th><th>ID</th><th>REF</th><th>ALT</th><th>QUAL</th><th>FILTER</th><th>INFO</th></tr></thead>";
             for (var k = 0; k < json.SNP.length; k++) {
-                html_string +=  "<tr><td>"+json.SNP[k].seq_region_id+"<td>"+json.SNP[k].seq_region_start+"<td>"+json.SNP[k].hit_name+"<td>ref<td>"+json.SNP[k].cigar_line+"<td>"+json.SNP[k].score+"<td><td>"+json.SNP[k].info
-                //html_string +=  "<tr><td>"+json.SNP[i].seq_region_start+"<td>"+json.SNP[i].seq_region_end+"<td>"+json.SNP[i].analysis_id+"<td>"+json.SNP[i].cigar_line
+                file_Text += seqregname+","+json.SNP[k].seq_region_start+","+json.SNP[k].hit_name+","+json.SNP[k].ref+","+json.SNP[k].cigar_line+","+json.SNP[k].score+","+json.SNP[k].info+"-"
+                html_string +=  "<tr><td>"+seqregname+"<td>"+json.SNP[k].seq_region_start+"<td>"+json.SNP[k].hit_name+"<td>"+json.SNP[k].ref+"<td>"+json.SNP[k].cigar_line+"<td>"+json.SNP[k].score+"<td><td>"+json.SNP[k].info
             }
             jQuery('#SNPs').html(html_string);
-
+            jQuery("#SNP_hit").tablesorter();
+            file_Text = file_Text.replace(/\s+/gi, "_")
+            jQuery('#vcfdownload').html("<button class='ui-state-default ui-corner-all' " +
+            "onclick=VCFFile('" + file_Text + "') \">Prepare Download VCF File</button>");
         }
         });
 
