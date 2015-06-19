@@ -657,4 +657,38 @@ public class DnaSequenceService {
             return JSONUtils.SimpleJSONError(e.getMessage());
         }
     }
+
+
+    public JSONObject listSNPs(HttpSession session, JSONObject json) {
+        JSONObject response = new JSONObject();
+
+        try {
+            response.put("list", analysisStore.listSNPs());
+
+            return response;
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return JSONUtils.SimpleJSONError(e.getMessage());
+        }
+    }
+
+    public JSONObject getGroupedSNPs(HttpSession session, JSONObject json) {
+        JSONObject response = new JSONObject();
+        String groupA =json.getString("group_a");
+        String groupB =json.getString("group_b");
+
+        String[] groupA_array = groupA.split(",");
+        String[] groupB_array = groupB.split(",");
+
+        try {
+            response.put("group_A", dafStore.getSNPs(groupA_array));
+            response.put("group_B", dafStore.getSNPs(groupB_array));
+            response.put("unique", dafStore.getUniqueSNPs(groupA_array, groupB_array));
+
+            return response;
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return JSONUtils.SimpleJSONError(e.getMessage());
+        }
+    }
 }

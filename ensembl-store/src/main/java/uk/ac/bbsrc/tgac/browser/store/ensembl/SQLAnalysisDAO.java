@@ -39,6 +39,7 @@ import uk.ac.bbsrc.tgac.browser.core.store.AnalysisStore;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by IntelliJ IDEA.
@@ -77,6 +78,7 @@ public class SQLAnalysisDAO implements AnalysisStore {
     public static final String GET_DISTINCT_ANALYSIS_ID_FROM_GENE = "SELECT DISTINCT analysis_id from gene where analysis_id = ? LIMIT 1";
     public static final String GET_DISTINCT_ANALYSIS_ID_FROM_DAF = "SELECT DISTINCT analysis_id from dna_align_feature where analysis_id = ? LIMIT 1";
     public static final String GET_DISTINCT_ANALYSIS_ID_FROM_Repeat = "SELECT DISTINCT analysis_id from repeat_feature where analysis_id = ? LIMIT 1";
+    public static final String GET_SNPS = "SELECT a.analysis_id, ad.display_label FROM analysis a, analysis_description ad where a.logic_name like '%SNP%' and a.analysis_id = ad.analysis_id";
 
     private JdbcTemplate template;
 
@@ -248,6 +250,17 @@ public class SQLAnalysisDAO implements AnalysisStore {
             return true;
         }else{
             return false;
+        }
+    }
+
+
+    public List<Map<String, Object>> listSNPs() throws IOException {
+        try {
+            List<Map<String, Object>> str = template.queryForList(GET_SNPS, new Object[]{});
+            return str;
+        } catch (EmptyResultDataAccessException e) {
+            e.printStackTrace();
+            throw new IOException("listSNPs not found -" + e.getMessage());
         }
     }
 }

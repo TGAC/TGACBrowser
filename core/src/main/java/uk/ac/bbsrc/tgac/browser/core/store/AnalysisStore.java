@@ -26,8 +26,11 @@
 package uk.ac.bbsrc.tgac.browser.core.store;
 
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -38,6 +41,10 @@ import java.io.IOException;
  */
 public interface AnalysisStore extends Store {
     public String getTrackIDfromName(String trackName) throws IOException;
+
     public JSONArray getAnnotationId(int query) throws IOException;
+
     public String getLogicNameByAnalysisId(int query) throws IOException;
+
+    public List<Map<String, Object>> listSNPs() throws IOException;
 }

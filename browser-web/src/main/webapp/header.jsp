@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -34,11 +35,9 @@
     <%--<script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery.svg.pack.js'/>"></script>--%>
     <%--<script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery-ui.js'/>"></script>--%>
 
-    <%--BioJS--%>
-    <script type="text/javascript" src="<c:url value='/scripts/BioJS/Biojs.js'/>"></script>
-    <script type="text/javascript" src="<c:url value='/scripts/BioJS/Biojs.Sequence.js'/>"></script>
 
     <script src="<c:url value='/scripts/d3.js/d3.v3.min.js'/>"></script>
+    <script src="<c:url value='/scripts/d3.js/venn.js'/>"></script>
     <%--<script src="http://d3js.org/d3.v3.js"></script>--%>
 
 

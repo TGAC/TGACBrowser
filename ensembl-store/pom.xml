@@ -126,6 +126,16 @@
             <artifactId>jackson-core-asl</artifactId>
             <version>1.9.2</version>
         </dependency>
+        <dependency>
+            <groupId>java-genomics</groupId>
+            <artifactId>java-genomics</artifactId>
+            <version>0.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>repository.java-genomics</groupId>
+            <artifactId>java-genomics</artifactId>
+            <version>0.1.0</version>
+        </dependency>
     </dependencies>
     <properties>
         <spring-version>3.0.5.RELEASE</spring-version>

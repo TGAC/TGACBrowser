@@ -39,6 +39,7 @@ import uk.ac.bbsrc.tgac.browser.core.store.UtilsStore;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -555,4 +556,80 @@ public class SQLDafDAO implements DafStore {
         return snpkList;
 
     }
+
+    public JSONArray getSNPs(String[] list) throws Exception {
+        JSONArray snpList = new JSONArray();
+        String analysis_query = "select analysis_id, display_label from analysis_description";
+        List<Map<String, Object>> analysis = template.queryForList(analysis_query, new Object[]{});
+        log.info("\n\n\n\n\nanalysis_obj " + analysis.toString());
+
+        JSONObject analysis_obj = new JSONObject();
+        for (Map map : analysis) {
+            analysis_obj.put(map.get("analysis_id"), map.get("display_label"));
+        }
+
+
+        String ids = "("+ list[0];
+        for(int i =1; i <list.length; i++){
+            ids += ","+list[1];
+        }
+        ids += ")";
+
+//        String SQL_query = "select * from dna_align_feature where seq_region_id = ? and seq_region_start = ?";
+        String SQL_query = "select d.*, SUBSTRING(sequence,seq_region_start,1) as ref from dna_align_feature d, dna where d.seq_region_id = 1 and  dna.seq_region_id = d.seq_region_id and  d.analysis_id in "+ids+";";
+       log.info("\n\n\n\n SQL_Querytest"+SQL_query);
+
+        List<Map<String, Object>> maps_one = template.queryForList(SQL_query, new Object[]{});
+        for (Map map : maps_one) {
+            map.put("info", analysis_obj.get(map.get("analysis_id").toString()));
+        }
+        snpList.addAll(maps_one);
+        return snpList;
+
+    }
+
+
+
+    public JSONArray getUniqueSNPs(String[] list1, String[] list2) throws Exception {
+        JSONArray snpList = new JSONArray();
+        String analysis_query = "select analysis_id, display_label from analysis_description";
+        List<Map<String, Object>> analysis = template.queryForList(analysis_query, new Object[]{});
+        log.info("\n\n\n\n\nanalysis_obj " + analysis.toString());
+
+        JSONObject analysis_obj = new JSONObject();
+        for (Map map : analysis) {
+            analysis_obj.put(map.get("analysis_id"), map.get("display_label"));
+        }
+
+
+        String ids_1 = "("+ list1[0];
+        for(int i =1; i <list1.length; i++){
+            ids_1 += ","+list1[1];
+        }
+        ids_1 += ")";
+
+        String ids_2 = "("+ list2[0];
+        for(int i =1; i <list2.length; i++){
+            ids_2 += ","+list2[1];
+        }
+        ids_2 += ")";
+
+        String SQL_query = "select d1.seq_region_start as start1, d2.seq_region_start as start2, d1.analysis_id as id1, d2.analysis_id as id2, d1.cigar_line as cigar1, d2.cigar_line as cigar2 " +
+                "from dna_align_feature d1, dna_align_feature d2 " +
+                "where d1.seq_region_id = 1 " +
+                "and d1.analysis_id in "+ids_1+ " " +
+                "and d2.analysis_id in "+ids_2+" " +
+                "and d1.seq_region_start = d2.seq_region_start";
+        log.info("\n\n\n\n SQL_Querytest"+SQL_query);
+
+        List<Map<String, Object>> maps_one = template.queryForList(SQL_query, new Object[]{});
+//        for (Map map : maps_one) {
+//            map.put("info", analysis_obj.get(map.get("analysis_id").toString()));
+//        }
+        snpList.addAll(maps_one);
+        return snpList;
+
+    }
+
+
 }

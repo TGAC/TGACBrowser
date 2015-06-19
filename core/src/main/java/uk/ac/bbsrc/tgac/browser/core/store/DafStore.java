@@ -46,5 +46,6 @@ public interface DafStore extends Store {
     public int countHit(int id, String trackId, long start, long end) throws Exception;
     public JSONArray getallSNPsonGene(int query, String coord, long start, long end) throws Exception;
     public JSONArray getallSNPsonSNP(int query, String coord, long start) throws Exception;
-
-}
+    public JSONArray getSNPs(String[] list) throws Exception;
+    public JSONArray getUniqueSNPs(String[] list1, String[] list2) throws Exception;
+    }
