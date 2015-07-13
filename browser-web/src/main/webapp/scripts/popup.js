@@ -131,6 +131,11 @@ function newpopup(track, i, j) {
             jQuery("#Detail").html(stringTrim(window[track][i].desc, width));
         }
 
+        if(window[track][i].domain){
+            jQuery("#exdetails").html('<span title="Attributes" class="ui-button ui-icon ui-icon-note" onclick=showDetails(\"' + track + "\",\"" + i + '\");></span>');
+
+        }
+
     }
 
 
@@ -524,12 +529,22 @@ function rightClickMenu(e) {
 }
 
 function showDetails(track, i, j) {
-    if (window[track][i].transcript[j].domain.length > 1) {
-        var details = window[track][i].transcript[j].domain.replace(/,/g, "<br>");
+    if(j){
+        if (window[track][i].transcript[j].domain.length > 1) {
+            var details = window[track][i].transcript[j].domain.replace(/,/g, "<br>");
 
-        jQuery.colorbox({
-            width: "90%",
-            html: "<b>Attributes</b><hr><span id=domain>" + window[track][i].transcript[j].domain.replace(/(GO:[0-9]+)/g, "<a href='http://www.ebi.ac.uk/QuickGO/GTerm?id=$1' target='_blank'>$1</a>").replace(/,/g, "<br>") + "</span>" });
+            jQuery.colorbox({
+                width: "90%",
+                html: "<b>Attributes</b><hr><span id=domain>" + window[track][i].transcript[j].domain.replace(/(GO:[0-9]+)/g, "<a href='http://www.ebi.ac.uk/QuickGO/GTerm?id=$1' target='_blank'>$1</a>").replace(/,/g, "<br>") + "</span>" });
+        }
+    }else{
+        if (window[track][i].domain.length > 1) {
+            //var details = window[track][i].domain.replace(/,/g, "<br>");
+
+            jQuery.colorbox({
+                width: "90%",
+                html: "<b>Details</b><hr><span id=domain>" + window[track][i].domain + "</span>" });
+        }
     }
 }
 
@@ -756,6 +771,7 @@ function fetchFasta(begin, end, track, i, j) {
             var seq = (json.seq).toLowerCase();
             if (i) {
                 var start, stop;
+                console.log(1)
 
                 if (window[track][i].transcript[j].start > window[track][i].transcript[j].end) {
                     start = window[track][i].transcript[j].end;
@@ -765,6 +781,9 @@ function fetchFasta(begin, end, track, i, j) {
                     start = window[track][i].transcript[j].start;
                     stop = window[track][i].transcript[j].end;
                 }
+
+                console.log(3)
+
                 var exons = window[track][i].transcript[j].Exons.length;
                 for (var k = 0; k < exons; k++) {
                     var substart, subend;
@@ -779,11 +798,48 @@ function fetchFasta(begin, end, track, i, j) {
                     var exonSeq = seq.substring(substart, subend);
                     seq = seq.substring(0, substart) + exonSeq.toUpperCase() + seq.substring(subend + 1, seq.length);
                 }
-                if (scale != 1) {
-                    jQuery('#fastaoutput').html(">" + seqregname + ": " + (begin * scale).toFixed(2) + "" + unit + " - " + (end * scale).toFixed(2) + "" + unit + " <font color='green'> " + convertFasta(seq) + "</font>");
-                } else {
-                    jQuery('#fastaoutput').html(">" + seqregname + ": " + (begin) + "" + unit + " - " + (end) + "" + unit + " <font color='green'> " + convertFasta(seq) + "</font>");
+
+                console.log(4)
+
+
+                console.log(5)
+
+                if (window[track][i].strand == -1) {
+                    var temp = "";
+                    var temp2 = seq.split("").reverse();
+                    for (var k = 0; k < temp2.length; k++) {
+                        if (temp2[k] == "a") {
+                            temp += "t";
+                        }
+                        else if (temp2[k] == "c") {
+                            temp += "g";
+                        }
+                        else if (temp2[k] == "g") {
+                            temp += "c";
+                        }
+                        else if (temp2[k] == "t") {
+                            temp += "a";
+                        }
+                        else if (temp2[k] == "A") {
+                            temp += "T";
+                        }
+                        else if (temp2[k] == "C") {
+                            temp += "G";
+                        }
+                        else if (temp2[k] == "G") {
+                            temp += "C";
+                        }
+                        else if (temp2[k] == "T") {
+                            temp += "A";
+                        }
+                        else {
+                            temp += "n";
+                        }
+                    }
+                    seq = temp;
                 }
+
+
                 jQuery('#fastaoutput').each(function () {
                     var pattern = /([ATCG]+)/g;
                     var before = '<span style="color: red;">';

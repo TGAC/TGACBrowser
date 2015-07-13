@@ -313,7 +313,6 @@ public class SQLDafDAO implements DafStore {
     }
 
 
-
     //
 //    @Cacheable(cacheName = "hitCache",
 //             keyGenerator = @KeyGenerator(
@@ -337,12 +336,13 @@ public class SQLDafDAO implements DafStore {
      */
     public List<Map<String, Object>> getHit(int id, String trackId, long start, long end) throws IOException {
         try {
-            String GET_HIT = "SELECT dna_align_feature_id as id,cast(seq_region_start as signed) as start, cast(seq_region_end as signed) as end,seq_region_strand as strand,hit_start as hitstart, hit_end as hitend, hit_name as 'desc', cigar_line as cigarline " +
+            String GET_HIT = "SELECT dna_align_feature_id as id,cast(seq_region_start as signed) as start, cast(seq_region_end as signed) as end,seq_region_strand as strand,hit_start as hitstart, hit_end as hitend, hit_name as 'desc', cigar_line as cigarline , external_data as domain " +
                     "FROM dna_align_feature " +
-                    "WHERE seq_region_id = " + id + " AND analysis_id = " + trackId + " and ((seq_region_start >= "+start+" AND seq_region_end <= "+end+") OR (seq_region_start <= "+start+" AND seq_region_end >= "+end+") OR (seq_region_end >= "+start+"  AND  seq_region_end <= "+end+") OR (seq_region_start <= "+start+" AND seq_region_start <= "+end+"))"+
+                    "WHERE seq_region_id = " + id + " AND analysis_id = " + trackId + " and ((seq_region_start >= " + start + " AND seq_region_end <= " + end + ") OR (seq_region_start <= " + start + " AND seq_region_end >= " + end + ") OR (seq_region_end >= " + start + "  AND  seq_region_end <= " + end + ") OR (seq_region_start <= " + start + " AND seq_region_start <= " + end + "))" +
                     " order by seq_region_start";
 
-            return template.queryForList(GET_HIT, new Object[]{});     } catch (Exception e) {
+            return template.queryForList(GET_HIT, new Object[]{});
+        } catch (Exception e) {
             e.printStackTrace();
             throw new IOException("Get DAF " + e.getMessage());
         }
@@ -354,7 +354,7 @@ public class SQLDafDAO implements DafStore {
         try {
 
 
-            String GET_HIT = "SELECT dna_align_feature_id as id,cast(seq_region_start as signed) as start, cast(seq_region_end as signed) as end,seq_region_strand as strand,hit_start as hitstart, hit_end as hitend, hit_name as 'desc', cigar_line as cigarline " +
+            String GET_HIT = "SELECT dna_align_feature_id as id,cast(seq_region_start as signed) as start, cast(seq_region_end as signed) as end,seq_region_strand as strand,hit_start as hitstart, hit_end as hitend, hit_name as 'desc', cigar_line as cigarline, external_data as domain " +
                     "FROM dna_align_feature " +
                     "WHERE seq_region_id " + query + " AND analysis_id = " + trackId +
                     " order by seq_region_start";
@@ -436,26 +436,29 @@ public class SQLDafDAO implements DafStore {
             JSONArray hitTracks = new JSONArray();
 
             for (Map map_temp : maps_two) {
-                String GET_HIT_addition = "SELECT if(seq_region_id =  "+id+", 0 , get_ref_coord(seq_region_id,  "+id+"))  AS start "+
+                String GET_HIT_addition = "SELECT if(seq_region_id =  " + id + ", 0 , get_ref_coord(seq_region_id,  " + id + "))  AS start " +
                         "FROM dna_align_feature " +
-                        "WHERE dna_align_feature_id = "+map_temp.get("id");
+                        "WHERE dna_align_feature_id = " + map_temp.get("id");
 
-                int start_addition =  0;//template.queryForInt(GET_HIT_addition, new Object[]{});
+                int start_addition = 0;//template.queryForInt(GET_HIT_addition, new Object[]{});
 
 
-                int track_start = start_pos + Integer.parseInt(map_temp.get("start").toString()) ;
+                int track_start = start_pos + Integer.parseInt(map_temp.get("start").toString());
                 int track_end = start_pos + Integer.parseInt(map_temp.get("end").toString());
-                if (start_addition+track_start >= start && start_addition+track_end <= end || start_addition+track_start <= start && start_addition+track_end >= end || start_addition+track_end >= start && start_addition+track_end <= end || start_addition+track_start >= start && start_addition+track_start <= end) {
+                if (start_addition + track_start >= start && start_addition + track_end <= end || start_addition + track_start <= start && start_addition + track_end >= end || start_addition + track_end >= start && start_addition + track_end <= end || start_addition + track_start >= start && start_addition + track_start <= end) {
                     eachTrack_temp.put("id", map_temp.get("id"));
-                    eachTrack_temp.put("start", start_addition+track_start);
-                    eachTrack_temp.put("end", start_addition+track_end);
+                    eachTrack_temp.put("start", start_addition + track_start);
+                    eachTrack_temp.put("end", start_addition + track_end);
                     eachTrack_temp.put("flag", false);
                     if (map_temp.get("cigarline") != null) {
                         eachTrack_temp.put("cigarline", map_temp.get("cigarline").toString());
                     }
+                    if (map_temp.get("domain") != null) {
+                        eachTrack_temp.put("domain", map_temp.get("domain").toString());
+                    }
                     if (track_end - track_start > 1) {
-                        eachTrack_temp.put("layer", util.stackLayerInt(ends,Integer.parseInt(map_temp.get("start").toString()), delta, Integer.parseInt(map_temp.get("end").toString())));
-                        ends = util.stackLayerList(ends,Integer.parseInt(map_temp.get("start").toString()), delta, Integer.parseInt(map_temp.get("end").toString()));
+                        eachTrack_temp.put("layer", util.stackLayerInt(ends, Integer.parseInt(map_temp.get("start").toString()), delta, Integer.parseInt(map_temp.get("end").toString())));
+                        ends = util.stackLayerList(ends, Integer.parseInt(map_temp.get("start").toString()), delta, Integer.parseInt(map_temp.get("end").toString()));
                     }
                     eachTrack_temp.put("desc", map_temp.get("desc"));
                     hitTracks.add(eachTrack_temp);
@@ -492,7 +495,7 @@ public class SQLDafDAO implements DafStore {
                 } else {
                 }
             } else {
-                String query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id = " + id + " and ((asm_start >= "+start+" AND asm_end <= "+end+") OR (asm_start <= "+start+" AND asm_end >= "+end+") OR (asm_end >= "+start+"  AND  asm_end <= "+end+") OR (asm_start >= "+start+" AND asm_start <= "+end+"))";
+                String query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id = " + id + " and ((asm_start >= " + start + " AND asm_end <= " + end + ") OR (asm_start <= " + start + " AND asm_end >= " + end + ") OR (asm_end >= " + start + "  AND  asm_end <= " + end + ") OR (asm_start >= " + start + " AND asm_start <= " + end + "))";
                 trackList = recursiveHit(query, 0, id, trackId, start, end, delta);
             }
             if (trackList.size() == 0) {

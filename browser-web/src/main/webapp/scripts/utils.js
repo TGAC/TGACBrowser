@@ -338,7 +338,7 @@ function stringTrim(string, width, newClass) {
     }
     else {
         width = parseInt(string.length * width / inLength);
-        return "<span title=" + string + ">" + string.substring(0, width) + "... </span>";
+        return "<span title='" + string + "'>" + string.substring(0, width) + "... </span>";
     }
 
 }
