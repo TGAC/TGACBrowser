@@ -148,9 +148,14 @@
                 {'group_a': list_a, 'group_b': list_b, 'url': ajaxurl},
                 {
                     'doOnSuccess': function (json) {
-                        var sets = [{sets: ['A'], size: json.group_A.size()},
-                            {sets: ['B'], size: json.group_B.size()},
-                            {sets: ['A', 'B'], size: json.unique.size()}];
+
+                        var group_A = []
+
+
+
+                        var sets = [{sets: ['A'], size: json.group_A},
+                            {sets: ['B'], size: json.group_B},
+                            {sets: ['A', 'B'], size: json.unique}];
 
                         var chart = venn.VennDiagram();
                         d3.select("#venn").datum(sets).call(chart);

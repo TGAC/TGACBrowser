@@ -28,6 +28,7 @@ package uk.ac.bbsrc.tgac.browser.service.ajax;
 import net.sf.json.JSONObject;
 import net.sourceforge.fluxion.ajax.Ajaxified;
 import net.sourceforge.fluxion.ajax.util.JSONUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -309,7 +310,7 @@ public class DnaSequenceService {
             } else if (trackId.contains(".sam") || trackId.contains(".bam")) {
                 count = SamBamService.countBAM(start, end, delta, trackId, seqName);
 
-                log.info("\n\n\nBAM count "+ count);
+                log.info("\n\n\nBAM count " + count);
 
 
                 if (count ==0) {
@@ -679,11 +680,12 @@ public class DnaSequenceService {
 
         String[] groupA_array = groupA.split(",");
         String[] groupB_array = groupB.split(",");
+        String[] groupC_array = (String[]) ArrayUtils.addAll(groupA_array, groupB_array);
 
         try {
             response.put("group_A", dafStore.getSNPs(groupA_array));
             response.put("group_B", dafStore.getSNPs(groupB_array));
-            response.put("unique", dafStore.getUniqueSNPs(groupA_array, groupB_array));
+            response.put("unique", dafStore.getSNPs(groupC_array));
 
             return response;
         } catch (Exception e) {
