@@ -35,8 +35,8 @@
     <%--<script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery-ui.js'/>"></script>--%>
 
     <%--BioJS--%>
-    <script type="text/javascript" src="<c:url value='/scripts/BioJS/Biojs.js'/>"></script>
-    <script type="text/javascript" src="<c:url value='/scripts/BioJS/Biojs.Sequence.js'/>"></script>
+    <%--<script type="text/javascript" src="<c:url value='/scripts/BioJS/Biojs.js'/>"></script>--%>
+    <%--<script type="text/javascript" src="<c:url value='/scripts/BioJS/Biojs.Sequence.js'/>"></script>--%>
 
     <script src="<c:url value='/scripts/d3.js/d3.v3.min.js'/>"></script>
     <%--<script src="http://d3js.org/d3.v3.js"></script>--%>
