@@ -440,7 +440,7 @@ public class SQLDafDAO implements DafStore {
                         "FROM dna_align_feature " +
                         "WHERE dna_align_feature_id = " + map_temp.get("id");
 
-                int start_addition = 0;//template.queryForInt(GET_HIT_addition, new Object[]{});
+                int start_addition = template.queryForInt(GET_HIT_addition, new Object[]{});
 
 
                 int track_start = start_pos + Integer.parseInt(map_temp.get("start").toString());
