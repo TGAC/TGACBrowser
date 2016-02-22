@@ -34,9 +34,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.bbsrc.tgac.browser.store.ensembl.Util;
 
+import java.nio.channels.InterruptedByTimeoutException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 
 /**
@@ -201,8 +203,8 @@ public class GFFService {
 
         try {
             JSONObject read = new JSONObject();
-            List<Integer> gene_start = new ArrayList<>();
-            List<Integer> gene_end = new ArrayList<>();
+            List<Integer> gene_start = new ArrayList<Integer>();
+            List<Integer> gene_end = new ArrayList<Integer>();
 
             long diff = (end - start) / 400;
             long temp_start, temp_end;

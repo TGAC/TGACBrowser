@@ -30,8 +30,8 @@ import edu.unc.genomics.io.VCFFileReader;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sourceforge.fluxion.ajax.Ajaxified;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
+import org.apache.log4j.spi.LoggerFactory;
 import uk.ac.bbsrc.tgac.browser.store.ensembl.Util;
 
 import java.nio.file.Path;
@@ -49,7 +49,7 @@ import java.util.List;
 @Ajaxified
 public class VCFService {
 
-    protected static final Logger log = LoggerFactory.getLogger(VCFService.class);
+//    protected static final Logger log = LoggerFactory.getLogger(VCFService.class);
 
 
     private Util util = new Util();
@@ -67,7 +67,7 @@ public class VCFService {
      * @throws Exception
      */
     public static int countVCF(long start, long end, int delta, String trackId, String reference) throws Exception {
-        log.info("\n\n\n\n\nVCF count");
+//        log.info("\n\n\n\n\nVCF count");
 
 
         Path path = Paths.get(trackId);
@@ -100,7 +100,7 @@ public class VCFService {
      * @throws Exception
      */
     public JSONArray getVCFReads(long start, long end, int delta, String trackId, String reference) throws Exception {
-        log.info("\n\n\n\n\nVCF reads");
+//        log.info("\n\n\n\n\nVCF reads");
 
         JSONArray VCF = new JSONArray();
         JSONObject response = new JSONObject();
@@ -173,7 +173,7 @@ public class VCFService {
 
     public static JSONArray getVCFGraphs(long start, long end, int delta, String trackId, String reference) throws Exception {
 
-        log.info("\n\n\n\n\nVCF graphs");
+//        log.info("\n\n\n\n\nVCF graphs");
 
         JSONArray VCF = new JSONArray();
         JSONObject response = new JSONObject();
@@ -182,8 +182,8 @@ public class VCFService {
 
         try {
             JSONObject read = new JSONObject();
-            List<Integer> eachEntry_start = new ArrayList<>();
-            List<Integer> eachEntry_end = new ArrayList<>();
+            List<Integer> eachEntry_start = new ArrayList<Integer>();
+            List<Integer> eachEntry_end = new ArrayList<Integer>();
 
             long diff = (end - start) / 400;
             long temp_start, temp_end;

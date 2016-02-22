@@ -185,7 +185,8 @@ public class BlastService {
             } else {
 
                 FileInputStream fstream = new FileInputStream("/net/tgac-cfs3/ifs/TGAC/browser/jobs/" + blastAccession + ".xml");
-                DataInputStream in = new DataInputStream(fstream);
+                BufferedReader in = new BufferedReader(new InputStreamReader(fstream));
+
                 String str;
                 while (null != (str = in.readLine())) {
 

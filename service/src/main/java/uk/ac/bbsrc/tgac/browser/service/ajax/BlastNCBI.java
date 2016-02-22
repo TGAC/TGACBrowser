@@ -92,7 +92,9 @@ public class BlastNCBI {
        wr.writeBytes(urlParameters);
        wr.flush();
        wr.close();
-       DataInputStream input = new DataInputStream(connection.getInputStream());
+//       DataInputStream input = new DataInputStream(connection.getInputStream());
+       BufferedReader input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
 
        String str;
 
@@ -217,7 +219,7 @@ public class BlastNCBI {
       wr.writeBytes(urlParameters);
       wr.flush();
       wr.close();
-      DataInputStream in = new DataInputStream(connection.getInputStream());
+      BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
       String str;
       StringBuffer sb = new StringBuffer();
       str = in.readLine();
@@ -272,7 +274,9 @@ public class BlastNCBI {
       wr.writeBytes(urlParameters);
       wr.flush();
       wr.close();
-      DataInputStream in = new DataInputStream(connection.getInputStream());
+//      DataInputStream in = new DataInputStream(connection.getInputStream());
+      BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
 
       while (null != (str = in.readLine())) {
           JSONObject eachBlast = new JSONObject();
@@ -367,7 +371,9 @@ public class BlastNCBI {
         wr.writeBytes(urlParameters);
         wr.flush();
         wr.close();
-        DataInputStream input = new DataInputStream(connection.getInputStream());
+//        DataInputStream input = new DataInputStream(connection.getInputStream());
+        BufferedReader input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
 
         String str;
 
@@ -483,7 +489,10 @@ public class BlastNCBI {
       wr.writeBytes(urlParameters);
       wr.flush();
       wr.close();
-      DataInputStream input = new DataInputStream(connection.getInputStream());
+//      DataInputStream input = new DataInputStream(connection.getInputStream());
+      BufferedReader input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+
       BufferedWriter out = new BufferedWriter(new FileWriter("../webapps/" + location + "/temp/" + blastAccession + ".json"));
       String hsp_from = "";
       String hsp_score = "";
