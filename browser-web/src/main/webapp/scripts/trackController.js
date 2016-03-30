@@ -1128,6 +1128,7 @@ function dispTrack(div, trackName, className) {
                         stopposition = 2;
                     }
                     trackClass = 'snp' + track[track_len].cigarline;
+                    new_div.style.height = "10px";
 
                     label = track[track_len].cigarline;
                 }
