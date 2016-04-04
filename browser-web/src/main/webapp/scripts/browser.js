@@ -63,7 +63,7 @@ function scrollZoom(event) {
 
 function zoomIn(zoom_len) {
     console.log("zoomin")
-console.log(getBegin())
+    console.log(getBegin())
     console.log(getEnd())
     var tempBegin = (parseInt(getBegin()) + parseInt(zoom_len));
     var tempEnd = (parseInt(getEnd()) - parseInt(zoom_len));
@@ -83,8 +83,8 @@ console.log(getBegin())
 //
 //    }
 //    else {
-        setBegin(tempBegin);
-        setEnd(tempEnd);
+    setBegin(tempBegin);
+    setEnd(tempEnd);
 //    }
     jumpToSeq();
 }
@@ -404,9 +404,7 @@ function updateJSON() {
         lastEnd = getEnd();
         lastStart = getBegin();
     }
-}
-
-function addJSON(from, to, trackName, trackId) {
+}         YDs� �ON(from, to, trackName, trackId) {
     if (from < 0) {
         from = 0;
     }
@@ -467,6 +465,10 @@ function addJSON(from, to, trackName, trackId) {
             for (var i = 0; i < Tracklist.length; i++) {
                 var temp_id = Tracklist[i].id
                 if (Tracklist[i].name == "blasttrack") {
+                    trackToggle(Tracklist[i].name);
+                }
+                else if (Tracklist[i].name == "upload") {
+                    console.log("upload")
                     trackToggle(Tracklist[i].name);
                 }
                 else if (jQuery("#" + Tracklist[i].name + "Checkbox").is(':checked') && Tracklist[i].id.toString().indexOf('noid') < 0) {

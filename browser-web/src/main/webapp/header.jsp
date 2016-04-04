@@ -22,11 +22,14 @@
     <script type="text/javascript" src="<c:url value='/scripts/scriptaculous/prototype.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/fluxion-ajax/fluxion-ajax-compiled.js'/>"></script>
 
-    <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery-1.4.2.min.js'/>"></script>
-    <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery-ui-1.8.custom.min.js'/>"></script>
+    <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery-1.12.0.min.js'/>"></script>
+    <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery-migrate-git.js'/>"></script>
+    <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery-ui-1.11.2.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery.tablesorter.min.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery.drawinglibrary.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery.cookie.js'/>"></script>
+
+    <script type="text/javascript" src="<c:url value='/scripts/DataTables-1.10.11/js/jquery.dataTables.js'/>"></script>
     <%--<script type="text/javascript" src="<c:url value='/scripts/jquery/js/jcanvas.min.js'/>"></script>--%>
 
     <%--<script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery.drawinglibrary.js'/>"></script>--%>
@@ -40,11 +43,16 @@
     <script src="<c:url value='/scripts/d3.js/venn.js'/>"></script>
     <%--<script src="http://d3js.org/d3.v3.js"></script>--%>
 
+    <link href="styles/font-awesome.css" rel="stylesheet">
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
 
     <script type="text/javascript" src="http://canvg.googlecode.com/svn/trunk/rgbcolor.js"></script>
     <script type="text/javascript" src="http://canvg.googlecode.com/svn/trunk/canvg.js"></script>
 
 
+
+    <link rel="stylesheet" href="<c:url value='/scripts/DataTables-1.10.11/css/jquery.dataTables.css'/>"          type="text/css">
 
 
     <link rel="stylesheet" href="<c:url value='/scripts/jquery/css/smoothness/jquery-ui-1.8.custom.css'/>"
@@ -70,6 +78,8 @@
     <script type="text/javascript" src="<c:url value='/scripts/tracksManager.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/natural_sort.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/blast_params.js'/>"></script>
+    <script type="text/javascript" src="<c:url value='/scripts/upload.js'/>"></script>
+    <script type="text/javascript" src="<c:url value='/scripts/manhattan.js'/>"></script>
 
     <title>${initParam.pageTitle}</title>
     <script type="text/javascript">
@@ -122,7 +132,7 @@
         ${initParam.fasta == "true" && length > 1 ? "| <a href=\"blast.jsp\"><span>Blast Search</span></a>" : ""}
 
 
-        | <a href="<c:url value="session.jsp"/>"><span>Load Session</span></a>
+        | <a href="<c:url value="filter.jsp"/>"><span>Load SNPs filtering</span></a>
     </div>
 </div>
 

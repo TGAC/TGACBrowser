@@ -13,6 +13,8 @@
                 jQuery('#searchText').val('Search DNA');
                 jQuery('#searchDiv').html('');
             }));
+
+            initUpload();
         });
     </script>
 </head>
@@ -134,6 +136,11 @@
                                     <div id=export style=" display: none;"
                                          class="divbutton"> Export
                                     </div>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-default btn-sm ui-btn ui-shadow ui-corner-all" data-toggle="modal" data-target="#myModal">
+                                        <i class="fa fa-upload"></i>
+                                    </button>
                                 </td>
                                 <td>
                                     <div onclick="checkSession();"
@@ -613,7 +620,32 @@
 
 </div>
 
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
 
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Drop files here:</h4>
+            </div>
+            <div class="modal-body">
+                <p>tree file (newick format), distance file (csv format), labels (csv format with 'label' in file name)</p>
+                <article>
+                    <div id="holder" class="">
+                    </div>
+                    <p class="hidden" id="upload"><label>Drag &amp; drop not supported, but you can still upload via this input field:<br>
+                        <input type="file"></label>
+                    </p>
+                </article>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
 
 </body>
 </html>

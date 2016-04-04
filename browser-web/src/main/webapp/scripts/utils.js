@@ -125,6 +125,7 @@ function browser_coordinates() {
 }
 
 function trackToggle(trackname) {
+    console.log("trackToggle "+trackname)
     var index = 0;
     var graph = "false";
     var trackid = "";
@@ -149,6 +150,10 @@ function trackToggle(trackname) {
                 }
                 else if (trackName.toLowerCase().indexOf("blasttrack") >= 0) {
                     dispBLAST("#" + trackName + "_div", 'blasttrack');
+                }
+                else if (trackName.toLowerCase().indexOf("upload") >= 0) {
+                    console.log("calling upload")
+                    dispGraphManhattan( "#" + trackName + "_div",trackName, window['track_list' + trackName].display_label);
                 }
                 else if (trackName.toLowerCase().indexOf("gene") >= 0 || trackName.toLowerCase().indexOf("gff") >= 0) {
                     dispGenes("#" + trackName + "_div", trackName, window['track_list' + trackName].expand, window['track_list' + trackName].display_label);
@@ -188,6 +193,11 @@ function trackToggle(trackname) {
             }
             else if (trackname.toLowerCase().indexOf("blasttrack") >= 0) {
                 dispBLAST("#" + trackname + "_div", 'blasttrack');
+            }
+            else if (trackname.toLowerCase().indexOf("upload") >= 0) {
+                console.log("calling upload")
+                // dispGraphManhattan( "#upload_div","gem", "noid");
+                dispGraphManhattan( "#" + trackname + "_div",trackname, window['track_list' + trackname].display_label);
             }
             else if (trackname.toLowerCase().indexOf("gene") >= 0 || trackname.toLowerCase().indexOf("gff") >= 0) {
                 dispGenes("#" + trackname + "_div", trackname, window['track_list' + trackname].expand, window['track_list' + trackname].display_label);
@@ -437,13 +447,13 @@ function sub_seq(seq, qseq) {
         width: "90%",
         height: "100%",
         html: "<table><tr><td><button id=\"subbutton\" class='ui-state-default ui-corner-all' " +
-            "onclick=\"blastToogle();\">Alignemt Sequence</button><br/>" +
-            "</td></td></tr></table><br/>" +
-            "<br/><b>Subject Sequence:</b> <br/>" +
-            "<div id=\"btop_output\" style='display : inline;  font-family: Courier, \"Courier New\", monospace'> " + id + "<br>" + convertSeqtoBLAST(seq, qseq) + "</div>" +
-            "<div id=\"sub_output\" style=' display: none; font-family: Courier, \"Courier New\", monospace'> <table><tr><td><button class='ui-state-default ui-corner-all' " +
-            "onclick=\"selectText('sub_output');\"')\">Select Sequence</button><br/>" +
-            "<td><div id=fastadownload></div></td></td></tr></table><br/> " + id + "<br>" + convertFasta(seq) + "</div>"});
+        "onclick=\"blastToogle();\">Alignemt Sequence</button><br/>" +
+        "</td></td></tr></table><br/>" +
+        "<br/><b>Subject Sequence:</b> <br/>" +
+        "<div id=\"btop_output\" style='display : inline;  font-family: Courier, \"Courier New\", monospace'> " + id + "<br>" + convertSeqtoBLAST(seq, qseq) + "</div>" +
+        "<div id=\"sub_output\" style=' display: none; font-family: Courier, \"Courier New\", monospace'> <table><tr><td><button class='ui-state-default ui-corner-all' " +
+        "onclick=\"selectText('sub_output');\"')\">Select Sequence</button><br/>" +
+        "<td><div id=fastadownload></div></td></td></tr></table><br/> " + id + "<br>" + convertFasta(seq) + "</div>"});
 }
 
 function blastToogle() {
