@@ -23,7 +23,7 @@
 #
  */
 
-package uk.ac.bbsrc.tgac.browser.store.ensembl;
+package uk.ac.bbsrc.tgac.browser.store;
 
 
 import net.sf.ehcache.CacheManager;
@@ -336,7 +336,7 @@ public class SQLDafDAO implements DafStore {
      */
     public List<Map<String, Object>> getHit(int id, String trackId, long start, long end) throws IOException {
         try {
-            String GET_HIT = "SELECT dna_align_feature_id as id,cast(seq_region_start as signed) as start, cast(seq_region_end as signed) as end,seq_region_strand as strand,hit_start as hitstart, hit_end as hitend, hit_name as 'desc', cigar_line as cigarline , external_data as domain " +
+            String GET_HIT = "SELECT dna_align_feature_id as id,cast(seq_region_start as signed) as start, cast(seq_region_end as signed) as end,seq_region_strand as strand,hit_start as hitstart, hit_end as hitend, hit_name as 'desc', cigar_line as cigarline " +
                     "FROM dna_align_feature " +
                     "WHERE seq_region_id = " + id + " AND analysis_id = " + trackId + " and ((seq_region_start >= " + start + " AND seq_region_end <= " + end + ") OR (seq_region_start <= " + start + " AND seq_region_end >= " + end + ") OR (seq_region_end >= " + start + "  AND  seq_region_end <= " + end + ") OR (seq_region_start <= " + start + " AND seq_region_start <= " + end + "))" +
                     " order by seq_region_start";
@@ -354,7 +354,7 @@ public class SQLDafDAO implements DafStore {
         try {
 
 
-            String GET_HIT = "SELECT dna_align_feature_id as id,cast(seq_region_start as signed) as start, cast(seq_region_end as signed) as end,seq_region_strand as strand,hit_start as hitstart, hit_end as hitend, hit_name as 'desc', cigar_line as cigarline, external_data as domain " +
+            String GET_HIT = "SELECT dna_align_feature_id as id,cast(seq_region_start as signed) as start, cast(seq_region_end as signed) as end,seq_region_strand as strand,hit_start as hitstart, hit_end as hitend, hit_name as 'desc', cigar_line as cigarline " +
                     "FROM dna_align_feature " +
                     "WHERE seq_region_id " + query + " AND analysis_id = " + trackId +
                     " order by seq_region_start";
@@ -453,9 +453,6 @@ public class SQLDafDAO implements DafStore {
                     if (map_temp.get("cigarline") != null) {
                         eachTrack_temp.put("cigarline", map_temp.get("cigarline").toString());
                     }
-                    if (map_temp.get("domain") != null) {
-                        eachTrack_temp.put("domain", map_temp.get("domain").toString());
-                    }
                     if (track_end - track_start > 1) {
                         eachTrack_temp.put("layer", util.stackLayerInt(ends, Integer.parseInt(map_temp.get("start").toString()), delta, Integer.parseInt(map_temp.get("end").toString())));
                         ends = util.stackLayerList(ends, Integer.parseInt(map_temp.get("start").toString()), delta, Integer.parseInt(map_temp.get("end").toString()));
@@ -512,8 +509,6 @@ public class SQLDafDAO implements DafStore {
             throw new Exception("processHit no result found " + e.getMessage());
         }
     }
-<<<<<<< Updated upstream
-=======
 
     public JSONArray getallSNPsonGene(int query, String coord, long start, long end) throws Exception {
         JSONArray snpkList = new JSONArray();
@@ -671,5 +666,4 @@ public class SQLDafDAO implements DafStore {
     }
 
 
->>>>>>> Stashed changes
 }
