@@ -26,20 +26,19 @@
     <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery.tablesorter.min.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery.drawinglibrary.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery.cookie.js'/>"></script>
-    <%--<script type="text/javascript" src="<c:url value='/scripts/jquery/js/jcanvas.min.js'/>"></script>--%>
 
-    <%--<script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery.drawinglibrary.js'/>"></script>--%>
-    <%--<script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery.svg.min.js'/>"></script>--%>
-    <%--<script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery.svgdom.min.js'/>"></script>--%>
-    <%--<script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery.svg.pack.js'/>"></script>--%>
-    <%--<script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery-ui.js'/>"></script>--%>
+    <script type="text/javascript" src="<c:url value='/scripts/DataTables-1.10.11/js/jquery.dataTables.js'/>"></script>
+
 
     <%--BioJS--%>
     <%--<script type="text/javascript" src="<c:url value='/scripts/BioJS/Biojs.js'/>"></script>--%>
     <%--<script type="text/javascript" src="<c:url value='/scripts/BioJS/Biojs.Sequence.js'/>"></script>--%>
 
     <script src="<c:url value='/scripts/d3.js/d3.v3.min.js'/>"></script>
-    <%--<script src="http://d3js.org/d3.v3.js"></script>--%>
+    <script src="<c:url value='/scripts/d3.js/venn.js'/>"></script>
+
+    <link rel="stylesheet" href="<c:url value='styles/font-awesome-4.2.0/css/font-awesome.css'/>" type="text/css">
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
 
 
     <script type="text/javascript" src="http://canvg.googlecode.com/svn/trunk/rgbcolor.js"></script>

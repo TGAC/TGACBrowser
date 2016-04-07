@@ -131,21 +131,25 @@
                         <table style="position: fixed; right: 0px; top: 25px;">
                             <tr>
                                 <td>
-                                    <div id=export style=" display: none;"
-                                         class="divbutton"> Export
-                                    </div>
+                                    <button id=export type="button" class="btn btn-default btn-sm ui-btn ui-shadow ui-corner-all" style="display: none;">
+                                    </button>
                                 </td>
                                 <td>
-                                    <div onclick="checkSession();"
-                                         class="divbutton">
-                                        Save Session
-                                    </div>
+
+                                    <button type="button" class="btn btn-default btn-sm ui-btn ui-shadow ui-corner-all" data-toggle="modal" data-target="#uploadModal">
+                                        <i class="fa fa-upload"></i>
+                                    </button>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-default btn-sm ui-btn ui-shadow ui-corner-all" onclick="checkSession();">
+                                        <i class="fa">Save Session</i>
+                                    </button>
                                 </td>
 
                                 <td>
-                                    <div id="controlsbutton" class="divbutton">
-                                        Tracks / Settings
-                                    </div>
+                                    <button type="button" class="btn btn-default btn-sm ui-btn ui-shadow ui-corner-all" data-toggle="modal" data-target="#controlModal">
+                                        <i class="fa">Tracks / Settings</i>
+                                    </button>
                                 </td>
                             </tr>
                         </table>
@@ -211,42 +215,49 @@
 
 <%--<div id="openCloseIdentifier"></div>--%>
 
-<div style='display:none'>
-    <div id="controlpanel" style="font-family: Arial;">
+<div class="modal fade tgacbrowsermodal" id="controlModal" role="dialog">
+    <div class="modal-dialog">
 
-        <h1>Control Panel</h1>
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Control Panel</h4>
+            </div>
+            <div class="modal-body">
+                <div id="controlpanel" style="font-family: Arial;">
 
-        <div class="sectionDivider" onclick="toggleLeftInfo(jQuery('#displayoptions_arrowclick'), 'displayoptions');">
-            Settings
-            <div id="displayoptions_arrowclick" class="toggleLeftDown"></div>
-        </div>
+                    <div class="sectionDivider" onclick="toggleLeftInfo(jQuery('#displayoptions_arrowclick'), 'displayoptions');">
+                        Settings
+                        <div id="displayoptions_arrowclick" class="toggleLeftDown"></div>
+                    </div>
 
-        <div id="displayoptions" style="display: none" align="left">
-            <input id="guidelineswitch" type="checkbox"/>Guideline
-            <br/>
-            <input id="currentpositionswitch" type="checkbox" checked="checked"/>Coordinates
-            <br/>
-            <input id="scrollswitch" type="checkbox" onchange="scrollSwitcher()"/>Scroll Zoom
-            <p></p>
-            Rows of Tracks:
-            <select id='rowoftracks' name='rowoftracks' onchange='trackToggle("all");'>
-                <option value=1> 1</option>
-                <option value=2> 2</option>
-                <option value=3> 3</option>
-                <option value=4 selected=""> 4</option>
-                <option value=5> 5</option>
-            </select>
-        </div>
+                    <div id="displayoptions" style="display: none" align="left">
+                        <input id="guidelineswitch" type="checkbox"/>Guideline
+                        <br/>
+                        <input id="currentpositionswitch" type="checkbox" checked="checked"/>Coordinates
+                        <br/>
+                        <input id="scrollswitch" type="checkbox" onchange="scrollSwitcher()"/>Scroll Zoom
+                        <p></p>
+                        Rows of Tracks:
+                        <select id='rowoftracks' name='rowoftracks' onchange='trackToggle("all");'>
+                            <option value=1> 1</option>
+                            <option value=2> 2</option>
+                            <option value=3> 3</option>
+                            <option value=4 selected=""> 4</option>
+                            <option value=5> 5</option>
+                        </select>
+                    </div>
 
-        <div class="sectionDivider" onclick="toggleLeftInfo(jQuery('#Tracksdiv_arrowclick'), 'Tracksdiv');">Tracks List
-            <div id="Tracksdiv_arrowclick" class="toggleLeftDown"></div>
-        </div>
+                    <div class="sectionDivider" onclick="toggleLeftInfo(jQuery('#Tracksdiv_arrowclick'), 'Tracksdiv');">Tracks List
+                        <div id="Tracksdiv_arrowclick" class="toggleLeftDown"></div>
+                    </div>
 
-        <div id="Tracksdiv">
-            <table width=100%>
-                <tr>
-                    <th>
-                        Track List
+                    <div id="Tracksdiv">
+                        <table width=100%>
+                            <tr>
+                                <th>
+                                    Track List
 
                         <span title='selectAll'><input type="checkbox" id='selectAllCheckbox'
                                                        name='selectAllCheckbox'
@@ -256,48 +267,56 @@
                                                          name='unSelectAllCheckbox'
                                                          onClick=unSelectAllCheckbox();>  Deselect All</span>
 
-                    </th>
+                                </th>
 
-                </tr>
-                <tr>
-                    <td>
-                        <div id="tracklist" align="left">
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div id="tracklist" align="left">
 
-                        </div>
-                    </td>
+                                    </div>
+                                </td>
 
-                </tr>
-            </table>
-        </div>
+                            </tr>
+                        </table>
+                    </div>
 
-        <div class="sectionDivider" onclick="toggleLeftInfo(jQuery('#MergeTracksdiv_arrowclick'), 'MergeTracksdiv');">
-            Merge
-            Tracks List
-            <div id="MergeTracksdiv_arrowclick" class="toggleLeftDown"></div>
-        </div>
-
-        <div id="MergeTracksdiv">
-
-            <table width=100%>
-                <tr>
-                    <th>
+                    <div class="sectionDivider" onclick="toggleLeftInfo(jQuery('#MergeTracksdiv_arrowclick'), 'MergeTracksdiv');">
                         Merge
-                    </th>
-                </tr>
-                <tr>
+                        Tracks List
+                        <div id="MergeTracksdiv_arrowclick" class="toggleLeftDown"></div>
+                    </div>
 
-                    <td>
-                        <div id="mergetracklist" align="left"></div>
-                    </td>
-                </tr>
+                    <div id="MergeTracksdiv">
 
-            </table>
+                        <table width=100%>
+                            <tr>
+                                <th>
+                                    Merge
+                                </th>
+                            </tr>
+                            <tr>
+
+                                <td>
+                                    <div id="mergetracklist" align="left"></div>
+                                </td>
+                            </tr>
+
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
         </div>
-        <%--<div id="openCloseWrap" style="display: none; cursor: pointer" onclick="tracklistopenclose();">--%>
-        <%--<font color="white"> Contrasdfols </font>--%>
-        <%--</div>--%>
+
     </div>
 </div>
+
+
+
 
 <div id="menu">
     <table id="dpop1" width="100%">
@@ -613,6 +632,96 @@
 
 </div>
 
+<div class="modal fade tgacbrowsermodal" id="uploadModal" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Drop files here:</h4>
+            </div>
+            <div class="modal-body">
+                <p>Current supported format is GAPIT file in <b>CSV</b> format.</p>
+                example: <br>
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>
+
+                        </th>
+                        <th>
+                            P.value
+                        </th>
+                        <th>
+                            Loc
+                        </th>
+                        <th>
+                            Chr
+                        </th>
+                        <th>
+                            ...
+                        </th>
+                        <th>
+                            ...
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>
+                            ref:pos:base
+                        </td>
+                        <td>
+                            log10P
+                        </td>
+                        <td>
+                            Chr_start-pos(ref)_end-pos(ref)
+                        </td>
+                        <td>
+                            Chr
+                        </td>
+                        <td>
+                            ...
+                        </td>
+                        <td>
+                            ...
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            cds1:105:A
+                        </td>
+                        <td>
+                            1.62E
+                        </td>
+                        <td>
+                            A01-11658_11788
+                        </td>
+                        <td>
+                            A01
+                        </td>
+                        <td>
+                            ...
+                        </td>
+                        <td>
+                            ...
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <article>
+                    <div id="holder" class="">
+                    </div>
+                    <p class="hidden" id="upload"><label>Drag &amp; drop not supported, but you can still upload via this input field:<br>
+                        <input type="file"></label>
+                    </p>
+                </article>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
 
 
 </body>

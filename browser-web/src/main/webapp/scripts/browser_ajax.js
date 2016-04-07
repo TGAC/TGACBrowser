@@ -228,7 +228,10 @@ function saveSession() {
         'saveFile',
         {'location': path, 'reference': seqregname, 'coord_sys': coord, 'session': randomnumber, 'from': getBegin(), 'to': getEnd(), 'seq': seq, 'seqlen': sequencelength, 'track': trackslist, 'tracks': tracks, 'filename': (randomnumber), 'blast': blast, 'edited_tracks': edited_tracks, 'removed_tracks': removed_tracks, 'url': ajaxurl},
         {'doOnSuccess': function (json) {
-            jQuery("#export").html("<a target = '_blank' href='" + json.link + "'>Export</a>")
+            jQuery("#export").html("Export")
+            jQuery("#export").click(function(){
+                window.open(json.link, '_blank');
+            })
             jQuery("#export").show();
         }
         });
@@ -268,7 +271,7 @@ function loadSession(query) {
             loadEditedTracks(json.edited_tracks)
             loadRemovedTracks(json.removed_tracks)
             reloadTracks(json.tracks, track_list, json.blast);
-            jQuery("#controlsbutton").colorbox({width: "90%", inline: true, href: "#controlpanel"});
+            //jQuery("#controlsbutton").colorbox({width: "90%", inline: true, href: "#controlpanel"});
             checkSession();
         }
         });
@@ -451,7 +454,7 @@ function fileUploadProgress(formname, divname, successfunc) {
 }
 
 function processingOverlay() {
-    jQuery.colorbox({width: "30%", html: "Processing..."});
+    //jQuery.colorbox({width: "30%", html: "Processing..."});
 }
 
 function fileUploadSuccess() {
@@ -724,21 +727,24 @@ function getMarkers(query) {
             }));
 
             var width = 15
+            if(max > 0){
+                for (var i = 0; i < markers.length; i++) {
+                    var length = sequencelength * parseFloat(jQuery("#" + seqregname).css('height')) / parseFloat(jQuery("#" + seqregname).css('height'));
+                    var maptop = parseFloat(jQuery("#" + seqregname).css('height')) + parseInt(jQuery("#" + seqregname).css('bottom')) - (parseInt(markers[i].end) * parseFloat(jQuery("#" + seqregname).css('height')) / length);
+                    var left = parseInt(jQuery("#" + seqregname).position().left) + parseInt(20);
+                    var mapheight = parseFloat(jQuery("#" + seqregname).css('height')) / markers.length;
+                    if (mapheight < 1) {
+                        mapheight = 1;
+                    }
+                    var opacity = markers[i].graph*1/max;
 
-            for (var i = 0; i < markers.length; i++) {
-                var length = sequencelength * parseFloat(jQuery("#" + seqregname).css('height')) / parseFloat(jQuery("#" + seqregname).css('height'));
-                var maptop = parseFloat(jQuery("#" + seqregname).css('height')) + parseInt(jQuery("#" + seqregname).css('bottom')) - (parseInt(markers[i].end) * parseFloat(jQuery("#" + seqregname).css('height')) / length);
-                var left = parseInt(jQuery("#" + seqregname).position().left) + parseInt(20);
-                var mapheight = parseFloat(jQuery("#" + seqregname).css('height')) / markers.length;
-                if (mapheight < 1) {
-                    mapheight = 1;
+
+                    jQuery("#refmap").append("<div title='" + markers[i].start + ":" + markers[i].end + "' class='refmapmarker'  style='opacity:"+opacity+"; left:" + left + "px; bottom:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;'  onclick=loadMarker(" + markers[i].start + "," + parseInt(markers[i].end)+");></div>");
+
                 }
-                var opacity = markers[i].graph*1/max;
-
-
-                jQuery("#refmap").append("<div title='" + markers[i].start + ":" + markers[i].end + "' class='refmapmarker'  style='opacity:"+opacity+"; left:" + left + "px; bottom:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;'  onclick=loadMarker(" + markers[i].start + "," + parseInt(markers[i].end)+");></div>");
-
             }
+
+
         }
         });
 }
@@ -773,6 +779,7 @@ function loadMarker(start,end){
                 if(stopposition < 1) {
                     stopposition = 1
                 }
+
                 jQuery("#marker_div").append("<div title='" + markers[i].start + ":" + markers[i].end + "' class='refmapmarker-sequence'  style='background: black; position: absolute; top:0px; left:" + startposition + "px;  width:" +stopposition + "px; height:" + height + "px;'></div>");
 
             }
@@ -856,7 +863,7 @@ function drawBrowser(json, from, to, blast) {
 
         setNavPanel();
 
-        jQuery("#controlsbutton").colorbox({width: "90%", inline: true, href: "#controlpanel"});
+        //jQuery("#controlsbutton").colorbox({width: "90%", inline: true, href: "#controlpanel"});
     }
     else {
 
