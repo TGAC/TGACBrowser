@@ -157,7 +157,7 @@ function readerLoaded(e, files, i, name) {
         "</div>";
 
 
-    jQuery("#tracks").append("<div id='upload"+count + "_wrapper' class='feature_tracks' style=\" max-height:110px; overflow-x: hidden;\">" +
+    jQuery("#tracks").append("<div id='upload"+count + "_wrapper' class='feature_tracks' style=\" max-height:150px; overflow-x: hidden;\">" +
         "</div>");
 
     jQuery("#upload"+count + "_wrapper").append(label +
@@ -165,7 +165,7 @@ function readerLoaded(e, files, i, name) {
     );
 
     jQuery(function () {
-        jQuery("#" + "upload"+count + "_wrapper").resizable({
+        jQuery("#upload"+count + "_wrapper").resizable({
             handles: "s",
             minHeight: "50px",
             borderBottom: '1px solid black'

@@ -31,12 +31,7 @@ function readGem(trackName, trackId, div) {
     var width = jQuery("#wrapper").width(),
         height = 100;
 
-    var newStart_temp = getBegin();
-    var newEnd_temp = getEnd();
-    var partial = (newEnd_temp - newStart_temp) / 2;
 
-
-    var x = d3.time.scale().range([0, width]);
     var y = d3.scale.linear().range([height, 0]);
 
 
