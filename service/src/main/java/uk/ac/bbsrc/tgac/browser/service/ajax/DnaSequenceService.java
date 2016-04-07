@@ -28,6 +28,7 @@ package uk.ac.bbsrc.tgac.browser.service.ajax;
 import net.sf.json.JSONObject;
 import net.sourceforge.fluxion.ajax.Ajaxified;
 import net.sourceforge.fluxion.ajax.util.JSONUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -309,7 +310,7 @@ public class DnaSequenceService {
             } else if (trackId.contains(".sam") || trackId.contains(".bam")) {
                 count = SamBamService.countBAM(start, end, delta, trackId, seqName);
 
-                log.info("\n\n\nBAM count "+ count);
+                log.info("\n\n\nBAM count " + count);
 
 
                 if (count ==0) {
@@ -685,7 +686,6 @@ public class DnaSequenceService {
             response.put("group_A", dafStore.getSNPs(groupA_array));
             response.put("group_B", dafStore.getSNPs(groupB_array));
 //            response.put("unique", dafStore.getSNPs(groupC_array));
-
             return response;
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.

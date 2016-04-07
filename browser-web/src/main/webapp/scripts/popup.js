@@ -90,7 +90,7 @@ function newpopup(track, i, j) {
         jQuery("#FASTAme").html('<span title="Fasta" class="ui-button ui-fasta" onclick=fetchFasta(' + window[track][i].transcript[j].start + ',' + window[track][i].transcript[j].end + ",\"" + track + "\",\"" + i + "\",\"" + j + '\");></span>');
         jQuery("#BLASTme").html('<span title="Blast" class="ui-button ui-blast" onclick=preBlast(' + window[track][i].transcript[j].start + ',' + window[track][i].transcript[j].end + ',' + '\"#popup\");></span>');
         jQuery("#ZoomHere").html('<span title="Zoom Here" class="ui-button ui-icon ui-icon-zoomin" onclick=zoomHere(' + window[track][i].transcript[j].start + ',' + window[track][i].transcript[j].end + ');></span>');
-        jQuery("#EditDescription").html('<span title="Edit" class="ui-button ui-icon ui-icon-pencil" onclick=showEditDesc(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
+        jQuery("#EditDescription").html('<span title="Edit" class="ui-button ui-icon ui-icon-pencil" onclick=showSNPs(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
         jQuery("#deleteTrack").html('<span title="Remove" class="ui-button ui-icon ui-icon-trash" onclick=deleteTrack(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
         jQuery("#flagTrack").html('<span title="Flag" class="ui-button ui-icon ui-icon-flag" onclick=flagTrack(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
         jQuery("#Linkme").html("<a target='_blank' href='" + jQuery("#linkLocation").html() + "" + window[track][i].desc + "'> <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\"></span></a>");
@@ -117,7 +117,7 @@ function newpopup(track, i, j) {
 
         }
         jQuery("#ZoomHere").html('<span title="Zoom Here" class="ui-button ui-icon ui-icon-zoomin" onclick=zoomHere(' + window[track][i].start + ',' + endposition + ');></span>');
-        jQuery("#EditDescription").html('<span title="Edit" class="ui-button ui-icon ui-icon-pencil" onclick=showEditDesc(\"' + track + '\",\'' + i + '\');></span>');
+        jQuery("#EditDescription").html('<span title="Edit" class="ui-button ui-icon ui-icon-pencil" onclick=showOtherSNPs(\"' + track + '\",\'' + i + '\');></span>');
         jQuery("#deleteTrack").html('<span title="Remove" class="ui-button ui-icon ui-icon-trash" onclick=deleteTrack(\"' + track + '\",\'' + i + '\');></span>');
         jQuery("#flagTrack").html('<span title="Flag" class="ui-button ui-icon ui-icon-flag" onclick=flagTrack(\"' + track + '\",\'' + i + '\');></span>');
         if (window['track_list' + track].id.toString().indexOf("cs") >= 0) {
@@ -390,6 +390,86 @@ function editDesc(track, i, j) {
     removePopup();
     backup_tracks(track, i);
 }
+
+function showSNPs(track, i, j) {
+console.log("showSNPS")
+    jQuery.colorbox({
+        width: "90%",
+        height: "100%",
+        html: "<div id=\"SNPs\"><img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'></div>"});
+
+
+
+
+    var start = window[track][i].transcript[j].start;
+    var end = window[track][i].transcript[j].end;
+    Fluxion.doAjax(
+        'dnaSequenceService',
+        'getSNPs',
+        {'id': seqregname,'start': start, 'end': end, 'coord':coord, 'url': ajaxurl},
+        {'doOnSuccess': function (json) {
+            var file_Text = "\#CHROM,POS,ID,REF,ALT,QUAL,FILTER,INFO-";
+            var html_string = "<div id=vcfdownload></div>" +
+                "" +
+                "<table class='list' id='SNP_hit' width=100%><thead><tr><th>#CHROM</th><th>POS</th><th>ID</th><th>REF</th><th>ALT</th><th>QUAL</th><th>FILTER</th><th>INFO</th></tr></thead>";
+            for (var k = 0; k < json.SNP.length; k++) {
+
+                file_Text += seqregname+","+json.SNP[k].seq_region_start+","+json.SNP[k].hit_name+","+json.SNP[k].ref+","+json.SNP[k].cigar_line+","+json.SNP[k].score+","+json.SNP[k].info+"-"
+                html_string +=  "<tr><td>"+seqregname+"<td>"+json.SNP[k].seq_region_start+"<td>"+json.SNP[k].hit_name+"<td>"+json.SNP[k].ref+"<td>"+json.SNP[k].cigar_line+"<td>"+json.SNP[k].score+"<td><td>"+json.SNP[k].info
+
+                if (k == json.SNP.length - 1) {
+                    html_string += "</table>";
+                    jQuery('#SNPs').html(html_string);
+                }
+            }
+            //generateFileLink(file_Text)
+            file_Text = file_Text.replace(/\s+/gi, "_")
+            console.log(file_Text)
+            jQuery("#SNP_hit").tablesorter();
+            jQuery('#vcfdownload').html("<button class='ui-state-default ui-corner-all' " +
+            "onclick=VCFFile('" + file_Text + "') \">Prepare Download VCF File</button>");
+
+
+        }
+        });
+    removePopup();
+}
+
+function showOtherSNPs(track, i) {
+    console.log("showOtherSNPS")
+
+    jQuery.colorbox({
+        width: "90%",
+        height: "100%",
+        html: "<div id=\"SNPs\"><img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'></div>"});
+
+
+    var start = window[track][i].start;
+    Fluxion.doAjax(
+        'dnaSequenceService',
+        'getOtherSNPs',
+        {'id': seqregname,'start': start, 'coord':coord, 'url': ajaxurl},
+        {'doOnSuccess': function (json) {
+            var file_Text = "\#CHROM,POS,ID,REF,ALT,QUAL,FILTER,INFO-";
+            var html_string = "<div id=vcfdownload></div>" +
+                "" +
+                "<table class='list' id='SNP_hit' width=100%><thead><tr><th>#CHROM</th><th>POS</th><th>ID</th><th>REF</th><th>ALT</th><th>QUAL</th><th>FILTER</th><th>INFO</th></tr></thead>";
+            for (var k = 0; k < json.SNP.length; k++) {
+                file_Text += seqregname+","+json.SNP[k].seq_region_start+","+json.SNP[k].hit_name+","+json.SNP[k].ref+","+json.SNP[k].cigar_line+","+json.SNP[k].score+","+json.SNP[k].info+"-"
+                html_string +=  "<tr><td>"+seqregname+"<td>"+json.SNP[k].seq_region_start+"<td>"+json.SNP[k].hit_name+"<td>"+json.SNP[k].ref+"<td>"+json.SNP[k].cigar_line+"<td>"+json.SNP[k].score+"<td><td>"+json.SNP[k].info
+            }
+            jQuery('#SNPs').html(html_string);
+            jQuery("#SNP_hit").tablesorter();
+            file_Text = file_Text.replace(/\s+/gi, "_")
+            jQuery('#vcfdownload').html("<button class='ui-state-default ui-corner-all' " +
+            "onclick=VCFFile('" + file_Text + "') \">Prepare Download VCF File</button>");
+        }
+        });
+
+    removePopup();
+}
+
+
 
 // removes data from variables and display again
 function deleteTrack(track, i, j) {

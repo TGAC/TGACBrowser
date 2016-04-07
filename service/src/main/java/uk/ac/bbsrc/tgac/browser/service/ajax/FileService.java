@@ -204,6 +204,38 @@ public class FileService {
     }
 
     /**
+     *
+     * @param session
+     * @param json
+     * @return
+     */
+    public JSONObject saveVCF(HttpSession session, JSONObject json) {
+        String reference = json.getString("reference");
+        String data = json.getString("data");
+
+        String location = json.getString("location");
+        JSONObject response = new JSONObject();
+        Random generator = new Random();
+        try {
+            int i = generator.nextInt();
+            data = data.replaceAll("_"," ");
+            data = data.replaceAll("-","\n");
+            data = data.replaceAll(",","\t");
+
+            BufferedWriter out = new BufferedWriter(new FileWriter("../webapps/" + location + "/temp/" + reference + "" + i + ".txt"));
+                out.write(data);
+            out.close();
+            response.put("link", "../" + location + "/temp/" + reference + "" + i + ".txt");
+            return response;
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            response.put("error", e.toString());
+            return response;
+        }
+
+    }
+
+    /**
      * Returns string
      * <p>
      * formats FASTA sequence each row of 70

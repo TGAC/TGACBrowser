@@ -50,3 +50,4 @@ public interface DafStore extends Store {
     public List<Map<String, Object>> getSNPs(String[] list) throws Exception;
     public JSONArray getUniqueSNPs(String[] list1, String[] list2) throws Exception;
 }
+

@@ -56,17 +56,17 @@
                 </configuration>
             </plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>uk.ac.bbsrc.tgac.miso.analysis.AnalysisServer</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-jar-plugin</artifactId>-->
+                <!--<configuration>-->
+                    <!--<archive>-->
+                        <!--<manifest>-->
+                            <!--<mainClass>uk.ac.bbsrc.tgac.miso.analysis.AnalysisServer</mainClass>-->
+                        <!--</manifest>-->
+                    <!--</archive>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
 
             <plugin>
                 <groupId>org.dstovall</groupId>
@@ -92,12 +92,12 @@
     </build>
 
     <dependencies>
-        <dependency>
-            <groupId>uk.ac.bbsrc.tgac.miso</groupId>
-            <artifactId>tgac-analysis</artifactId>
-            <version>0.1.6</version>
-            <!--<scope>provided</scope>-->
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>uk.ac.bbsrc.tgac.miso</groupId>-->
+            <!--<artifactId>tgac-analysis</artifactId>-->
+            <!--<version>0.1.6</version>-->
+            <!--&lt;!&ndash;<scope>provided</scope>&ndash;&gt;-->
+        <!--</dependency>-->
         <dependency>
             <groupId>uk.ac.ebi.fgpt</groupId>
             <artifactId>conan-service</artifactId>

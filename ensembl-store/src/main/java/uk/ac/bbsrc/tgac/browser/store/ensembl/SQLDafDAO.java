@@ -39,6 +39,7 @@ import uk.ac.bbsrc.tgac.browser.core.store.UtilsStore;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -440,7 +441,11 @@ public class SQLDafDAO implements DafStore {
                         "FROM dna_align_feature " +
                         "WHERE dna_align_feature_id = " + map_temp.get("id");
 
+<<<<<<< HEAD
                 int start_addition = template.queryForInt(GET_HIT_addition, new Object[]{});
+=======
+                int start_addition = 0;//template.queryForInt(GET_HIT_addition, new Object[]{});
+>>>>>>> fileuplod
 
 
                 int track_start = start_pos + Integer.parseInt(map_temp.get("start").toString());
@@ -512,8 +517,11 @@ public class SQLDafDAO implements DafStore {
             throw new Exception("processHit no result found " + e.getMessage());
         }
     }
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 =======
+=======
+>>>>>>> fileuplod
 
     public JSONArray getallSNPsonGene(int query, String coord, long start, long end) throws Exception {
         JSONArray snpkList = new JSONArray();
@@ -561,7 +569,11 @@ public class SQLDafDAO implements DafStore {
 
     }
 
+<<<<<<< HEAD
     public List<Map<String, Object>> getSNPs(String[] list) throws Exception {
+=======
+    public int getSNPs(String[] list) throws Exception {
+>>>>>>> fileuplod
         JSONArray snpList = new JSONArray();
         String analysis_query = "select analysis_id, display_label from analysis_description";
         List<Map<String, Object>> analysis = template.queryForList(analysis_query, new Object[]{});
@@ -573,6 +585,7 @@ public class SQLDafDAO implements DafStore {
         }
 
 
+<<<<<<< HEAD
         String ids = "(" + list[0];
         for (int i = 1; i < list.length; i++) {
             ids += "," + list[1];
@@ -592,13 +605,38 @@ public class SQLDafDAO implements DafStore {
 //        String SQL_query = "select seq_region_start  from dna_align_feature where seq_region_start in  " + sub_query + " and analysis_id = " + list[list.length - 1] + ";";
         String SQL_query = "select d.dna_align_feature_id, d.analysis_id, a.display_label, d.seq_region_start, d.seq_region_id, s.name  from dna_align_feature d, analysis_description a, seq_region s  where  d.analysis_id in " + ids + " and a.analysis_id = d.analysis_id and d.seq_region_id = s.seq_region_id;";
 
+=======
+//        String ids = "(" + list[0];
+//        for (int i = 1; i < list.length; i++) {
+//            ids += "," + list[1];
+//        }
+//        ids += ")";
+
+        String sub_query = "( select seq_region_start from dna_align_feature where seq_region_id = 1 and analysis_id = " + list[0] + ")";
+        for (int i = 1; i < list.length - 1; i++) {
+            sub_query = "( select seq_region_start from dna_align_feature where seq_region_id = 1 and analysis_id = " + list[i] + " and seq_region_start in " + sub_query +
+                    ") ";
+        }
+
+        log.info("\n\n\n\n test-query " + sub_query);
+//        String SQL_query = "select * from dna_align_feature where seq_region_id = ? and seq_region_start = ?";
+//        String SQL_query = "select d.*, SUBSTRING(sequence,seq_region_start,1) as ref from dna_align_feature d, dna where d.seq_region_id = 1 and  dna.seq_region_id = d.seq_region_id and  d.analysis_id in " + ids + ";";
+
+        String SQL_query = "select seq_region_start  from dna_align_feature where seq_region_start in  " + sub_query + " and analysis_id = " + list[list.length - 1] + ";";
+
+        log.info("\n\n\n\n SQL_Querytest" + SQL_query);
+>>>>>>> fileuplod
 
         List<Map<String, Object>> maps_one = template.queryForList(SQL_query, new Object[]{});
 //        for (Map map : maps_one) {
 //            map.put("info", analysis_obj.get(map.get("analysis_id").toString()));
 //        }
 //        snpList.addAll(maps_one);
+<<<<<<< HEAD
         return maps_one;
+=======
+        return maps_one.size();
+>>>>>>> fileuplod
 
     }
 
@@ -615,9 +653,14 @@ public class SQLDafDAO implements DafStore {
 
 
 //        String SQL_query = "select * from dna_align_feature where seq_region_id = ? and seq_region_start = ?";
+<<<<<<< HEAD
 //        String SQL_query = "select d.*, SUBSTRING(sequence,seq_region_start,1) as ref from dna_align_feature d, dna where  dna.seq_region_id = d.seq_region_id and  analysis_id =  " + list + ";";
         String SQL_query = "select d.*, SUBSTRING(sequence,seq_region_start,1) as ref from dna_align_feature d, dna where  dna.seq_region_id = d.seq_region_id and  analysis_id =  " + list + ";";
         log.info("\n\n\n\n SQL_Querytest 2 " + SQL_query);
+=======
+        String SQL_query = "select d.*, SUBSTRING(sequence,seq_region_start,1) as ref from dna_align_feature d, dna where d.seq_region_id = 1 and  dna.seq_region_id = d.seq_region_id and  analysis_id =  " + list + ";";
+        log.info("\n\n\n\n SQL_Querytest" + SQL_query);
+>>>>>>> fileuplod
 
         List<Map<String, Object>> maps_one = template.queryForList(SQL_query, new Object[]{});
         for (Map map : maps_one) {
@@ -659,7 +702,11 @@ public class SQLDafDAO implements DafStore {
                 "and d1.analysis_id in " + ids_1 + " " +
                 "and d2.analysis_id in " + ids_2 + " " +
                 "and d1.seq_region_start = d2.seq_region_start";
+<<<<<<< HEAD
         log.info("\n\n\n\n SQL_Querytest 3 " + SQL_query);
+=======
+        log.info("\n\n\n\n SQL_Querytest" + SQL_query);
+>>>>>>> fileuplod
 
         List<Map<String, Object>> maps_one = template.queryForList(SQL_query, new Object[]{});
 //        for (Map map : maps_one) {
@@ -671,5 +718,8 @@ public class SQLDafDAO implements DafStore {
     }
 
 
+<<<<<<< HEAD
 >>>>>>> Stashed changes
+=======
+>>>>>>> fileuplod
 }

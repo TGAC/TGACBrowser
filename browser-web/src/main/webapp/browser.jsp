@@ -13,6 +13,8 @@
                 jQuery('#searchText').val('Search DNA');
                 jQuery('#searchDiv').html('');
             }));
+
+            initUpload();
         });
     </script>
 </head>
@@ -723,6 +725,8 @@
             </div>
         </div>
 
+    </div>
+</div>
 
 </body>
 </html>
