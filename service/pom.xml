@@ -131,29 +131,29 @@
             <version>2.4</version>
             <classifier>jdk15</classifier>
         </dependency>
-        <dependency>
-            <groupId>net.sf.sam</groupId>
-            <artifactId>sam</artifactId>
-            <version>1.96</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>net.sf.sam</groupId>-->
+            <!--<artifactId>sam</artifactId>-->
+            <!--<version>1.96</version>-->
+        <!--</dependency>-->
 
-        <dependency>
-            <groupId>java-genomics</groupId>
-            <artifactId>java-genomics</artifactId>
-            <version>0.1.0</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>java-genomics</groupId>-->
+            <!--<artifactId>java-genomics</artifactId>-->
+            <!--<version>0.1.0</version>-->
+        <!--</dependency>-->
 
-        <dependency>
-            <groupId>broad-inst</groupId>
-            <artifactId>igv</artifactId>
-            <version>2.3.23</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>broad-inst</groupId>-->
+            <!--<artifactId>igv</artifactId>-->
+            <!--<version>2.3.23</version>-->
+        <!--</dependency>-->
 
-        <dependency>
-            <groupId>broad-inst.tribble</groupId>
-            <artifactId>tribble</artifactId>
-            <version>1.91</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>broad-inst.tribble</groupId>-->
+            <!--<artifactId>tribble</artifactId>-->
+            <!--<version>1.91</version>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>org.apache.commons</groupId>
