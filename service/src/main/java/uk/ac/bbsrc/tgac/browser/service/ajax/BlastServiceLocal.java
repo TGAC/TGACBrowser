@@ -42,7 +42,7 @@ import java.lang.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.*;
 import org.xml.sax.SAXParseException;
-import uk.ac.bbsrc.tgac.browser.blastmanager.store.BLASTManagerStore;
+import uk.ac.bbsrc.tgac.browser.blastmanager.store.*;
 
 import static org.apache.commons.lang.StringUtils.split;
 

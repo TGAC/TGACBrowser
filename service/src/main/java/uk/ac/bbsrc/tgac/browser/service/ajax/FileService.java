@@ -27,7 +27,7 @@ package uk.ac.bbsrc.tgac.browser.service.ajax;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import net.sf.samtools.SAMFileReader;
+//import net.sf.samtools.SAMFileReader;
 import net.sourceforge.fluxion.ajax.Ajaxified;
 import net.sourceforge.fluxion.ajax.util.JSONUtils;
 
@@ -35,7 +35,7 @@ import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.util.Random;
 
-import net.sf.samtools.*;
+//import net.sf.samtools.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -25,6 +25,7 @@
 
 package uk.ac.bbsrc.tgac.browser.service.ajax.javagenomicsio;
 
+<<<<<<< Updated upstream
 import edu.unc.genomics.VCFEntry;
 import edu.unc.genomics.io.VCFFileReader;
 import net.sf.json.JSONArray;
@@ -38,6 +39,22 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+=======
+//import edu.unc.genomics.VCFEntry;
+//import edu.unc.genomics.io.VCFFileReader;
+//import net.sf.json.JSONArray;
+//import net.sf.json.JSONObject;
+//import net.sourceforge.fluxion.ajax.Ajaxified;
+//import org.apache.log4j.Logger;
+//import org.apache.log4j.spi.LoggerFactory;
+//import uk.ac.bbsrc.tgac.browser.store.ensembl.Util;
+//import java.nio.channels.InterruptedByTimeoutException;
+//import java.nio.file.Path;
+//import java.nio.file.Paths;
+//import java.util.ArrayList;
+//import java.util.InputMismatchException;
+//import java.util.List;
+>>>>>>> Stashed changes
 
 /**
  * Created with IntelliJ IDEA.
@@ -46,7 +63,7 @@ import java.util.List;
  * Time: 12:04 PM
  * To change this template use File | Settings | File Templates.
  */
-@Ajaxified
+//@Ajaxified
 public class VCFService {
 
 //    protected static final Logger log = LoggerFactory.getLogger(VCFService.class);
