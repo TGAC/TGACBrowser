@@ -404,7 +404,9 @@ function updateJSON() {
         lastEnd = getEnd();
         lastStart = getBegin();
     }
-}         YDs� �ON(from, to, trackName, trackId) {
+}
+
+function addJSON(from, to, trackName, trackId) {
     if (from < 0) {
         from = 0;
     }
