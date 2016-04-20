@@ -640,8 +640,8 @@
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Drop files here:</h4>
+                <button data-dismiss="modal" class="close" type="button">×</button>
+                <h4 class="modal-title">Upload data</h4>
             </div>
             <div class="modal-body">
                 <p>Current supported format is GAPIT file in <b>CSV</b> format.</p>
@@ -661,9 +661,7 @@
                         <th>
                             Chr
                         </th>
-                        <th>
-                            ...
-                        </th>
+                        <th>TAIR_id</th>
                         <th>
                             ...
                         </th>
@@ -683,9 +681,7 @@
                         <td>
                             Chr
                         </td>
-                        <td>
-                            ...
-                        </td>
+                        <td>TAIR_gene_id</td>
                         <td>
                             ...
                         </td>
@@ -703,9 +699,7 @@
                         <td>
                             A01
                         </td>
-                        <td>
-                            ...
-                        </td>
+                        <td>AT4G30996.1</td>
                         <td>
                             ...
                         </td>
@@ -713,18 +707,17 @@
                     </tbody>
                 </table>
                 <article>
-                    <div id="holder" class="">
+                    <div id="holder" class=""> Drop files here
                     </div>
-                    <p class="hidden" id="upload"><label>Drag &amp; drop not supported, but you can still upload via this input field:<br>
+                    <p id="upload" class="hidden"><label>Drag &amp; drop not supported, but you can still upload via this input field:<br>
                         <input type="file"></label>
                     </p>
                 </article>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button data-dismiss="modal" class="btn btn-default" type="button">Close</button>
             </div>
         </div>
-
     </div>
 </div>
 

@@ -1,168 +1,739 @@
-/**
- * Created by thankia on 30/03/2016.
+/*
+ *
+ * Copyright (c) 2013. The Genome Analysis Centre, Norwich, UK
+ * TGAC Browser project contacts: Anil Thanki, Xingdong Bian, Robert Davey, Mario Caccamo @ TGAC
+ * **********************************************************************
+ *
+ * This file is part of TGAC Browser.
+ *
+ * TGAC Browser is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * TGAC Browser is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with TGAC Browser.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * ***********************************************************************
+ *
  */
 
-var duration = 10;
-function readGem(trackName, trackId, div) {
-    var data = window[trackName]
-    var keys = d3.keys(window[trackName][0])
-    window[trackName] = []
-    data.forEach(function (d, i) {
-        if (d.Chr == seqregname) {
-            var start = d.Loc.split("_")[1]
-            d.ref = d.Loc.split("_")[0]; //d[keys[0]].split(":")[0];
-            d.position = parseInt(start) + parseInt(d[keys[0]].split(":")[1]);
-            d.refbase = d[keys[0]].split(":")[2];
-            d.cds = d[keys[0]].split(":")[0];
+/**
+ * Created by IntelliJ IDEA.
+ * User: thankia
+ * Date: 2/17/12
+ * Time: 4:08 PM
+ * To change this template use File | Settings | File Templates.
+ */
 
-            window[trackName].push({
-                "ref": d.ref,
-                "position": d.position,
-                "refbase": d.refbase,
-                "log10P": noExponents(d.log10P),
-                "cds": d.cds,
-                "cds_pos": d.cds_pos
-            })
-        }
-
-    });
-
-    var margin = {top: 10, right: 0, bottom: 10, left: 0};
-    var width = jQuery("#wrapper").width(),
-        height = 100;
+var seq = null, seqLen, sequencelength, randomnumber, merged_track_list, deltaWidth = 0, refheight;
+var showCDS = false, showSNP = false, ctrldown = false;
+var rightclick = false, path;
+//var cds, SNPs, Exon, minWidth;
+var newStart, newEnd, mouseX, mouseY, border_left, border_right, selectionStart, selectionEnd, lastStart = -1, lastEnd = -1, grouplastid = null, grouptrack, grouptrackclass;
+var blastsdata = [];
+var grouplist = [];
+var tracks = [];
+var tracklocation = [];
 
 
-    var y = d3.scale.linear().range([height, 0]);
-
-
-    window[trackName+"svg"] = d3.select(div)
-        .append("svg")
-        .attr("width", width )
-        .attr("height", height+margin.top+margin.bottom )
-        .append("g")
-        .attr("transform",
-            "translate(" + margin.left + "," + margin.top + ")");
-    var gem = window[trackName];
-
-    var yScale = d3.scale.linear()
-        .domain(d3.extent(gem, function (d) {
-            return d.log10P;
-        }))
-        .range([height, 0]);
-    var yAxis = d3.svg.axis().scale(yScale).orient("left");
-    var svg = window[trackName+"svg"]
-
-
-    svg.append("g")
-        .attr("class", "y axis")
-        .attr("transform", "translate("+width/2+",0)")
-        .call(yAxis)
-        .append("text")
-        .attr("class", "label")
-        .attr("transform", "rotate(-90)")
-        .attr("y", 6)
-        .attr("dy", "10px")
-        .style("fill", "none")
-        .style("text-anchor", "end")
-        .text("log10P");
-
-
-    dispGraphManhattan(div, trackName, trackId)
-    // })
-}
-
-function dispGraphManhattan(div, trackName, trackId) {
-    console.log("dispGraphManhattan")
-
-    var data = window[trackName];
-    var gem = []
-
-    var newStart_temp = getBegin();
-    var newEnd_temp = getEnd();
-    var partial = (newEnd_temp - newStart_temp) / 2;
-
-
-    data.forEach(function (d, i) {
-        if(d.position >= newStart_temp-partial && d.position <= parseInt(newEnd_temp) + parseInt(partial)){
-            gem.push(d)
-        }
-    });
-
-    var width = jQuery("#wrapper").width(),
-        height = 100;
-
-
-    var svg = window[trackName+"svg"]
-
-    var xScale = d3.scale.linear()
-        .domain([newStart_temp - partial, parseInt(newEnd_temp) + parseInt(partial)])
-        .range([0, width]), // value -> display
-        xAxis = d3.svg.axis().scale(xScale).orient("bottom");
-
-    var yScale = d3.scale.linear()
-        .domain(d3.extent(gem, function (d) {
-            return d.log10P;
-        }))
-        .range([height, 0]);
-
-    svg.selectAll(".dot")
-        .remove();
-
-    var dot = svg.selectAll(".dot")
-        .data(gem);
-
-    console.log(gem.length)
-    console.log(gem.size())
-
-    var dotEnter = dot.enter().append("circle")
-        .attr("class", "dot")
-        .attr("r", 2)
-        .attr("cx", function (d) {
-            return xScale(d.position);
-        })
-        .attr("cy", function (d) {
-            return yScale(d.log10P);
-        })
-        .style("fill", "black")
-        .append("svg:title")
-        .text(function (d) {
-            return d.ref+":"+d.position
-        });
-
-    var dotUpdate = dot.transition()
-        .duration(duration)
-        .attr("cx", function (d) {
-            return xScale(d.position);
-        })
-        .attr("cy", function (d) {
-            return yScale(d.log10P);
-        });
-
-    var dotExit = dot.exit().transition()
-        .duration(duration)
-        .attr("cx", function (d) {
-            return xScale(d.position);
-        })
-        .attr("cy", function (d) {
-            return yScale(d.log10P);
-        })
-        .remove();
-}
-
-function noExponents(n) {
-    var data= String(n).split(/[eE]/);
-    if(data.length== 1) return data[0];
-
-    var  z= '', sign= this<0? '-':'',
-        str= data[0].replace('.', ''),
-        mag= Number(data[1])+ 1;
-
-    if(mag<0){
-        z= sign + '0.';
-        while(mag++) z += '0';
-        return z + str.replace(/^\-/,'');
+//toogle side bar codes
+function tracklistopenclose() {
+    if (jQuery("#openCloseIdentifier").is(":hidden")) {
+        jQuery("#slider").animate({
+            marginLeft: "-141px"
+        }, 500);
+        jQuery("#openCloseIdentifier").show();
     }
-    mag -= str.length;
-    while(mag--) z += '0';
-    return str + z;
+    else {
+        jQuery("#slider").animate({
+            marginLeft: "0px"
+        }, 500);
+        jQuery("#openCloseIdentifier").hide();
+    }
 }
+
+// Generate automated tracks divs for each track
+
+function tracks_div(Tracklist, i) {
+
+
+
+    if (i) {
+
+        console.log("tracks_div "+i)
+
+        jQuery("#tracks").append("<div id='" + Tracklist[i].name + "_wrapper' class='feature_tracks' style=\"display:block; max-height:110px; overflow-x: hidden;\">" +
+            "</div>");
+
+
+        if (Tracklist[i].web && Tracklist[i].web.label == false) {
+            window['track_list' + Tracklist[i].name].label_show = false;
+            jQuery("#" + Tracklist[i].name + "_wrapper").append("<div align='left' class='handle'>" +
+                "<table>" +
+                "<tr>" +
+                "<td><div class='closehandle ui-icon ui-icon-close' onclick=removeTrack(\"" + Tracklist[i].name + "_div\",\"" + Tracklist[i].name + "\");></div></td>" +
+                "</tr>" +
+                "</table>" +
+                "</div>" +
+                "<div id='" + Tracklist[i].name + "_div' class='feature_tracks' style=\"display:none; top:0px;\" > " + Tracklist[i].name + "</div>"
+            );
+        } else {
+            jQuery("#" + Tracklist[i].name + "_wrapper").append("<div align='left' class='handle'>" +
+                "<table>" +
+                "<tr>" +
+                "<td><b>" + Tracklist[i].display_label + "</b></td>" +
+                "<td><div class=\"ui-icon ui-icon-comment\" onclick=toogleLabel(\"" + Tracklist[i].name + "\");> </div></td>" + checkGene(Tracklist[i].name) +
+                "<td><div class='closehandle ui-icon ui-icon-close' onclick=removeTrack(\"" + Tracklist[i].name + "_div\",\"" + Tracklist[i].name + "\");></div></td>" +
+                "</tr>" +
+                "</table>" +
+                "</div>" +
+                "<div id='" + Tracklist[i].name + "_div' class='feature_tracks' style=\"display:block; top:10px;\" > </div>"
+            );
+        }
+
+        jQuery(function () {
+            jQuery("#" + Tracklist[i].name + "_wrapper").resizable({
+                handles: "s",
+                minHeight: "50px",
+                borderBottom: '1px solid black'
+            });
+        });
+    } else {
+
+        jQuery("#tracks").html("<div id='mergedtrack_wrapper' class='feature_tracks' style=\"display:none\">  " +
+            "<div align='left' class='handle'>" +
+            "<table>" +
+            "<tr>" +
+            "<td><b>Merged Track  </b></td>" +
+            "<td><div class=\"ui-icon ui-icon-comment\" onclick=toogleLabelMerged();> </div></td>" +
+            "<td><div class='closehandle ui-icon ui-icon-close' onclick=removeMergedTrack()></div></td>" +
+            "<td><div id= \"mergelabel\" align='left'></div></td>" +
+            "</tr>" +
+            "</table>" +
+            "</div>" +
+            "<div id=\"mergedtrack\" style=\"display:none\" > </div>" +
+            "</div>");
+
+        jQuery("#mergedtrack_wrapper").resizable({
+            handles: "s",
+            alsoResize: "#mergedtrack",
+            minHeight: "50px",
+            borderBottom: '1px solid black'
+        });
+
+        for (var i = 0; i < Tracklist.length; i++) {
+            jQuery("#tracks").append("<div id='" + Tracklist[i].name + "_wrapper' class='feature_tracks' style=\"display:none; max-height:110px; overflow-x: hidden;\">" +
+                "</div>");
+
+
+            if (Tracklist[i].web && Tracklist[i].web.label == false) {
+                window['track_list' + Tracklist[i].name].label_show = false;
+                jQuery("#" + Tracklist[i].name + "_wrapper").append("<div align='left' class='handle'>" +
+                    "<table>" +
+                    "<tr>" +
+                    "<td><div class='closehandle ui-icon ui-icon-close' onclick=removeTrack(\"" + Tracklist[i].name + "_div\",\"" + Tracklist[i].name + "\");></div></td>" +
+                    "</tr>" +
+                    "</table>" +
+                    "</div>" +
+                    "<div id='" + Tracklist[i].name + "_div' class='feature_tracks' style=\"display:none; top:0px;\" > " + Tracklist[i].name + "</div>"
+                );
+            } else {
+                jQuery("#" + Tracklist[i].name + "_wrapper").append("<div align='left' class='handle'>" +
+                    "<table>" +
+                    "<tr>" +
+                    "<td><b>" + Tracklist[i].display_label + "</b></td>" +
+                    "<td><div class=\"ui-icon ui-icon-comment\" onclick=toogleLabel(\"" + Tracklist[i].name + "\");> </div></td>" + checkGene(Tracklist[i].name) +
+                    "<td><div class='closehandle ui-icon ui-icon-close' onclick=removeTrack(\"" + Tracklist[i].name + "_div\",\"" + Tracklist[i].name + "\");></div></td>" +
+                    "</tr>" +
+                    "</table>" +
+                    "</div>" +
+                    "<div id='" + Tracklist[i].name + "_div' class='feature_tracks' style=\"display:none; top:10px;\" > </div>"
+                );
+            }
+
+            jQuery(function () {
+                jQuery("#" + Tracklist[i].name + "_wrapper").resizable({
+                    handles: "s",
+                    minHeight: "50px",
+                    borderBottom: '1px solid black'
+                });
+            });
+        }
+    }
+
+
+    function checkGene(track) {
+        if (track.toLowerCase().indexOf('gene') >= 0 || track.toLowerCase().indexOf("gff") >= 0) {
+            return "<td><div title='Expand/Shrink' class=\"closehandle ui-icon ui-icon-carat-2-n-s\" onclick=toogleTrackView(\"" + track + "\");> </div></td>"
+        }
+        else {
+            return "";
+        }
+    }
+
+}
+// Generate automated tracks lists for each track
+
+function trackList(tracklist, i) {
+    console.log("trackList")
+    var Tracklist = tracklist;
+
+    if (i) {
+        console.log(i)
+
+        console.log(Tracklist[i])
+
+        window['track_list' + Tracklist[i].name] = {
+            name: Tracklist[i].name,
+            id: Tracklist[i].id,
+            display_label: Tracklist[i].display_label,
+            desc: Tracklist[i].desc,
+            disp: Tracklist[i].disp,
+            merge: Tracklist[i].merge,
+            label: Tracklist[i].label,
+            graph: Tracklist[i].graph,
+            graphtype: null,
+            label_show: true
+        }
+
+        tracks_div(tracklist, i);
+        tracks_css(tracklist, i);
+
+
+        if (Tracklist[i].web && Tracklist[i].web.trackgroup) {
+
+            if (document.getElementById("group" + Tracklist[i].web.trackgroup) == null) {
+                jQuery("#tracklist").append("<div style='padding: 5px; margin: 10px; position: relative; border: 1px solid lightgray; top: 10px' id='group" + Tracklist[i].web.trackgroup + "'> <b>" + Tracklist[i].web.trackgroup + "</b> <p></div>")
+                jQuery("#mergetracklist").append("<div style='padding: 5px;  margin: 10px; position: relative; border: 1px solid lightgray; top: 10px' id='mergegroup" + Tracklist[i].web.trackgroup + "'><b>" + Tracklist[i].web.trackgroup + "</b> <p></div>")
+            }
+
+            jQuery("<div>").attr({
+                'style': "position: relative; width: 70%; word-wrap: break-word;",
+                'id': Tracklist[i].name + "span",
+                'title': Tracklist[i].desc
+            }).html("<input type=\"checkbox\" checked id='" + Tracklist[i].name + "Checkbox' name='" + Tracklist[i].name + "Checkbox' onClick=loadTrackAjax(\"" + Tracklist[i].id + "\",\"" + Tracklist[i].name + "\"); value=" + Tracklist[i].name + " >" + Tracklist[i].display_label)
+                .appendTo("#group" + Tracklist[i].web.trackgroup);
+
+            jQuery("<div>").attr({
+                'style': "position: relative; width: 70%; word-wrap: break-word;",
+                'id': Tracklist[i].name + "span",
+                'title': Tracklist[i].desc
+            }).html("<input type=\"checkbox\" disabled id='" + Tracklist[i].name + "mergeCheckbox' name='" + Tracklist[i].name + "mergeCheckbox' onClick=mergeTrack(\"" + Tracklist[i].name + "\"); value=" + Tracklist[i].name + " >" + Tracklist[i].display_label)
+                .appendTo("#mergegroup" + Tracklist[i].web.trackgroup);
+
+        } else {
+            if (document.getElementById("nogroup") == null) {
+
+                jQuery("#tracklist").append("<div style='padding: 5px; margin: 10px; position: relative; border: 1px solid lightgray; top: 10px' id='nogroup'> </div>")
+                jQuery("#mergetracklist").append("<div style='padding: 5px;  margin: 10px; position: relative; border: 1px solid lightgray; top: 10px' id='nomergegroup'></div>")
+                jQuery("#nogroup").append("<table id='nogroup-table' width=100%> <tr>");
+                jQuery("#nomergegroup").append("<table id='nomergegroup-table' width=100%> <tr>");
+
+            }
+
+            jQuery("<div>").attr({
+                'style': "position: relative; width: 70%; word-wrap: break-word;",
+                'id': Tracklist[i].name + "span",
+                'title': Tracklist[i].desc
+            }).html("<input type=\"checkbox\" checked id='" + Tracklist[i].name + "Checkbox' name='" + Tracklist[i].name + "Checkbox' onClick=loadTrackAjax(\"" + Tracklist[i].id + "\",\"" + Tracklist[i].name + "\"); value=" + Tracklist[i].name + " >" + Tracklist[i].display_label).appendTo("#nogroup-table");
+
+            jQuery("<div>").attr({
+                'style': "position: relative; width: 70%; word-wrap: break-word;",
+                'id': Tracklist[i].name + "span",
+                'title': Tracklist[i].desc
+            }).html("<input type=\"checkbox\" disabled id='" + Tracklist[i].name + "mergeCheckbox' name='" + Tracklist[i].name + "mergeCheckbox' onClick=mergeTrack(\"" + Tracklist[i].name + "\"); value=" + Tracklist[i].name + " >" + Tracklist[i].display_label)
+                .appendTo("#nomergegroup-table");
+
+            if ((i + 1) % 3 == 0) {
+                jQuery("#nogroup-table").append("</tr> <tr>");
+                jQuery("#nomergegroup-table").append("</tr> <tr>");
+            }
+        }
+    }
+    else {
+        for (var i = 0; i < Tracklist.length; i++) {
+
+            window['track_list' + Tracklist[i].name] = {
+                name: Tracklist[i].name,
+                id: Tracklist[i].id,
+                display_label: Tracklist[i].display_label,
+                desc: Tracklist[i].desc,
+                disp: Tracklist[i].disp,
+                merge: Tracklist[i].merge,
+                label: Tracklist[i].label,
+                graph: Tracklist[i].graph,
+                graphtype: null,
+
+                label_show: true
+            }
+        }
+
+        tracks_div(tracklist);
+        tracks_css(tracklist);
+
+        var tracks = "<table width=100%> <tr>";
+        var mergeTrack = "<table width=100%> <tr>";
+
+        for (var i = 0; i < Tracklist.length; i++) {
+
+            if (Tracklist[i].web && Tracklist[i].web.trackgroup) {
+
+                if (document.getElementById("group" + Tracklist[i].web.trackgroup) == null) {
+                    jQuery("#tracklist").append("<div style='padding: 5px; margin: 10px; position: relative; border: 1px solid lightgray; top: 10px' id='group" + Tracklist[i].web.trackgroup + "'> <b>" + Tracklist[i].web.trackgroup + "</b> <p></div>")
+                    jQuery("#mergetracklist").append("<div style='padding: 5px;  margin: 10px; position: relative; border: 1px solid lightgray; top: 10px' id='mergegroup" + Tracklist[i].web.trackgroup + "'><b>" + Tracklist[i].web.trackgroup + "</b> <p></div>")
+                }
+
+                jQuery("<div>").attr({
+                    'style': "position: relative; width: 70%; word-wrap: break-word;",
+                    'id': Tracklist[i].name + "span",
+                    'title': Tracklist[i].desc
+                }).html("<input type=\"checkbox\"  id='" + Tracklist[i].name + "Checkbox' name='" + Tracklist[i].name + "Checkbox' onClick=loadTrackAjax(\"" + Tracklist[i].id + "\",\"" + Tracklist[i].name + "\"); value=" + Tracklist[i].name + " >" + Tracklist[i].display_label)
+                    .appendTo("#group" + Tracklist[i].web.trackgroup);
+
+                jQuery("<div>").attr({
+                    'style': "position: relative; width: 70%; word-wrap: break-word;",
+                    'id': Tracklist[i].name + "span",
+                    'title': Tracklist[i].desc
+                }).html("<input type=\"checkbox\" disabled id='" + Tracklist[i].name + "mergeCheckbox' name='" + Tracklist[i].name + "mergeCheckbox' onClick=mergeTrack(\"" + Tracklist[i].name + "\"); value=" + Tracklist[i].name + " >" + Tracklist[i].display_label)
+                    .appendTo("#mergegroup" + Tracklist[i].web.trackgroup);
+
+            } else {
+                if (document.getElementById("nogroup") == null) {
+
+                    jQuery("#tracklist").append("<div style='padding: 5px; margin: 10px; position: relative; border: 1px solid lightgray; top: 10px' id='nogroup'> </div>")
+                    jQuery("#mergetracklist").append("<div style='padding: 5px;  margin: 10px; position: relative; border: 1px solid lightgray; top: 10px' id='nomergegroup'></div>")
+                    jQuery("#nogroup").append("<table id='nogroup-table' width=100%> <tr>");
+                    jQuery("#nomergegroup").append("<table id='nomergegroup-table' width=100%> <tr>");
+
+                }
+
+                jQuery("<div>").attr({
+                    'style': "position: relative; width: 70%; word-wrap: break-word;",
+                    'id': Tracklist[i].name + "span",
+                    'title': Tracklist[i].desc
+                }).html("<input type=\"checkbox\"  id='" + Tracklist[i].name + "Checkbox' name='" + Tracklist[i].name + "Checkbox' onClick=loadTrackAjax(\"" + Tracklist[i].id + "\",\"" + Tracklist[i].name + "\"); value=" + Tracklist[i].name + " >" + Tracklist[i].display_label).appendTo("#nogroup-table");
+
+                jQuery("<div>").attr({
+                    'style': "position: relative; width: 70%; word-wrap: break-word;",
+                    'id': Tracklist[i].name + "span",
+                    'title': Tracklist[i].desc
+                }).html("<input type=\"checkbox\" disabled id='" + Tracklist[i].name + "mergeCheckbox' name='" + Tracklist[i].name + "mergeCheckbox' onClick=mergeTrack(\"" + Tracklist[i].name + "\"); value=" + Tracklist[i].name + " >" + Tracklist[i].display_label)
+                    .appendTo("#nomergegroup-table");
+
+                if ((i + 1) % 3 == 0) {
+                    jQuery("#nogroup-table").append("</tr> <tr>");
+                    jQuery("#nomergegroup-table").append("</tr> <tr>");
+                }
+            }
+        }
+    }
+
+
+}
+
+// Generate automated css classes for tracks
+
+function tracks_css(Tracklist, i) {
+    if(i){
+        console.log("trackcss "+i)
+        if (Tracklist[i].web && Tracklist[i].web.colour) {
+
+            if (Tracklist[i].name.toLowerCase().indexOf("snp") >= 0) {
+
+            }
+            else if (Tracklist[i].web.source == "file" && (Tracklist[i].name.toLowerCase().indexOf("gene") >= 0 || Tracklist[i].name.toLowerCase().indexOf("gff") >= 0)) {
+
+                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_exon" + "{ background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
+                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_utr" + "{  background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
+                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_graph{ border:1px solid black; background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
+                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_heatgraph{  background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
+
+            }
+            else if (Tracklist[i].web.source == "file") {
+                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "" + "{ fill:" + Tracklist[i].web.colour + "; stroke: " + Tracklist[i].web.colour + "; background: " + Tracklist[i].web.colour + ";} </style>").appendTo("head");
+            }
+            else if (Tracklist[i].name.toLowerCase().indexOf("gene") >= 0 || Tracklist[i].name.toLowerCase().indexOf("gff") >= 0) {
+
+                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_exon" + "{ background:" + Tracklist[i].web.colour + "; } </style>").appendTo("head");
+                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_utr" + "{  background:" + Tracklist[i].web.colour + "; opacity: 0.5;} </style>").appendTo("head");
+                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_graph{ border:1px solid black; background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
+                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_heatgraph{ background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
+
+            }
+            else {
+
+                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "{ background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
+                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_graph { border:1px solid black; background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
+                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_heatgraph {  background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
+
+            }
+        }
+        else {
+
+
+            if (Tracklist[i].name.toLowerCase().indexOf("snp") >= 0) {
+
+            }
+            else if (Tracklist[i].name.toLowerCase().indexOf("gene") >= 0 || Tracklist[i].name.toLowerCase().indexOf("gff") >= 0) {
+                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_exon" + "{ background: green; } </style>").appendTo("head");
+                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_utr" + "{ background: steelblue; opacity: 0.5;} </style>").appendTo("head");
+                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_graph { border:1px solid black; background:green;} </style>").appendTo("head");
+                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_heatgraph {  background:green;} </style>").appendTo("head");
+
+            }
+            else {
+                var colour = "";
+
+                if (Tracklist[i].name.toLowerCase().indexOf("contig") >= 0) {
+                    colour = "#ff8c00";
+                }
+                else if (Tracklist[i].name.toLowerCase().indexOf("est") >= 0) {
+                    colour = "#556b2f";
+                }
+                else if (Tracklist[i].name.toLowerCase().indexOf("clone") >= 0) {
+                    colour = "#90ee90";
+                }
+                else if (Tracklist[i].name.toLowerCase().indexOf("align") >= 0) {
+                    colour = "#a52a2a";
+                }
+                else if (Tracklist[i].name.toLowerCase().indexOf("sam") >= 0 || Tracklist[i].name.toLowerCase().indexOf("bam") >= 0) {
+                    colour = "blue";
+                }
+                else if (Tracklist[i].name.toLowerCase().indexOf("repeat") >= 0) {
+                    colour = "gray";
+                }
+                else {
+                    colour = "green";
+                }
+
+                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "{ background:" + colour + ";} </style>").appendTo("head");
+                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_graph{ border:1px solid black; background:" + colour + ";} </style>").appendTo("head");
+                jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_heatgraph{ background:" + colour + ";} </style>").appendTo("head");
+            }
+        }
+    }else{
+        for (var i = 0; i < Tracklist.length; i++) {
+            if (Tracklist[i].web && Tracklist[i].web.colour) {
+
+                if (Tracklist[i].name.toLowerCase().indexOf("snp") >= 0) {
+
+                }
+                else if (Tracklist[i].web.source == "file" && (Tracklist[i].name.toLowerCase().indexOf("gene") >= 0 || Tracklist[i].name.toLowerCase().indexOf("gff") >= 0)) {
+
+                    jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_exon" + "{ background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
+                    jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_utr" + "{  background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
+                    jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_graph{ border:1px solid black; background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
+                    jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_heatgraph{  background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
+
+                }
+                else if (Tracklist[i].web.source == "file") {
+                    jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "" + "{ fill:" + Tracklist[i].web.colour + "; stroke: " + Tracklist[i].web.colour + "; background: " + Tracklist[i].web.colour + ";} </style>").appendTo("head");
+                }
+                else if (Tracklist[i].name.toLowerCase().indexOf("gene") >= 0 || Tracklist[i].name.toLowerCase().indexOf("gff") >= 0) {
+
+                    jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_exon" + "{ background:" + Tracklist[i].web.colour + "; } </style>").appendTo("head");
+                    jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_utr" + "{  background:" + Tracklist[i].web.colour + "; opacity: 0.5;} </style>").appendTo("head");
+                    jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_graph{ border:1px solid black; background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
+                    jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_heatgraph{ background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
+
+                }
+                else {
+
+                    jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "{ background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
+                    jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_graph { border:1px solid black; background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
+                    jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_heatgraph {  background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
+
+                }
+            }
+            else {
+
+
+                if (Tracklist[i].name.toLowerCase().indexOf("snp") >= 0) {
+
+                }
+                else if (Tracklist[i].name.toLowerCase().indexOf("gene") >= 0 || Tracklist[i].name.toLowerCase().indexOf("gff") >= 0) {
+                    jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_exon" + "{ background: green; } </style>").appendTo("head");
+                    jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_utr" + "{ background: steelblue; opacity: 0.5;} </style>").appendTo("head");
+                    jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_graph { border:1px solid black; background:green;} </style>").appendTo("head");
+                    jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_heatgraph {  background:green;} </style>").appendTo("head");
+
+                }
+                else {
+                    var colour = "";
+
+                    if (Tracklist[i].name.toLowerCase().indexOf("contig") >= 0) {
+                        colour = "#ff8c00";
+                    }
+                    else if (Tracklist[i].name.toLowerCase().indexOf("est") >= 0) {
+                        colour = "#556b2f";
+                    }
+                    else if (Tracklist[i].name.toLowerCase().indexOf("clone") >= 0) {
+                        colour = "#90ee90";
+                    }
+                    else if (Tracklist[i].name.toLowerCase().indexOf("align") >= 0) {
+                        colour = "#a52a2a";
+                    }
+                    else if (Tracklist[i].name.toLowerCase().indexOf("sam") >= 0 || Tracklist[i].name.toLowerCase().indexOf("bam") >= 0) {
+                        colour = "blue";
+                    }
+                    else if (Tracklist[i].name.toLowerCase().indexOf("repeat") >= 0) {
+                        colour = "gray";
+                    }
+                    else {
+                        colour = "green";
+                    }
+
+                    jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "{ background:" + colour + ";} </style>").appendTo("head");
+                    jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_graph{ border:1px solid black; background:" + colour + ";} </style>").appendTo("head");
+                    jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_heatgraph{ background:" + colour + ";} </style>").appendTo("head");
+                }
+            }
+        }
+    }
+
+}
+
+function toggleLeftInfo(div, id) {
+    if (jQuery(div).hasClass("toggleRight")) {
+        jQuery(div).removeClass("toggleRight").addClass("toggleRightDown");
+    }
+    else {
+        jQuery(div).removeClass("toggleRightDown").addClass("toggleRight");
+    }
+    jQuery("#" + id).toggle("blind", {}, 500);
+}
+
+function loadDefaultTrack(tracklist) {
+    var Tracklist = tracklist;
+    var cookietest = []
+    if (jQuery.cookie('trackslist')) {
+        cookietest = JSON.parse(jQuery.cookie('trackslist'));
+    }
+    else {
+        for (var i = 0; i < Tracklist.length; i++) {
+            if (Tracklist[i].disp == "1" && tracklist[i].id.toString().indexOf("noid") < 0) {
+                jQuery('#' + Tracklist[i].name + 'Checkbox').attr('checked', true);
+                mergeTrackList(Tracklist[i].name);
+
+                var partial = ((getEnd() - getBegin()) / 2);
+                var start = (getBegin() - partial);
+                var end = parseInt(getEnd()) + parseFloat(partial);
+                if (start < 0) {
+                    start = 0;
+                }
+                if (end > sequencelength) {
+                    end = sequencelength;
+                }
+                deltaWidth = parseInt(end - start) * 2 / parseInt(maxLen);
+                window[Tracklist[i].name] == "loading";
+                trackToggle(Tracklist[i].name);
+                Fluxion.doAjax(
+                    'dnaSequenceService',
+                    'loadTrack',
+                    {
+                        'query': seqregname,
+                        'coord': coord,
+                        'name': Tracklist[i].name,
+                        'trackid': Tracklist[i].id,
+                        'start': start,
+                        'end': end,
+                        'delta': deltaWidth,
+                        'url': ajaxurl
+                    },
+                    {
+                        'doOnSuccess': function (json) {
+                            var trackname = json.name;
+
+                            if (json.type == "graph") {
+                                window['track_list' + json.name].graph = "true";
+                                window['track_list' + json.name].graphtype = json.graphtype;
+                            }
+                            else {
+                                window['track_list' + json.name].graph = "false";
+                            }
+                            window[trackname] = json[trackname];
+                            trackToggle(trackname);
+                        }
+                    });
+            }
+        }
+    }
+
+    for (var i = 0; i < Tracklist.length; i++) {
+
+        jQuery.each(cookietest, function (j, v) {
+            if (v.name == Tracklist[i].name && v.disp == 1 && Tracklist[i].id.toString().indexOf('noid') < 0) {
+                jQuery('#' + Tracklist[i].name + 'Checkbox').attr('checked', true);
+                mergeTrackList(Tracklist[i].name);
+                var partial = (getEnd() - getBegin()) + ((getEnd() - getBegin()) / 2);
+                var start = (getBegin() - partial);
+                var end = parseInt(getEnd()) + parseFloat(partial);
+                if (start < 0) {
+                    start = 0;
+                }
+
+                if (end > sequencelength) {
+                    end = sequencelength;
+                }
+
+                deltaWidth = parseInt(end - start) * 2 / parseInt(maxLen);
+
+                window[Tracklist[i].name] == "loading";
+
+                trackToggle(Tracklist[i].name);
+                Fluxion.doAjax(
+                    'dnaSequenceService',
+                    'loadTrack',
+                    {
+                        'query': seqregname,
+                        'coord': coord,
+                        'name': Tracklist[i].name,
+                        'trackid': Tracklist[i].id,
+                        'start': start,
+                        'end': end,
+                        'delta': deltaWidth,
+                        'url': ajaxurl
+                    },
+                    {
+                        'doOnSuccess': function (json) {
+                            var trackname = json.name;
+
+                            if (json.type == "graph") {
+                                window['track_list' + json.name].graph = "true";
+                                window['track_list' + json.name].graphtype = json.graphtype;
+                            }
+                            else {
+                                window['track_list' + json.name].graph = "false";
+                            }
+                            window[trackname] = json[trackname];
+                            trackToggle(trackname);
+                        }
+                    });
+                jQuery('#' + Tracklist[i].name + 'Checkbox').attr('checked', true);
+                window['track_list' + track_list[i].name].disp = 1
+
+                return false; // stops the loop
+            }
+            else if (v.name == Tracklist[i].name && v.disp == 0) {
+                window["track_list" + Tracklist[i].name].disp = 0;
+            }
+        });
+        continue;
+    }
+}
+
+function mergeTrackList(trackName) {
+
+    if (jQuery("#" + trackName + "Checkbox").is(':checked')) {
+        jQuery("#" + trackName + "mergedCheckbox").removeAttr("disabled");
+    }
+    else {
+        jQuery("#" + trackName + "mergedCheckbox").attr("disabled", true);
+
+        mergeTrack(trackName);
+    }
+}
+
+function getTracks() {
+
+    var tracks = [];
+    var eachTrack = {};
+    if (jQuery("#notifier").text().indexOf("BLAST") >= 0) {
+        eachTrack = {"trackId": "running", "child": blastsdata}
+        tracks.push(eachTrack);
+    }
+    if ((window['blasttrack']))// && !jQuery("#blasttrackCheckbox").is(':checked'))
+    {
+        var track = window['blasttrack'];
+        eachTrack = {"trackId": 0, "child": track}
+        tracks.push(eachTrack);
+    }
+
+    return tracks;
+}
+
+function getTracklist() {
+
+    var tracks = [];
+    for (var i = 0; i < track_list.length; i++) {
+
+        tracks.push(window["track_list" + track_list[i].name]);
+    }
+
+    return tracks;
+}
+
+function getEditedTracks() {
+    var tracks = [];
+    var eachTrack = {};
+    for (var i = 0; i < track_list.length; i++) {
+        if (window[track_list[i].name + "_edited"]) {
+            eachTrack = {"trackName": track_list[i].name + "_edited", "child": window[track_list[i].name + "_edited"]};
+            tracks.push(eachTrack);
+        }
+    }
+    return tracks;
+}
+
+function getRemovedTracks() {
+    var tracks = [];
+    var eachTrack = {};
+    for (var i = 0; i < track_list.length; i++) {
+        if (window[track_list[i].name + "_removed"]) {
+            eachTrack = {
+                "trackName": track_list[i].name + "_removed",
+                "child": window[track_list[i].name + "_removed"]
+            };
+            tracks.push(eachTrack);
+        }
+    }
+    return tracks;
+}
+
+function loadEditedTracks(tracks) {
+    for (var i = 0; i < tracks.length; i++) {
+        window[tracks[i].trackName] = tracks[i].child;
+    }
+}
+
+function loadRemovedTracks(tracks) {
+    for (var i = 0; i < tracks.length; i++) {
+        window[tracks[i].trackName] = tracks[i].child;
+    }
+}
+
+function selectAllCheckbox() {
+    if (jQuery("#selectAllCheckbox").is(':checked')) {
+        jQuery("#tracklist input").each(function () {
+            if (jQuery(this).is(':checked')) {
+                //    do nothing
+            }
+            else {
+                jQuery(this).attr('checked', 'checked');
+                eval(jQuery(this).attr('onClick'));
+            }
+        })
+    }
+    else {
+    }
+}
+
+function unSelectAllCheckbox() {
+    if (jQuery("#unSelectAllCheckbox").is(':checked')) {
+        jQuery("#tracklist input").each(function () {
+            if (jQuery(this).is(':checked')) {
+                jQuery(this).attr('checked', false);
+                window['track_list' + this.id.replace("Checkbox", "")].disp = 0
+            }
+        })
+    }
+    trackToggle("all")
+}
+
+

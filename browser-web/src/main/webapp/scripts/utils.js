@@ -135,6 +135,7 @@ function trackToggle(trackname) {
         jQuery("#mergedtrack").html("<div id= \"mergelabel\" align='left' class='handle'></div>");
         for (var i = 0; i < track_list.length; i++) {
             var trackName = track_list[i].name;
+            console.log(trackName)
             trackid = window['track_list' + trackName].id;
             graph = window['track_list' + trackName].graph;
             if (jQuery("#" + track_list[i].name + "Checkbox").is(':checked')) {
@@ -143,15 +144,16 @@ function trackToggle(trackname) {
                         dispGraph("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
                     } else if (window['track_list' + trackName].graphtype == "heat") {
                         dispGraphHeat("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
-
                     } else if (window['track_list' + trackName].graphtype == "wig") {
                         dispGraphWig("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
+                    }else if (window['track_list' + trackName].graphtype == "manhattan"){
+                        dispGraphManhattan("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
                     }
                 }
                 else if (trackName.toLowerCase().indexOf("blasttrack") >= 0) {
                     dispBLAST("#" + trackName + "_div", 'blasttrack');
                 }
-                else if (trackName.toLowerCase().indexOf("upload") >= 0) {
+                else if (trackName.toLowerCase().indexOf("manhattan") >= 0) {
                     console.log("calling upload")
                     dispGraphManhattan( "#" + trackName + "_div",trackName, window['track_list' + trackName].display_label);
                 }
@@ -180,21 +182,24 @@ function trackToggle(trackname) {
         layers = jQuery("#rowoftracks").val();
         trackid = window['track_list' + trackname].id;
         graph = window['track_list' + trackname].graph;
+        console.log(trackname)
+
         if (jQuery('#' + trackname + 'Checkbox').is(':checked')) {
             if (graph == "true") {
                 if (window['track_list' + trackname].graphtype == "bar") {
                     dispGraph("#" + trackname + "_div", trackname, window['track_list' + trackname].display_label);
                 } else if (window['track_list' + trackname].graphtype == "heat") {
                     dispGraphHeat("#" + trackname + "_div", trackname, window['track_list' + trackname].display_label);
-
                 } else if (window['track_list' + trackname].graphtype == "wig") {
                     dispGraphWig("#" + trackname + "_div", trackname, window['track_list' + trackname].display_label);
+                }else if (window['track_list' + trackname].graphtype == "manhattan"){
+                    dispGraphManhattan("#" + trackname + "_div", trackname, window['track_list' + trackname].display_label);
                 }
             }
             else if (trackname.toLowerCase().indexOf("blasttrack") >= 0) {
                 dispBLAST("#" + trackname + "_div", 'blasttrack');
             }
-            else if (trackname.toLowerCase().indexOf("upload") >= 0) {
+            else if (trackname.toLowerCase().indexOf("manhattan") >= 0) {
                 console.log("calling upload")
                 // dispGraphManhattan( "#upload_div","gem", "noid");
                 dispGraphManhattan( "#" + trackname + "_div",trackname, window['track_list' + trackname].display_label);

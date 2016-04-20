@@ -469,7 +469,7 @@ function addJSON(from, to, trackName, trackId) {
                 if (Tracklist[i].name == "blasttrack") {
                     trackToggle(Tracklist[i].name);
                 }
-                else if (Tracklist[i].name == "upload") {
+                else if (Tracklist[i].name.indexOf("upload") >= 0) {
                     console.log("upload")
                     trackToggle(Tracklist[i].name);
                 }

@@ -2835,6 +2835,7 @@ span.deleteicon input {
     width: 300px;
     min-height: 300px;
     margin: 20px auto;
+    line-height: 300px;
 }
 
 #holder.hover {

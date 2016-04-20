@@ -136,59 +136,145 @@ function readerLoaded(e, files, i, name) {
         }
     })
 
+    var track_list_length = track_list.length
+
+    console.log("track_list_length "+track_list_length)
+
+    var trackname=name.split(".")[0]
     track_list.push({
-        name: "upload"+count,
-        display_label: "upload",
+        name: "uploadManhattan"+count,
+        display_label: trackname+"Manhattan",
         id: "noid"+count,
-        desc: "uploaded file:"+name,
+        desc: "uploaded file:"+trackname,
         disp: 1,
-        merge: 0
+        merge: 0,
+        label: name+"Manhattan",
+        graph: 1,
+        graphtype: "manhattan",
+        label_show: true,
+        web:{colour:"red",source : "file", trackgroup: i}
     });
 
-    var label = "<div align='left' class='handle'>" +
-        "<table>" +
-        "<tbody>" +
-        "<tr>" +
-        "<td><b>"+name+"</b></td>" +
-        "<td><div onclick='removeTrack(\"upload"+count+"\",\"upload"+count+"\");' class='closehandle ui-icon ui-icon-close'></div></td>" +
-        "</tr>" +
-        "</tbody>" +
-        "</table>" +
-        "</div>";
+    trackList(track_list, track_list_length)
 
 
-    jQuery("#tracks").append("<div id='upload"+count + "_wrapper' class='feature_tracks' style=\" max-height:150px; overflow-x: hidden;\">" +
-        "</div>");
+    //var label = "<div align='left' class='handle'>" +
+    //    "<table>" +
+    //    "<tbody>" +
+    //    "<tr>" +
+    //    "<td><b>"+name+"</b></td>" +
+    //    "<td><div onclick='removeTrack(\"uploadManhattan"+count+"\",\"uploadManhattan"+count+"\");' class='closehandle ui-icon ui-icon-close'></div></td>" +
+    //    "</tr>" +
+    //    "</tbody>" +
+    //    "</table>" +
+    //    "</div>";
+    //
+    //
+    //jQuery("#tracks").append("<div id='uploadManhattan"+count + "_wrapper' class='feature_tracks' style=\" max-height:150px; overflow-x: hidden;\">" +
+    //    "</div>");
+    //
+    //jQuery("#uploadManhattan"+count + "_wrapper").append(label +
+    //    "<div id='uploadManhattan"+count + "_div' class='feature_tracks' style=\"top:0px;\" > " + name + "</div>"
+    //);
+    //
+    //jQuery(function () {
+    //    jQuery("#uploadManhattan"+count + "_wrapper").resizable({
+    //        handles: "s",
+    //        minHeight: "50px",
+    //        borderBottom: '1px solid black'
+    //    });
+    //});
+    //
+    //jQuery("#tracklist").append("<p title='uploadManhattan' id=uploadManhattan"+count+"check><input type=\"checkbox\" checked id='uploadManhattan"+count+"Checkbox' name='uploadManhattan"+count+"Checkbox' onClick=loadTrackAjax(\"uploadManhattan"+count+"\",\"uploadManhattan"+count+"\");\>  Upload track\  </p>");
+    //
+    //jQuery("#mergetracklist").append("<span id=uploadManhattan"+count+"trackspan> <input type=\"checkbox\" id='uploadManhattan"+count+"mergedCheckbox' name='uploadManhattan"+count+"mergedCheckbox' onClick=mergeTrack(\"uploadManhattan"+count+"\"); value=uploadManhattan >Upload Track</span>");
 
-    jQuery("#upload"+count + "_wrapper").append(label +
-        "<div id='upload"+count + "_div' class='feature_tracks' style=\"top:0px;\" > " + name + "</div>"
-    );
+    window["uploadManhattan"+count] = processData(window["gem"])
 
-    jQuery(function () {
-        jQuery("#upload"+count + "_wrapper").resizable({
-            handles: "s",
-            minHeight: "50px",
-            borderBottom: '1px solid black'
+    //window['track_listuploadManhattan'+count] = {
+    //    name: "uploadManhattan"+count,
+    //    id: "noid"+count,
+    //    display_label: name,
+    //    desc: "uploaded file:"+name,
+    //    disp: 1,
+    //    label_show: true
+    //}
+
+    if(extension.indexOf("csv") >= 0 && name.toLowerCase().indexOf("gapit") >= 0){
+        readGem("uploadManhattan"+count, "noid"+count, "#uploadManhattan"+count+"_div")
+
+        track_list.forEach(function(d,i){
+            if(d.name.indexOf("upload") >= 0){
+                count++;
+            }
+        })
+
+        var track_list_length = track_list.length
+
+
+        track_list.push({
+            name: "uploadCDS"+count,
+            display_label: trackname+"Gene",
+            id: "noid"+count,
+            desc: "uploaded file:"+trackname,
+            disp: 1,
+            merge: 0,
+            label: name+"Gene",
+            graph: 0,
+            graphtype: null,
+            label_show: true,
+            web:{colour:"red",source : "file", trackgroup: i}
         });
-    });
 
-    jQuery("#tracklist").append("<p title='upload' id=upload"+count+"check><input type=\"checkbox\" checked id='upload"+count+"Checkbox' name='upload"+count+"Checkbox' onClick=loadTrackAjax(\"upload"+count+"\",\"upload"+count+"\");\>  Upload track\  </p>");
+        trackList(track_list, track_list_length)
 
-    jQuery("#mergetracklist").append("<span id=upload"+count+"trackspan> <input type=\"checkbox\" id='upload"+count+"mergedCheckbox' name='upload"+count+"mergedCheckbox' onClick=mergeTrack(\"upload"+count+"\"); value=upload >Upload Track</span>");
+        // var label = "<div align='left' class='handle'>" +
+        //     "<table>" +
+        //     "<tbody>" +
+        //     "<tr>" +
+        //     "<td><b>"+name+"genes</b></td>" +
+        //     "<td><div onclick='removeTrack(\"uploadCDS"+count+"\",\"uploadCDS"+count+"\");' class='closehandle ui-icon ui-icon-close'></div></td>" +
+        //     "</tr>" +
+        //     "</tbody>" +
+        //     "</table>" +
+        //     "</div>";
 
-    window["upload"+count] = processData(window["gem"])
 
-    window['track_listupload'+count] = {
-        name: upload+count,
-        id: "noid"+count,
-        display_label: name,
-        desc: "uploaded file:"+name,
-        disp: 1,
-        label_show: true
-    }
+        // jQuery("#tracks").append("<div id='uploadCDS"+count + "_wrapper' class='feature_tracks' style=\" max-height:150px; overflow-x: hidden;\">" +
+        //     "</div>");
 
-    if(extension.indexOf("csv") >= 0){
-        readGem("upload"+count, "noid"+count, "#upload"+count+"_div")
+        // jQuery("#uploadCDS"+count + "_wrapper").append(label +
+        //     "<div id='uploadCDS"+count + "_div' class='feature_tracks' style=\"top:0px;\" > " + name + "</div>"
+        // );
+
+        // jQuery(function () {
+        //     jQuery("#uploadCDS"+count + "_wrapper").resizable({
+        //         handles: "s",
+        //         minHeight: "50px",
+        //         borderBottom: '1px solid black'
+        //     });
+        // });
+
+        // jQuery("#tracklist").append("<p title='uploadCDS' id=uploadCDS"+count+"check><input type=\"checkbox\" checked id='uploadCDS"+count+"Checkbox' name='uploadCDS"+count+"Checkbox' onClick=loadTrackAjax(\"uploadCDS"+count+"\",\"uploadCDS"+count+"\");\>  Upload track\  </p>");
+
+        // jQuery("#mergetracklist").append("<span id=uploadCDS"+count+"trackspan> <input type=\"checkbox\" id='uploadCDS"+count+"mergedCheckbox' name='uploadCDS"+count+"mergedCheckbox' onClick=mergeTrack(\"uploadCDS"+count+"\"); value=uploadCDS >Upload Track</span>");
+
+        window["uploadCDS"+count] = processData(window["gem"])
+
+        // window['track_listuploadCDS'+count] = {
+        //     name: "uploadCDS"+count,
+        //     id: "noid"+count,
+        //     display_label: name,
+        //     desc: "uploaded file:"+name,
+        //     disp: 1,
+        //     label_show: true
+        // }
+
+        // window["uploadCDS"+count] = processData(window["gem"])
+
+        readCDSfromGem("uploadCDS"+count, "noid"+count, "#uploadCDS"+count+"_div")
+
+
     }
 
     // If there's a file left to load
