@@ -152,9 +152,11 @@ function checkTask(task, db, format, start, end, hit, link, old_id, type, slurm_
         {'url': ajaxurl, 'taskid': task, 'old_taskid': old_id, 'slurm_id': slurm_id},
         {
             'doOnSuccess': function (json) {
-                if(json.result == "PENDING" || json.result == "RUNNING" ||  json.result == "COMPLETING"){
-                    setTimeout(checkTask(task, db, format, start, end, hit, link, old_id, type, slurm_id), 10000);
-                } else if (json.result == 'FAILED' || json.result == "SUSPENDED" ||  json.result == "CANCELLED" ||  json.result == "TIMEOUT") {
+                if (json.result == "PENDING" || json.result == "RUNNING" || json.result == "COMPLETING") {
+                    setTimeout(function () {
+                        checkTask(task, db, format, start, end, hit, link, old_id, type, slurm_id)
+                    }, 1000);
+                } else if (json.result == 'FAILED' || json.result == "SUSPENDED" || json.result == "CANCELLED" || json.result == "TIMEOUT") {
                     alert('Blast search: ' + json.result);
                     jQuery("#notifier").hide();
                     jQuery("#notifier").html("");
@@ -210,7 +212,11 @@ function checkTask(task, db, format, start, end, hit, link, old_id, type, slurm_
                             },
                             {
                                 'doOnSuccess': function (json) {
-                                    if (json.html == "No hits found.") {
+                                    if (json.html.toLowerCase() == "error") {
+                                        jQuery("#" + json.id).removeClass("list-group-item-info")
+                                        jQuery("#" + json.id).addClass("list-group-item-danger")
+                                        jQuery("#" + json.id).html("<b>BLAST job " + json.id + "</b><br> "+stringTrim(json.error, 250)+" <span style=\"float: right; position: relative;\" onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
+                                    }else if (json.html == "No hits found.") {
                                         jQuery("#" + json.id).removeClass("list-group-item-info")
                                         jQuery("#" + json.id).addClass("list-group-item-danger")
                                         jQuery("#" + json.id).html("<b>BLAST job " + json.id + "</b><br> No hits found. <span style=\"float: right; position: relative;\" onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
@@ -235,6 +241,13 @@ function checkTask(task, db, format, start, end, hit, link, old_id, type, slurm_
                                     }
                                     jQuery("#notifier").hide()
                                     jQuery("#notifier").html("");
+                                },
+                                'doOnError': function (json) {
+                                    if (json.html.toLowerCase() == "error") {
+                                        jQuery("#" + json.id).removeClass("list-group-item-info")
+                                        jQuery("#" + json.id).addClass("list-group-item-danger")
+                                        jQuery("#" + json.id).html("<b>BLAST job " + json.id + "</b><br> "+stringTrim(json.error, 200)+" <span style=\"float: right; position: relative;\" onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
+                                    }
                                 }
                             });
                     }
