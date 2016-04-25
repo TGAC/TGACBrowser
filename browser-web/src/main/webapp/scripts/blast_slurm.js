@@ -212,7 +212,7 @@ function checkTask(task, db, format, start, end, hit, link, old_id, type, slurm_
                             },
                             {
                                 'doOnSuccess': function (json) {
-                                    if (json.html.toLowerCase() == "error") {
+                                    if (json.html == "error") {
                                         jQuery("#" + json.id).removeClass("list-group-item-info")
                                         jQuery("#" + json.id).addClass("list-group-item-danger")
                                         jQuery("#" + json.id).html("<b>BLAST job " + json.id + "</b><br> "+stringTrim(json.error, 250)+" <span style=\"float: right; position: relative;\" onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
