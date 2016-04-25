@@ -16,10 +16,10 @@
         <!-- <property name="seqStore" ref="sequenceStore"/> -->
     </bean>
 
-    <bean id="samBamService"
-          class="uk.ac.bbsrc.tgac.browser.service.ajax.javagenomicsio.SamBamService">
-        <!-- <property name="seqStore" ref="sequenceStore"/> -->
-    </bean>
+    <!--<bean id="samBamService"-->
+          <!--class="uk.ac.bbsrc.tgac.browser.service.ajax.javagenomicsio.SamBamService">-->
+        <!--&lt;!&ndash; <property name="seqStore" ref="sequenceStore"/> &ndash;&gt;-->
+    <!--</bean>-->
 
     <bean id="fileService"
           class="uk.ac.bbsrc.tgac.browser.service.ajax.FileService">
@@ -34,6 +34,10 @@
 
     <bean id="blastServiceNCBI"
           class="uk.ac.bbsrc.tgac.browser.service.ajax.BlastNCBI">
+    </bean>
+
+    <bean id="blastserviceslurm"
+          class="uk.ac.bbsrc.tgac.browser.service.ajax.BlastServiceSLURM">
     </bean>
 </beans>
 
