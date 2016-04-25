@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.regex.Matcher;
@@ -67,8 +68,13 @@ public class BlastServiceSystem {
             Process proc = Runtime.getRuntime().exec(cmd);
             proc.waitFor();
             BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-            BufferedReader stdError = new BufferedReader(new
-                    InputStreamReader(proc.getErrorStream()));
+            BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+
+            String error = stdError.readLine();
+            while (error != null) {
+                System.out.println("\t\t\t" + error);
+            }
+
 
             String line = reader.readLine();
             while (line != null) {
@@ -82,10 +88,6 @@ public class BlastServiceSystem {
 
             }
 
-            String error = null;
-            while ((error = stdError.readLine()) != null) {
-                System.out.println(error);
-            }
 
             return jobid;
         } catch (IOException e1) {
@@ -98,7 +100,8 @@ public class BlastServiceSystem {
         return null;
     }
 
-    public static String checkJob(String id) throws IOException {
+    public String checkJob(String id) throws IOException {
+
         String state = null;
         try {
             String cmd = scontrol + " " + show + " " + job + " " + id;
@@ -111,11 +114,8 @@ public class BlastServiceSystem {
             String line = reader.readLine();
 
 
-
-            while (line != null || state != null) {
-
+            while (line != null && state == null) {
                 state = consoleValueByKey(line, "JobState=", "[A-Z]+");
-
                 line = reader.readLine();
             }
             String error = null;
@@ -128,20 +128,63 @@ public class BlastServiceSystem {
         } catch (InterruptedException e2) {
             return "Pblm found2.";
         }
+        log.info("\n\n\n checkjob " + state);
 
         return state;
     }
 
+    public JSONObject checkError(String id) throws IOException {
+        log.info("\n\tcheckError "+id);
+        JSONObject error = new JSONObject();
+        error.put("found", false);
+        try {
+            String cmd = scontrol + " " + show + " " + job + " " + id;
+            Process proc = Runtime.getRuntime().exec(cmd);
+            proc.waitFor();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
 
-    public static String consoleValueByKey(String input, String key, String regex) {
+            String line = reader.readLine();
+            String file = null;
+
+
+            while (line != null && file == null) {
+                file = consoleValueByKey(line, "StdErr=", ".*");
+                line = reader.readLine();
+            }
+
+            if(file != null){
+                String sCurrentLine;
+                BufferedReader br = null;
+                br = new BufferedReader(new FileReader(file));
+                while ((sCurrentLine = br.readLine()) != null) {
+                    log.info("\n\t\t"+sCurrentLine);
+                    if(sCurrentLine.toLowerCase().indexOf("error")>=0){
+                        error.put("found", true);
+                        error.put("error", sCurrentLine);
+                        break;
+                    }
+                }
+            }
+        } catch (IOException e1) {
+            return JSONObject.fromObject("Check Error IO Exception.");
+        } catch (InterruptedException e2) {
+            return JSONObject.fromObject("Check Error InterruptedException.");
+        }
+        return error;
+    }
+
+
+    public String consoleValueByKey(String input, String key, String regex) {
+        log.info("\n\n\n consoleValueByKey " + input);
+
         final Pattern pattern = Pattern.compile(key + regex);
         Matcher matcher;
         String rtn = null;
-            matcher = pattern.matcher(input);
-            if (matcher.find()) {
-                // strip the value from the value / key pair.
-                rtn = matcher.group(0).substring(key.length());
-            }
+        matcher = pattern.matcher(input);
+        if (matcher.find()) {
+            rtn = matcher.group(0).substring(key.length());
+        }
+
         return rtn;
     }
 

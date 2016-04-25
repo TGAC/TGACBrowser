@@ -91,8 +91,15 @@ public class BlastServiceSLURM {
             String blastAccession = json.getString("accession");
             String location = json.getString("location");
             String old_blastAccession = json.getString("old_taskid");
+            String slurm_id = json.getString("slurm_id");
 
-            if (blastManagerStore.checkResultDatabase(old_blastAccession)) {
+
+            JSONObject error = blastServiceSystem.checkError(slurm_id);
+            if (error.getBoolean("found") == true) {
+                html.put("id", blastAccession);
+                html.put("html", "Error");
+                html.put("error", error.getString("error"));
+            } else if (blastManagerStore.checkResultDatabase(old_blastAccession)) {
                 log.info("already in db");
                 blasts = blastManagerStore.getFromDatabase(old_blastAccession, location);
                 html.put("id", blastAccession);
