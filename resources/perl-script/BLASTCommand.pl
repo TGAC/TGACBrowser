@@ -18,8 +18,6 @@ else
   printf "command 1 exited with value %d", $? >> 8;
 }
 
-#`/data/workarea/bianx/blast+/$type  -db $db -query /scratch/tgacbrowser/$accession.fa -outfmt '$format' -out /scratch/tgacbrowser/$accession.xml $params -max_target_seqs 10`;
-
 system("perl /data/workarea/tgacbrowser/loadBLAST.pl '/scratch/tgacbrowser/$accession.xml' '$format' >  /scratch/tgacbrowser/$accession.info");
 if ( $? == -1 )
 {

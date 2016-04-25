@@ -48,11 +48,8 @@ var link = null;
 
 function setBlast() {
     if (jQuery("#blastType").text().indexOf('local') >= 0) {
-
-
         jQuery.getScript("scripts/blast_local.js", function (data, textStatus, jqxhr) {
         });
-
         jQuery("#blastdbs").show();
     }
     else if (jQuery("#blastType").text().indexOf('ncbi') >= 0) {
@@ -62,6 +59,11 @@ function setBlast() {
     }
     else if (jQuery("#blastType").text().indexOf('server') >= 0) {
         jQuery.getScript("scripts/blast_server.js", function (data, textStatus, jqxhr) {
+        });
+        jQuery("#blastdbs").show();
+    }
+    else if (jQuery("#blastType").text().indexOf('slurm') >= 0) {
+        jQuery.getScript("scripts/blast_slurm.js", function (data, textStatus, jqxhr) {
         });
         jQuery("#blastdbs").show();
     }
