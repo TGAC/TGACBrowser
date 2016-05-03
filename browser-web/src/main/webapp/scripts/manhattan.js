@@ -36,7 +36,7 @@ function readGem(trackName, trackId, div) {
 
     });
 
-    var margin = {top: 10, right: 0, bottom: 10, left: 0};
+    var margin = {top: 0, right: 0, bottom: 0, left: 0};
     var width = jQuery("#wrapper").width(),
         height = 100;
 
@@ -64,7 +64,6 @@ function readGem(trackName, trackId, div) {
 
     svg.append("g")
         .attr("class", "y axis")
-        .attr("transform", "translate(" + width / 2 + ",0)")
         .call(yAxis)
         .append("text")
         .attr("class", "label")
