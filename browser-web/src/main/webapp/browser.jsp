@@ -640,7 +640,7 @@
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
-                <button data-dismiss="modal" class="close" type="button">×</button>
+                <button data-dismiss="modal" class="close" type="button">X</button>
                 <h4 class="modal-title">Upload data</h4>
             </div>
             <div class="modal-body">
@@ -707,9 +707,11 @@
                     </tbody>
                 </table>
                 <article>
-                    <div id="holder" class=""> Drop files here
+                    <div id="holder" class="">  Drop files here
+
                     </div>
-                    <p id="upload" class="hidden"><label>Drag &amp; drop not supported, but you can still upload via this input field:<br>
+                    <p id="upload" class="hidden">
+                        <label>Drag &amp; drop not supported, but you can still upload via this input field:<br>
                         <input type="file"></label>
                     </p>
                 </article>
