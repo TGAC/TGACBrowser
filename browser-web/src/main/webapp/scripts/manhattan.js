@@ -10,11 +10,11 @@ function readGem(trackName, trackId, div) {
     data.forEach(function (d, i) {
         if (d.Chr == seqregname) {
             var start = d.Loc.split("_")[1]
-            var end= d.Loc.split("_")[2]
-            if(end > start){
+            var end = d.Loc.split("_")[2]
+            if (end > start) {
                 start = start
                 end = end
-            }else{
+            } else {
                 start = end;
                 end = start;
             }
@@ -44,10 +44,10 @@ function readGem(trackName, trackId, div) {
     var y = d3.scale.linear().range([height, 0]);
 
 
-    window[trackName+"svg"] = d3.select(div)
+    window[trackName + "svg"] = d3.select(div)
         .append("svg")
-        .attr("width", width )
-        .attr("height", height+margin.top+margin.bottom )
+        .attr("width", width)
+        .attr("height", height + margin.top + margin.bottom)
         .append("g")
         .attr("transform",
             "translate(" + margin.left + "," + margin.top + ")");
@@ -59,12 +59,12 @@ function readGem(trackName, trackId, div) {
         }))
         .range([height, 0]);
     var yAxis = d3.svg.axis().scale(yScale).orient("left");
-    var svg = window[trackName+"svg"]
+    var svg = window[trackName + "svg"]
 
 
     svg.append("g")
         .attr("class", "y axis")
-        .attr("transform", "translate("+width/2+",0)")
+        .attr("transform", "translate(" + width / 2 + ",0)")
         .call(yAxis)
         .append("text")
         .attr("class", "label")
@@ -81,7 +81,6 @@ function readGem(trackName, trackId, div) {
 }
 
 function readCDSfromGem(trackName, trackId, div) {
-    console.log("readCDSfromGem")
     var data = window[trackName]
     var temp_data = []
     var outputList = [];
@@ -92,11 +91,11 @@ function readCDSfromGem(trackName, trackId, div) {
             var start = d.Loc.split("_")[1]
             var end = d.Loc.split("_")[2]
 
-            if(end > start){
+            if (end > start) {
                 d.start = start
                 d.end = end
                 d.strand = 1
-            }else{
+            } else {
                 d.start = end;
                 d.end = start;
                 d.strand = -1;
@@ -104,9 +103,8 @@ function readCDSfromGem(trackName, trackId, div) {
             d.ref = d.Loc.split("_")[0]; //d[keys[0]].split(":")[0];
             d.desc = d.TAIR_id;
 
-            if(outputList.indexOf(d.TAIR_id) >=0 ){
-                console.log("exist "+d.TAIR_id)
-            }else{
+            if (outputList.indexOf(d.TAIR_id) >= 0) {
+            } else {
                 outputList.push(d.TAIR_id)
 
                 temp_data.push({
@@ -117,20 +115,13 @@ function readCDSfromGem(trackName, trackId, div) {
                 })
             }
 
-
-
-
         }
-
-
 
         window[trackName] = temp_data
 
     });
 
-    console.log(window[trackName])
     trackToggle(trackName)
-    // })
 }
 
 
@@ -146,7 +137,7 @@ function dispGraphManhattan(div, trackName, trackId) {
 
 
     data.forEach(function (d, i) {
-        if(d.position >= newStart_temp-partial && d.position <= parseInt(newEnd_temp) + parseInt(partial)){
+        if (d.position >= newStart_temp - partial && d.position <= parseInt(newEnd_temp) + parseInt(partial)) {
             gem.push(d)
         }
     });
@@ -155,7 +146,7 @@ function dispGraphManhattan(div, trackName, trackId) {
         height = 100;
 
 
-    var svg = window[trackName+"svg"]
+    var svg = window[trackName + "svg"]
 
     var xScale = d3.scale.linear()
         .domain([newStart_temp - partial, parseInt(newEnd_temp) + parseInt(partial)])
@@ -189,7 +180,7 @@ function dispGraphManhattan(div, trackName, trackId) {
         .style("fill", "black")
         .append("svg:title")
         .text(function (d) {
-            return d.ref+":"+d.position
+            return d.ref + ":" + d.position
         });
 
     var dotUpdate = dot.transition()
@@ -213,19 +204,19 @@ function dispGraphManhattan(div, trackName, trackId) {
 }
 
 function noExponents(n) {
-    var data= String(n).split(/[eE]/);
-    if(data.length== 1) return data[0];
+    var data = String(n).split(/[eE]/);
+    if (data.length == 1) return data[0];
 
-    var  z= '', sign= this<0? '-':'',
-        str= data[0].replace('.', ''),
-        mag= Number(data[1])+ 1;
+    var z = '', sign = this < 0 ? '-' : '',
+        str = data[0].replace('.', ''),
+        mag = Number(data[1]) + 1;
 
-    if(mag<0){
-        z= sign + '0.';
-        while(mag++) z += '0';
-        return z + str.replace(/^\-/,'');
+    if (mag < 0) {
+        z = sign + '0.';
+        while (mag++) z += '0';
+        return z + str.replace(/^\-/, '');
     }
     mag -= str.length;
-    while(mag--) z += '0';
+    while (mag--) z += '0';
     return str + z;
 }
