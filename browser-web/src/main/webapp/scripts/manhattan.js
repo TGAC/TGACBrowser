@@ -10,6 +10,15 @@ function readGem(trackName, trackId, div) {
     data.forEach(function (d, i) {
         if (d.Chr == seqregname) {
             var start = d.Loc.split("_")[1]
+            var end= d.Loc.split("_")[2]
+            if(end > start){
+                start = start
+                end = end
+            }else{
+                start = end;
+                end = start;
+            }
+
             d.ref = d.Loc.split("_")[0]; //d[keys[0]].split(":")[0];
             d.position = parseInt(start) + parseInt(d[keys[0]].split(":")[1]);
             d.refbase = d[keys[0]].split(":")[2];
@@ -70,6 +79,60 @@ function readGem(trackName, trackId, div) {
     dispGraphManhattan(div, trackName, trackId)
     // })
 }
+
+function readCDSfromGem(trackName, trackId, div) {
+    console.log("readCDSfromGem")
+    var data = window[trackName]
+    var temp_data = []
+    var outputList = [];
+
+    window[trackName] = []
+    data.forEach(function (d, i) {
+        if (d.Chr == seqregname) {
+            var start = d.Loc.split("_")[1]
+            var end = d.Loc.split("_")[2]
+
+            if(end > start){
+                d.start = start
+                d.end = end
+                d.strand = 1
+            }else{
+                d.start = end;
+                d.end = start;
+                d.strand = -1;
+            }
+            d.ref = d.Loc.split("_")[0]; //d[keys[0]].split(":")[0];
+            d.desc = d.TAIR_id;
+
+            if(outputList.indexOf(d.TAIR_id) >=0 ){
+                console.log("exist "+d.TAIR_id)
+            }else{
+                outputList.push(d.TAIR_id)
+
+                temp_data.push({
+                    "ref": d.ref,
+                    "start": d.start,
+                    "end": d.end,
+                    "desc": d.desc,
+                })
+            }
+
+
+
+
+        }
+
+
+
+        window[trackName] = temp_data
+
+    });
+
+    console.log(window[trackName])
+    trackToggle(trackName)
+    // })
+}
+
 
 function dispGraphManhattan(div, trackName, trackId) {
     console.log("dispGraphManhattan")
