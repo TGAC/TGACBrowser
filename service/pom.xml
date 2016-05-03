@@ -113,12 +113,6 @@
             <version>1.0-alpha-3</version>
         </dependency>
 
-        <!--<dependency>-->
-        <!--<groupId>net.sourceforge.sam</groupId>-->
-        <!--<artifactId>sam</artifactId>-->
-        <!--<version>1.84</version>-->
-        <!--</dependency>-->
-
         <dependency>
             <groupId>net.sourceforge.fluxion.ajax.beans</groupId>
             <artifactId>fluxion-ajax-beans</artifactId>
@@ -178,8 +172,6 @@
             <artifactId>dropbox-core-sdk</artifactId>
             <version>1.6</version>
         </dependency>
-
-
     </dependencies>
 
     <properties>
