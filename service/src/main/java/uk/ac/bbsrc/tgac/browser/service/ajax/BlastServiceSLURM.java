@@ -97,7 +97,7 @@ public class BlastServiceSLURM {
             JSONObject error = blastServiceSystem.checkError(slurm_id);
             if (error.getBoolean("found") == true) {
                 html.put("id", blastAccession);
-                html.put("html", "Error");
+                html.put("html", "error");
                 html.put("error", error.getString("error"));
             } else if (blastManagerStore.checkResultDatabase(old_blastAccession)) {
                 log.info("already in db");
