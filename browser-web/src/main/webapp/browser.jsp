@@ -676,7 +676,7 @@
                             log10P
                         </td>
                         <td>
-                            Chr_start-pos(ref)_end-pos(ref)
+                            Chr_start_pos(ref)_end-pos(ref)
                         </td>
                         <td>
                             Chr
