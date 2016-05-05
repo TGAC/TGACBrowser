@@ -39,7 +39,6 @@ import uk.ac.bbsrc.tgac.browser.core.store.AnalysisStore;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Created by IntelliJ IDEA.
