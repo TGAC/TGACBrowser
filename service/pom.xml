@@ -149,6 +149,14 @@
             <!--<version>1.91</version>-->
         <!--</dependency>-->
 
+            <dependency>
+                <groupId>java-genomics</groupId>
+                <artifactId>java-genomics</artifactId>
+                <version>0.1.0</version>
+                <!--<scope>system</scope>-->
+                <!--<systemPath>${basedir}/lib/java-genomics-io.jar</systemPath>-->
+            </dependency>
+
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math3</artifactId>

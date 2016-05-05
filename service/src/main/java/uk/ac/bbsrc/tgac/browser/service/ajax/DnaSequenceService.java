@@ -33,10 +33,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.bbsrc.tgac.browser.core.store.*;
-//import uk.ac.bbsrc.tgac.browser.service.ajax.javagenomicsio.BigWigService;
-//import uk.ac.bbsrc.tgac.browser.service.ajax.javagenomicsio.GFFService;
-//import uk.ac.bbsrc.tgac.browser.service.ajax.javagenomicsio.SamBamService;
-//import uk.ac.bbsrc.tgac.browser.service.ajax.javagenomicsio.VCFService;
+import uk.ac.bbsrc.tgac.browser.service.ajax.javagenomicsio.BigWigService;
+import uk.ac.bbsrc.tgac.browser.service.ajax.javagenomicsio.GFFService;
+import uk.ac.bbsrc.tgac.browser.service.ajax.javagenomicsio.SamBamService;
+import uk.ac.bbsrc.tgac.browser.service.ajax.javagenomicsio.VCFService;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
@@ -102,9 +102,9 @@ public class DnaSequenceService {
         this.searchStore = searchStore;
     }
 
-//    private SamBamService samBamService = new SamBamService();
-//    private GFFService gffService = new GFFService();
-//    private VCFService vcfService = new VCFService();
+    private SamBamService samBamService = new SamBamService();
+    private GFFService gffService = new GFFService();
+    private VCFService vcfService = new VCFService();
 
 
     /**
@@ -305,58 +305,58 @@ public class DnaSequenceService {
         int count;
         try {
             Integer queryid = sequenceStore.getSeqRegionWithCoord(seqName, coord);
-//            if (trackId.toLowerCase().contains(".bw") || trackId.toLowerCase().contains(".bigwig") || trackId.toLowerCase().contains(".wig")) {
-//                response.put(trackName, BigWigService.getWig(start, end, delta, trackId, seqName));
-//            } else if (trackId.contains(".sam") || trackId.contains(".bam")) {
-//                count = SamBamService.countBAM(start, end, delta, trackId, seqName);
-//
-//                log.info("\n\n\nBAM count " + count);
-//
-//
+            if (trackId.toLowerCase().contains(".bw") || trackId.toLowerCase().contains(".bigwig") || trackId.toLowerCase().contains(".wig")) {
+                response.put(trackName, BigWigService.getWig(start, end, delta, trackId, seqName));
+            } else if (trackId.contains(".sam") || trackId.contains(".bam")) {
+                count = SamBamService.countBAM(start, end, delta, trackId, seqName);
+
+                log.info("\n\n\nBAM count " + count);
+
+
+                if (count ==0) {
+                    response.put(trackName, "getHit no result found");
+
+                } else if (count < 5000) {
+                    response.put(trackName, samBamService.getBAMReads(start, end, delta, trackId, seqName));
+                } else {
+                    response.put("type", "graph");
+                    response.put("graphtype", "wig");
+                    response.put(trackName, SamBamService.getBAMGraphs(start, end, delta, trackId, seqName));
+                }
+            } else if (trackId.contains(".gff") || trackId.contains(".GFF")) {
+                count = GFFService.countGFF(start, end, delta, trackId, seqName);
+                log.info("\n\n\nGFF count "+ count);
+
+                if (count ==0) {
+                    response.put(trackName, "getHit no result found");
+
+                } else if (count < 5000) {
+                    response.put(trackName, gffService.getGFFReads(start, end, delta, trackId, seqName));
+                } else {
+                    response.put("type", "graph");
+                    response.put("graphtype", "bar");
+                    response.put(trackName, GFFService.getGFFGraphs(start, end, delta, trackId, seqName));
+                }
+            } else if (trackId.contains(".vcf") || trackId.contains(".VCF")) {
+                count = VCFService.countVCF(start, end, delta, trackId, seqName);
+
+                log.info("\n\n\nVCF count "+ count);
+
+
 //                if (count ==0) {
 //                    response.put(trackName, "getHit no result found");
 //
-//                } else if (count < 5000) {
-//                    response.put(trackName, samBamService.getBAMReads(start, end, delta, trackId, seqName));
-//                } else {
-//                    response.put("type", "graph");
-//                    response.put("graphtype", "wig");
-//                    response.put(trackName, SamBamService.getBAMGraphs(start, end, delta, trackId, seqName));
-//                }
-//            } else if (trackId.contains(".gff") || trackId.contains(".GFF")) {
-//                count = GFFService.countGFF(start, end, delta, trackId, seqName);
-//                log.info("\n\n\nGFF count "+ count);
-//
-//                if (count ==0) {
-//                    response.put(trackName, "getHit no result found");
-//
-//                } else if (count < 5000) {
-//                    response.put(trackName, gffService.getGFFReads(start, end, delta, trackId, seqName));
-//                } else {
-//                    response.put("type", "graph");
-//                    response.put("graphtype", "bar");
-//                    response.put(trackName, GFFService.getGFFGraphs(start, end, delta, trackId, seqName));
-//                }
-//            } else if (trackId.contains(".vcf") || trackId.contains(".VCF")) {
-//                count = VCFService.countVCF(start, end, delta, trackId, seqName);
-//
-//                log.info("\n\n\nVCF count "+ count);
-//
-//
-////                if (count ==0) {
-////                    response.put(trackName, "getHit no result found");
-////
-////                } else
-//                if (count < 5000) {
-//                    response.put(trackName, vcfService.getVCFReads(start, end, delta, trackId, seqName));
-//                } else {
-//                    response.put("type", "graph");
-//                    response.put("graphtype", "bar");
-//                    response.put(trackName, VCFService.getVCFGraphs(start, end, delta, trackId, seqName));
-//                }
-//            } else if (trackId.contains(".bed")) {
-//                response.put(trackName, SamBamService.getBed(start, end, delta, trackId, seqName));
-//            } else
+//                } else
+                if (count < 5000) {
+                    response.put(trackName, vcfService.getVCFReads(start, end, delta, trackId, seqName));
+                } else {
+                    response.put("type", "graph");
+                    response.put("graphtype", "bar");
+                    response.put(trackName, VCFService.getVCFGraphs(start, end, delta, trackId, seqName));
+                }
+            } else if (trackId.contains(".bed")) {
+                response.put(trackName, SamBamService.getBed(start, end, delta, trackId, seqName));
+            } else
                 if (trackId.indexOf("cs") >= 0) {
                 count = assemblyStore.countAssembly(queryid, trackId, start, end);
                 log.info("\n\n\nassembly count "+ count);
