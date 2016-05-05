@@ -2325,6 +2325,7 @@ span.counter {
     cursor: pointer;
     height: 5px;
     min-width: 1px;
+    background: red;
 }
 
 /*.track:hover {*/
