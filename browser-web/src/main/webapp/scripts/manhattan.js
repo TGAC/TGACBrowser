@@ -36,9 +36,9 @@ function readGem(trackName, trackId, div) {
 
     });
 
-    var margin = {top: 10, right: 0, bottom: 10, left: 0};
+    var margin = {top: 00, right: 0, bottom: 0, left: 0};
     var width = jQuery("#wrapper").width(),
-        height = 100;
+        height = 90;
 
 
     var y = d3.scale.linear().range([height, 0]);
@@ -113,7 +113,8 @@ function readCDSfromGem(trackName, trackId, div) {
                     "ref": d.ref,
                     "start": d.start,
                     "end": d.end,
-                    "desc": d.desc,
+                    "desc": "<a target='_blank' href='http://plants.ensembl.org/Arabidopsis_thaliana/Gene/Summary?g="+d.desc+"'>"+ d.desc+"</a>",
+
                 })
             }
 
@@ -152,7 +153,7 @@ function dispGraphManhattan(div, trackName, trackId) {
     });
 
     var width = jQuery("#wrapper").width(),
-        height = 100;
+        height = 90;
 
     var radius = (width / (newEnd_temp - newStart_temp) )/ 4;
     if(radius < 1)
