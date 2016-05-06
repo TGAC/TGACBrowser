@@ -20,9 +20,13 @@ function readGem(trackName, trackId, div) {
             }
 
             d.ref = d.Loc.split("_")[0]; //d[keys[0]].split(":")[0];
-            d.position = parseInt(start) + parseInt(d[keys[0]].split(":")[1]);
+            // d.position = parseInt(start) + parseInt(d[keys[0]].split(":")[1]);
+            var addition = (d[keys[0]].split(":")[1] ? parseInt(d[keys[0]].split(":")[1]) : 0);
+            d.position = parseInt(start) + addition;
+
             d.refbase = d[keys[0]].split(":")[2];
             d.cds = d[keys[0]].split(":")[0];
+            // console.log(d)
 
             window[trackName].push({
                 "ref": d.ref,
@@ -36,7 +40,7 @@ function readGem(trackName, trackId, div) {
 
     });
 
-    var margin = {top: 00, right: 0, bottom: 0, left: 0};
+    var margin = {top: 10, right: 0, bottom: 10, left: 0};
     var width = jQuery("#wrapper").width(),
         height = 90;
 
@@ -105,7 +109,7 @@ function readCDSfromGem(trackName, trackId, div) {
             d.desc = d.TAIR_id;
 
             if(outputList.indexOf(d.TAIR_id) >=0 ){
-                console.log("exist "+d.TAIR_id)
+                //console.log("exist "+d.TAIR_id)
             }else{
                 outputList.push(d.TAIR_id)
 
@@ -113,8 +117,7 @@ function readCDSfromGem(trackName, trackId, div) {
                     "ref": d.ref,
                     "start": d.start,
                     "end": d.end,
-                    "desc": "<a target='_blank' href='http://plants.ensembl.org/Arabidopsis_thaliana/Gene/Summary?g="+d.desc+"'>"+ d.desc+"</a>",
-
+                    "desc": d.desc,
                 })
             }
 
@@ -154,11 +157,13 @@ function dispGraphManhattan(div, trackName, trackId) {
 
     var width = jQuery("#wrapper").width(),
         height = 90;
+    var margin = {top: 10, right: 0, bottom: 10, left: 0};
 
-    var radius = (width / (newEnd_temp - newStart_temp) )/ 4;
-    if(radius < 1)
+
+    var radious = (width / (newEnd_temp - newStart_temp) )/ 4;
+    if(radious < 1)
     {
-        radius = 1
+        radious = 1
     }
 
 
@@ -181,10 +186,13 @@ function dispGraphManhattan(div, trackName, trackId) {
     var dot = svg.selectAll(".dot")
         .data(gem);
 
+    console.log(gem.length)
+    console.log(gem.size())
+
     var dotEnter = dot.enter().append("circle")
         .attr("class", "dot")
         .attr("r", function(){
-            return radius
+            return radious
         })
         .attr("cx", function (d) {
             return xScale(d.position);
@@ -196,7 +204,9 @@ function dispGraphManhattan(div, trackName, trackId) {
         .append("svg:title")
         .text(function (d) {
             return d.ref+":"+d.position
-        });
+        })
+        .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")");
 
     var dotUpdate = dot.transition()
         .duration(duration)
@@ -205,7 +215,9 @@ function dispGraphManhattan(div, trackName, trackId) {
         })
         .attr("cy", function (d) {
             return yScale(d.log10P);
-        });
+        })
+        .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")");
 
     var dotExit = dot.exit().transition()
         .duration(duration)
