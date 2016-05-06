@@ -66,10 +66,7 @@ function tracks_div(Tracklist, i) {
 
     if (i) {
 
-        console.log("tracks_div "+i)
-
         track_div_html(Tracklist, i)
-
 
     } else {
 
@@ -109,8 +106,6 @@ function tracks_div(Tracklist, i) {
 }
 
 function track_div_html(Tracklist, i){
-
-    console.log("track_div_html "+i)
 
     jQuery("#tracks").append("<div id='" + Tracklist[i].name + "_wrapper' class='feature_tracks' style=\"display:block; max-height:110px; overflow-x: hidden;\">" +
         "</div>");
@@ -162,17 +157,10 @@ function track_div_html(Tracklist, i){
 // Generate automated tracks lists for each track
 
 function trackList(tracklist, i) {
-    console.log("trackList")
     var Tracklist = tracklist;
 
     if (i) {
-        console.log(i)
-
-        console.log(Tracklist[i])
-
         prepare_track_list(Tracklist, i)
-
-
     }
     else {
         for (var i = 0; i < Tracklist.length; i++) {
@@ -262,15 +250,12 @@ function prepare_track_list(Tracklist, i){
 
 function tracks_css(Tracklist, i) {
     if(i){
-        console.log("trackcss "+i)
         prepare_track_css (Tracklist, i)
-
     }else{
         for (var i = 0; i < Tracklist.length; i++) {
             prepare_track_css (Tracklist, i)
         }
     }
-
 }
 
 function prepare_track_css (Tracklist, i){
@@ -364,7 +349,7 @@ function toggleLeftInfo(div, id) {
 function loadDefaultTrack(tracklist) {
     var Tracklist = tracklist;
     var cookietest = []
-    if (jQuery.cookie('trackslist')) {
+    if (JSON.parse(jQuery.cookie('trackslist')).length > 1) {
         cookietest = JSON.parse(jQuery.cookie('trackslist'));
     }
     else {
