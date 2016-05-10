@@ -145,7 +145,7 @@ function readerLoaded(e, files, i, name) {
 
 
 
-    if(extension.indexOf("csv") >= 0 && name.toLowerCase().indexOf("gapit") >= 0){
+    if(extension.indexOf("csv") >= 0 && (name.toLowerCase().indexOf("gapit") >= 0 || name.toLowerCase().indexOf("gem") >= 0)){
         readGem("uploadManhattan"+count, "noid"+count, "#uploadManhattan"+count+"_div")
 
         track_list.forEach(function(d,i){
