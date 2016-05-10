@@ -36,11 +36,10 @@ import edu.unc.genomics.Interval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.bbsrc.tgac.browser.store.ensembl.Util;
-
+//
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.
 import java.io.*;
 import java.nio.*;
 import java.nio.file.Paths;
@@ -59,9 +58,9 @@ import java.util.List;
 @Ajaxified
 public class SamBamService {
 
-//    protected static final Logger log = LoggerFactory.getLogger(SamBamService.class);
-//
-//
+////    protected static final Logger log = LoggerFactory.getLogger(SamBamService.class);
+////
+////
     private Util util = new Util();
     /**
      * Return JSONArray

@@ -50,9 +50,9 @@ import java.util.List;
 @Ajaxified
 public class VCFService {
 
-//    protected static final Logger log = LoggerFactory.getLogger(VCFService.class);
-
-
+////    protected static final Logger log = LoggerFactory.getLogger(VCFService.class);
+//
+//
     private Util util = new Util();
 
 
