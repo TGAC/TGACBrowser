@@ -18,7 +18,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.7</version>
+                <version>2.9</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -150,20 +150,20 @@
 
     <!-- Maven repository deploy -->
     <distributionManagement>
-        <downloadUrl>https://repos.tgac.bbsrc.ac.uk/maven/repo</downloadUrl>
+        <downloadUrl>https://repos.tgac.ac.uk/maven/repo</downloadUrl>
         <repository>
             <id>tgac-repo</id>
             <name>TGAC repository</name>
-            <url>scp://repos.tgac.bbsrc.ac.uk/var/www/html/maven/repo</url>
+            <url>scp://repos.tgac.ac.uk/var/www/html/maven/repo</url>
         </repository>
         <snapshotRepository>
             <id>tgac-repo</id>
             <name>TGAC repository</name>
-            <url>scp://repos.tgac.bbsrc.ac.uk/var/www/html/maven/repo</url>
+            <url>scp://repos.tgac.ac.uk/var/www/html/maven/repo</url>
         </snapshotRepository>
         <site>
             <id>browser-site</id>
-            <url>scp://repos.tgac.bbsrc.ac.uk/var/www/html/tgac-browser</url>
+            <url>scp://repos.tgac.ac.uk/var/www/html/tgac-browser</url>
         </site>
     </distributionManagement>
 
@@ -178,7 +178,7 @@
         <repository>
             <id>tgac-repo</id>
             <name>TGAC Maven Repository</name>
-            <url>https://repos.tgac.bbsrc.ac.uk/maven/repo</url>
+            <url>https://repos.tgac.ac.uk/maven/repo</url>
             <releases>
                 <updatePolicy>always</updatePolicy>
             </releases>
@@ -238,13 +238,21 @@
             <id>springsource-snapshot</id>
             <url>http://repository.springsource.com/maven/bundles/snapshot</url>
         </repository>
+
+        <repository>
+            <id>project.local</id>
+            <name>project</name>
+            <url>file:${project.basedir}/lib</url>
+        </repository>
+
     </repositories>
 
     <pluginRepositories>
         <pluginRepository>
             <id>tgac-repo</id>
             <name>TGAC Maven Repository</name>
-            <url>https://repos.tgac.bbsrc.ac.uk/maven/repo</url>
+            <url>https://repos.tgac.ac.uk/maven/repo</url>
+
             <!--
             <releases>
                 <updatePolicy>never</updatePolicy>
@@ -280,8 +288,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                 </configuration>
             </plugin>
         </plugins>
