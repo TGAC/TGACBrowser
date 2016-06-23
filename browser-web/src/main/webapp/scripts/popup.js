@@ -422,7 +422,7 @@ if(j){
         {'doOnSuccess': function (json) {
             var file_Text = "\#CHROM,POS,ID,REF,ALT,QUAL,FILTER,INFO-";
             var html_string = "<div id=vcfdownload></div>" +
-                "" +
+                "SNPs in between " +start +" and "+end+" <br>"+
                 "<table class='list' id='SNP_hit' width=100%><thead><tr><th>#CHROM</th><th>POS</th><th>ID</th><th>REF</th><th>ALT</th><th>QUAL</th><th>FILTER</th><th>INFO</th></tr></thead>";
             for (var k = 0; k < json.SNP.length; k++) {
 
@@ -464,7 +464,7 @@ function showOtherSNPs(track, i) {
         {'doOnSuccess': function (json) {
             var file_Text = "\#CHROM,POS,ID,REF,ALT,QUAL,FILTER,INFO-";
             var html_string = "<div id=vcfdownload></div>" +
-                "" +
+                "SNPs at position " +start +" <br>"+
                 "<table class='list' id='SNP_hit' width=100%><thead><tr><th>#CHROM</th><th>POS</th><th>ID</th><th>REF</th><th>ALT</th><th>QUAL</th><th>FILTER</th><th>INFO</th></tr></thead>";
             for (var k = 0; k < json.SNP.length; k++) {
                 file_Text += seqregname+","+json.SNP[k].seq_region_start+","+json.SNP[k].hit_name+","+json.SNP[k].ref+","+json.SNP[k].cigar_line+","+json.SNP[k].score+","+json.SNP[k].info+"-"

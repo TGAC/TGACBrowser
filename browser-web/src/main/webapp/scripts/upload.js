@@ -120,7 +120,6 @@ function readerLoaded(e, files, i, name) {
 
     var track_list_length = track_list.length
 
-    console.log("track_list_length "+track_list_length)
 
     var trackname=name.split(".")[0]
     track_list.push({
