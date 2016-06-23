@@ -623,46 +623,12 @@ public class SQLDafDAO implements DafStore {
         }
         ids += ")";
 
-//        String sub_query = "( select seq_region_start from dna_align_feature where seq_region_id = 1 and analysis_id = " + list[0] + ")";
-//        for (int i = 1; i < list.length - 1; i++) {
-//            sub_query = "( select seq_region_start from dna_align_feature where seq_region_id = 1 and analysis_id = " + list[i] + " and seq_region_start in " + sub_query +
-//                    ") ";
-//        }
-
-//        log.info("\n\n\n\n test-query " + sub_query);
-//        String SQL_query = "select * from dna_align_feature where seq_region_id = ? and seq_region_start = ?";
-//        String SQL_query = "select d.*, SUBSTRING(sequence,seq_region_start,1) as ref from dna_align_feature d, dna where d.seq_region_id = 1 and  dna.seq_region_id = d.seq_region_id and  d.analysis_id in " + ids + ";";
-
-//        String SQL_query = "select seq_region_start  from dna_align_feature where seq_region_start in  " + sub_query + " and analysis_id = " + list[list.length - 1] + ";";
-        String SQL_query = "select d.dna_align_feature_id, d.analysis_id, a.display_label, d.seq_region_start, d.seq_region_id, s.name  from dna_align_feature d, analysis_description a, seq_region s  where  d.analysis_id in " + ids + " and a.analysis_id = d.analysis_id and d.seq_region_id = s.seq_region_id;";
-
-//=======
-////        String ids = "(" + list[0];
-////        for (int i = 1; i < list.length; i++) {
-////            ids += "," + list[1];
-////        }
-////        ids += ")";
-//
-//        String sub_query = "( select seq_region_start from dna_align_feature where seq_region_id = 1 and analysis_id = " + list[0] + ")";
-//        for (int i = 1; i < list.length - 1; i++) {
-//            sub_query = "( select seq_region_start from dna_align_feature where seq_region_id = 1 and analysis_id = " + list[i] + " and seq_region_start in " + sub_query +
-//                    ") ";
-//        }
-//
-//        log.info("\n\n\n\n test-query " + sub_query);
-////        String SQL_query = "select * from dna_align_feature where seq_region_id = ? and seq_region_start = ?";
-////        String SQL_query = "select d.*, SUBSTRING(sequence,seq_region_start,1) as ref from dna_align_feature d, dna where d.seq_region_id = 1 and  dna.seq_region_id = d.seq_region_id and  d.analysis_id in " + ids + ";";
-//
-//        String SQL_query = "select seq_region_start  from dna_align_feature where seq_region_start in  " + sub_query + " and analysis_id = " + list[list.length - 1] + ";";
-//
-//        log.info("\n\n\n\n SQL_Querytest" + SQL_query);
-//>>>>>>> fileuplod
+        String SQL_query = "select d.dna_align_feature_id, d.analysis_id, a.display_label, d.seq_region_start, d.seq_region_id, s.name  " +
+                "from dna_align_feature d, analysis_description a, seq_region s  " +
+                "where  d.analysis_id in " + ids + " and a.analysis_id = d.analysis_id and d.seq_region_id = s.seq_region_id;";
 
         List<Map<String, Object>> maps_one = template.queryForList(SQL_query, new Object[]{});
-//        for (Map map : maps_one) {
-//            map.put("info", analysis_obj.get(map.get("analysis_id").toString()));
-//        }
-//        snpList.addAll(maps_one);
+
         return maps_one;
 
     }
