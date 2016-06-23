@@ -39,7 +39,6 @@ import uk.ac.bbsrc.tgac.browser.core.store.UtilsStore;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -529,14 +528,60 @@ public class SQLDafDAO implements DafStore {
         log.info("\n\n\n\n\nanalysis_obj " + analysis_obj);
 //        String SQL_query = "select * from dna_align_feature where seq_region_id = ? and (seq_region_start >= ? and seq_region_end <= ?) and  analysis_id in (select analysis_id from analysis where logic_name like \"%SNP%\")";
         String SQL_query = "select d.*, SUBSTRING(sequence,seq_region_start,1) as ref from dna_align_feature d, dna where d.seq_region_id = ? and dna.seq_region_id = d.seq_region_id and (d.seq_region_start >= ? and d.seq_region_end <= ?) and  d.analysis_id in (select analysis_id from analysis where logic_name like \"%SNP%\")";
-        List<Map<String, Object>> maps_one = template.queryForList(SQL_query, new Object[]{query, start, end});
-        for (Map map : maps_one) {
-            map.put("info", analysis_obj.get(map.get("analysis_id").toString()));
+        List<Map<String, Object>> SNPs = template.queryForList(SQL_query, new Object[]{query, start, end});
+
+        if (SNPs.size() > 0) {
+            for (Map SNP : SNPs) {
+                SNP.put("info", analysis_obj.get(SNP.get("analysis_id").toString()));
+            }
+        } else {
+            snpkList.addAll(recurvsive_getallSNPsonGene(0, query, coord, start, end));
         }
-        snpkList.addAll(maps_one);
+        snpkList.addAll(SNPs);
+        log.info("\n\n\n\n\t final "+snpkList.toString());
         return snpkList;
 
     }
+
+    public JSONArray recurvsive_getallSNPsonGene(int start_pos, int query, String coord, long start, long end) throws Exception {
+
+        log.info("\n\n\n\n\nrecursive  " + query);
+
+
+        JSONArray snpkList = new JSONArray();
+
+        List<Map<String, Object>> assembly = template.queryForList(GET_Assembly_for_reference, new Object[]{query});
+
+        String SQL_query = "select d.*, SUBSTRING(sequence,seq_region_start,1) as ref from dna_align_feature d, dna where d.seq_region_id = ? and dna.seq_region_id = d.seq_region_id and (d.seq_region_start >= ? and d.seq_region_end <= ?) and  d.analysis_id in (select analysis_id from analysis where logic_name like \"%SNP%\")";
+
+        String analysis_query = "select analysis_id, display_label from analysis_description";
+        List<Map<String, Object>> analysis = template.queryForList(analysis_query, new Object[]{});
+        log.info("\n\n\n\n\nanalysis_obj " + analysis.toString());
+
+        JSONObject analysis_obj = new JSONObject();
+        for (Map map : analysis) {
+            analysis_obj.put(map.get("analysis_id"), map.get("display_label"));
+        }
+
+        for (Map map : assembly) {
+            start_pos += Integer.parseInt(map.get("asm_start").toString());
+            int id = Integer.parseInt(map.get("cmp_seq_region_id").toString());
+            List<Map<String, Object>> SNPs = template.queryForList(SQL_query, new Object[]{id, start - start_pos, end - start_pos});
+            if (SNPs.size() > 0) {
+                for (Map SNP : SNPs) {
+                    SNP.put("info", analysis_obj.get(SNP.get("analysis_id").toString()));
+                    SNP.put("seq_region_start", start_pos + Integer.parseInt(SNP.get("seq_region_start").toString()));
+                }
+            } else {
+                snpkList.addAll(recurvsive_getallSNPsonGene(start_pos, id, coord, start, end));
+            }
+            snpkList.addAll(SNPs);
+        }
+
+        return snpkList;
+
+    }
+
 
     public JSONArray getallSNPsonSNP(int query, String coord, long start) throws Exception {
         JSONArray snpkList = new JSONArray();

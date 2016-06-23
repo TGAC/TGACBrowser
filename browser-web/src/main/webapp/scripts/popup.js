@@ -117,7 +117,12 @@ function newpopup(track, i, j) {
 
         }
         jQuery("#ZoomHere").html('<span title="Zoom Here" class="ui-button ui-icon ui-icon-zoomin" onclick=zoomHere(' + window[track][i].start + ',' + endposition + ');></span>');
-        jQuery("#EditDescription").html('<span title="Edit" class="ui-button ui-icon ui-icon-pencil" onclick=showOtherSNPs(\"' + track + '\",\'' + i + '\');></span>');
+        if(track.toLowerCase().indexOf('snp')>0){
+            jQuery("#EditDescription").html('<span title="Edit" class="ui-button ui-icon ui-icon-pencil" onclick=showOtherSNPs(\"' + track + '\",\'' + i + '\');></span>');
+        }else{
+            jQuery("#EditDescription").html('<span title="Edit" class="ui-button ui-icon ui-icon-pencil" onclick=showSNPs(\"' + track + '\",\'' + i + '\');></span>');
+
+        }
         jQuery("#deleteTrack").html('<span title="Remove" class="ui-button ui-icon ui-icon-trash" onclick=deleteTrack(\"' + track + '\",\'' + i + '\');></span>');
         jQuery("#flagTrack").html('<span title="Flag" class="ui-button ui-icon ui-icon-flag" onclick=flagTrack(\"' + track + '\",\'' + i + '\');></span>');
         if (window['track_list' + track].id.toString().indexOf("cs") >= 0) {
@@ -400,9 +405,16 @@ console.log("showSNPS")
 
 
 
+    var start = 0;
+    var end = 0;
+if(j){
+    start = window[track][i].transcript[j].start;
+    end = window[track][i].transcript[j].end;
 
-    var start = window[track][i].transcript[j].start;
-    var end = window[track][i].transcript[j].end;
+}else{
+    start = window[track][i].start;
+    end = window[track][i].end;
+}
     Fluxion.doAjax(
         'dnaSequenceService',
         'getSNPs',
