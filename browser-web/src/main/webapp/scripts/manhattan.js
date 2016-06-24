@@ -121,18 +121,12 @@ function readCDSfromGem(trackName, trackId, div) {
                 })
             }
 
-
-
-
         }
-
-
 
         window[trackName] = temp_data
 
     });
 
-    console.log(window[trackName])
     trackToggle(trackName)
     // })
 }
@@ -185,9 +179,6 @@ function dispGraphManhattan(div, trackName, trackId) {
 
     var dot = svg.selectAll(".dot")
         .data(gem);
-
-    console.log(gem.length)
-    console.log(gem.size())
 
     var dotEnter = dot.enter().append("circle")
         .attr("class", "dot")

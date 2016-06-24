@@ -397,7 +397,7 @@ function editDesc(track, i, j) {
 }
 
 function showSNPs(track, i, j) {
-console.log("showSNPS")
+    console.log("showSNPS")
     jQuery.colorbox({
         width: "90%",
         height: "100%",
@@ -407,14 +407,14 @@ console.log("showSNPS")
 
     var start = 0;
     var end = 0;
-if(j){
-    start = window[track][i].transcript[j].start;
-    end = window[track][i].transcript[j].end;
+    if(j){
+        start = window[track][i].transcript[j].start;
+        end = window[track][i].transcript[j].end;
 
-}else{
-    start = window[track][i].start;
-    end = window[track][i].end;
-}
+    }else{
+        start = window[track][i].start;
+        end = window[track][i].end;
+    }
     Fluxion.doAjax(
         'dnaSequenceService',
         'getSNPs',
@@ -425,7 +425,6 @@ if(j){
                 "SNPs in between " +start +" and "+end+" <br>"+
                 "<table class='list' id='SNP_hit' width=100%><thead><tr><th>#CHROM</th><th>POS</th><th>ID</th><th>REF</th><th>ALT</th><th>QUAL</th><th>FILTER</th><th>INFO</th></tr></thead>";
             for (var k = 0; k < json.SNP.length; k++) {
-
                 file_Text += seqregname+","+json.SNP[k].seq_region_start+","+json.SNP[k].hit_name+","+json.SNP[k].ref+","+json.SNP[k].cigar_line+","+json.SNP[k].score+","+json.SNP[k].info+"-"
                 html_string +=  "<tr><td>"+seqregname+"<td>"+json.SNP[k].seq_region_start+"<td>"+json.SNP[k].hit_name+"<td>"+json.SNP[k].ref+"<td>"+json.SNP[k].cigar_line+"<td>"+json.SNP[k].score+"<td><td>"+json.SNP[k].info
 
@@ -439,7 +438,7 @@ if(j){
             console.log(file_Text)
             jQuery("#SNP_hit").tablesorter();
             jQuery('#vcfdownload').html("<button class='ui-state-default ui-corner-all' " +
-            "onclick=VCFFile('" + file_Text + "') \">Prepare Download VCF File</button>");
+                "onclick=VCFFile('" + file_Text + "') \">Prepare Download VCF File</button>");
 
 
         }
@@ -474,7 +473,7 @@ function showOtherSNPs(track, i) {
             jQuery("#SNP_hit").tablesorter();
             file_Text = file_Text.replace(/\s+/gi, "_")
             jQuery('#vcfdownload').html("<button class='ui-state-default ui-corner-all' " +
-            "onclick=VCFFile('" + file_Text + "') \">Prepare Download VCF File</button>");
+                "onclick=VCFFile('" + file_Text + "') \">Prepare Download VCF File</button>");
         }
         });
 
@@ -707,9 +706,9 @@ function showPeptides(track, i, k) {
             jQuery.colorbox({
                 width: "90%",
                 html: "<table><tr><td><button id=\"peptidebutton\" class='ui-state-default ui-corner-all' " +
-                    "onclick=\"sequenceToogle();\">Peptide Sequence</button><br/>" +
-                    "</td></td></tr></table><br/>" +
-                    "<div id='cdnasequence' style='display : inline; font-family: Courier, \"Courier New\", monospace'><b>cDNA Seq</b><hr>" + cdnaseq + "</div><div id='peptidesequence' style='display : none; font-family: Courier, \"Courier New\", monospace'><b>Peptide Seq</b><hr>" + peptideseq + "</div>" });
+                "onclick=\"sequenceToogle();\">Peptide Sequence</button><br/>" +
+                "</td></td></tr></table><br/>" +
+                "<div id='cdnasequence' style='display : inline; font-family: Courier, \"Courier New\", monospace'><b>cDNA Seq</b><hr>" + cdnaseq + "</div><div id='peptidesequence' style='display : none; font-family: Courier, \"Courier New\", monospace'><b>Peptide Seq</b><hr>" + peptideseq + "</div>" });
         }
         });
 
@@ -817,7 +816,7 @@ function convertPeptide(cdnaseq) {
         else if (chunk == "GTT" || chunk == "GTC" || chunk == "GTA" || chunk == "GTG") {
             ptn_seq += "V";
         }
-        //  	UAA, UGA, UAG
+        //      UAA, UGA, UAG
         else if (chunk == "TAA" || chunk == "TGA" || chunk == "TAG") {
             ptn_seq += "*";
         }
@@ -849,11 +848,11 @@ function fetchFasta(begin, end, track, i, j) {
         width: "90%",
         height: "100%",
         html: "<table><tr><td><button class='ui-state-default ui-corner-all' " +
-            "onclick=\"selectText('fastaoutput');\"')\">Select Sequence</button><br/>" +
-            "<td><div id=fastadownload></div></td></td></tr></table><br/>" +
+        "onclick=\"selectText('fastaoutput');\"')\">Select Sequence</button><br/>" +
+        "<td><div id=fastadownload></div></td></td></tr></table><br/>" +
             // "<b>Position: </b>" + begin + " - " + end+
-            "<br/><b>Fasta:</b> <br/>" + reverseText +
-            "<div id=\"fastaoutput\" style=' font-family: Courier, \"Courier New\", monospace'><img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'></div>"});
+        "<br/><b>Fasta:</b> <br/>" + reverseText +
+        "<div id=\"fastaoutput\" style=' font-family: Courier, \"Courier New\", monospace'><img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'></div>"});
 
     Fluxion.doAjax(
         'dnaSequenceService',
