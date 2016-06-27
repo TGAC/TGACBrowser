@@ -164,6 +164,7 @@ function readerLoaded(e, files, i, name) {
             disp: 1,
             merge: 0,
             label: name+"Gene",
+            ensembl:"http://plants.ensembl.org/Multi/Search/Results?species=all;idx=;q=",
             graph: 0,
             graphtype: null,
             label_show: true,

@@ -178,6 +178,7 @@ function trackList(tracklist, i) {
 }
 
 function prepare_track_list(Tracklist, i){
+    console.log(Tracklist)
     window['track_list' + Tracklist[i].name] = {
         name: Tracklist[i].name,
         id: Tracklist[i].id,
@@ -188,7 +189,8 @@ function prepare_track_list(Tracklist, i){
         label: Tracklist[i].label,
         graph: Tracklist[i].graph,
         graphtype: null,
-        label_show: true
+        label_show: true,
+        ensembl: Tracklist[i].ensembl ?  Tracklist[i].ensembl : null
     }
 
     tracks_div(Tracklist, i);

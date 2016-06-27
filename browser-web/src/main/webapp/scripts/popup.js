@@ -93,13 +93,17 @@ function newpopup(track, i, j) {
         jQuery("#EditDescription").html('<span title="Edit" class="ui-button ui-icon ui-icon-pencil" onclick=showSNPs(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
         jQuery("#deleteTrack").html('<span title="Remove" class="ui-button ui-icon ui-icon-trash" onclick=deleteTrack(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
         jQuery("#flagTrack").html('<span title="Flag" class="ui-button ui-icon ui-icon-flag" onclick=flagTrack(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
-        jQuery("#Linkme").html("<a target='_blank' href='" + jQuery("#linkLocation").html() + "" + window[track][i].desc + "'> <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\"></span></a>");
+        if(window["track_list"+track] != null){
+            jQuery("#Linkme").html("<a target='_blank' href='" + window["track_list"+track].ensembl + "" + window[track][i].desc + "'> <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\"></span></a>");
+        }
         jQuery("#revertme").html('<span title="Revert_Name" class="ui-button ui-icon ui-icon-arrowreturnthick-1-w" onclick=revertTrack(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
         jQuery("#Detail").html(stringTrim(window[track][i].transcript[j].desc + "(" + window[track][i].desc + ")", width));
 
     }
     else {
-        jQuery("#Linkme").html("");
+        if(window["track_list"+track] != null){
+            jQuery("#Linkme").html("<a target='_blank' href='" + window["track_list"+track].ensembl + "" + window[track][i].desc + "'> <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\"></span></a>");
+        }
         jQuery("#makemetop").html('');
         jQuery("#peptides").html('');
         jQuery("#position").html(position);
