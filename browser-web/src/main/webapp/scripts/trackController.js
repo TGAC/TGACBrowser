@@ -304,7 +304,6 @@ function dispBLASTindel(j, blast_start) {
 
 function dispGenes(div, track, expand, className) {
     var d = new Date();
-    console.log(d.getMinutes() + ":" + d.getSeconds() + ":" + d.getMilliseconds())
 
     var track_div = document.getElementById(track + "_div")
 
@@ -613,7 +612,6 @@ function dispGenes(div, track, expand, className) {
     }
 
     var d = new Date();
-    console.log(d.getMinutes() + ":" + d.getSeconds() + ":" + d.getMilliseconds())
 
 }
 
@@ -977,7 +975,6 @@ function dispTrack(div, trackName, className) {
 
 
     var d = new Date();
-    console.log(d.getMinutes() + ":" + d.getSeconds() + ":" + d.getMilliseconds())
     var track_div = document.getElementById(trackName + "_div")
 
     var new_div = document.createElement("div");
@@ -1201,7 +1198,6 @@ function dispTrack(div, trackName, className) {
     }
 
     var d = new Date();
-    console.log(d.getMinutes() + ":" + d.getSeconds() + ":" + d.getMilliseconds())
 
 }
 
@@ -1373,8 +1369,6 @@ function dispVCF(div, trackName, className) {
                     }
 
                     label = stringColour(track[track_len].ref.toString()) + "<br>" + stringColour(track[track_len].alt.toString());
-                    console.log(label)
-
                     jQuery("<div>").attr({
                         'id': trackName + "" + track_len,
                         'class': trackClass + " " + className,

@@ -107,7 +107,11 @@ function tracks_div(Tracklist, i) {
 
 function track_div_html(Tracklist, i){
 
-    jQuery("#tracks").append("<div id='" + Tracklist[i].name + "_wrapper' class='feature_tracks' style=\"display:block; max-height:110px; overflow-x: hidden;\">" +
+    var style = "display:block;";
+    if(Tracklist[i].disp == false || Tracklist[i].disp == 0){
+        style = "display:none;";
+    }
+    jQuery("#tracks").append("<div id='" + Tracklist[i].name + "_wrapper' class='feature_tracks' style='"+style+" max-height:110px; overflow-x: hidden;'>" +
         "</div>");
 
 
@@ -152,6 +156,9 @@ function track_div_html(Tracklist, i){
             return "";
         }
     }
+
+
+
 }
 
 // Generate automated tracks lists for each track
@@ -178,7 +185,6 @@ function trackList(tracklist, i) {
 }
 
 function prepare_track_list(Tracklist, i){
-    console.log(Tracklist)
     window['track_list' + Tracklist[i].name] = {
         name: Tracklist[i].name,
         id: Tracklist[i].id,
@@ -196,6 +202,10 @@ function prepare_track_list(Tracklist, i){
     tracks_div(Tracklist, i);
     tracks_css(Tracklist, i);
 
+    var checked = "checked"
+    if(Tracklist[i].disp == false || Tracklist[i].disp == 0){
+        checked = "";
+    }
 
     if (Tracklist[i].web && Tracklist[i].web.trackgroup) {
 
@@ -208,7 +218,7 @@ function prepare_track_list(Tracklist, i){
             'style': "position: relative; width: 70%; word-wrap: break-word;",
             'id': Tracklist[i].name + "span",
             'title': Tracklist[i].desc
-        }).html("<input type=\"checkbox\" checked id='" + Tracklist[i].name + "Checkbox' name='" + Tracklist[i].name + "Checkbox' onClick=loadTrackAjax(\"" + Tracklist[i].id + "\",\"" + Tracklist[i].name + "\"); value=" + Tracklist[i].name + " >" + Tracklist[i].display_label)
+        }).html("<input type=\"checkbox\" "+checked+" id='" + Tracklist[i].name + "Checkbox' name='" + Tracklist[i].name + "Checkbox' onClick=loadTrackAjax(\"" + Tracklist[i].id + "\",\"" + Tracklist[i].name + "\"); value=" + Tracklist[i].name + " >" + Tracklist[i].display_label)
             .appendTo("#group" + Tracklist[i].web.trackgroup);
 
         jQuery("<div>").attr({
@@ -232,7 +242,7 @@ function prepare_track_list(Tracklist, i){
             'style': "position: relative; width: 70%; word-wrap: break-word;",
             'id': Tracklist[i].name + "span",
             'title': Tracklist[i].desc
-        }).html("<input type=\"checkbox\" checked id='" + Tracklist[i].name + "Checkbox' name='" + Tracklist[i].name + "Checkbox' onClick=loadTrackAjax(\"" + Tracklist[i].id + "\",\"" + Tracklist[i].name + "\"); value=" + Tracklist[i].name + " >" + Tracklist[i].display_label).appendTo("#nogroup-table");
+        }).html("<input type=\"checkbox\" "+checked+" id='" + Tracklist[i].name + "Checkbox' name='" + Tracklist[i].name + "Checkbox' onClick=loadTrackAjax(\"" + Tracklist[i].id + "\",\"" + Tracklist[i].name + "\"); value=" + Tracklist[i].name + " >" + Tracklist[i].display_label).appendTo("#nogroup-table");
 
         jQuery("<div>").attr({
             'style': "position: relative; width: 70%; word-wrap: break-word;",
@@ -246,6 +256,13 @@ function prepare_track_list(Tracklist, i){
             jQuery("#nomergegroup-table").append("</tr> <tr>");
         }
     }
+
+//     console.log(Tracklist[i])
+// if(Tracklist[i].disp != false || Tracklist[i].disp != 0){
+// console.log("before")
+//     loadTrackAjax(Tracklist[i].id, Tracklist[i].name)
+// console.log("after")
+//     }
 }
 
 // Generate automated css classes for tracks
@@ -349,10 +366,12 @@ function toggleLeftInfo(div, id) {
 }
 
 function loadDefaultTrack(tracklist) {
+    console.log("loadDefaultTrack")
     var Tracklist = tracklist;
     var cookietest = []
     if (JSON.parse(jQuery.cookie('trackslist')).length > 1) {
         cookietest = JSON.parse(jQuery.cookie('trackslist'));
+        console.log(cookietest)
     }
     else {
         for (var i = 0; i < Tracklist.length; i++) {
@@ -404,10 +423,12 @@ function loadDefaultTrack(tracklist) {
         }
     }
 
+
     for (var i = 0; i < Tracklist.length; i++) {
 
         jQuery.each(cookietest, function (j, v) {
             if (v.name == Tracklist[i].name && v.disp == 1 && Tracklist[i].id.toString().indexOf('noid') < 0) {
+                console.log("v "+v.name)
                 jQuery('#' + Tracklist[i].name + 'Checkbox').attr('checked', true);
                 mergeTrackList(Tracklist[i].name);
                 var partial = (getEnd() - getBegin()) + ((getEnd() - getBegin()) / 2);
