@@ -373,7 +373,7 @@ function loadDefaultTrack(tracklist) {
         cookietest = JSON.parse(jQuery.cookie('trackslist'));
         console.log(cookietest)
     }
-    else {
+    //else {
         for (var i = 0; i < Tracklist.length; i++) {
             if (Tracklist[i].disp == "1" && tracklist[i].id.toString().indexOf("noid") < 0) {
                 jQuery('#' + Tracklist[i].name + 'Checkbox').attr('checked', true);
@@ -421,7 +421,7 @@ function loadDefaultTrack(tracklist) {
                     });
             }
         }
-    }
+    //}
 
 
     for (var i = 0; i < Tracklist.length; i++) {
