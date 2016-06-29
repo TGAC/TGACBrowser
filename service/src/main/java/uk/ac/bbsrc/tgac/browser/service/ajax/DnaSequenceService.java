@@ -93,6 +93,12 @@ public class DnaSequenceService {
         this.repeatStore = repeatStore;
     }
 
+    @Autowired
+    private MarkerStore markerStore;
+
+    public void setMarkerStore(MarkerStore markerStore) {
+        this.markerStore = markerStore;
+    }
 
     public void setSequenceStore(SequenceStore sequenceStore) {
         this.sequenceStore = sequenceStore;
@@ -388,7 +394,22 @@ public class DnaSequenceService {
                     response.put("graphtype", "bar");
                     response.put(trackName, repeatStore.getRepeatGraph(queryid, trackId, start, end));
                 }
-            } else if (analysisStore.getLogicNameByAnalysisId(Integer.parseInt(trackId)).matches("(?i).*gene.*")) {
+            } else if (analysisStore.getLogicNameByAnalysisId(Integer.parseInt(trackId)).matches("(?i).*marker.*")) {
+                    count = markerStore.countMarker(queryid, trackId, start, end);
+                    log.info("\n\n\nrepeat count "+ count);
+
+                    if (count ==0) {
+                        response.put(trackName, "getHit no result found");
+
+                    } else if (count < 5000) {
+                        response.put(trackName, markerStore.processMarker(markerStore.getMarker(queryid, trackId, start, end), start, end, delta, queryid, trackId));
+                    } else {
+                        response.put("type", "graph");
+                        response.put("graphtype", "bar");
+                        response.put(trackName, markerStore.getMarkerGraph(queryid, trackId, start, end));
+                    }
+                }
+                else if (analysisStore.getLogicNameByAnalysisId(Integer.parseInt(trackId)).matches("(?i).*gene.*")) {
                 count = geneStore.countGene(queryid, trackId, start, end);
 
 
