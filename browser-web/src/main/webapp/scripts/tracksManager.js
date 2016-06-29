@@ -257,12 +257,6 @@ function prepare_track_list(Tracklist, i){
         }
     }
 
-//     console.log(Tracklist[i])
-// if(Tracklist[i].disp != false || Tracklist[i].disp != 0){
-// console.log("before")
-//     loadTrackAjax(Tracklist[i].id, Tracklist[i].name)
-// console.log("after")
-//     }
 }
 
 // Generate automated css classes for tracks
