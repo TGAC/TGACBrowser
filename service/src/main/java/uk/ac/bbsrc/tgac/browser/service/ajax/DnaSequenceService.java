@@ -143,6 +143,7 @@ public class DnaSequenceService {
                 response.put("chromosome", searchStore.checkChromosome());
                 response.put("transcript", searchStore.getTranscriptSearch(seqName));
                 response.put("GO", searchStore.getGOSearch(seqName));
+                response.put("marker",searchStore.getMarkerSearch(seqName));
                 response.put("chromosome", searchStore.checkChromosome());
                 if(response.get("gene").toString().equals("[]") && response.get("transcript").toString().equals("[]") && response.get("GO").toString().equals("[]")){
                     response.put("html", "none");
@@ -200,6 +201,7 @@ public class DnaSequenceService {
                     response.put("gene", searchStore.getGenesSearch(seqName));
                     response.put("transcript", searchStore.getTranscriptSearch(seqName));
                     response.put("GO", searchStore.getGOSearch(seqName));
+                    response.put("marker",searchStore.getMarkerSearch(seqName));
                     response.put("chromosome", searchStore.checkChromosome());
                     if(response.get("gene").toString().equals("[]") && response.get("transcript").toString().equals("[]") && response.get("GO").toString().equals("[]")){
                         response.put("html", "none");

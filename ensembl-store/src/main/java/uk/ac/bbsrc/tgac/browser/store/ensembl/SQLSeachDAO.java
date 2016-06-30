@@ -83,8 +83,8 @@ public class SQLSeachDAO implements SearchStore {
     public static final String GET_SEQ_FROM_SEQ_REGION_ID = "SELECT sequence FROM dna WHERE seq_region_id = ?";
     public static final String GET_SEQ_REGION_ID_FROM_NAME = "SELECT seq_region_id FROM seq_region WHERE name  = ?";
     public static final String GET_SEQ_REGION_ID_SEARCH = "SELECT s.seq_region_id, s.name, s.length, cs.name as Type, s.coord_system_id as coord FROM seq_region s, coord_system cs WHERE cs.coord_system_id = s.coord_system_id and  s.name like ? LIMIT 100;";
-//    public static final String GET_SEQ_REGION_ID_SEARCH = "SELECT * FROM seq_region WHERE name like ? limit 100";
-public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_region_id, s.name, s.length, cs.name as Type, s.coord_system_id as coord FROM seq_region s, coord_system cs WHERE s.name = ? and cs.coord_system_id = s.coord_system_id limit 100;";
+    //    public static final String GET_SEQ_REGION_ID_SEARCH = "SELECT * FROM seq_region WHERE name like ? limit 100";
+    public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_region_id, s.name, s.length, cs.name as Type, s.coord_system_id as coord FROM seq_region s, coord_system cs WHERE s.name = ? and cs.coord_system_id = s.coord_system_id limit 100;";
 
     public static final String GET_SIZE_SEQ_REGION_ID_SEARCH = "SELECT count(length) FROM seq_region WHERE name like ?";
     public static final String GET_SEQ_REGION_ID_SEARCH_all = "SELECT * FROM seq_region WHERE coord_system_id = ?";
@@ -95,6 +95,9 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
 
     public static final String GET_SEQ_REGION_ATTRIB_FROM_ID = "SELECT * FROM seq_region_attrib WHERE seq_region_id = ? and attrib_type_id = 3";
 
+
+    public static final String GET_MARKER_SEARCH = "SELECT marker_id FROM marker_synonym WHERE name like ? LIMIT 100";
+    public static final String GET_MARKER_FEATURE = "SELECT marker_feature_id, analysis_id, seq_region_start, seq_region_end, seq_region_id FROM marker_feature WHERE marker_id = ?";
 
     public static final String GET_GENE_SEARCH = "SELECT gene_id, analysis_id, seq_region_start, seq_region_end, seq_region_id, description FROM gene WHERE description like ? LIMIT 100";
     public static final String GET_TRANSCRIPT_SEARCH = "SELECT transcript_id, analysis_id, seq_region_start, seq_region_end, seq_region_id, description FROM transcript WHERE description LIKE ? LIMIT 100";
@@ -169,7 +172,7 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
             int i = 0;
             for (Map map : maps) {
                 JSONObject eachGene = new JSONObject();
-                eachGene.put("Type","Gene_"+getLogicNameByAnalysisId(Integer.parseInt(map.get("analysis_id").toString())));
+                eachGene.put("Type", "Gene_" + getLogicNameByAnalysisId(Integer.parseInt(map.get("analysis_id").toString())));
                 eachGene.put("name", map.get("description"));
                 if (checkChromosome()) {
                     int pos = getPositionOnReference(Integer.parseInt(map.get("seq_region_id").toString()), 0);
@@ -183,13 +186,12 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
                     eachGene.put("parent", getSeqRegionName(Integer.parseInt(map.get("seq_region_id").toString())));
                     eachGene.put("coord", template.queryForObject(GET_coord_sys_id, new Object[]{map.get("seq_region_id")}, String.class));
                 }
-                log.info("\n\n\t\tanalyisis "+map.get("analysis_id"));
+                log.info("\n\n\t\tanalyisis " + map.get("analysis_id"));
 
                 eachGene.put("analysis_id", template.queryForObject(GET_LOGIC_NAME_FROM_ANALYSIS_ID, new Object[]{map.get("analysis_id")}, String.class));
                 genes.add(eachGene);
                 i++;
-                if(i > 100)
-                {
+                if (i > 100) {
                     break;
                 }
             }
@@ -197,10 +199,54 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
         } catch (EmptyResultDataAccessException e) {
 //     return getGOSearch(searchQuery);
             e.printStackTrace();
-            throw new IOException("Get gene search empty resposnse"+e.getMessage());
+            throw new IOException("Get gene search empty resposnse" + e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            throw new IOException("Get gene search result not found"+e.getMessage());  //To change body of catch statement use File | Settings | File Templates.
+            throw new IOException("Get gene search result not found" + e.getMessage());  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
+
+
+    public JSONArray getMarkerSearch(String searchQuery) throws IOException {
+        try {
+            JSONArray result_markers = new JSONArray();
+            List<Map<String, Object>> maps = template.queryForList(GET_MARKER_SEARCH, new Object[]{'%' + searchQuery + '%'});
+            int i = 0;
+            for (Map map : maps) {
+                JSONObject eachMarkerResult = new JSONObject();
+                List<Map<String, Object>> markers = template.queryForList(GET_MARKER_FEATURE, new Object[]{map.get("marker_id")});
+                for (Map marker : markers) {
+                    eachMarkerResult.put("Type", "Gene_" + getLogicNameByAnalysisId(Integer.parseInt(marker.get("analysis_id").toString())));
+                    eachMarkerResult.put("name", map.get("name"));
+                    if (checkChromosome()) {
+                        int pos = getPositionOnReference(Integer.parseInt(marker.get("seq_region_id").toString()), 0);
+                        eachMarkerResult.put("start", pos + Integer.parseInt(marker.get("seq_region_start").toString()));
+                        eachMarkerResult.put("end", pos + Integer.parseInt(marker.get("seq_region_end").toString()));
+                        eachMarkerResult.put("parent", getSeqRegionName(getAssemblyReference(Integer.parseInt(marker.get("seq_region_id").toString()))));
+                    } else {
+                        eachMarkerResult.put("start", marker.get("seq_region_start"));
+                        eachMarkerResult.put("end", marker.get("seq_region_end"));
+                        eachMarkerResult.put("parent", getSeqRegionName(Integer.parseInt(marker.get("seq_region_id").toString())));
+                        eachMarkerResult.put("coord", template.queryForObject(GET_coord_sys_id, new Object[]{marker.get("seq_region_id")}, String.class));
+                    }
+                    log.info("\n\n\t\tanalyisis " + map.get("analysis_id"));
+
+                    eachMarkerResult.put("analysis_id", template.queryForObject(GET_LOGIC_NAME_FROM_ANALYSIS_ID, new Object[]{marker.get("analysis_id")}, String.class));
+                    result_markers.add(eachMarkerResult);
+                    i++;
+                    if (i > 100) {
+                        break;
+                    }
+                }
+            }
+            return result_markers;
+        } catch (EmptyResultDataAccessException e) {
+//     return getGOSearch(searchQuery);
+            e.printStackTrace();
+            throw new IOException("Get gene search empty resposnse" + e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new IOException("Get gene search result not found" + e.getMessage());  //To change body of catch statement use File | Settings | File Templates.
         }
     }
 
@@ -211,10 +257,10 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
 
             boolean chr = checkChromosome();
             int i = 1;
-            if(chr){
+            if (chr) {
                 for (Map map : maps) {
                     if (chr) {
-                        if(getAssemblyReference(Integer.parseInt(map.get("seq_region_id").toString())) != 0){
+                        if (getAssemblyReference(Integer.parseInt(map.get("seq_region_id").toString())) != 0) {
                             int pos = getPositionOnReference(Integer.parseInt(map.get("seq_region_id").toString()), 0);
                             map.put("start", pos);
                             map.put("end", pos + Integer.parseInt(map.get("length").toString()));
@@ -224,17 +270,15 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
                     }
                     names.add(map);
                     i++;
-                    if(i > 100)
-                    {
+                    if (i > 100) {
                         break;
                     }
                 }
-            }else{
+            } else {
                 for (Map map : maps) {
                     names.add(map);
                     i++;
-                    if(i > 100)
-                    {
+                    if (i > 100) {
                         break;
                     }
                 }
@@ -243,10 +287,10 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
             return names;
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
-            throw new IOException("empty result exception result not found "+e.getMessage());
+            throw new IOException("empty result exception result not found " + e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            throw new IOException("result not found "+e.getMessage());  //To change body of catch statement use File | Settings | File Templates.
+            throw new IOException("result not found " + e.getMessage());  //To change body of catch statement use File | Settings | File Templates.
         }
     }
 
@@ -257,10 +301,10 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
 
             boolean chr = checkChromosome();
             int i = 1;
-            if(chr){
+            if (chr) {
                 for (Map map : maps) {
                     if (chr) {
-                        if(getAssemblyReference(Integer.parseInt(map.get("seq_region_id").toString())) != 0){
+                        if (getAssemblyReference(Integer.parseInt(map.get("seq_region_id").toString())) != 0) {
                             int pos = getPositionOnReference(Integer.parseInt(map.get("seq_region_id").toString()), 0);
                             map.put("start", pos);
                             map.put("end", pos + Integer.parseInt(map.get("length").toString()));
@@ -270,17 +314,15 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
                     }
                     names.add(map);
                     i++;
-                    if(i > 100)
-                    {
+                    if (i > 100) {
                         break;
                     }
                 }
-            }else{
+            } else {
                 for (Map map : maps) {
                     names.add(map);
                     i++;
-                    if(i > 100)
-                    {
+                    if (i > 100) {
                         break;
                     }
                 }
@@ -289,10 +331,10 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
             return names;
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
-            throw new IOException("empty result exception result not found "+e.getMessage());
+            throw new IOException("empty result exception result not found " + e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            throw new IOException("result not found "+e.getMessage());  //To change body of catch statement use File | Settings | File Templates.
+            throw new IOException("result not found " + e.getMessage());  //To change body of catch statement use File | Settings | File Templates.
         }
     }
 
@@ -324,9 +366,9 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
 
     private boolean checkCoord(int id, String str) {
         boolean check = false;
-        log.info("\n\n\ncheckCoord = "+id);
+        log.info("\n\n\ncheckCoord = " + id);
         int cood_sys_id = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{id}, Integer.class);
-        log.info("\n\n\ncheckCoord = "+cood_sys_id);
+        log.info("\n\n\ncheckCoord = " + cood_sys_id);
 
         List<Map<String, Object>> maps = template.queryForList(CHECK_Coord_sys_attr, new Object[]{cood_sys_id, '%' + str + '%', '%' + str + '%'});
         if (maps.size() > 0) {
@@ -375,7 +417,7 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
         if (checkCoord(id, "chr")) {
             ref_id = id;
         } else {
-            log.info("\n\n\t\tgetassemblyref "+id);
+            log.info("\n\n\t\tgetassemblyref " + id);
             List<Map<String, Object>> maps = template.queryForList(GET_reference_for_Assembly, new Object[]{id});
             for (Map map : maps) {
                 if (checkCoord(Integer.parseInt(map.get("asm_seq_region_id").toString()), "chr")) {
@@ -390,7 +432,7 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
 
     public String getLogicNameByAnalysisId(int id) throws IOException {
         try {
-            log.info("\n\n\t\tanalyisis "+id);
+            log.info("\n\n\t\tanalyisis " + id);
             String str = template.queryForObject(GET_LOGIC_NAME_FROM_ANALYSIS_ID, new Object[]{id}, String.class);
             return str;
         } catch (EmptyResultDataAccessException e) {
@@ -404,13 +446,13 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
         try {
             JSONArray genes = new JSONArray();
             List<Map<String, Object>> maps = template.queryForList(GET_TRANSCRIPT_SEARCH, new Object[]{'%' + searchQuery + '%'});
-           int i = 0;
+            int i = 0;
 
             for (Map map : maps) {
-              log.info("\n\n\ntranscript "+map.toString());
+                log.info("\n\n\ntranscript " + map.toString());
 
                 JSONObject eachGene = new JSONObject();
-                eachGene.put("Type", "Transcript_"+getLogicNameByAnalysisId(Integer.parseInt(map.get("analysis_id").toString())));
+                eachGene.put("Type", "Transcript_" + getLogicNameByAnalysisId(Integer.parseInt(map.get("analysis_id").toString())));
                 eachGene.put("name", map.get("description"));
                 if (checkChromosome()) {
                     int pos = getPositionOnReference(Integer.parseInt(map.get("seq_region_id").toString()), 0);
@@ -423,14 +465,13 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
                     eachGene.put("parent", getSeqRegionName(Integer.parseInt(map.get("seq_region_id").toString())));
                     eachGene.put("coord", template.queryForObject(GET_coord_sys_id, new Object[]{map.get("seq_region_id")}, String.class));
                 }
-                log.info("\n\n\ntranscript "+eachGene.toString());
-                log.info("\n\n\t\tanalyisis "+map.get("analysis_id"));
+                log.info("\n\n\ntranscript " + eachGene.toString());
+                log.info("\n\n\t\tanalyisis " + map.get("analysis_id"));
 
                 eachGene.put("analysis_id", template.queryForObject(GET_LOGIC_NAME_FROM_ANALYSIS_ID, new Object[]{map.get("analysis_id")}, String.class));
                 genes.add(eachGene);
                 i++;
-                if(i > 100)
-                {
+                if (i > 100) {
                     break;
                 }
             }
@@ -449,7 +490,7 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
         try {
             JSONArray GOs = new JSONArray();
             List<Map<String, Object>> maps = template.queryForList(GET_GO_Genes, new Object[]{'%' + searchQuery + '%'});
-           int i = 0;
+            int i = 0;
             for (Map map : maps) {
 
                 List<Map<String, Object>> genes = template.queryForList(GET_GO_Gene_Details, new Object[]{map.get("gene_id").toString()});
@@ -468,12 +509,11 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
                         eachGo.put("coord", template.queryForObject(GET_coord_sys_id, new Object[]{gene.get("seq_region_id")}, String.class));
                     }
                     eachGo.put("value", map.get("value"));
-                    eachGo.put("Type", "Gene_"+getLogicNameByAnalysisId(Integer.parseInt(gene.get("analysis_id").toString())));
+                    eachGo.put("Type", "Gene_" + getLogicNameByAnalysisId(Integer.parseInt(gene.get("analysis_id").toString())));
                     eachGo.put("analysis_id", getLogicNameByAnalysisId(Integer.parseInt(gene.get("analysis_id").toString())));
                     GOs.add(eachGo);
                     i++;
-                    if(i > 100)
-                    {
+                    if (i > 100) {
                         break;
                     }
                 }
@@ -497,13 +537,12 @@ public static final String GET_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT s.seq_re
                         eachGo.put("end", map.get("seq_region_end"));
                         eachGo.put("parent", getSeqRegionName(Integer.parseInt(gene.get("seq_region_id").toString())));
                     }
-                    eachGo.put("Type", "Transcript_"+getLogicNameByAnalysisId(Integer.parseInt(gene.get("analysis_id").toString())));
+                    eachGo.put("Type", "Transcript_" + getLogicNameByAnalysisId(Integer.parseInt(gene.get("analysis_id").toString())));
                     eachGo.put("value", map.get("value"));
                     eachGo.put("analysis_id", getLogicNameByAnalysisId(Integer.parseInt(gene.get("analysis_id").toString())));
                     GOs.add(eachGo);
                     i++;
-                    if(i > 100)
-                    {
+                    if (i > 100) {
                         break;
                     }
                 }

@@ -40,6 +40,7 @@ public interface SearchStore extends Store {
     public boolean checkChromosome() throws Exception;
     public boolean checkChromosome(int id) throws Exception;
     public JSONArray getGenesSearch(String query) throws IOException;
+    public JSONArray getMarkerSearch(String query) throws IOException;
     public JSONArray getTranscriptSearch(String query) throws IOException;
     public JSONArray getGOSearch(String query) throws IOException;
     public JSONArray getSeqRegionSearch(String query) throws IOException;
