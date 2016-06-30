@@ -172,6 +172,10 @@ public class SQLSeachDAO implements SearchStore {
             int i = 0;
             for (Map map : maps) {
                 JSONObject eachGene = new JSONObject();
+                eachGene.put("id", map.get("gene_id"));
+                String coord = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{getAssemblyReference(Integer.parseInt(map.get("seq_region_id").toString()))}, String.class);
+                eachGene.put("coord", coord);
+
                 eachGene.put("Type", "Gene_" + getLogicNameByAnalysisId(Integer.parseInt(map.get("analysis_id").toString())));
                 eachGene.put("name", map.get("description"));
                 if (checkChromosome()) {
@@ -216,7 +220,12 @@ public class SQLSeachDAO implements SearchStore {
                 JSONObject eachMarkerResult = new JSONObject();
                 List<Map<String, Object>> markers = template.queryForList(GET_MARKER_FEATURE, new Object[]{map.get("marker_id")});
                 for (Map marker : markers) {
-                    eachMarkerResult.put("Type", "Gene_" + getLogicNameByAnalysisId(Integer.parseInt(marker.get("analysis_id").toString())));
+                    eachMarkerResult.put("id", marker.get("marker_feature_id"));
+                    String coord = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{getAssemblyReference(Integer.parseInt(marker.get("seq_region_id").toString()))}, String.class);
+                    eachMarkerResult.put("coord", coord);
+
+
+                    eachMarkerResult.put("Type", "Marker_" + getLogicNameByAnalysisId(Integer.parseInt(marker.get("analysis_id").toString())));
                     eachMarkerResult.put("name", map.get("name"));
                     if (checkChromosome()) {
                         int pos = getPositionOnReference(Integer.parseInt(marker.get("seq_region_id").toString()), 0);
@@ -259,6 +268,8 @@ public class SQLSeachDAO implements SearchStore {
             int i = 1;
             if (chr) {
                 for (Map map : maps) {
+                    map.put("id", map.get("seq_region_id"));
+
                     if (chr) {
                         if (getAssemblyReference(Integer.parseInt(map.get("seq_region_id").toString())) != 0) {
                             int pos = getPositionOnReference(Integer.parseInt(map.get("seq_region_id").toString()), 0);
@@ -497,6 +508,7 @@ public class SQLSeachDAO implements SearchStore {
                 for (Map gene : genes) {
                     JSONObject eachGo = new JSONObject();
                     eachGo.put("name", gene.get("description"));
+                    eachGo.put("id", map.get("gene_id"));
                     if (checkChromosome()) {
                         int pos = getPositionOnReference(Integer.parseInt(gene.get("seq_region_id").toString()), 0);
                         eachGo.put("start", pos + Integer.parseInt(gene.get("seq_region_start").toString()));
