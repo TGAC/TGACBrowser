@@ -2036,7 +2036,7 @@ span.counter {
     /*width: 200px;*/
     z-index: 1999;
     text-align: left;
-    padding: 5px;
+    padding: 10px;
 }
 
 .textbutton {
@@ -2656,6 +2656,18 @@ span.deleteicon input {
     margin: 0px;
     padding: 0px;
 }
+
+.refmapsearchmarkermarker {
+    opacity: 0.5;
+    cursor: pointer;
+    position: absolute;
+    /*border: 0.5px solid black;*/
+    background: orange;
+    border-radius: 1px;
+    margin: 0px;
+    padding: 0px;
+}
+
 
 /*.refmapsearchmarkergo:hover {*/
 /*margin: 10px;*/
