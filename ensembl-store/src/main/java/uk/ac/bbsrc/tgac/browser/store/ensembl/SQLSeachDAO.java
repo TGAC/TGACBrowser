@@ -96,7 +96,7 @@ public class SQLSeachDAO implements SearchStore {
     public static final String GET_SEQ_REGION_ATTRIB_FROM_ID = "SELECT * FROM seq_region_attrib WHERE seq_region_id = ? and attrib_type_id = 3";
 
 
-    public static final String GET_MARKER_SEARCH = "SELECT marker_id FROM marker_synonym WHERE name like ? LIMIT 100";
+    public static final String GET_MARKER_SEARCH = "SELECT marker_id, name FROM marker_synonym WHERE name like ? LIMIT 100";
     public static final String GET_MARKER_FEATURE = "SELECT marker_feature_id, analysis_id, seq_region_start, seq_region_end, seq_region_id FROM marker_feature WHERE marker_id = ?";
 
     public static final String GET_GENE_SEARCH = "SELECT gene_id, analysis_id, seq_region_start, seq_region_end, seq_region_id, description FROM gene WHERE description like ? LIMIT 100";

@@ -145,7 +145,7 @@ public class DnaSequenceService {
                 response.put("GO", searchStore.getGOSearch(seqName));
                 response.put("marker",searchStore.getMarkerSearch(seqName));
                 response.put("chromosome", searchStore.checkChromosome());
-                if(response.get("gene").toString().equals("[]") && response.get("transcript").toString().equals("[]") && response.get("GO").toString().equals("[]")){
+                if(response.get("gene").toString().equals("[]") && response.get("transcript").toString().equals("[]") && response.get("GO").toString().equals("[]") && response.get("marker").toString().equals("[]")){
                     response.put("html", "none");
                 }else{
                     response.put("html", "gene");
@@ -203,7 +203,7 @@ public class DnaSequenceService {
                     response.put("GO", searchStore.getGOSearch(seqName));
                     response.put("marker",searchStore.getMarkerSearch(seqName));
                     response.put("chromosome", searchStore.checkChromosome());
-                    if(response.get("gene").toString().equals("[]") && response.get("transcript").toString().equals("[]") && response.get("GO").toString().equals("[]")){
+                    if(response.get("gene").toString().equals("[]") && response.get("transcript").toString().equals("[]") && response.get("GO").toString().equals("[]") && response.get("marker").toString().equals("[]")){
                         response.put("html", "none");
                     }else{
                         response.put("html", "gene");
