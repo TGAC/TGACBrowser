@@ -55,11 +55,12 @@ function seqregionSearchPopup(query, from, to, blast) {
         'dnaSequenceService',
         'seqregionSearchSequence',
         {'query': query, 'url': ajaxurl},
-        {'doOnSuccess': function (json) {
-            jQuery("#searchresultMap").fadeOut();
+        {
+            'doOnSuccess': function (json) {
+                jQuery("#searchresultMap").fadeOut();
 
-            ajax_processing(json, from, to, blast)
-        }
+                ajax_processing(json, from, to, blast)
+            }
         });
 
 }
@@ -86,9 +87,10 @@ function seqregionSearchwithCoord(query, coord, from, to, blast) {
         'dnaSequenceService',
         'seqregionSearchSequenceWithCoord',
         {'query': query, 'coord': coord, 'url': ajaxurl},
-        {'doOnSuccess': function (json) {
-            ajax_processing(json, from, to, blast)
-        }
+        {
+            'doOnSuccess': function (json) {
+                ajax_processing(json, from, to, blast)
+            }
         });
 
 }
@@ -99,7 +101,7 @@ function search(query, from, to, blast) {
     seqregname = null;
 
     if (track_list) {
-        jQuery.cookie('trackslist', track_list.toJSON(), {  path: '/', expires: 10});
+        jQuery.cookie('trackslist', track_list.toJSON(), {path: '/', expires: 10});
         removeTrackslist(track_list);
     }
 
@@ -120,13 +122,14 @@ function search(query, from, to, blast) {
         'dnaSequenceService',
         'searchSequence',
         {'query': query, 'url': ajaxurl},
-        {'doOnSuccess': function (json) {
-            jQuery('#canvas').hide();
-            jQuery('#currentposition').hide();
-            jQuery("#searchresultMap").fadeOut();
+        {
+            'doOnSuccess': function (json) {
+                jQuery('#canvas').hide();
+                jQuery('#currentposition').hide();
+                jQuery("#searchresultMap").fadeOut();
 
-            ajax_processing(json, from, to, blast)
-        }
+                ajax_processing(json, from, to, blast)
+            }
         });
 }
 
@@ -136,10 +139,11 @@ function generateFileLink(data) {
         'fileService',
         'exportFile',
         {'filecontent': data, 'url': ajaxurl, 'location': path},
-        {'doOnSuccess': function (json) {
-            filelink = json.link;
-            jQuery(window.location).attr('href', filelink).attr("target", "_blank");
-        }
+        {
+            'doOnSuccess': function (json) {
+                filelink = json.link;
+                jQuery(window.location).attr('href', filelink).attr("target", "_blank");
+            }
         });
 }
 
@@ -180,20 +184,30 @@ function loadTrackAjax(trackId, trackname) {
         Fluxion.doAjax(
             'dnaSequenceService',
             'loadTrack',
-            {'query': seqregname, 'coord': coord, 'name': trackname, 'trackid': trackId, 'start': start, 'end': end, 'delta': deltaWidth, 'url': ajaxurl},
-            {'doOnSuccess': function (json) {
-                var trackname = json.name;
+            {
+                'query': seqregname,
+                'coord': coord,
+                'name': trackname,
+                'trackid': trackId,
+                'start': start,
+                'end': end,
+                'delta': deltaWidth,
+                'url': ajaxurl
+            },
+            {
+                'doOnSuccess': function (json) {
+                    var trackname = json.name;
 
-                if (json.type == "graph") {
-                    window['track_list' + json.name].graph = "true";
-                    window['track_list' + json.name].graphtype = json.graphtype;
+                    if (json.type == "graph") {
+                        window['track_list' + json.name].graph = "true";
+                        window['track_list' + json.name].graphtype = json.graphtype;
+                    }
+                    else {
+                        window['track_list' + json.name].graph = "false";
+                    }
+                    window[trackname] = json[trackname];
+                    trackToggle(trackname);
                 }
-                else {
-                    window['track_list' + json.name].graph = "false";
-                }
-                window[trackname] = json[trackname];
-                trackToggle(trackname);
-            }
             });
     }
 }
@@ -205,14 +219,15 @@ function metaData() {
         'dnaSequenceService',
         'metaInfo',
         {'url': ajaxurl},
-        {'doOnSuccess': function (json) {
-            jQuery("#dbinfo").html("Species Name: <i>" + json.metainfo[0].name + "</i> Database Version: " + json.metainfo[0].version);
-            chromosome = json.chr;
-            unit = json.unit ? json.unit : "bp";
-            scale = json.scale ? json.scale : 1;
-            link = json.link ? json.link : null;
-            jQuery(".unit").html(unit)
-        }
+        {
+            'doOnSuccess': function (json) {
+                jQuery("#dbinfo").html("Species Name: <i>" + json.metainfo[0].name + "</i> Database Version: " + json.metainfo[0].version);
+                chromosome = json.chr;
+                unit = json.unit ? json.unit : "bp";
+                scale = json.scale ? json.scale : 1;
+                link = json.link ? json.link : null;
+                jQuery(".unit").html(unit)
+            }
         });
     return chromosome;
 }
@@ -226,14 +241,31 @@ function saveSession() {
     Fluxion.doAjax(
         'fileService',
         'saveFile',
-        {'location': path, 'reference': seqregname, 'coord_sys': coord, 'session': randomnumber, 'from': getBegin(), 'to': getEnd(), 'seq': seq, 'seqlen': sequencelength, 'track': trackslist, 'tracks': tracks, 'filename': (randomnumber), 'blast': blast, 'edited_tracks': edited_tracks, 'removed_tracks': removed_tracks, 'url': ajaxurl},
-        {'doOnSuccess': function (json) {
-            jQuery("#export").html("Export")
-            jQuery("#export").click(function(){
-                window.open(json.link, '_blank');
-            })
-            jQuery("#export").show();
-        }
+        {
+            'location': path,
+            'reference': seqregname,
+            'coord_sys': coord,
+            'session': randomnumber,
+            'from': getBegin(),
+            'to': getEnd(),
+            'seq': seq,
+            'seqlen': sequencelength,
+            'track': trackslist,
+            'tracks': tracks,
+            'filename': (randomnumber),
+            'blast': blast,
+            'edited_tracks': edited_tracks,
+            'removed_tracks': removed_tracks,
+            'url': ajaxurl
+        },
+        {
+            'doOnSuccess': function (json) {
+                jQuery("#export").html("Export")
+                jQuery("#export").click(function () {
+                    window.open(json.link, '_blank');
+                })
+                jQuery("#export").show();
+            }
         });
 }
 
@@ -242,38 +274,39 @@ function loadSession(query) {
         'fileService',
         'loadSession',
         {'location': path, 'query': query, 'url': ajaxurl},
-        {'doOnSuccess': function (json) {
-            var now = new Date();
+        {
+            'doOnSuccess': function (json) {
+                var now = new Date();
 
-            seq = json.seq;
-            sequencelength = json.seqlen;
-            track_list = json.tracklist;
-            randomnumber = json.session;
-            coord = json.coord_sys;
-            jQuery("#sessionid").html("<b>Session Id: </b><a  href='./session.jsp?query=" + randomnumber + "' target='_blank'>" + randomnumber + "</a> Saved at " + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds());
-            jQuery("#sessionid").show();
+                seq = json.seq;
+                sequencelength = json.seqlen;
+                track_list = json.tracklist;
+                randomnumber = json.session;
+                coord = json.coord_sys;
+                jQuery("#sessionid").html("<b>Session Id: </b><a  href='./session.jsp?query=" + randomnumber + "' target='_blank'>" + randomnumber + "</a> Saved at " + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds());
+                jQuery("#sessionid").show();
 
-            jQuery('#seqnameh1').html('<a href="/"+path+"/">' + json.reference + '</a>');
-            jQuery('#seqname').html("<br/>");
-            jQuery('#canvas').show();
-            jQuery('#displayoptions').show();
-            jQuery('#sessioninput').fadeOut();
-            seqregname = json.reference;
-            trackList(track_list);
-            minWidth = findminwidth();
-            setBegin(json.from);
-            setEnd(json.to)
-            jumpToSeq();
-            dispSeqCoord();
-            displayCursorPosition();
-            setNavPanel();
-            getReferences();
-            loadEditedTracks(json.edited_tracks)
-            loadRemovedTracks(json.removed_tracks)
-            reloadTracks(json.tracks, track_list, json.blast);
-            //jQuery("#controlsbutton").colorbox({width: "90%", inline: true, href: "#controlpanel"});
-            checkSession();
-        }
+                jQuery('#seqnameh1').html('<a href="/"+path+"/">' + json.reference + '</a>');
+                jQuery('#seqname').html("<br/>");
+                jQuery('#canvas').show();
+                jQuery('#displayoptions').show();
+                jQuery('#sessioninput').fadeOut();
+                seqregname = json.reference;
+                trackList(track_list);
+                minWidth = findminwidth();
+                setBegin(json.from);
+                setEnd(json.to)
+                jumpToSeq();
+                dispSeqCoord();
+                displayCursorPosition();
+                setNavPanel();
+                getReferences();
+                loadEditedTracks(json.edited_tracks)
+                loadRemovedTracks(json.removed_tracks)
+                reloadTracks(json.tracks, track_list, json.blast);
+                //jQuery("#controlsbutton").colorbox({width: "90%", inline: true, href: "#controlpanel"});
+                checkSession();
+            }
         });
 }
 
@@ -282,10 +315,11 @@ function loadSeq(query, from, to) {
         'dnaSequenceService',
         'loadSequence',
         {'query': query, 'from': getBegin(), 'to': getEnd(), 'coord': coord, 'url': ajaxurl},
-        {'doOnSuccess': function (json) {
-            seq = json.seq;
-            return json.seq;
-        }
+        {
+            'doOnSuccess': function (json) {
+                seq = json.seq;
+                return json.seq;
+            }
         });
 }
 
@@ -318,20 +352,30 @@ function reloadTracks(tracks, tracklist, blast) {
             Fluxion.doAjax(
                 'dnaSequenceService',
                 'loadTrack',
-                {'query': seqregname, 'coord': coord, 'name': tracklist[i].name, 'trackid': tracklist[i].id, 'start': start, 'end': end, 'delta': deltaWidth, 'url': ajaxurl},
-                {'doOnSuccess': function (json) {
-                    var trackname = json.name;
+                {
+                    'query': seqregname,
+                    'coord': coord,
+                    'name': tracklist[i].name,
+                    'trackid': tracklist[i].id,
+                    'start': start,
+                    'end': end,
+                    'delta': deltaWidth,
+                    'url': ajaxurl
+                },
+                {
+                    'doOnSuccess': function (json) {
+                        var trackname = json.name;
 
-                    if (json.type == "graph") {
-                        window['track_list' + json.name].graph = "true";
-                        window['track_list' + json.name].graphtype = json.graphtype;
+                        if (json.type == "graph") {
+                            window['track_list' + json.name].graph = "true";
+                            window['track_list' + json.name].graphtype = json.graphtype;
+                        }
+                        else {
+                            window['track_list' + json.name].graph = "false";
+                        }
+                        window[trackname] = json[trackname];
+                        trackToggle(trackname);
                     }
-                    else {
-                        window['track_list' + json.name].graph = "false";
-                    }
-                    window[trackname] = json[trackname];
-                    trackToggle(trackname);
-                }
                 });
         }
         else {
@@ -384,9 +428,10 @@ function fastaFile(seq, start, end) {
         'fileService',
         'saveFasta',
         {'sequence': fastaseq, 'reference': seqregname, 'from': start, 'to': end, 'url': ajaxurl, 'location': path},
-        {'doOnSuccess': function (json) {
-            jQuery("#fastadownload").html("<a href=" + json.link + " target = '_blank'>Download</a>");
-        }
+        {
+            'doOnSuccess': function (json) {
+                jQuery("#fastadownload").html("<a href=" + json.link + " target = '_blank'>Download</a>");
+            }
         });
 
 }
@@ -396,9 +441,10 @@ function VCFFile(data) {
         'fileService',
         'saveVCF',
         {'data': data, 'reference': seqregname, 'url': ajaxurl, 'location': path},
-        {'doOnSuccess': function (json) {
-            jQuery("#vcfdownload").html("<a href=" + json.link + " target = '_blank'>Download</a>");
-        }
+        {
+            'doOnSuccess': function (json) {
+                jQuery("#vcfdownload").html("<a href=" + json.link + " target = '_blank'>Download</a>");
+            }
         });
 
 }
@@ -439,17 +485,18 @@ function loadPreBlast(jsonid, refid) {
         'blastservice',
         'blastEntry',
         {'accession': jsonid, 'seqregion': refid, 'url': ajaxurl},
-        {'doOnSuccess': function (json) {
-            track_list.push(
-                {name: "blasttrack", id: "noid", desc: "blast from browser", disp: 1, merge: 0}
-            );
+        {
+            'doOnSuccess': function (json) {
+                track_list.push(
+                    {name: "blasttrack", id: "noid", desc: "blast from browser", disp: 1, merge: 0}
+                );
 
-            window['blasttrack'] = json.entries;//(decodeURIComponent(json.blast.replace(/\s+/g, ""))).replace(/>/g, "");
-            jQuery('input[name=blasttrackCheckbox]').attr('checked', true);
-            jQuery("#mergetracklist").append("<span id=blastcheckmerge> <input type=\"checkbox\" id='blasttrackmergedCheckbox' name='blasttrackmergedCheckbox' onClick=mergeTrack(\"blasttrack\"); value=blasttrack >Blast Track</span>");
-            trackToggle("blasttrack");
+                window['blasttrack'] = json.entries;//(decodeURIComponent(json.blast.replace(/\s+/g, ""))).replace(/>/g, "");
+                jQuery('input[name=blasttrackCheckbox]').attr('checked', true);
+                jQuery("#mergetracklist").append("<span id=blastcheckmerge> <input type=\"checkbox\" id='blasttrackmergedCheckbox' name='blasttrackmergedCheckbox' onClick=mergeTrack(\"blasttrack\"); value=blasttrack >Blast Track</span>");
+                trackToggle("blasttrack");
 
-        }
+            }
         });
 }
 
@@ -478,52 +525,53 @@ function getReferences(callback) {
         'dnaSequenceService',
         'searchSeqRegionforMap',
         {'url': ajaxurl},
-        {'doOnSuccess': function (json) {
-            var maximumLengthname, maximumsequencelength;
-            var max = Math.max.apply(Math, json.seqregion.map(function (o) {
-                return o.length;
-            }));
+        {
+            'doOnSuccess': function (json) {
+                var maximumLengthname, maximumsequencelength;
+                var max = Math.max.apply(Math, json.seqregion.map(function (o) {
+                    return o.length;
+                }));
 
-            var referenceLength = json.seqregion.length;
-            if (!maxLen) {
-                maxLen = jQuery(window).width();
-            }
-            var width = 15;
-            var distance = (parseInt(maxLen) - (width * referenceLength)) / (referenceLength + 1);
-            jQuery("#mapmarker").css("width", width);
-            jQuery("#mapmarker").hide()
+                var referenceLength = json.seqregion.length;
+                if (!maxLen) {
+                    maxLen = jQuery(window).width();
+                }
+                var width = 15;
+                var distance = (parseInt(maxLen) - (width * referenceLength)) / (referenceLength + 1);
+                jQuery("#mapmarker").css("width", width);
+                jQuery("#mapmarker").hide()
 
 
-            json.seqregion.sort(naturalSort)
-            jQuery("#refmap").html("");
-            if (referenceLength > 0 && referenceLength < 50) {
-                changeCSS();
-                while (referenceLength--) {
-                    if (json.seqregion[referenceLength].length == max) {
-                        maximumLengthname = json.seqregion[referenceLength].name;
-                        maximumsequencelength = json.seqregion[referenceLength].length;
+                json.seqregion.sort(naturalSort)
+                jQuery("#refmap").html("");
+                if (referenceLength > 0 && referenceLength < 50) {
+                    changeCSS();
+                    while (referenceLength--) {
+                        if (json.seqregion[referenceLength].length == max) {
+                            maximumLengthname = json.seqregion[referenceLength].name;
+                            maximumsequencelength = json.seqregion[referenceLength].length;
+                        }
+                        var left = parseInt(referenceLength * (width)) + parseInt(distance * referenceLength) + parseInt(distance);
+                        var height = (json.seqregion[referenceLength].length * 125 / max);
+                        var length = json.seqregion[referenceLength].length;
+                        if (seqregname == json.seqregion[referenceLength].name) {
+                            refheight = height;
+                        }
+                        var top = parseInt(jQuery("#map").css('top')) + parseInt(jQuery("#map").css('height')) - (height + 20);
+                        if (seqregname == json.seqregion[referenceLength].name) {
+                            jQuery("#refmap").append("<div length=" + json.seqregion[referenceLength].length + " onclick='jumpToHere(event);' class='refmap' id='" + json.seqregion[referenceLength].name + "' style='left: " + left + "px; width:" + width + "px; height:" + height + "px;'></div>");
+                        }
+                        else {
+                            jQuery("#refmap").append("<div length=" + json.seqregion[referenceLength].length + " onclick='jumpToOther(event, " + length + ",\"" + json.seqregion[referenceLength].name + "\",\"" + json.seqregion[referenceLength].coord + "\");' class='refmap' id='" + json.seqregion[referenceLength].name + "' style='left: " + left + "px; width:" + width + "px; height:" + height + "px;'></div>");
+                        }
+                        jQuery("#refmap").append("<div onclick='jumpToOther(event, " + length + ",\"" + json.seqregion[referenceLength].name + "\",\"" + json.seqregion[referenceLength].coord + "\");' style='position:absolute; cursor: pointer; color:blue; bottom: 0px; left: " + (left) + "px; '> <u>" + stringTrim(json.seqregion[referenceLength].name, width * 3) + "</u></div>");
+                        jQuery("#map").fadeIn();
                     }
-                    var left = parseInt(referenceLength * (width)) + parseInt(distance * referenceLength) + parseInt(distance);
-                    var height = (json.seqregion[referenceLength].length * 125 / max);
-                    var length = json.seqregion[referenceLength].length;
-                    if (seqregname == json.seqregion[referenceLength].name) {
-                        refheight = height;
-                    }
-                    var top = parseInt(jQuery("#map").css('top')) + parseInt(jQuery("#map").css('height')) - (height + 20);
-                    if (seqregname == json.seqregion[referenceLength].name) {
-                        jQuery("#refmap").append("<div length=" + json.seqregion[referenceLength].length + " onclick='jumpToHere(event);' class='refmap' id='" + json.seqregion[referenceLength].name + "' style='left: " + left + "px; width:" + width + "px; height:" + height + "px;'></div>");
-                    }
-                    else {
-                        jQuery("#refmap").append("<div length=" + json.seqregion[referenceLength].length + " onclick='jumpToOther(event, " + length + ",\"" + json.seqregion[referenceLength].name + "\",\"" + json.seqregion[referenceLength].coord + "\");' class='refmap' id='" + json.seqregion[referenceLength].name + "' style='left: " + left + "px; width:" + width + "px; height:" + height + "px;'></div>");
-                    }
-                    jQuery("#refmap").append("<div onclick='jumpToOther(event, " + length + ",\"" + json.seqregion[referenceLength].name + "\",\"" + json.seqregion[referenceLength].coord + "\");' style='position:absolute; cursor: pointer; color:blue; bottom: 0px; left: " + (left) + "px; '> <u>" + stringTrim(json.seqregion[referenceLength].name, width * 3) + "</u></div>");
-                    jQuery("#map").fadeIn();
+                }
+                if (callback) {
+                    callback();
                 }
             }
-            if (callback) {
-                callback();
-            }
-        }
         });
 }
 
@@ -533,139 +581,68 @@ function dispOnMap(json) {
     jQuery("#searchResultLegend").fadeIn();
     jQuery("#searchresultMap").html("<center><h1>Result for the search</h1><br> (Limited to first 100 match)</center>");
 
-    if (json.html == "seqregion") {
 
-        var markers = json.seqregion;
+    jQuery.each(json, function (key, data) {
         var seqregionlist = "UnMapped Hits: <br> <table class='list' id='search_hit' ><thead><tr><th>coord-sys</th><th>Name</th><th>Position</th><th>Link</th></tr> </thead>";
-        jQuery("#unmapped").hide();
-        jQuery("#searchResultLegend").html("")
-        for (var i = 0; i < markers.length; i++) {
-            if (document.getElementById(markers[i].Type) == null) {
-                jQuery("#searchResultLegend").append("<div class='searchResultLegend'>" +
-                    "<input checked type=checkbox name='refmapsearchmarkerseqregion' id='" + markers[i].Type + "' onClick=jQuery('." + markers[i].Type + "').toggle()> " + stringTrim(markers[i].Type, 200) + "" +
-                    " </div> ")
-            }
 
-            if (markers[i].parent) {
-                jQuery("#" + markers[i].parent).attr("onclick", "")
-                var length = jQuery("#" + markers[i].parent).attr("length") * parseFloat(jQuery("#" + markers[i].parent).css('height')) / parseFloat(jQuery("#" + markers[i].parent).css('height'));
-                var maptop = ((markers[i].start) * parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
-                var left = 25;
-                var mapheight = ((markers[i].end - markers[i].start) * parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
-                if (mapheight < 1) {
-                    mapheight = 1;
+        if (jQuery.isArray(data) && data.length > 0) {
+            jQuery("#searchResultLegend").append("<div class='searchResultLegend'>" +
+                "<input checked type=checkbox name='refmapsearchmarkerseqregion' id='" + data[0].Type + "' onClick=jQuery('." + data[0].Type + "').toggle()> " + stringTrim(data[0].Type, 200) + "" +
+                " </div> ")
+
+            jQuery.each(data, function (index, data) {
+
+                var marker = data;
+
+                if (marker.parent) {
+                    jQuery("#" + marker.parent).attr("onclick", "")
+                    var length = jQuery("#" + marker.parent).attr("length") * parseFloat(jQuery("#" + marker.parent).css('height')) / parseFloat(jQuery("#" + marker.parent).css('height'));
+                    var maptop = ((marker.start) * parseFloat(jQuery("#" + marker.parent).css('height'))) / length;
+                    var left = 25;
+                    var mapheight = ((marker.end - marker.start) * parseFloat(jQuery("#" + marker.parent).css('height'))) / length;
+                    if (mapheight < 1) {
+                        mapheight = 1;
+                    }
+                    jQuery("#" + marker.parent).append("<div name='" + marker.name + "' " +
+                        "parent=" + marker.parent + " coord=" + marker.coord + " start=" + marker.start + " end=" + marker.end + " " +
+                        "id='" + marker.name + "' " +
+                        "title='" + marker.name + ":" + marker.start + "-" + marker.end + "' " +
+                        "class='refmapsearchmarker" + key + " " + marker.Type + "' " +
+                        "style='left:" + left + "px; top:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' " +
+                        "onclick=clicked_func('" + marker.name + "'); >" +
+                        "</div>");
+                } else {
+                    var link = "<a target='_blank' href='index.jsp?query=" + marker.name + "&&coord=" + marker.coord + "&&from=0&&to=" + marker.length + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span><a/>"
+                    seqregionlist += "<tr><td>" + marker.coord + "</td><td>" + marker.name + "</td><td>0:" + marker.length + "</td><td>" + link + "</td>";
+                    jQuery("#unmapped").show();
                 }
-                jQuery("#" + markers[i].parent).append("<div name='" + markers[i].name + "' " +
-                    "parent=" + markers[i].parent + " coord=" + markers[i].coord + " start=" + markers[i].start + " end=" + markers[i].end + " " +
-                    "id='" + markers[i].name + "' " +
-                    "title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' " +
-                    "class='refmapsearchmarkerseqregion" + " " + markers[i].Type + "' " +
-                    "style='left:" + left + "px; top:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' " +
-                    "onclick=clicked_func('" + markers[i].name + "'); >" +
-                    "</div>");
-            } else {
-                var link = "<a target='_blank' href='index.jsp?query=" + markers[i].name + "&&coord=" + markers[i].coord + "&&from=0&&to=" + markers[i].length + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span><a/>"
-                seqregionlist += "<tr><td>" + markers[i].coord + "</td><td>" + markers[i].name + "</td><td>0:" + markers[i].length + "</td><td>" + link + "</td>";
-                jQuery("#unmapped").show();
-            }
-        }
 
-        jQuery("#unmapped").html(seqregionlist)
-    }
+            })
 
-    if (json.html == "gene" || json.html == "GO" || json.html == "transcript") {
-        var markers = json.gene;
-
-        for (var i = 0; i < markers.length; i++) {
-            if (document.getElementById(markers[i].Type) == null) {
-                jQuery("#searchResultLegend").append("<div class='searchResultLegend'>" +
-                    "<input checked type=checkbox name='refmapsearchmarkerseqregion' id='" + markers[i].Type + "' onClick=jQuery('." + markers[i].Type + "').toggle()> " + stringTrim(markers[i].Type, 200) + "" +
-                    " </div> ")
-            }
-
-            jQuery("#" + markers[i].parent).attr("onclick", "")
-            var length = jQuery("#" + markers[i].parent).attr("length") * parseFloat(jQuery("#" + markers[i].parent).css('height')) / parseFloat(jQuery("#" + markers[i].parent).css('height'));
-            var maptop = ((markers[i].start) * parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
-            var left = 25;
-            var mapheight = ((markers[i].end - markers[i].start) * parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
-            if (mapheight < 1) {
-                mapheight = 1;
-            }
-            jQuery("#" + markers[i].parent).append("<div name='" + markers[i].name + "' " +
-                "parent=" + markers[i].parent + " coord=" + markers[i].coord + " start=" + markers[i].start + " end=" + markers[i].end + " id='" + markers[i].name + "' " +
-                "title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' " +
-                "class='refmapsearchmarkergene" + " " + markers[i].Type + "' " +
-                "style='left:" + left + "px; top:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' " +
-                "onclick=clicked_func('" + markers[i].name + "'); >" +
-                "</div>");
+            jQuery("#unmapped").html(seqregionlist)
 
         }
-
-        var markers = json.transcript;
-
-        for (var i = 0; i < markers.length; i++) {
-            if (document.getElementById(markers[i].Type) == null) {
-                jQuery("#searchResultLegend").append("<div class='searchResultLegend'>" +
-                    "<input checked type=checkbox name='refmapsearchmarkerseqregion' id='" + markers[i].Type + "' onClick=jQuery('." + markers[i].Type + "').toggle()> " + stringTrim(markers[i].Type, 200) + "" +
-                    " </div> ")
-            }
-
-            jQuery("#" + markers[i].parent).attr("onclick", "")
-            var length = jQuery("#" + markers[i].parent).attr("length") * parseFloat(jQuery("#" + markers[i].parent).css('height')) / parseFloat(jQuery("#" + markers[i].parent).css('height'));
-            var maptop = ((markers[i].start) * parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
-            var left = 25;
-            var mapheight = ((markers[i].end - markers[i].start) * parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
-            if (mapheight < 1) {
-                mapheight = 1;
-            }
-            jQuery("#" + markers[i].parent).append("<div name='" + markers[i].name + "' " +
-                "parent=" + markers[i].parent + " coord=" + markers[i].coord + " start=" + markers[i].start + " end=" + markers[i].end + " id='" + markers[i].name + "' " +
-                "title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' " +
-                "class='refmapsearchmarkertranscript" + " " + markers[i].Type + "' " +
-                "style='left:" + left + "px; top:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' " +
-                "onclick=clicked_func('" + markers[i].name + "'); >" +
-                "</div>");
-        }
-
-        var markers = json.GO;
-        jQuery("#searchResultLegend").append("<div class='searchResultLegend'><input checked  type=checkbox name='refmapsearchmarkergo' onClick=jQuery('.refmapsearchmarkergo').toggle()> GO </div>")
-
-        for (var i = 0; i < markers.length; i++) {
-            var length = maximumsequencelength * parseFloat(jQuery("#" + markers[i].parent).css('height')) / parseFloat(jQuery("#" + maximumLengthname).css('height'));
-            var maptop = ((markers[i].start) * parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
-            var left = 25;
-            var mapheight = ((markers[i].end - markers[i].start) * parseFloat(jQuery("#" + markers[i].parent).css('height'))) / length;
-            if (mapheight < 1) {
-                mapheight = 1;
-            }
-            jQuery("#" + markers[i].parent).append("<div " +
-                "name='" + markers[i].name + "' " +
-                "parent=" + markers[i].parent + " coord=" + markers[i].coord + " start=" + markers[i].start + " end=" + markers[i].end + " " +
-                "id='" + markers[i].name + "' " +
-                "title='" + markers[i].name + ":" + markers[i].start + "-" + markers[i].end + "' " +
-                "class='refmapsearchmarkergo" + " " + markers[i].Type + "' " +
-                "style='left:" + left + "px; top:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' " +
-                "onclick=clicked_func('" + markers[i].name + "'); >" +
-                "</div>");
-        }
-    }
-
+    })
 }
 
 function clicked_func(element) {
     element = element.replace(/\./g, '\\.')
     var seqregioncontent = "";
 
-
-    element = jQuery("[name='" + element + "']");
+    element = jQuery("#" + element);
     var parent_main = element.attr("parent");
 
     var temp_element = element;
+
+
     var class_clicked = "." + element.attr('class').split(" ")[1];
+
     var temp = element.prevAll(class_clicked);
     for (var i = 0; i < temp.length; i++) {
+
         var temp_id = temp[i].id.replace(/\./g, '\\.');
-        var temp_element = jQuery("[name='" + temp_id + "']");
+
+        var temp_element = jQuery("#" + temp_id);
         var parent = temp_element.attr("parent");
         var start = temp_element.attr("start");
         var end = temp_element.attr("end");
@@ -673,7 +650,7 @@ function clicked_func(element) {
 
 
         var name = temp_element.attr("title").split(":")[0];
-        var link = "<a target='_blank' href='index.jsp?query=" + name + "&&coord=" + coord + "&&from=" + start + "&&to= " + end + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span><a/>"
+        var link = "<a target='_blank' href='index.jsp?query=" + parent + "&&coord=" + coord + "&&from=" + start + "&&to= " + end + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span><a/>"
 
         seqregioncontent = "<tr><td>" + parent + "</td><td>" + coord + "</td><td>" + name + "</td><td>" + start + ":" + end + "</td><td>" + link + "</td>" + seqregioncontent;
 
@@ -687,7 +664,7 @@ function clicked_func(element) {
     temp_element = element;
 
     var temp_id = temp_element.attr('id').replace(/\./g, '\\.');
-    var temp_element = jQuery("[name='" + temp_id + "']");
+    var temp_element = jQuery("#" + temp_id);
     var parent = temp_element.attr("parent");
     var start = temp_element.attr("start");
     var end = temp_element.attr("end");
@@ -695,19 +672,19 @@ function clicked_func(element) {
     var coord = temp_element.attr("coord");
 
 
-    var link = "<a target='_blank' href='index.jsp?query=" + name + "&&coord=" + coord + "&&from=" + start + "&&to=" + end + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span><a/>"
+    var link = "<a target='_blank' href='index.jsp?query=" + parent + "&&coord=" + coord + "&&from=" + start + "&&to=" + end + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span><a/>"
     seqregioncontent += "<tr background=lightgray><td><b>" + parent + "</b></td><td>" + coord + "</td><td><b>" + name + "</b></td><td><b>" + start + ":" + end + "</b></td><td>" + link + "</td>";
 
     var temp = element.nextAll(class_clicked);
 
     for (var i = 0; i < temp.length; i++) {
         var temp_id = temp[i].id.replace(/\./g, '\\.');
-        var temp_element = jQuery("[name='" + temp_id + "']");
+        var temp_element = jQuery("#" + temp_id);
         var parent = temp_element.attr("parent");
         var start = temp_element.attr("start");
         var end = temp_element.attr("end");
         var name = temp_element.attr("title").split(":")[0];
-        var link = "<a target='_blank' href='index.jsp?query=" + name + "&&coord=" + coord + "&&from=" + start + "&&to=" + end + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span><a/>"
+        var link = "<a target='_blank' href='index.jsp?query=" + parent + "&&coord=" + coord + "&&from=" + start + "&&to=" + end + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span><a/>"
         var coord = temp_element.attr("coord");
 
 
@@ -722,46 +699,47 @@ function clicked_func(element) {
     jQuery("#searchresult").html(seqregioncontent)
     jQuery("#searchresult").fadeIn()
     jQuery("#searchresult").css('top', '225px')
-    jQuery("#searchresult").css('left', jQuery("#" + parent_main).css('left'))
+    // jQuery("#searchresult").css('left', jQuery("#" + parent_main).css('left'))
 }
 
 function getMarkers(query) {
     Fluxion.doAjax(
         'dnaSequenceService',
         'loadMarker',
-        {'query': query,'coord':coord, 'url': ajaxurl},
-        {'doOnSuccess': function (json) {
-            var markers = json.marker;
-            var height = jQuery("#" + seqregname).css('height');
+        {'query': query, 'coord': coord, 'url': ajaxurl},
+        {
+            'doOnSuccess': function (json) {
+                var markers = json.marker;
+                var height = jQuery("#" + seqregname).css('height');
 
-            var max = Math.max.apply(Math, markers.map(function (o) {
-                return o.graph;
-            }));
+                var max = Math.max.apply(Math, markers.map(function (o) {
+                    return o.graph;
+                }));
 
-            var width = 15
-            if(max > 0){
-                for (var i = 0; i < markers.length; i++) {
-                    var length = sequencelength * parseFloat(jQuery("#" + seqregname).css('height')) / parseFloat(jQuery("#" + seqregname).css('height'));
-                    var maptop = parseFloat(jQuery("#" + seqregname).css('height')) + parseInt(jQuery("#" + seqregname).css('bottom')) - (parseInt(markers[i].end) * parseFloat(jQuery("#" + seqregname).css('height')) / length);
-                    var left = parseInt(jQuery("#" + seqregname).position().left) + parseInt(20);
-                    var mapheight = parseFloat(jQuery("#" + seqregname).css('height')) / markers.length;
-                    if (mapheight < 1) {
-                        mapheight = 1;
+                var width = 15
+                if (max > 0) {
+                    for (var i = 0; i < markers.length; i++) {
+                        var length = sequencelength * parseFloat(jQuery("#" + seqregname).css('height')) / parseFloat(jQuery("#" + seqregname).css('height'));
+                        var maptop = parseFloat(jQuery("#" + seqregname).css('height')) + parseInt(jQuery("#" + seqregname).css('bottom')) - (parseInt(markers[i].end) * parseFloat(jQuery("#" + seqregname).css('height')) / length);
+                        var left = parseInt(jQuery("#" + seqregname).position().left) + parseInt(20);
+                        var mapheight = parseFloat(jQuery("#" + seqregname).css('height')) / markers.length;
+                        if (mapheight < 1) {
+                            mapheight = 1;
+                        }
+                        var opacity = markers[i].graph * 1 / max;
+
+
+                        jQuery("#refmap").append("<div title='" + markers[i].start + ":" + markers[i].end + "' class='refmapmarker'  style='opacity:" + opacity + "; left:" + left + "px; bottom:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;'  onclick=loadMarker(" + markers[i].start + "," + parseInt(markers[i].end) + ");></div>");
+
                     }
-                    var opacity = markers[i].graph*1/max;
-
-
-                    jQuery("#refmap").append("<div title='" + markers[i].start + ":" + markers[i].end + "' class='refmapmarker'  style='opacity:"+opacity+"; left:" + left + "px; bottom:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;'  onclick=loadMarker(" + markers[i].start + "," + parseInt(markers[i].end)+");></div>");
-
                 }
+
+
             }
-
-
-        }
         });
 }
 
-function loadMarker(start,end){
+function loadMarker(start, end) {
     jQuery("#marker_div").html("");
     setBegin(start);
     setEnd(end);
@@ -770,32 +748,33 @@ function loadMarker(start,end){
     Fluxion.doAjax(
         'dnaSequenceService',
         'loadMarkerForRegion',
-        {'query': seqregname, 'start': start, 'end':end, 'coord':coord, 'url': ajaxurl},
-        {'doOnSuccess': function (json) {
-            var markers = json.marker;
-            var height = jQuery("#" + seqregname).css('height');
+        {'query': seqregname, 'start': start, 'end': end, 'coord': coord, 'url': ajaxurl},
+        {
+            'doOnSuccess': function (json) {
+                var markers = json.marker;
+                var height = jQuery("#" + seqregname).css('height');
 
-            var height = 20
-            var newStart_temp = getBegin();
-            var newEnd_temp = getEnd();
-            var maxLen_temp = jQuery("#canvas").css("width");
+                var height = 20
+                var newStart_temp = getBegin();
+                var newEnd_temp = getEnd();
+                var maxLen_temp = jQuery("#canvas").css("width");
 
-            for (var i = 0; i < markers.length; i++) {
+                for (var i = 0; i < markers.length; i++) {
 
-                var track_start = markers[i].start;
-                var track_stop = markers[i].end ?  markers[i].end : parseInt( markers[i].start) + 1;
+                    var track_start = markers[i].start;
+                    var track_stop = markers[i].end ? markers[i].end : parseInt(markers[i].start) + 1;
 
-                var startposition =(track_start - newStart_temp) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp);
-                var stopposition = (track_stop - track_start + 1) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp);
+                    var startposition = (track_start - newStart_temp) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp);
+                    var stopposition = (track_stop - track_start + 1) * parseFloat(maxLen_temp) / (newEnd_temp - newStart_temp);
 
-                if(stopposition < 1) {
-                    stopposition = 1
+                    if (stopposition < 1) {
+                        stopposition = 1
+                    }
+
+                    jQuery("#marker_div").append("<div title='" + markers[i].start + ":" + markers[i].end + "' class='refmapmarker-sequence'  style='background: black; position: absolute; top:0px; left:" + startposition + "px;  width:" + stopposition + "px; height:" + height + "px;'></div>");
+
                 }
-
-                jQuery("#marker_div").append("<div title='" + markers[i].start + ":" + markers[i].end + "' class='refmapmarker-sequence'  style='background: black; position: absolute; top:0px; left:" + startposition + "px;  width:" +stopposition + "px; height:" + height + "px;'></div>");
-
             }
-        }
         });
 }
 
@@ -814,7 +793,7 @@ function changeCSS() {
 
 function drawBrowser(json, from, to, blast) {
 
-    var url = "/"+jQuery('#title').text()+"/index.jsp?query=" + json.seqregname + "&coord=" + json.coord_sys
+    var url = "/" + jQuery('#title').text() + "/index.jsp?query=" + json.seqregname + "&coord=" + json.coord_sys
 
     jQuery("#searchresultMap").html("")
     jQuery("#tracklist").html("")
@@ -841,7 +820,17 @@ function drawBrowser(json, from, to, blast) {
             var filename = tracks[i].substring(tracks[i].lastIndexOf("/") + 1, tracks[i].lastIndexOf("."));
             var type = tracks[i].substring(tracks[i].lastIndexOf(".") + 1, tracks[i].length);
             track_list.push(
-                {name: filename + "_" + type, id: tracks[i], display_label: filename, desc: tracks[i], disp: 1, merge: 0, graph: "false", display_lable: tracks[i], label: 0}
+                {
+                    name: filename + "_" + type,
+                    id: tracks[i],
+                    display_label: filename,
+                    desc: tracks[i],
+                    disp: 1,
+                    merge: 0,
+                    graph: "false",
+                    display_lable: tracks[i],
+                    label: 0
+                }
             );
         }
     }
@@ -881,9 +870,9 @@ function drawBrowser(json, from, to, blast) {
 
     }
 
-    window.history.pushState(json.seqregname, jQuery('#title').text()+"-"+json.seqregname,url)
+    window.history.pushState(json.seqregname, jQuery('#title').text() + "-" + json.seqregname, url)
 
-        dispSeqCoord();
+    dispSeqCoord();
 
     displayCursorPosition();
 
@@ -923,58 +912,32 @@ function makeSeqRegionList(json, from, to, blast) {
 
 function makeFeatureList(json, from, to) {
     jQuery('#currentposition').hide();
-    jQuery("#searchresult").html("<h1>Results for searched query</h1> <br> (Limited to first 100 match) <br> <div id=\"searchresultHead\"></div><div id=\"searchnavtabs\"><ul> <li><a href=\"#tabGenes\"><span>Genes</span></a></li>  <li><a href=\"#tabTranscripts\"><span>Transcripts</span></a></li><li><a href=\"#tabGO\"><span>GO</span></a></li> </ul> <div id=\"tabGenes\"></div> <div id=\"tabGO\"> </div>      <div id=\"tabTranscripts\"></div> </div>");
+    jQuery("#searchresult").html("<h1>Results for searched query</h1> " +
+        "<br> (Limited to first 100 match) " +
+        "<br>" +
+        " <div id=\"searchresultHead\"></div>" +
+        "<div id=\"searchnavtabs\">" +
+        "<ul id='listSearch'> " +
+        "</ul>" +
+        "</div>");
     jQuery("#searchresult").fadeIn();
 
-    var genecontent = "";
-    var content = "<h1>Search Results: </h1><br>";
-    for (var i = 0; i < json.gene.length; i++) {
-        if (i == 0) {
-            genecontent += "<table class='list' id='gene_hit'><thead><tr><th>Track</th><th>Gene</th><th>Reference Name</th><th>Reference Coord Sys</th><th>Position</th><th>Link</th></tr></thead>";
-        }
-        genecontent += "<tr><td>" + json.gene[i].Type + "<td> " + json.gene[i].name + "<td>" + json.gene[i].parent + "<td> " + json.gene[i].coord + "<td>" + json.gene[i].start + "-" + json.gene[i].end + "<td> <a target='_blank' href='index.jsp?query=" + json.gene[i].parent + "&&coord=" + json.gene[i].coord + "&&from=" + json.gene[i].start + "&&to=" + json.gene[i].end + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span> </a></td>";
-        if (i == json.gene.length - 1) {
+    jQuery.each(json, function (key, data) {
+        var genecontent = "";
+
+        if (jQuery.isArray(data) && data.length > 0) {
+            jQuery("#listSearch").append("<li> <a href='#tab" + key + "'><span>" + key + "</span></a></li>");
+            jQuery("#searchnavtabs").append("<div id='tab" + key + "'></div>");
+            genecontent += "<table class='list' id='" + key + "_hit'><thead><tr><th>Track</th><th>Gene</th><th>Reference Name</th><th>Reference Coord Sys</th><th>Position</th><th>Link</th></tr></thead>";
+            jQuery.each(data, function (index, data) {
+                genecontent += "<tr><td>" + data.Type + "<td> " + data.name + "<td>" + data.parent + "<td> " + data.coord + "<td>" + data.start + "-" + data.end + "<td> <a target='_blank' href='index.jsp?query=" + data.parent + "&&coord=" + data.coord + "&&from=" + data.start + "&&to=" + data.end + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span> </a></td>";
+            })
             genecontent += "</table>";
-            jQuery('#tabGenes').append(genecontent);
+            jQuery("#tab" + key).append(genecontent);
+            jQuery("#" + key + "_hit").tablesorter();
         }
+    })
 
-        jQuery("#gene_hit").tablesorter();
-
-    }
-    content += "<hr>";
-    var gocontent = "";
-    for (var i = 0; i < json.GO.length; i++) {
-
-        if (i == 0) {
-            gocontent += "<table class='list' id='go_hit'><thead><tr><th>Attribute Type</th><th>Gene/Transcript Name</th><th>Attrib</th><th>Reference Name</th><th>Reference Coord Sys</th><th>Position</th><th>Link</th></tr></thead>";
-        }
-
-        gocontent += "<tr><td>" + json.GO[i].Type + "<td>" + json.GO[i].name + "<td>" + json.GO[i].parent + "<td> " + json.GO[i].value + "<td> " + json.GO[i].coord + "<td>" + json.GO[i].start + "-" + json.GO[i].end + "</td><td> <a target='_blank' href='index.jsp?query=" + json.GO[i].parent + "&&coord=" + json.GO[i].coord + "&&from=" + json.GO[i].start + "&&to=" + json.GO[i].end + "' ><span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span> </a></tr>";
-
-        if (i == json.GO.length - 1) {
-            gocontent += "</table>";
-            jQuery('#tabGO').append(gocontent);
-        }
-
-        jQuery("#go_hit").tablesorter();
-
-    }
-
-
-    var transcriptcontent = "";
-    for (var i = 0; i < json.transcript.length; i++) {
-        if (i == 0) {
-            transcriptcontent += "<table class='list' id='transcript_hit'><thead><tr><th>Attribute Type</th><th>Transcript Name</th><th>Reference Name</th><th>Reference Coord Sys</th><th>Position</th><th>Link</th></tr></thead>";
-        }
-        transcriptcontent += "<tr><td> " + json.transcript[i].Type + "<td>" + json.transcript[i].name + "<td> " + json.transcript[i].parent + "<td> " + json.transcript[i].coord + "<td>" + json.transcript[i].start + "-" + json.transcript[i].end + "<td><a target='_blank' href='index.jsp?query=" + json.transcript[i].parent + "&&coord=" + json.transcript[i].coord + "&&from=" + json.transcript[i].start + "&&to=" + json.transcript[i].end + "' ><span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span> </a></td></tr>";
-
-        if (i == json.transcript.length - 1) {
-            transcriptcontent += "</table>";
-            jQuery('#tabTranscripts').append(transcriptcontent);
-        }
-    }
-
-    jQuery("#transcript_hit").tablesorter();
     jQuery("#searchnavtabs").tabs();
     jQuery("#searchresultHead").html("<h2>Search Result</h2>");
 }
@@ -1019,7 +982,7 @@ function ajax_processing(json, from, to, blast) {
         drawBrowser(json, from, to, blast)
     } else if (json.html == "seqregion") {
         makeSeqRegionList(json, from, to, blast)
-    }else if (json.html == "gene") {
+    } else if (json.html == "gene") {
         makeFeatureList(json, from, to, blast)
     }
     else {
