@@ -173,8 +173,6 @@ public class SQLSeachDAO implements SearchStore {
             for (Map map : maps) {
                 JSONObject eachGene = new JSONObject();
                 eachGene.put("id", map.get("gene_id"));
-                String coord = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{getAssemblyReference(Integer.parseInt(map.get("seq_region_id").toString()))}, String.class);
-                eachGene.put("coord", coord);
 
                 eachGene.put("Type", "Gene_" + getLogicNameByAnalysisId(Integer.parseInt(map.get("analysis_id").toString())));
                 eachGene.put("name", map.get("description"));
@@ -183,7 +181,9 @@ public class SQLSeachDAO implements SearchStore {
                     eachGene.put("start", pos + Integer.parseInt(map.get("seq_region_start").toString()));
                     eachGene.put("end", pos + Integer.parseInt(map.get("seq_region_end").toString()));
                     eachGene.put("parent", getSeqRegionName(getAssemblyReference(Integer.parseInt(map.get("seq_region_id").toString()))));
-//                    eachGene.put("coord", getSeqRegionName(getAssemblyReference(Integer.parseInt(map.get("seq_region_id").toString()))));
+                    String coord = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{getAssemblyReference(Integer.parseInt(map.get("seq_region_id").toString()))}, String.class);
+                    eachGene.put("coord", coord);
+
                 } else {
                     eachGene.put("start", map.get("seq_region_start"));
                     eachGene.put("end", map.get("seq_region_end"));
@@ -221,8 +221,7 @@ public class SQLSeachDAO implements SearchStore {
                 List<Map<String, Object>> markers = template.queryForList(GET_MARKER_FEATURE, new Object[]{map.get("marker_id")});
                 for (Map marker : markers) {
                     eachMarkerResult.put("id", marker.get("marker_feature_id"));
-                    String coord = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{getAssemblyReference(Integer.parseInt(marker.get("seq_region_id").toString()))}, String.class);
-                    eachMarkerResult.put("coord", coord);
+
 
 
                     eachMarkerResult.put("Type", "Marker_" + getLogicNameByAnalysisId(Integer.parseInt(marker.get("analysis_id").toString())));
@@ -232,6 +231,8 @@ public class SQLSeachDAO implements SearchStore {
                         eachMarkerResult.put("start", pos + Integer.parseInt(marker.get("seq_region_start").toString()));
                         eachMarkerResult.put("end", pos + Integer.parseInt(marker.get("seq_region_end").toString()));
                         eachMarkerResult.put("parent", getSeqRegionName(getAssemblyReference(Integer.parseInt(marker.get("seq_region_id").toString()))));
+                        String coord = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{getAssemblyReference(Integer.parseInt(marker.get("seq_region_id").toString()))}, String.class);
+                        eachMarkerResult.put("coord", coord);
                     } else {
                         eachMarkerResult.put("start", marker.get("seq_region_start"));
                         eachMarkerResult.put("end", marker.get("seq_region_end"));
