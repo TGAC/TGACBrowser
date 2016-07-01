@@ -143,11 +143,11 @@ public class DnaSequenceService {
                 response.put("chromosome", searchStore.checkChromosome());
                 response.put("transcript", searchStore.getTranscriptSearch(seqName));
                 response.put("GO", searchStore.getGOSearch(seqName));
-                response.put("marker",searchStore.getMarkerSearch(seqName));
+                response.put("marker", searchStore.getMarkerSearch(seqName));
                 response.put("chromosome", searchStore.checkChromosome());
-                if(response.get("gene").toString().equals("[]") && response.get("transcript").toString().equals("[]") && response.get("GO").toString().equals("[]") && response.get("marker").toString().equals("[]")){
+                if (response.get("gene").toString().equals("[]") && response.get("transcript").toString().equals("[]") && response.get("GO").toString().equals("[]") && response.get("marker").toString().equals("[]")) {
                     response.put("html", "none");
-                }else{
+                } else {
                     response.put("html", "gene");
                 }
             } else {
@@ -201,11 +201,11 @@ public class DnaSequenceService {
                     response.put("gene", searchStore.getGenesSearch(seqName));
                     response.put("transcript", searchStore.getTranscriptSearch(seqName));
                     response.put("GO", searchStore.getGOSearch(seqName));
-                    response.put("marker",searchStore.getMarkerSearch(seqName));
+                    response.put("marker", searchStore.getMarkerSearch(seqName));
                     response.put("chromosome", searchStore.checkChromosome());
-                    if(response.get("gene").toString().equals("[]") && response.get("transcript").toString().equals("[]") && response.get("GO").toString().equals("[]") && response.get("marker").toString().equals("[]")){
+                    if (response.get("gene").toString().equals("[]") && response.get("transcript").toString().equals("[]") && response.get("GO").toString().equals("[]") && response.get("marker").toString().equals("[]")) {
                         response.put("html", "none");
-                    }else{
+                    } else {
                         response.put("html", "gene");
                     }
                 }
@@ -321,7 +321,7 @@ public class DnaSequenceService {
                 log.info("\n\n\nBAM count " + count);
 
 
-                if (count ==0) {
+                if (count == 0) {
                     response.put(trackName, "getHit no result found");
 
                 } else if (count < 5000) {
@@ -333,9 +333,9 @@ public class DnaSequenceService {
                 }
             } else if (trackId.contains(".gff") || trackId.contains(".GFF")) {
                 count = GFFService.countGFF(start, end, delta, trackId, seqName);
-                log.info("\n\n\nGFF count "+ count);
+                log.info("\n\n\nGFF count " + count);
 
-                if (count ==0) {
+                if (count == 0) {
                     response.put(trackName, "getHit no result found");
 
                 } else if (count < 5000) {
@@ -348,7 +348,7 @@ public class DnaSequenceService {
             } else if (trackId.contains(".vcf") || trackId.contains(".VCF")) {
                 count = VCFService.countVCF(start, end, delta, trackId, seqName);
 
-                log.info("\n\n\nVCF count "+ count);
+                log.info("\n\n\nVCF count " + count);
 
 
 //                if (count ==0) {
@@ -364,11 +364,10 @@ public class DnaSequenceService {
                 }
             } else if (trackId.contains(".bed")) {
                 response.put(trackName, SamBamService.getBed(start, end, delta, trackId, seqName));
-            } else
-                if (trackId.indexOf("cs") >= 0) {
+            } else if (trackId.indexOf("cs") >= 0) {
                 count = assemblyStore.countAssembly(queryid, trackId, start, end);
-                log.info("\n\n\nassembly count "+ count);
-                if (count ==0) {
+                log.info("\n\n\nassembly count " + count);
+                if (count == 0) {
                     response.put(trackName, "getHit no result found");
 
                 } else if (count < 5000) {
@@ -384,9 +383,9 @@ public class DnaSequenceService {
                 }
             } else if (analysisStore.getLogicNameByAnalysisId(Integer.parseInt(trackId)).matches("(?i).*repeat.*")) {
                 count = repeatStore.countRepeat(queryid, trackId, start, end);
-                log.info("\n\n\nrepeat count "+ count);
+                log.info("\n\n\nrepeat count " + count);
 
-                if (count ==0) {
+                if (count == 0) {
                     response.put(trackName, "getHit no result found");
 
                 } else if (count < 5000) {
@@ -397,29 +396,28 @@ public class DnaSequenceService {
                     response.put(trackName, repeatStore.getRepeatGraph(queryid, trackId, start, end));
                 }
             } else if (analysisStore.getLogicNameByAnalysisId(Integer.parseInt(trackId)).matches("(?i).*marker.*")) {
-                    count = markerStore.countMarker(queryid, trackId, start, end);
-                    log.info("\n\n\nrepeat count "+ count);
+                count = markerStore.countMarker(queryid, trackId, start, end);
+                log.info("\n\n\nrepeat count " + count);
 
-                    if (count ==0) {
-                        response.put(trackName, "getHit no result found");
+                if (count == 0) {
+                    response.put(trackName, "getHit no result found");
 
-                    } else if (count < 5000) {
-                        response.put(trackName, markerStore.processMarker(markerStore.getMarker(queryid, trackId, start, end), start, end, delta, queryid, trackId));
-                    } else {
-                        response.put("type", "graph");
-                        response.put("graphtype", "bar");
-                        response.put(trackName, markerStore.getMarkerGraph(queryid, trackId, start, end));
-                    }
+                } else if (count < 5000) {
+                    response.put(trackName, markerStore.processMarker(markerStore.getMarker(queryid, trackId, start, end), start, end, delta, queryid, trackId));
+                } else {
+                    response.put("type", "graph");
+                    response.put("graphtype", "bar");
+                    response.put(trackName, markerStore.getMarkerGraph(queryid, trackId, start, end));
                 }
-                else if (analysisStore.getLogicNameByAnalysisId(Integer.parseInt(trackId)).matches("(?i).*gene.*")) {
+            } else if (analysisStore.getLogicNameByAnalysisId(Integer.parseInt(trackId)).matches("(?i).*gene.*")) {
                 count = geneStore.countGene(queryid, trackId, start, end);
 
 
-                log.info("\n\n\ngene count "+ count);
-                if (count ==0) {
+                log.info("\n\n\ngene count " + count);
+                if (count == 0) {
                     response.put(trackName, "getGene no result found");
                 } else if (count < 1000) {
-                    response.put(trackName, geneStore.processGenes(geneStore.getGenes(queryid, trackId,  start, end), start, end, delta, queryid, trackId));
+                    response.put(trackName, geneStore.processGenes(geneStore.getGenes(queryid, trackId, start, end), start, end, delta, queryid, trackId));
                 } else {
                     response.put("type", "graph");
                     response.put("graphtype", "bar");
@@ -428,9 +426,9 @@ public class DnaSequenceService {
             } else {
                 count = dafStore.countHit(queryid, trackId, start, end);
 
-                log.info("\n\n\nhit count "+ count);
+                log.info("\n\n\nhit count " + count);
 
-                if (count ==0) {
+                if (count == 0) {
                     response.put(trackName, "getHit no result found");
                 } else if (count < 5000) {
                     response.put(trackName, dafStore.processHit(dafStore.getHit(queryid, trackId, start, end), start, end, delta, queryid, trackId));
@@ -469,13 +467,13 @@ public class DnaSequenceService {
         try {
             response.put("metainfo", sequenceStore.getdbinfo());
             response.put("chr", searchStore.checkChromosome());
-            if(sequenceStore.getScale().length() > 0){
+            if (sequenceStore.getScale().length() > 0) {
                 response.put("scale", sequenceStore.getScale());
             }
-            if(sequenceStore.getUnit().length() > 0){
+            if (sequenceStore.getUnit().length() > 0) {
                 response.put("unit", sequenceStore.getUnit());
             }
-            if(sequenceStore.getLink().length() > 0){
+            if (sequenceStore.getLink().length() > 0) {
                 response.put("link", sequenceStore.getLink());
             }
 
@@ -612,10 +610,9 @@ public class DnaSequenceService {
     }
 
     /**
-     *
      * @param session an HTTPSession comes from ajax call
      * @param json    json object with key parameters sent from ajax call
-     * @return        JSONObject with marker information
+     * @return JSONObject with marker information
      */
     public JSONObject loadMarkerForRegion(HttpSession session, JSONObject json) {
         JSONObject response = new JSONObject();
@@ -635,10 +632,9 @@ public class DnaSequenceService {
 
 
     /**
-     *
      * @param session an HTTPSession comes from ajax call
      * @param json    json object with key parameters sent from ajax call
-     * @return        JSONObject with marker information
+     * @return JSONObject with marker information
      */
     public JSONObject getSNPs(HttpSession session, JSONObject json) {
         JSONObject response = new JSONObject();
@@ -660,10 +656,9 @@ public class DnaSequenceService {
     }
 
     /**
-     *
      * @param session an HTTPSession comes from ajax call
      * @param json    json object with key parameters sent from ajax call
-     * @return        JSONObject with marker information
+     * @return JSONObject with marker information
      */
     public JSONObject getOtherSNPs(HttpSession session, JSONObject json) {
         JSONObject response = new JSONObject();
@@ -699,8 +694,8 @@ public class DnaSequenceService {
 
     public JSONObject getGroupedSNPs(HttpSession session, JSONObject json) {
         JSONObject response = new JSONObject();
-        String groupA =json.getString("group_a");
-        String groupB =json.getString("group_b");
+        String groupA = json.getString("group_a");
+        String groupB = json.getString("group_b");
 
         String[] groupA_array = groupA.split(",");
         String[] groupB_array = groupB.split(",");
