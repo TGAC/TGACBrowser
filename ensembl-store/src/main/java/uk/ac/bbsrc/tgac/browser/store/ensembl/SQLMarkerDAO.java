@@ -291,10 +291,10 @@ public class SQLMarkerDAO implements MarkerStore {
 
         try {
 
-                String GET_MARKER = "SELECT marker_feature_id as id,seq_region_start as start, seq_region_end as end " +
-                        "FROM marker_feature " +
-                        "WHERE seq_region_id = " + id + " AND analysis_id = " + trackId + " and ((seq_region_start >= "+start+" AND seq_region_end <= "+end+") OR (seq_region_start <= "+start+" AND seq_region_end >= "+end+") OR (seq_region_end >= "+start+"  AND  seq_region_end <= "+end+") OR (seq_region_start <= "+start+" AND seq_region_start <= "+end+"))"+
-                        " order by seq_region_start";
+                String GET_MARKER = "SELECT mf.marker_feature_id as id,mf.seq_region_start as start, mf.seq_region_end as end, ms.name as 'desc' " +
+                        "FROM marker_feature mf, marker_synonym ms " +
+                        "WHERE mf.marker_id = ms.marker_id and mf.seq_region_id = " + id + " AND mf.analysis_id = " + trackId + " and ((mf.seq_region_start >= "+start+" AND mf.seq_region_end <= "+end+") OR (mf.seq_region_start <= "+start+" AND mf.seq_region_end >= "+end+") OR (mf.seq_region_end >= "+start+"  AND  mf.seq_region_end <= "+end+") OR (mf.seq_region_start <= "+start+" AND mf.seq_region_start <= "+end+"))"+
+                        " order by mf.seq_region_start";
                 return template.queryForList(GET_MARKER, new Object[]{});
 
         } catch (Exception e){
@@ -314,10 +314,10 @@ public class SQLMarkerDAO implements MarkerStore {
     public List<Map<String, Object>> getMarker(String query, int id, String trackId, long start, long end) throws Exception {
         try {
             query = query + ")";
-                String GET_MARKER = "SELECT marker_feature_id as id,seq_region_start as start, seq_region_end as end,seq_region_strand as strand " +
-                        "FROM marker_feature " +
-                        "WHERE seq_region_id  " + query + " AND analysis_id = " + trackId +
-                        " order by seq_region_start";
+                String GET_MARKER = "SELECT mf.marker_feature_id as id,mf.seq_region_start as start, mf.seq_region_end as end, ms.name as 'desc' "  +
+                        "FROM marker_feature mf, marker_synonym ms " +
+                        "WHERE mf.marker_id = ms.marker_id and mf.seq_region_id  " + query + " AND mf.analysis_id = " + trackId +
+                        " order by mf.seq_region_start";
 
                 return template.queryForList(GET_MARKER, new Object[]{});
 
@@ -403,6 +403,8 @@ public class SQLMarkerDAO implements MarkerStore {
                 eachTrack_temp.put("end", start_addition+end_pos);
                 eachTrack_temp.put("flag", false);
                 eachTrack_temp.put("strand", map.get("strand"));
+
+                  eachTrack_temp.put("desc", map.get("desc"));
 //                eachTrack_temp.put("markerstart", start_add + Integer.parseInt(map.get("markerstart").toString()));
 //                eachTrack_temp.put("markerend", start_add + Integer.parseInt(map.get("markerstart").toString()));
 //                eachTrack_temp.put("score", map.get("score"));
