@@ -644,8 +644,8 @@
                 <h4 class="modal-title">Upload data</h4>
             </div>
             <div class="modal-body">
-                <p>Current supported format is GAPIT file in <b>CSV</b> format.</p>
-                example: <br>
+                <p>Current supported format is GAPIT and GEM file in <b>CSV</b> format.</p>
+                example: File should match column labels shown below, but not order of column. <br>
                 <table class="table table-bordered">
                     <thead>
                     <tr>
