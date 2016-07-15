@@ -79,6 +79,7 @@
     <script type="text/javascript" src="<c:url value='/scripts/blast_params.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/upload.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/manhattan.js'/>"></script>
+    <script type="text/javascript" src="<c:url value='/scripts/gff_parser.js'/>"></script>
 
     <title>${initParam.pageTitle}</title>
     <script type="text/javascript">

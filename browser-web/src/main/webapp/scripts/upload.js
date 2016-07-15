@@ -20,6 +20,8 @@ var allowedTypes = [{
     extension: ".nhx"
 }, {
     extension: ".csv"
+}, {
+    extension: ".gff"
 }]
 
 function initUpload() {
@@ -120,31 +122,28 @@ function readerLoaded(e, files, i, name) {
 
     var track_list_length = track_list.length
 
-
-    var trackname=name.split(".")[0]
-    track_list.push({
-        name: "uploadManhattan"+count,
-        display_label: trackname+"Manhattan",
-        id: "noid"+count,
-        desc: "uploaded file:"+trackname,
-        disp: 1,
-        merge: 0,
-        label: name+"Manhattan",
-        graph: 1,
-        graphtype: "manhattan",
-        label_show: true,
-        web:{colour:"red",source : "file", trackgroup: i}
-    });
-
-    trackList(track_list, track_list_length)
-
-
-
-    window["uploadManhattan"+count] = processData(window["gem"])
-
-
-
     if(extension.indexOf("csv") >= 0 && (name.toLowerCase().indexOf("gapit") >= 0 || name.toLowerCase().indexOf("gem") >= 0)){
+        var trackname=name.split(".")[0]
+        track_list.push({
+            name: "uploadManhattan"+count,
+            display_label: trackname+"Manhattan",
+            id: "noid"+count,
+            desc: "uploaded file:"+trackname,
+            disp: 1,
+            merge: 0,
+            label: name+"Manhattan",
+            graph: 1,
+            graphtype: "manhattan",
+            label_show: true,
+            web:{colour:"red",source : "file", trackgroup: i}
+        });
+
+        trackList(track_list, track_list_length)
+
+
+
+        window["uploadManhattan"+count] = processData(window["gem"])
+
         readGem("uploadManhattan"+count, "noid"+count, "#uploadManhattan"+count+"_div")
 
         track_list.forEach(function(d,i){
@@ -177,6 +176,38 @@ function readerLoaded(e, files, i, name) {
 
         readCDSfromGem("uploadCDS"+count, "noid"+count, "#uploadCDS"+count+"_div")
 
+    }else if(extension.indexOf("gff") >= 0 ){
+
+        track_list.forEach(function(d,i){
+            if(d.name.indexOf("upload") >= 0){
+                count++;
+            }
+        })
+
+        var track_list_length = track_list.length
+
+
+        track_list.push({
+            name: "uploadGFF"+count,
+            display_label: trackname+"Gene",
+            id: "noid"+count,
+            desc: "uploaded file:"+trackname,
+            disp: 1,
+            merge: 0,
+            label: name+"Gene",
+            ensembl:"http://plants.ensembl.org/Multi/Search/Results?species=all;idx=;q=",
+            graph: 0,
+            graphtype: null,
+            label_show: true,
+            web:{colour:"red",source : "file", trackgroup: i}
+        });
+
+        trackList(track_list, track_list_length)
+
+        window["uploadGFF"+count] = window["gem"]
+
+        readGFF("uploadGFF"+count, "noid"+count, "#uploadGFF"+count+"_div")
+
     }
 
     // If there's a file left to load
@@ -184,6 +215,14 @@ function readerLoaded(e, files, i, name) {
         setup_reader(files, i + 1);
     }
 
+}
+
+function processFile(bin){
+    var bin_array = bin.split("\n")
+
+        for (var i = 0; i < bin_array.length; i++) {
+                    wig.push(bin_array[i]);
+                }
 }
 
 function processData(allText) {
