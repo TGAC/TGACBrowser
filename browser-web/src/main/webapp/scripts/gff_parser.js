@@ -3,17 +3,14 @@
  */
 
 function readGFF(trackName, trackId, div){
-    var gene, transcript, exon, cds = []
-    var data = window[trackName]
+    var gene = {}, transcript = {}, exon = {}, cds ={}
+    var geneid = 1, transcriptid = 1, exonid = 1, cdsid = 1;
+    var data = window[trackName].split(/\r\n|\n/)
     data.forEach(function (line) {
         if (line.indexOf('#') != 0) {
-            //its not a comment, ill process it
-
             var parts = line.split('\t');
 
             if (parts.length !== 9) {
-                //the file might use spaces instead of tabs
-                //ill try to split it by spaces
                 parts = line.trim().split(/\s+/);
             }
 
@@ -21,30 +18,44 @@ function readGFF(trackName, trackId, div){
                 var attParts = parts[8].split(';');
                 var arrayObject = {};
                 var feature = {
-                    seqid: parts[0],
+                    seq_region_name: parts[0],
                     source: parts[1],
                     type: parts[2],
-                    start: parts[3],
-                    end: parts[4],
+                    start: parseInt(parts[3]),
+                    end: parseInt(parts[4]),
                     score: parts[5],
-                    strand: parts[6],
-                    phase: parts[7],
-                    attributes: arrayObject
+                    strand: parts[6] == "+" ? 1 : -1,
+                    phase: parts[7]
                 };
 
                 for (var i = 0; i < attParts.length; ++i) {
                     var pair = attParts[i].split("=");
-                    feature[pair[0]] = pair[1];
+                    feature[pair[0].toLowerCase()] = pair[1];
                 }
 
                 if(parts[2].toLowerCase() == 'gene'){
-                    gene.push(feature)
-                }else if(parts[2].toLowerCase() == 'exon'){
-                    exon.push(feature)
+                    if(feature['id'] == undefined){
+                        feature["id"] = geneid++;
+                    }
+                    feature["Transcript"] = []
+                    gene[feature['name']] = feature
                 }else if(parts[2].toLowerCase() == 'transcript'){
-                    transcript.push(feature)
+                    if(feature['id'] == undefined){
+                        feature["id"] = transcriptid++;
+                    }
+                    feature["Exon"] = []
+                    feature["CDS"] = []
+                    transcript[feature['name']] = feature
+                }else if(parts[2].toLowerCase() == 'exon'){
+                    if(feature['id'] == undefined){
+                        feature["id"] = exonid++;
+                    }
+                    exon[feature['id']] = feature
                 }else if(parts[2].toLowerCase() == 'cds'){
-                    cds.push(feature)
+                    if(feature['id'] == undefined){
+                        feature["id"] = cdsid++;
+                    }
+                    cds[feature['id']] = feature
                 }
             } else {
                 var err = new Error('9 parts of feature not found');
@@ -52,8 +63,32 @@ function readGFF(trackName, trackId, div){
         }
     });
 
-    console.log(gene)
-    console.log(transcript)
-    console.log(exon)
-    console.log(cds)
+    window[trackName] = joinGFF(gene, transcript, exon, cds)
+
+    trackToggle(trackName)
+
+
+}
+
+function joinGFF(genes, transcripts, exons, CDSs){
+    for(var id in exons){
+        var parent = exons[id].parent
+        if(transcripts.hasOwnProperty(parent)){
+            transcripts[parent]["Exon"].push(exons[id])
+        }
+    }
+
+    for(var id in CDSs){
+        var parent = CDSs[id].parent
+        if(transcripts.hasOwnProperty(parent)){
+            transcripts[parent]["CDS"].push(CDSs[id])
+        }
+    }
+
+    for(var id in transcripts){
+        var parent = transcripts[id].parent
+        if(genes.hasOwnProperty(parent)){
+            genes[parent]["Transcript"].push(transcripts[id])
+        }
+    }
 }
