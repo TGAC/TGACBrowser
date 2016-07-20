@@ -22,6 +22,8 @@ var allowedTypes = [{
     extension: ".csv"
 }, {
     extension: ".gff"
+}, {
+    extension: ".gff3"
 }]
 
 function initUpload() {
