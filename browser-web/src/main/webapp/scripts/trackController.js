@@ -575,7 +575,7 @@ function dispGenes(div, track, expand, className) {
 
 
 
-                    clone_new_div.className = "track";
+                    //clone_new_div.className = "track";
                     clone_new_div.style.width = stopposition + "px";
                     clone_new_div.style.top = top + "px";
 
