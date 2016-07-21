@@ -102,6 +102,7 @@ function readGFF(trackName, trackId, div) {
         }
     });
     window[trackName] = joinGFF(gene, transcript, exon, cds, threeUTR, fiveUTR)
+    window['track_list' + trackName].data = window[trackName]
     trackToggle(trackName)
 
 
@@ -160,6 +161,10 @@ function joinGFF(genes, transcripts, exons, CDSs, threeUTR, fiveUTR) {
     for (var gene in genes) {
         gene_array.push(genes[gene])
     }
+
+    gene_array.sort(function(a, b) {
+        return parseFloat(a.start) - parseFloat(b.start);
+    });
 
     return gene_array;
 }

@@ -471,6 +471,7 @@ function addJSON(from, to, trackName, trackId) {
                 }
                 else if (Tracklist[i].name.indexOf("upload") >= 0) {
                     console.log("upload")
+                    updateUploadedTrack(Tracklist[i].name)
                     trackToggle(Tracklist[i].name);
                 }
                 else if (jQuery("#" + Tracklist[i].name + "Checkbox").is(':checked') && Tracklist[i].id.toString().indexOf('noid') < 0) {
@@ -523,6 +524,35 @@ function addJSON(from, to, trackName, trackId) {
         }
     }
 
+}
+
+function updateUploadedTrack(trackName){
+
+
+    console.log("updateUploadedTrack")
+
+    var start = getBegin();
+    var end = getEnd();
+
+    var diff = (end-start)/2
+
+    start = start - diff
+    end = parseInt(end) + parseInt(diff)
+
+    temp_data = []
+
+    var data = window['track_list' + trackName].data;
+
+
+    jQuery.each(data, function (index, value) {
+        if(value.start > start && value.start < end){
+            temp_data.push(value)
+        }
+    })
+
+
+
+    window[trackName] = temp_data;
 }
 
 /*

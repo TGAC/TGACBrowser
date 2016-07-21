@@ -87,12 +87,32 @@ function dispGraph(div, trackName, className) {
                 'class': "graph " + className + "_graph",
                 'style': "bottom:0px; height: " + (track[track_len].graph * 45 / max) + "px; LEFT:" + startposition + "px; width:" + (stopposition - 1) + "px",
                 'title': track_start + ":" + track_stop + "->" + track[track_len].graph,
-                'onClick': "setBegin(" + track[track_len].start + ");setEnd(" + track[track_len].end + ");jumpToSeq();"
+                'onClick': "graphClick('" + trackName + "'," + track_len + ");"
             }).appendTo(div);
 
         }
     }
 }
+
+
+function graphClick(track, i){
+    var start = window[track][i].start;
+    var end = window[track][i].end;
+
+    if(window[track][i].data && window[track][i].graph < 1000){
+        window['track_list' + track].graph = "false";
+        var data = window[track]
+        if(window[track][i].graph > 0){
+            window[track] = window[track][i].data;
+        }
+    }
+
+    setBegin(start);
+    setEnd(end);
+    jumpToSeq();
+}
+
+
 function dispGraphHeat(div, trackName, className) {
     var track_html = "";
     jQuery(div).html("");
