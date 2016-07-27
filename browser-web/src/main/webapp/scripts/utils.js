@@ -90,7 +90,6 @@ function findminwidth() {
 //        jQuery('.browserimage').hide();
 //    }
 
-    console.log("return min width "+seqWidth)
 
     return parseInt(seqWidth);
 }
@@ -135,7 +134,6 @@ function trackToggle(trackname) {
         jQuery("#mergedtrack").html("<div id= \"mergelabel\" align='left' class='handle'></div>");
         for (var i = 0; i < track_list.length; i++) {
             var trackName = track_list[i].name;
-            console.log(trackName)
             trackid = window['track_list' + trackName].id;
             graph = window['track_list' + trackName].graph;
             if (jQuery("#" + track_list[i].name + "Checkbox").is(':checked')) {
@@ -154,7 +152,6 @@ function trackToggle(trackname) {
                     dispBLAST("#" + trackName + "_div", 'blasttrack');
                 }
                 else if (trackName.toLowerCase().indexOf("manhattan") >= 0) {
-                    console.log("calling upload")
                     dispGraphManhattan( "#" + trackName + "_div",trackName, window['track_list' + trackName].display_label);
                 }
                 else if (trackName.toLowerCase().indexOf("gene") >= 0 || trackName.toLowerCase().indexOf("gff") >= 0) {
@@ -182,7 +179,6 @@ function trackToggle(trackname) {
         layers = jQuery("#rowoftracks").val();
         trackid = window['track_list' + trackname].id;
         graph = window['track_list' + trackname].graph;
-        console.log(trackname)
 
         if (jQuery('#' + trackname + 'Checkbox').is(':checked')) {
             if (graph == "true") {
@@ -200,7 +196,6 @@ function trackToggle(trackname) {
                 dispBLAST("#" + trackname + "_div", 'blasttrack');
             }
             else if (trackname.toLowerCase().indexOf("manhattan") >= 0) {
-                console.log("calling upload")
                 // dispGraphManhattan( "#upload_div","gem", "noid");
                 dispGraphManhattan( "#" + trackname + "_div",trackname, window['track_list' + trackname].display_label);
             }
@@ -505,7 +500,6 @@ function convertSeqtoBLAST(seq, qseq) {
             oldbtopString += "|";
         }
         else {
-            console.log(oldString.charAt(i) + " == " + oldQString.charAt(i))
             oldbtopString += " ";
         }
         i++;
@@ -618,12 +612,7 @@ function trackToGraph(div, trackName, className){
 
     start = start - diff
     end = parseInt(end) + parseInt(diff)
-
-    diff = (end - start) / 400;
-
-    console.log (end + " "+  start)
-    console.log(diff)
-
+    diff = parseInt((end - start) / 400);
     var i = 1;
     var threshold_lower = parseInt(start) + parseInt(diff * i)
     var threshold_upper = parseInt(start) + parseInt(diff * parseInt(i+1))
@@ -632,37 +621,41 @@ function trackToGraph(div, trackName, className){
 
     var graph = []
     var temp_data = {};
-    console.log(threshold_lower+" "+threshold_upper)
-
     temp_data[threshold_lower] = []
     jQuery.each(data, function (index, value) {
-        if(value.start > threshold_lower && value.start < threshold_upper){
+        if(parseInt(value.start) > parseInt(threshold_lower) && parseInt(value.start) < parseInt(threshold_upper)){
             temp_data[threshold_lower].push(value)
-        }else{
-            // i++;
-            // threshold_lower = parseInt(start) + parseInt(diff * i)
-            // threshold_upper = parseInt(start) + parseInt(diff * parseInt(i+1))
-            // temp_data[threshold_lower] = []
+        }else if(parseInt(value.start) > parseInt(threshold_upper)){
+            console.log(threshold_lower+ " "+threshold_upper)
+            console.log(value.start)
             graph.push({start: threshold_lower, end: threshold_upper, graph: temp_data[threshold_lower].length, data:temp_data[threshold_lower] })
-            while(value.start > threshold_lower && value.start > threshold_upper){
-                updateThreshold()
+            if(threshold_upper <= end && threshold_lower >= start){
+                while(value.start > threshold_lower && value.start > threshold_upper){
+                    updateThreshold()
+                }
+                temp_data[threshold_lower].push(value)
             }
-            temp_data[threshold_lower].push(value)
-            console.log(threshold_lower+" "+threshold_upper)
+            else{
+                console.log(value)
+            }
         }
     })
 
     function updateThreshold(){
         i++;
-        threshold_lower = parseInt(start) + parseInt(diff * i)
-        threshold_upper = parseInt(start) + parseInt(diff * parseInt(i+1))
-        temp_data[threshold_lower] = []
+        var temp_threshold_lower = parseInt(start) + parseInt(diff * i)
+        var temp_threshold_upper = parseInt(start) + parseInt(diff * parseInt(i+1))
+        if(temp_threshold_upper <= end && temp_threshold_lower >= start){
+            threshold_lower = temp_threshold_lower
+            threshold_upper = temp_threshold_upper
+            temp_data[threshold_lower] = []
+        }
     }
 
+
     window[trackName] = graph;
-
     dispGraph(div, trackName, className)
-
+    console.log(window[trackName])
     window['track_list' + trackName].graph = "true";
     window['track_list' + trackName].graphType = "bar"
 
