@@ -24,6 +24,7 @@
  */
 
 function dispGraph(div, trackName, className) {
+    console.log("dispGraph")
     var track_html = "";
     jQuery(div).html("");
 
@@ -99,12 +100,9 @@ function graphClick(track, i){
     var start = window[track][i].start;
     var end = window[track][i].end;
 
-    if(window[track][i].data && window[track][i].graph < 1000){
+    if(window[track][i].data){
         window['track_list' + track].graph = "false";
-        var data = window[track]
-        if(window[track][i].graph > 0){
-            window[track] = window[track][i].data;
-        }
+        window[track] = window[track][i].data;
     }
 
     setBegin(start);
