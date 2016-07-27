@@ -71,7 +71,7 @@ function zoomIn(zoom_len) {
     console.log(tempBegin)
     console.log(tempEnd)
 
-    console.log(tempEnd-tempBegin)
+    console.log(tempEnd - tempBegin)
 
     console.log(minWidth)
 
@@ -132,7 +132,7 @@ function jumpToOther(e, length, name, coord) {
         begin = 1;
         end = length;
     }
-    window.location.replace("index.jsp?query=" + name + "&coord="+coord+"&from=" + begin + "&to=" + end);
+    window.location.replace("index.jsp?query=" + name + "&coord=" + coord + "&from=" + begin + "&to=" + end);
 }
 
 function zoomOut(zoom_len) {
@@ -301,11 +301,11 @@ function setNavPanel() {
         diff = 0;
     }
     var border_right = (diff) + "px solid transparent";
-    jQuery("#nav_panel").animate({left: left}, { duration: 300, queue: false});
-    jQuery("#nav_panel").animate({width: width}, { duration: 300, queue: false});
-    jQuery("#nav_panel").animate({borderBottom: height}, { duration: 300, queue: false});
-    jQuery("#nav_panel").animate({borderLeft: border_left}, { duration: 300, queue: false});
-    jQuery("#nav_panel").animate({borderRight: (border_right)}, { duration: 300, queue: false});
+    jQuery("#nav_panel").animate({left: left}, {duration: 300, queue: false});
+    jQuery("#nav_panel").animate({width: width}, {duration: 300, queue: false});
+    jQuery("#nav_panel").animate({borderBottom: height}, {duration: 300, queue: false});
+    jQuery("#nav_panel").animate({borderLeft: border_left}, {duration: 300, queue: false});
+    jQuery("#nav_panel").animate({borderRight: (border_right)}, {duration: 300, queue: false});
 
 }
 
@@ -346,50 +346,55 @@ function trackDrag() {
     }
 }
 function updateJSON() {
-
+    console.log("update json")
     var from, to;
     var partial = (getEnd() - getBegin()) / 2;
     from = Math.ceil(parseInt(getEnd()) - partial);
     to = Math.ceil(parseInt(getEnd()) + partial);
+    console.log(lastStart + " " + lastEnd)
+    console.log(getBegin() + " " + getEnd())
 
     if (lastStart >= 0 || lastEnd >= 0) {
 
-//      console.log("right");
-        if (parseInt(lastStart) < parseInt(getBegin()) || parseInt(lastEnd) < parseInt(newEnd)) {
+        if (parseInt(lastStart) < parseInt(getBegin()) && parseInt(lastEnd) > parseInt(getEnd())) {
+            console.log("zoomin");
+            // removeJSON(null, parseInt((parseInt(getEnd()) + parseInt(partial))));
+            // removeJSON(parseInt(parseInt(getBegin() - partial)), null);
+
+            from = Math.floor((getBegin() - partial));
+            to = Math.ceil(parseInt(getEnd()) + parseInt(partial));
+
+            removeJSON(from, to);
+
+            lastEnd = getEnd();
+            lastStart = getBegin();
+        }
+        else if (parseInt(lastStart) < parseInt(getBegin()) || parseInt(lastEnd) < parseInt(getEnd())) {
+            console.log("right");
             from = Math.ceil(parseInt(getBegin()) - partial);
             to = Math.ceil(parseInt(getEnd()) + partial);
 
             addJSON(from, to);
-//      removeJSON(parseInt((parseInt(getBegin()) - parseInt(partial)) - (getEnd() - getBegin())), "");
 
             lastEnd = getEnd();
             lastStart = getBegin();
         }
-        //      console.log("left");
         else if (parseInt(lastStart) > parseInt(getBegin()) || parseInt(lastEnd) > parseInt(getEnd())) {
+            console.log("left");
             from = Math.floor((parseInt(getBegin()) - parseInt(partial)));
             to = Math.ceil(parseInt(getEnd()) + partial);
 
             addJSON(from, to);
-//      removeJSON("", parseInt((parseInt(getEnd()) + parseInt(partial) + parseInt((getEnd() - getBegin())))));
             lastEnd = getEnd();
             lastStart = getBegin();
         }
-//       console.log("zoomout");
         else if (parseInt(lastStart) > parseInt(getBegin()) || parseInt(lastEnd) < parseInt(getEnd())) {
+            console.log("zoomout");
             from = Math.floor((getBegin() - partial));
             to = Math.ceil(parseInt(getEnd()) + parseInt(partial));
 
             addJSON(from, to);
 
-            lastEnd = getEnd();
-            lastStart = getBegin();
-        }
-//      console.log("zoomin");
-        else if (parseInt(lastStart) < parseInt(getBegin()) && parseInt(lastEnd) > parseInt(getEnd())) {
-            partial = (parseInt((getEnd() - getBegin() ) + parseInt(partial)));
-            removeJSON(null, parseInt((parseInt(getEnd()) + parseInt(partial))));
-            removeJSON(parseInt(parseInt(getBegin() - partial)), null);
             lastEnd = getEnd();
             lastStart = getBegin();
         }
@@ -407,6 +412,9 @@ function updateJSON() {
 }
 
 function addJSON(from, to, trackName, trackId) {
+
+    console.log("add json")
+
     if (from < 0) {
         from = 0;
     }
@@ -426,40 +434,50 @@ function addJSON(from, to, trackName, trackId) {
             Fluxion.doAjax(
                 'dnaSequenceService',
                 'loadTrack',
-                {'query': seqregname, 'coord': coord, 'name': trackName, 'trackid': trackId, 'start': from, 'end': to, 'delta': deltaWidth, 'url': ajaxurl},
-                {'doOnSuccess': function (json) {
-                    var trackname = json.name;
-                    window[trackname] = json[trackname];
-                    if (json.type == "graph") {
-                        window['track_list' + json.name].graph = "true";
-                        window['track_list' + json.name].graphtype = json.graphtype;
-                    }
-                    else {
-                        window['track_list' + json.name].graph = "false";
-                        if (window[trackname + "_edited"]) {
-                            jQuery.each(window[trackname], function (i, v) {
-                                jQuery.each(window[trackname + "_edited"], function (j, w) {
-                                    if (w.id == v.id) {
-                                        window[trackname].splice(i, 1, window[trackname + "_edited"][j])
-                                        return;
-                                    }
-                                });
-                                return;
-                            });
+                {
+                    'query': seqregname,
+                    'coord': coord,
+                    'name': trackName,
+                    'trackid': trackId,
+                    'start': from,
+                    'end': to,
+                    'delta': deltaWidth,
+                    'url': ajaxurl
+                },
+                {
+                    'doOnSuccess': function (json) {
+                        var trackname = json.name;
+                        window[trackname] = json[trackname];
+                        if (json.type == "graph") {
+                            window['track_list' + json.name].graph = "true";
+                            window['track_list' + json.name].graphtype = json.graphtype;
                         }
-                        if (window[trackname + "_removed"]) {
-                            for (var i = 0; i < window[trackname].length; i++) {
-                                jQuery.each(window[trackname + "_removed"], function (j, w) {
-                                    if (w.id == window[trackname][i].id) {
-                                        window[trackname].splice(i - 1, 1)
-                                        return;
-                                    }
+                        else {
+                            window['track_list' + json.name].graph = "false";
+                            if (window[trackname + "_edited"]) {
+                                jQuery.each(window[trackname], function (i, v) {
+                                    jQuery.each(window[trackname + "_edited"], function (j, w) {
+                                        if (w.id == v.id) {
+                                            window[trackname].splice(i, 1, window[trackname + "_edited"][j])
+                                            return;
+                                        }
+                                    });
+                                    return;
                                 });
                             }
+                            if (window[trackname + "_removed"]) {
+                                for (var i = 0; i < window[trackname].length; i++) {
+                                    jQuery.each(window[trackname + "_removed"], function (j, w) {
+                                        if (w.id == window[trackname][i].id) {
+                                            window[trackname].splice(i - 1, 1)
+                                            return;
+                                        }
+                                    });
+                                }
+                            }
                         }
+                        trackToggle(json.name)
                     }
-                    trackToggle(json.name)
-                }
                 });
         }
         else {
@@ -481,42 +499,52 @@ function addJSON(from, to, trackName, trackId) {
                         Fluxion.doAjax(
                             'dnaSequenceService',
                             'loadTrack',
-                            {'query': seqregname, 'coord': coord, 'name': trackname, 'trackid': trackid, 'start': from, 'end': to, 'delta': deltaWidth, 'url': ajaxurl},
-                            {'doOnSuccess': function (json) {
-                                var trackname = json.name;
-                                window[trackname] = json[trackname];
+                            {
+                                'query': seqregname,
+                                'coord': coord,
+                                'name': trackname,
+                                'trackid': trackid,
+                                'start': from,
+                                'end': to,
+                                'delta': deltaWidth,
+                                'url': ajaxurl
+                            },
+                            {
+                                'doOnSuccess': function (json) {
+                                    var trackname = json.name;
+                                    window[trackname] = json[trackname];
 
-                                if (json.type == "graph") {
-                                    window['track_list' + json.name].graph = "true";
-                                    window['track_list' + json.name].graphtype = json.graphtype;
-                                }
-                                else {
-                                    window['track_list' + json.name].graph = "false";
-                                    if (window[trackname + "_edited"]) {
-
-                                        jQuery.each(window[trackname], function (i, v) {
-                                            jQuery.each(window[trackname + "_edited"], function (j, w) {
-                                                if (w.id == v.id) {
-                                                    window[trackname].splice(i, 1, window[trackname + "_edited"][j])
-                                                    return;
-                                                }
-                                            });
-                                            return;
-                                        });
+                                    if (json.type == "graph") {
+                                        window['track_list' + json.name].graph = "true";
+                                        window['track_list' + json.name].graphtype = json.graphtype;
                                     }
-                                    if (window[trackname + "_removed"]) {
-                                        for (var i = 0; i < window[trackname].length; i++) {
-                                            jQuery.each(window[trackname + "_removed"], function (j, w) {
-                                                if (w.id == window[trackname][i].id) {
-                                                    window[trackname].splice(i - 1, 1)
-                                                    return;
-                                                }
+                                    else {
+                                        window['track_list' + json.name].graph = "false";
+                                        if (window[trackname + "_edited"]) {
+
+                                            jQuery.each(window[trackname], function (i, v) {
+                                                jQuery.each(window[trackname + "_edited"], function (j, w) {
+                                                    if (w.id == v.id) {
+                                                        window[trackname].splice(i, 1, window[trackname + "_edited"][j])
+                                                        return;
+                                                    }
+                                                });
+                                                return;
                                             });
                                         }
+                                        if (window[trackname + "_removed"]) {
+                                            for (var i = 0; i < window[trackname].length; i++) {
+                                                jQuery.each(window[trackname + "_removed"], function (j, w) {
+                                                    if (w.id == window[trackname][i].id) {
+                                                        window[trackname].splice(i - 1, 1)
+                                                        return;
+                                                    }
+                                                });
+                                            }
+                                        }
                                     }
+                                    trackToggle(json.name)
                                 }
-                                trackToggle(json.name)
-                            }
                             });
                     }
                 }
@@ -526,33 +554,34 @@ function addJSON(from, to, trackName, trackId) {
 
 }
 
-function updateUploadedTrack(trackName){
-
-
+function updateUploadedTrack(trackName) {
     console.log("updateUploadedTrack")
+    window[trackName] = filterData(trackName)
+    trackToggle(trackName)
 
-    var start = getBegin();
-    var end = getEnd();
+    // console.log("updateUploadedTrack")
 
-    var diff = (end-start)/2
+    // var start = getBegin();
+    // var end = getEnd();
 
-    start = start - diff
-    end = parseInt(end) + parseInt(diff)
+    // var diff = (end-start)/2
 
-    temp_data = []
+    // start = start - diff
+    // end = parseInt(end) + parseInt(diff)
 
-    var data = window['track_list' + trackName].data;
+    // temp_data = []
 
-
-    jQuery.each(data, function (index, value) {
-        if(value.start > start && value.start < end){
-            temp_data.push(value)
-        }
-    })
+    // var data = window['track_list' + trackName].data;
 
 
+    // jQuery.each(data, function (index, value) {
+    //     if(value.start > start && value.start < end){
+    //         temp_data.push(value)
+    //     }
+    // })
 
-    window[trackName] = temp_data;
+
+    // window[trackName] = temp_data;
 }
 
 /*
@@ -609,6 +638,9 @@ function updateUploadedTrack(trackName){
  */
 
 function removeJSON(from, to) {
+    console.log("remove json " + from + " " + to)
+
+
     if (from < 0) {
         from = 0;
     }
@@ -624,44 +656,88 @@ function removeJSON(from, to) {
 
     var Tracklist = track_list;
     var query = jQuery('#search').val();
-    if (from == null) {
-        var count = 0;
-        for (var i = 0; i < Tracklist.length; i++) {
-            if (window[Tracklist[i].name]) {
-                for (var j = 0; j < window[Tracklist[i].name].length;) {
-                    if (window[Tracklist[i].name][j].start > to) {
-                        count++;
-                        delete window[Tracklist[i].name].splice(j, 1);
-                    }
-                    else {
-                        j++;
-                    }
+
+    for (var i = 0; i < Tracklist.length; i++) {
+        if (jQuery("#" + Tracklist[i].name + "Checkbox").is(':checked')) {
+            if (window['track_list' + Tracklist[i].name].graph == "true" && Tracklist[i].name.indexOf("upload") < 0) {
+                Fluxion.doAjax(
+                    'dnaSequenceService',
+                    'loadTrack',
+                    {
+                        'query': seqregname,
+                        'coord': coord,
+                        'name': Tracklist[i].name,
+                        'trackid': Tracklist[i].id,
+                        'start': from,
+                        'end': to,
+                        'delta': deltaWidth,
+                        'url': ajaxurl
+                    },
+                    {
+                        'doOnSuccess': function (json) {
+                            var trackname = json.name;
+                            window[trackname] = json[trackname];
+
+                            if (json.type == "graph") {
+                                window['track_list' + json.name].graph = "true";
+                                window['track_list' + json.name].graphtype = json.graphtype;
+                            }
+                            else {
+                                window['track_list' + json.name].graph = "false";
+                                if (window[trackname + "_edited"]) {
+
+                                    jQuery.each(window[trackname], function (i, v) {
+                                        jQuery.each(window[trackname + "_edited"], function (j, w) {
+                                            if (w.id == v.id) {
+                                                window[trackname].splice(i, 1, window[trackname + "_edited"][j])
+                                                return;
+                                            }
+                                        });
+                                        return;
+                                    });
+                                }
+                                if (window[trackname + "_removed"]) {
+                                    for (var i = 0; i < window[trackname].length; i++) {
+                                        jQuery.each(window[trackname + "_removed"], function (j, w) {
+                                            if (w.id == window[trackname][i].id) {
+                                                window[trackname].splice(i - 1, 1)
+                                                return;
+                                            }
+                                        });
+                                    }
+                                }
+                            }
+                            trackToggle(json.name)
+                        }
+                    })
+            } else {
+
+
+                var data;
+                if(window['track_list' + Tracklist[i].name].data){
+                    console.log("filterData if")
+                    data = window['track_list' + Tracklist[i].name].data;
+                }else{
+                    console.log("filterData else")
+
+                    data = window[Tracklist[i].name];
                 }
-                if (jQuery("#" + Tracklist[i].name + "Checkbox").is(':checked')) {
-                    trackToggle(Tracklist[i].name)
-                }
+
+                window['track_list' + Tracklist[i].name].graph = "false";
+                console.log(data.length)
+                var temp_data = []
+                jQuery.each(data, function (index, value) {
+                    if(parseInt(value.start) > parseInt(from) && parseInt(value.start) < parseInt(to)){
+                        temp_data.push(value)
+                    }
+
+                })
+                console.log(temp_data.length)
+
+                window[Tracklist[i].name] = temp_data
+                trackToggle(Tracklist[i].name)
+
             }
         }
     }
-    else {
-        var count = 0;
-        for (var i = 0; i < Tracklist.length; i++) {
-            if (window[Tracklist[i].name]) {
-                for (var j = 0; j < window[Tracklist[i].name].length;) {
-                    if (window[Tracklist[i].name][j].start < from) {
-                        count++;
-                        delete window[Tracklist[i].name].splice(j, 1);
-                    }
-                    else {
-                        j++;
-                    }
-                }
-                if (jQuery("#" + Tracklist[i].name + "Checkbox").is(':checked')) {
-                    trackToggle(Tracklist[i].name)
-                }
-            }
-        }
-    }
-
-
 }
