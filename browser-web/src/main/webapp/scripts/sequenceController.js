@@ -52,7 +52,7 @@ function dispSeq() {
 }
 
 function changeSeq(begin, end) {
-    trackToggle("all");
+    //trackToggle("all");
     updateJSON();
     seqBar(begin, end);
     browser_coordinates();
@@ -62,7 +62,6 @@ function seqBar(seqStart, seqEnd) {
 
     var temp = seqEnd - seqStart;
     var seqLen = visualLength(temp);
-    console.log(seqLen+" "+maxLen)
     if (parseFloat(seqLen) <= (parseFloat(maxLen)) && jQuery("#fasta").html().indexOf('true') >= 0) {
         selectionStart = seqStart;
         selectionEnd = seqEnd;
@@ -153,12 +152,6 @@ function jumpToSeq() {
         alert("Ending position need to be bigger than Starting position");
     }
     else {
-        console.log("else")
-
-        console.log(begin)
-        console.log(end)
-
-        console.log(minWidth)
 //        if ((parseInt(end) - parseInt(begin)) < minWidth) {
 //
 //            console.log("if")
@@ -182,13 +175,9 @@ function jumpToSeq() {
         var begin = getBegin()-1;
         var end = getEnd();
 
-        console.log(begin)
-        console.log(len)
-        console.log(maxLen)
         var seqStart = parseInt(begin) * parseInt(maxLen) / len;
         var seqEnd = parseInt(end) * parseInt(maxLen) / len;
         var width = parseFloat(seqEnd) - parseFloat(seqStart);
-        console.log(seqStart)
 
         removeAllPopup();
         setDragableLeft(seqStart);
