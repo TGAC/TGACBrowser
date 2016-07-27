@@ -14,7 +14,7 @@ function readGFF(trackName, trackId, div) {
                 parts = line.trim().split(/\s+/);
             }
 
-            if (parts.length == 9) {
+            if (parts.length == 9 && parts[0] == seqregname) {
                 var attParts = parts[8].split(';');
                 var arrayObject = {};
                 var feature = {
