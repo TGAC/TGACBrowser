@@ -40,6 +40,8 @@ function readGem(trackName, trackId, div) {
 
     });
 
+    window['track_list' + trackName].data = window[trackName]
+
     var margin = {top: 10, right: 0, bottom: 10, left: 0};
     var width = jQuery("#wrapper").width(),
         height = 90;
@@ -81,7 +83,6 @@ function readGem(trackName, trackId, div) {
 
 
     dispGraphManhattan(div, trackName, trackId)
-    // })
 }
 
 function readCDSfromGem(trackName, trackId, div) {
@@ -124,11 +125,11 @@ function readCDSfromGem(trackName, trackId, div) {
         }
 
         window[trackName] = temp_data
+        window['track_list' + trackName].data = window[trackName]
 
     });
 
     trackToggle(trackName)
-    // })
 }
 
 
