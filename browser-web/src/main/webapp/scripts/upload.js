@@ -24,6 +24,8 @@ var allowedTypes = [{
     extension: ".gff"
 }, {
     extension: ".gff3"
+}, {
+    extension: ".vcf"
 }]
 
 function initUpload() {
@@ -209,6 +211,38 @@ function readerLoaded(e, files, i, name) {
         window["uploadGFF"+count] = window["gem"]
 
         readGFF("uploadGFF"+count, "noid"+count, "#uploadGFF"+count+"_div")
+
+    }else if(extension.indexOf("vcf") >= 0 ){
+
+        track_list.forEach(function(d,i){
+            if(d.name.indexOf("upload") >= 0){
+                count++;
+            }
+        })
+
+        var track_list_length = track_list.length
+
+
+        track_list.push({
+            name: "uploadVCF"+count,
+            display_label: trackname+"Gene",
+            id: "noid"+count,
+            desc: "uploaded file:"+trackname,
+            disp: 1,
+            merge: 0,
+            label: name+"VCF",
+            ensembl:"http://plants.ensembl.org/Multi/Search/Results?species=all;idx=;q=",
+            graph: 0,
+            graphtype: null,
+            label_show: true,
+            web:{colour:"red",source : "file", trackgroup: i}
+        });
+
+        trackList(track_list, track_list_length)
+
+        window["uploadVCF"+count] = window["gem"]
+
+        readVCF("uploadVCF"+count, "noid"+count, "#uploadVCF"+count+"_div")
 
     }
 
