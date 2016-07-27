@@ -387,7 +387,6 @@ function dispGenes(div, track, expand, className) {
         var j = 0;
         var len = genes.length;
 
-        console.log(len)
         if (genes[0] == null) {
             if (div.indexOf("mergedtrack") <= 0) {
                 track_html = [];
@@ -488,7 +487,6 @@ function dispGenes(div, track, expand, className) {
                     jQuery(div).html(track_html.join(""));
                 }
                 var len = genes.length;
-                console.log(len)
 
                 while (len--) {
                     trackClass = "gene track";
@@ -975,8 +973,8 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
         return track_html;
     }
     else if (track.length >= 1000) {
-        trackToGraph(trackName)
-        dispGraph(div, trackName, className)
+        //trackToGraph(trackName)
+        //dispGraph(div, trackName, className)
     }
 }
 
@@ -1068,7 +1066,6 @@ function dispTrack(div, trackName, className) {
 
         var track = window[trackName];
 
-        console.log(track.length)
         if (track[0] == null) {
             if (div.indexOf("mergedtrack") <= 0) {
                 track_html = [];
@@ -1077,6 +1074,7 @@ function dispTrack(div, trackName, className) {
             }
         }
         else if (track.length > 0 && (track.length < 1000 || diff <= minWidth)) {
+
             if (div.indexOf("mergedtrack") <= 0) {
                 track_html = [];
                 jQuery(div).html(track_html.join(""));
@@ -1209,7 +1207,7 @@ function dispTrack(div, trackName, className) {
 }
 
 function dispVCF(div, trackName, className) {
-
+    console.log("dispVCF")
     var labelclass = "label" + trackName;
     var modi_style;
     var labeltoogle = "display : in-line;";
@@ -1270,7 +1268,6 @@ function dispVCF(div, trackName, className) {
         var maxLen_temp = jQuery("#canvas").css("width");
 
         var track = window[trackName];
-
         if (track[0] == null) {
             if (div.indexOf("mergedtrack") <= 0) {
                 track_html = [];
@@ -1279,6 +1276,7 @@ function dispVCF(div, trackName, className) {
             }
         }
         else if (track.length > 0 && (track.length < 1000 || diff <= minWidth)) {
+
             if (div.indexOf("mergedtrack") <= 0) {
                 track_html = [];
                 jQuery(div).html(track_html.join(""));
@@ -1388,7 +1386,7 @@ function dispVCF(div, trackName, className) {
             }
         }
         else if (track.length >= 1000) {
-            dispGraph(div, trackName, trackId)
+            trackToGraph(div, trackName, className)
         }
     }
 
