@@ -27,7 +27,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <artifactId>tgac-browser</artifactId>
-        <groupId>uk.ac.bbsrc.tgac.tgac-browser</groupId>
+        <groupId>uk.ac.bbsrc.earlham.tgac-browser</groupId>
         <version>0.2.0</version>
     </parent>
 
@@ -63,18 +63,18 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>uk.ac.bbsrc.tgac.tgac-browser</groupId>
+            <groupId>uk.ac.bbsrc.earlham.tgac-browser</groupId>
             <artifactId>core</artifactId>
             <version>0.2.0</version>
         </dependency>
         <dependency>
-            <groupId>uk.ac.bbsrc.tgac.tgac-browser</groupId>
+            <groupId>uk.ac.bbsrc.earlham.tgac-browser</groupId>
             <artifactId>browser-process</artifactId>
             <version>0.2.0</version>
         </dependency>
 
         <dependency>
-            <groupId>uk.ac.bbsrc.tgac.tgac-browser</groupId>
+            <groupId>uk.ac.bbsrc.earlham.tgac-browser</groupId>
             <artifactId>ensembl-store</artifactId>
             <version>0.2.0</version>
         </dependency>

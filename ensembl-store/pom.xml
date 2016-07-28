@@ -28,7 +28,7 @@
 
     <parent>
         <artifactId>tgac-browser</artifactId>
-        <groupId>uk.ac.bbsrc.tgac.tgac-browser</groupId>
+        <groupId>uk.ac.bbsrc.earlham.tgac-browser</groupId>
         <version>0.2.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -63,7 +63,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>uk.ac.bbsrc.tgac.tgac-browser</groupId>
+            <groupId>uk.ac.bbsrc.earlham.tgac-browser</groupId>
             <artifactId>core</artifactId>
             <version>0.2.0</version>
         </dependency>

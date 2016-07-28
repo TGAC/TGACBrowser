@@ -12,32 +12,32 @@
     </bean>
 
     <bean id="dnaSequenceService"
-          class="uk.ac.bbsrc.tgac.browser.service.ajax.DnaSequenceService">
+          class="uk.ac.bbsrc.earlham.browser.service.ajax.DnaSequenceService">
         <!-- <property name="seqStore" ref="sequenceStore"/> -->
     </bean>
 
     <!--<bean id="samBamService"-->
-          <!--class="uk.ac.bbsrc.tgac.browser.service.ajax.javagenomicsio.SamBamService">-->
+          <!--class="SamBamService">-->
         <!--&lt;!&ndash; <property name="seqStore" ref="sequenceStore"/> &ndash;&gt;-->
     <!--</bean>-->
 
     <bean id="fileService"
-          class="uk.ac.bbsrc.tgac.browser.service.ajax.FileService">
+          class="uk.ac.bbsrc.earlham.browser.service.ajax.FileService">
     </bean>
 
     <bean id="blastservice"
-          class="uk.ac.bbsrc.tgac.browser.service.ajax.BlastService">
+          class="uk.ac.bbsrc.earlham.browser.service.ajax.BlastService">
     </bean>
     <bean id="blastservicelocal"
-          class="uk.ac.bbsrc.tgac.browser.service.ajax.BlastServiceLocal">
+          class="uk.ac.bbsrc.earlham.browser.service.ajax.BlastServiceLocal">
     </bean>
 
     <bean id="blastServiceNCBI"
-          class="uk.ac.bbsrc.tgac.browser.service.ajax.BlastNCBI">
+          class="uk.ac.bbsrc.earlham.browser.service.ajax.BlastNCBI">
     </bean>
 
     <bean id="blastserviceslurm"
-          class="uk.ac.bbsrc.tgac.browser.service.ajax.BlastServiceSLURM">
+          class="uk.ac.bbsrc.earlham.browser.service.ajax.BlastServiceSLURM">
     </bean>
 </beans>
 

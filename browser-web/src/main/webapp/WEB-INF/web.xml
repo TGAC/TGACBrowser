@@ -89,7 +89,7 @@
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
     <listener>
-        <listener-class>uk.ac.bbsrc.tgac.browser.web.BrowserAppListener</listener-class>
+        <listener-class>uk.ac.bbsrc.earlham.browser.web.BrowserAppListener</listener-class>
     </listener>
     <context-param>
         <param-name>webAppRootKey</param-name>

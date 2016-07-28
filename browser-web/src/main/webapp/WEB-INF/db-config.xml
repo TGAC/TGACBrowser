@@ -53,49 +53,49 @@
 
     <bean id="cacheManager" name="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"/>
 
-    <bean id="blastManagerDAO" class="uk.ac.bbsrc.tgac.browser.store.blastmanager.BLASTManagerDAO">
+    <bean id="blastManagerDAO" class="uk.ac.bbsrc.earlham.browser.store.blastmanager.BLASTManagerDAO">
         <property name="jdbcTemplate" ref="blast_dbTemplate"/>
     </bean>
 
-    <bean id="sequenceDAO" class="uk.ac.bbsrc.tgac.browser.store.ensembl.SQLSequenceDAO">
+    <bean id="sequenceDAO" class="uk.ac.bbsrc.earlham.browser.store.ensembl.SQLSequenceDAO">
         <property name="jdbcTemplate" ref="interfaceTemplate"/>
     </bean>
 
-    <bean id="searchDAO" class="uk.ac.bbsrc.tgac.browser.store.ensembl.SQLSeachDAO">
+    <bean id="searchDAO" class="uk.ac.bbsrc.earlham.browser.store.ensembl.SQLSeachDAO">
         <property name="jdbcTemplate" ref="interfaceTemplate"/>
     </bean>
 
-    <bean id="repeatDAO" class="uk.ac.bbsrc.tgac.browser.store.ensembl.SQLRepeatDAO">
+    <bean id="repeatDAO" class="uk.ac.bbsrc.earlham.browser.store.ensembl.SQLRepeatDAO">
         <property name="jdbcTemplate" ref="interfaceTemplate"/>
     </bean>
 
-    <bean id="markerDAO" class="uk.ac.bbsrc.tgac.browser.store.ensembl.SQLMarkerDAO">
+    <bean id="markerDAO" class="uk.ac.bbsrc.earlham.browser.store.ensembl.SQLMarkerDAO">
         <property name="jdbcTemplate" ref="interfaceTemplate"/>
     </bean>
 
-    <bean id="geneDAO" class="uk.ac.bbsrc.tgac.browser.store.ensembl.SQLGeneDAO">
+    <bean id="geneDAO" class="uk.ac.bbsrc.earlham.browser.store.ensembl.SQLGeneDAO">
         <property name="jdbcTemplate" ref="interfaceTemplate"/>
     </bean>
 
-    <bean id="analysisDAO" class="uk.ac.bbsrc.tgac.browser.store.ensembl.SQLAnalysisDAO">
+    <bean id="analysisDAO" class="uk.ac.bbsrc.earlham.browser.store.ensembl.SQLAnalysisDAO">
         <property name="jdbcTemplate" ref="interfaceTemplate"/>
     </bean>
 
-    <bean id="assemblyDAO" class="uk.ac.bbsrc.tgac.browser.store.ensembl.SQLAssemblyDAO">
+    <bean id="assemblyDAO" class="uk.ac.bbsrc.earlham.browser.store.ensembl.SQLAssemblyDAO">
         <property name="jdbcTemplate" ref="interfaceTemplate"/>
     </bean>
 
-    <bean id="dafDAO" class="uk.ac.bbsrc.tgac.browser.store.ensembl.SQLDafDAO">
+    <bean id="dafDAO" class="uk.ac.bbsrc.earlham.browser.store.ensembl.SQLDafDAO">
         <property name="jdbcTemplate" ref="interfaceTemplate"/>
     </bean>
 
-    <bean id="util" class="uk.ac.bbsrc.tgac.browser.store.ensembl.Util">
+    <bean id="util" class="uk.ac.bbsrc.earlham.browser.store.ensembl.Util">
         <property name="jdbcTemplate" ref="interfaceTemplate"/>
     </bean>
 
     <bean name="blastManagerStore" class="org.springframework.aop.framework.ProxyFactoryBean">
         <property name="proxyInterfaces">
-            <value>uk.ac.bbsrc.tgac.browser.blastmanager.store.BLASTManagerStore</value>
+            <value>uk.ac.bbsrc.earlham.browser.blastmanager.store.BLASTManagerStore</value>
         </property>
         <property name="interceptorNames">
             <list>
@@ -106,7 +106,7 @@
 
     <bean name="sequenceStore" class="org.springframework.aop.framework.ProxyFactoryBean">
         <property name="proxyInterfaces">
-            <value>uk.ac.bbsrc.tgac.browser.core.store.SequenceStore</value>
+            <value>uk.ac.bbsrc.earlham.browser.core.store.SequenceStore</value>
         </property>
         <property name="interceptorNames">
             <list>
@@ -117,7 +117,7 @@
 
     <bean name="searchStore" class="org.springframework.aop.framework.ProxyFactoryBean">
         <property name="proxyInterfaces">
-            <value>uk.ac.bbsrc.tgac.browser.core.store.SearchStore</value>
+            <value>uk.ac.bbsrc.earlham.browser.core.store.SearchStore</value>
         </property>
         <property name="interceptorNames">
             <list>
@@ -128,7 +128,7 @@
 
     <bean name="repeatStore" class="org.springframework.aop.framework.ProxyFactoryBean">
         <property name="proxyInterfaces">
-            <value>uk.ac.bbsrc.tgac.browser.core.store.RepeatStore</value>
+            <value>uk.ac.bbsrc.earlham.browser.core.store.RepeatStore</value>
         </property>
         <property name="interceptorNames">
             <list>
@@ -139,7 +139,7 @@
 
     <bean name="markerStore" class="org.springframework.aop.framework.ProxyFactoryBean">
         <property name="proxyInterfaces">
-            <value>uk.ac.bbsrc.tgac.browser.core.store.MarkerStore</value>
+            <value>uk.ac.bbsrc.earlham.browser.core.store.MarkerStore</value>
         </property>
         <property name="interceptorNames">
             <list>
@@ -151,7 +151,7 @@
 
     <bean name="geneStore" class="org.springframework.aop.framework.ProxyFactoryBean">
         <property name="proxyInterfaces">
-            <value>uk.ac.bbsrc.tgac.browser.core.store.GeneStore</value>
+            <value>uk.ac.bbsrc.earlham.browser.core.store.GeneStore</value>
         </property>
         <property name="interceptorNames">
             <list>
@@ -162,7 +162,7 @@
 
     <bean name="assemblyStore" class="org.springframework.aop.framework.ProxyFactoryBean">
         <property name="proxyInterfaces">
-            <value>uk.ac.bbsrc.tgac.browser.core.store.AssemblyStore</value>
+            <value>uk.ac.bbsrc.earlham.browser.core.store.AssemblyStore</value>
         </property>
         <property name="interceptorNames">
             <list>
@@ -173,7 +173,7 @@
 
     <bean name="analysisStore" class="org.springframework.aop.framework.ProxyFactoryBean">
         <property name="proxyInterfaces">
-            <value>uk.ac.bbsrc.tgac.browser.core.store.AnalysisStore</value>
+            <value>uk.ac.bbsrc.earlham.browser.core.store.AnalysisStore</value>
         </property>
         <property name="interceptorNames">
             <list>
@@ -184,7 +184,7 @@
 
     <bean name="dafStore" class="org.springframework.aop.framework.ProxyFactoryBean">
         <property name="proxyInterfaces">
-            <value>uk.ac.bbsrc.tgac.browser.core.store.DafStore</value>
+            <value>uk.ac.bbsrc.earlham.browser.core.store.DafStore</value>
         </property>
         <property name="interceptorNames">
             <list>
@@ -195,7 +195,7 @@
 
     <bean name="utilsStore" class="org.springframework.aop.framework.ProxyFactoryBean">
         <property name="proxyInterfaces">
-            <value>uk.ac.bbsrc.tgac.browser.core.store.UtilsStore</value>
+            <value>uk.ac.bbsrc.earlham.browser.core.store.UtilsStore</value>
         </property>
         <property name="interceptorNames">
             <list>

@@ -5,12 +5,12 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>uk.ac.bbsrc.tgac.tgac-browser</groupId>
+    <groupId>uk.ac.bbsrc.earlham.tgac-browser</groupId>
     <version>0.2.0</version>
     <artifactId>tgac-browser</artifactId>
     <packaging>pom</packaging>
     <name>TGAC Browser Framework</name>
-    <url>http://www.tgac.bbsrc.ac.uk/software/tgac-browser</url>
+    <url>http://www.earlham.ac.uk/tgac-browser</url>
 
     <!-- Reporting/Documentation output -->
     <reporting>
@@ -96,8 +96,8 @@
             <id>davey</id>
             <name>Rob Davey</name>
             <email>robert.davey@bbsrc.ac.uk</email>
-            <organization>TGAC</organization>
-            <organizationUrl>http://www.tgac.bbsrc.ac.uk/staff/robert_davey</organizationUrl>
+            <organization>Earlham Institute</organization>
+            <organizationUrl>http://www.earlham.ac.uk/rob-davey</organizationUrl>
             <roles>
                 <role>administrator</role>
                 <role>Developer</role>
@@ -109,9 +109,9 @@
         <developer>
             <id>bianx</id>
             <name>Xingdong Bian</name>
-            <email>xingdong.bian@bbsrc.ac.uk</email>
-            <organization>TGAC</organization>
-            <organizationUrl>http://www.tgac.ac.uk/</organizationUrl>
+            <email>xingdong.bian@ealham.ac.uk</email>
+            <organization>Earlham Institute</organization>
+            <organizationUrl>http://www.earlham.ac.uk/xingdong-bian</organizationUrl>
             <roles>
                 <role>administrator</role>
                 <role>Developer</role>
@@ -123,9 +123,9 @@
         <developer>
             <id>thankia</id>
             <name>Anil Thanki</name>
-            <email>anil.thanki@tgac.ac.uk</email>
-            <organization>TGAC</organization>
-            <organizationUrl>http://www.tgac.ac.uk/</organizationUrl>
+            <email>anil.thanki@earlham.ac.uk</email>
+            <organization>Earlham Institute</organization>
+            <organizationUrl>http://www.earlham.ac.uk/anil-thanki/</organizationUrl>
             <roles>
                 <role>administrator</role>
                 <role>Developer</role>
