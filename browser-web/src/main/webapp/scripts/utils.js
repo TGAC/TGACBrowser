@@ -605,6 +605,7 @@ function format_numbers(number){
 }
 
 function trackToGraph(div, trackName, className){
+
     var start = getBegin();
     var end = getEnd();
 
@@ -612,8 +613,17 @@ function trackToGraph(div, trackName, className){
 
     start = start - diff
     end = parseInt(end) + parseInt(diff)
-    diff = parseInt((end - start) / 400);
+
     var i = 1;
+    if(start < 0){
+        start = 0
+    }
+    if(end > sequencelength){
+        end = sequencelength
+    }
+
+    diff = parseInt((end - start) / 400);
+
     var threshold_lower = parseInt(start) + parseInt(diff * i)
     var threshold_upper = parseInt(start) + parseInt(diff * parseInt(i+1))
 
@@ -621,41 +631,32 @@ function trackToGraph(div, trackName, className){
 
     var graph = []
     var temp_data = {};
+    console.log(window[trackName].length)
+
     temp_data[threshold_lower] = []
     jQuery.each(data, function (index, value) {
         if(parseInt(value.start) > parseInt(threshold_lower) && parseInt(value.start) < parseInt(threshold_upper)){
             temp_data[threshold_lower].push(value)
         }else if(parseInt(value.start) > parseInt(threshold_upper)){
-            console.log(threshold_lower+ " "+threshold_upper)
-            console.log(value.start)
             graph.push({start: threshold_lower, end: threshold_upper, graph: temp_data[threshold_lower].length, data:temp_data[threshold_lower] })
-            if(threshold_upper <= end && threshold_lower >= start){
-                while(value.start > threshold_lower && value.start > threshold_upper){
-                    updateThreshold()
-                }
-                temp_data[threshold_lower].push(value)
+            while(parseInt(value.start) > parseInt(threshold_upper)){
+                updateThreshold()
             }
-            else{
-                console.log(value)
-            }
+            temp_data[threshold_lower].push(value)
         }
     })
 
     function updateThreshold(){
         i++;
-        var temp_threshold_lower = parseInt(start) + parseInt(diff * i)
-        var temp_threshold_upper = parseInt(start) + parseInt(diff * parseInt(i+1))
-        if(temp_threshold_upper <= end && temp_threshold_lower >= start){
-            threshold_lower = temp_threshold_lower
-            threshold_upper = temp_threshold_upper
-            temp_data[threshold_lower] = []
-        }
+        threshold_lower += parseInt(diff)
+        threshold_upper += parseInt(diff)
+        temp_data[threshold_lower] = []
     }
 
 
     window[trackName] = graph;
+    console.log(window[trackName].length)
     dispGraph(div, trackName, className)
-    console.log(window[trackName])
     window['track_list' + trackName].graph = "true";
     window['track_list' + trackName].graphType = "bar"
 
