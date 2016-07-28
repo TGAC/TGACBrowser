@@ -644,8 +644,10 @@
                 <h4 class="modal-title">Upload data</h4>
             </div>
             <div class="modal-body">
-                <p>Current supported format is GAPIT and GEM file in <b>CSV</b> format.</p>
-                example: File should match column labels shown below, but not order of column. <br>
+                Current supported formats are GFF, VCF, GAPIT and GEM.
+                <br>
+                example: File should have extension matching type. <br>
+                GAPIT and GEM files must match column labels shown below, but not order of column. <br>
                 <table class="table table-bordered">
                     <thead>
                     <tr>
