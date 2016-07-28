@@ -184,7 +184,7 @@ function jumpToSeq() {
         setDragableWidth(width);
         setbglayerLeft(seqStart, false);
         setbglayerWidth(width);
-        window.history.pushState('TGAC Browser', 'Title', "index.jsp?query="+seqregname+"&&coord="+coord+"&&from="+getBegin()+'&&to='+getEnd);
+        window.history.pushState('TGAC Browser', 'Title', "index.jsp?query="+seqregname+"&&coord="+coord+"&&from="+getBegin()+'&&to='+getEnd());
         changeSeq(begin, end);
     }
 

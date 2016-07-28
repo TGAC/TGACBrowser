@@ -264,6 +264,8 @@ function seqRight() {
 function auto_drag() {
     var drag = parseFloat(getDragableLeft());
     setbglayerLeft(drag, true);
+    window.history.pushState('TGAC Browser', 'Title', "index.jsp?query="+seqregname+"&&coord="+coord+"&&from="+getBegin()+'&&to='+getEnd());
+
 }
 
 
