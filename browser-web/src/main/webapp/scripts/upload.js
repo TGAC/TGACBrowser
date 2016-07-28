@@ -181,6 +181,7 @@ function readerLoaded(e, files, i, name) {
         readCDSfromGem("uploadCDS"+count, "noid"+count, "#uploadCDS"+count+"_div")
 
     }else if(extension.indexOf("gff") >= 0 ){
+        var trackname=name.split(".")[0]
 
         track_list.forEach(function(d,i){
             if(d.name.indexOf("upload") >= 0){
@@ -213,6 +214,7 @@ function readerLoaded(e, files, i, name) {
         readGFF("uploadGFF"+count, "noid"+count, "#uploadGFF"+count+"_div")
 
     }else if(extension.indexOf("vcf") >= 0 ){
+        var trackname=name.split(".")[0]
 
         track_list.forEach(function(d,i){
             if(d.name.indexOf("upload") >= 0){
@@ -225,7 +227,7 @@ function readerLoaded(e, files, i, name) {
 
         track_list.push({
             name: "uploadVCF"+count,
-            display_label: trackname+"Gene",
+            display_label: trackname+"VCF",
             id: "noid"+count,
             desc: "uploaded file:"+trackname,
             disp: 1,
