@@ -126,7 +126,7 @@ function readerLoaded(e, files, i, name) {
 
     var track_list_length = track_list.length
 
-    if(extension.indexOf("csv") >= 0 && (name.toLowerCase().indexOf("gapit") >= 0 || name.toLowerCase().indexOf("gem") >= 0)){
+    if((extension.indexOf("csv") >= 0 && (name.toLowerCase().indexOf("gapit") >= 0 || name.toLowerCase().indexOf("gem") >= 0)) || (extension.indexOf("gapit") >= 0 || extension.indexOf("gem") >= 0)){
         var trackname=name.split(".")[0]
         track_list.push({
             name: "uploadManhattan"+count,
