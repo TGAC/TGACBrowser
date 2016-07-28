@@ -22,7 +22,7 @@ function readVCF(trackName, trackId, div) {
                     source: parts[1],
                     id: parts[2],
                     start: parseInt(parts[1]),
-                    end: parseInt(parts[1])+parseInt(parts[3].length),
+                    end: parseInt(parts[1])+parseInt(parts[3].length)-1, // because when drawing, end base is counted for track length as well
                     source: parts[3],
                     alt: parts[4],
                     qual: parts[5],

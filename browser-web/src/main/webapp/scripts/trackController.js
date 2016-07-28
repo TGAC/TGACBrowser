@@ -1325,12 +1325,12 @@ function dispVCF(div, trackName, className) {
                         stopposition = 2;
                     }
 
-                    label = stringColour(track[track_len].ref.toString()) + "<br>" + stringColour(track[track_len].alt.toString());
+                    label = stringColour(track[track_len].alt.toString());
 
                     jQuery("<div>").attr({
                         'id': trackName + "" + track_len,
                         'class': trackClass,
-                        'style': "font-family: 'Courier New',Courier,monospace; font-size: 13px; " + border + " " + modi_style + " TOP:" + top + "px; LEFT:" + (startposition) + "px; width:" + (stopposition) + "px;",
+                        'style': "text-align: center; font-family: 'Courier New',Courier,monospace; font-size: 13px; " + border + " " + modi_style + " TOP:" + top + "px; LEFT:" + (startposition) + "px; width:" + (stopposition) + "px;",
                         'onClick': "trackClick(\"" + trackName + "\",\"" + track_len + "\")"
                     }).html(label).appendTo(div);
 
@@ -1373,7 +1373,7 @@ function dispVCF(div, trackName, className) {
                         stopposition = 2;
                     }
 
-                    label = stringColour(track[track_len].ref.toString()) + "<br>" + stringColour(track[track_len].alt.toString());
+                    label = stringColour(track[track_len].alt.toString());
                     jQuery("<div>").attr({
                         'id': trackName + "" + track_len,
                         'class': trackClass + " " + className,
