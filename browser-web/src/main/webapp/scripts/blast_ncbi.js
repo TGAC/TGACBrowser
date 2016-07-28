@@ -1,7 +1,7 @@
  /*
 *
-* Copyright (c) 2013. The Genome Analysis Centre, Norwich, UK
-* TGAC Browser project contacts: Anil Thanki, Xingdong Bian, Robert Davey, Mario Caccamo @ TGAC
+* Copyright (c) 2013. Earlham Institute, Norwich, UK
+* TGAC Browser project contacts: Anil Thanki, Xingdong Bian, Robert Davey @ Earlham Institute
 * **********************************************************************
 *
 * This file is part of TGAC Browser.
