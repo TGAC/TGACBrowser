@@ -26,7 +26,7 @@
 <div id="footer">
     <br/>
 
-    <p>&copy; 2011 - 2014 <a href="http://www.tgac.bbsrc.ac.uk/" target="_blank">The Genome Analysis Centre</a> | Version: 0.2.1 | <a href='mailto:tgac.browser@tgac.ac.uk?Subject=TGAC Browser - Feedback'> Feedback </a></p>
+    <p>&copy; 2011 - 2016 <a href="http://www.earlham.ac.uk/" target="_blank">Earlham Institute</a> | Version: 0.2.1 | <a href='mailto:tgac.browser@tgac.ac.uk?Subject=TGAC Browser - Feedback'> Feedback </a></p>
 </div>
 </body>
 </html>

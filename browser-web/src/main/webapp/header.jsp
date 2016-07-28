@@ -13,7 +13,7 @@
 
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 
-    <link REL="SHORTCUT ICON" href="<c:url value='/images/browser/tgac_logo.png'/>">
+    <link REL="SHORTCUT ICON" href="<c:url value='/images/EI_favicon.jpg'/>">
 
     <link rel="stylesheet" href="<c:url value='/styles/bootstrap-css/bootstrap-theme.min.css'/>" type="text/css">
     <link rel="stylesheet" href="<c:url value='/styles/bootstrap-css/bootstrap.min.css'/>" type="text/css">
@@ -104,7 +104,7 @@
 
 
 <div class="headerbar">
-    <div id="logo">    <img height="30px" src="images/browser/TGAC_white.png" alt=""></a>
+    <div id="logo">    <img height="20px" src="images/EI_full.png" alt=""></a>
     </div>
     <%--<div id="dbinfo"></div>--%>
     <center>
