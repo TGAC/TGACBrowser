@@ -13,7 +13,7 @@ function readVCF(trackName, trackId, div) {
         if (line.indexOf('#') != 0) {
             var parts = line.split('\t');
 
-            if (parts.length == 8 && parseInt(parts[1]) < sequencelength){//} && parts[0] == seqregname) {
+            if (parts.length == 8  && parts[0] == seqregname && parseInt(parts[1]) < sequencelength) {
                 var attParts = parts[7].split(';');
                 var arrayObject = {};
 
