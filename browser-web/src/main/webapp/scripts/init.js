@@ -386,6 +386,10 @@ function onLoad() {
 //        }
 //
 //    });
+
+
+    jQuery("#uploadFormats").tabs();
+
 }
 
 

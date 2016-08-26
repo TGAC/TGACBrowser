@@ -63,10 +63,12 @@
                             <table>
                                 <tr>
                                     <td>
-                                        <input type="text" id="begin_scale" size="5" class="jump"> <span class="unit"></span>
+                                        <input type="text" id="begin_scale" size="5" class="jump"> <span
+                                            class="unit"></span>
                                     </td>
                                     <td>
-                                        <input type="text" id="end_scale" size="5" class="jump"> <span class="unit"></span>
+                                        <input type="text" id="end_scale" size="5" class="jump"> <span
+                                            class="unit"></span>
                                     </td>
                                     <td>
                                         <div onclick="jumpToSeqFromGo()" class="divbutton"> Go</div>
@@ -133,23 +135,28 @@
                         <table style="position: fixed; right: 0px; top: 25px;">
                             <tr>
                                 <td>
-                                    <button id=export type="button" class="btn btn-default btn-sm ui-btn ui-shadow ui-corner-all" style="display: none;">
+                                    <button id=export type="button"
+                                            class="btn btn-default btn-sm ui-btn ui-shadow ui-corner-all"
+                                            style="display: none;">
                                     </button>
                                 </td>
                                 <td>
 
-                                    <button type="button" class="btn btn-default btn-sm ui-btn ui-shadow ui-corner-all" data-toggle="modal" data-target="#uploadModal">
+                                    <button type="button" class="btn btn-default btn-sm ui-btn ui-shadow ui-corner-all"
+                                            data-toggle="modal" data-target="#uploadModal">
                                         <i class="fa fa-upload"></i>
                                     </button>
                                 </td>
                                 <td>
-                                    <button type="button" class="btn btn-default btn-sm ui-btn ui-shadow ui-corner-all" onclick="checkSession();">
+                                    <button type="button" class="btn btn-default btn-sm ui-btn ui-shadow ui-corner-all"
+                                            onclick="checkSession();">
                                         <i class="fa">Save Session</i>
                                     </button>
                                 </td>
 
                                 <td>
-                                    <button type="button" class="btn btn-default btn-sm ui-btn ui-shadow ui-corner-all" data-toggle="modal" data-target="#controlModal">
+                                    <button type="button" class="btn btn-default btn-sm ui-btn ui-shadow ui-corner-all"
+                                            data-toggle="modal" data-target="#controlModal">
                                         <i class="fa">Tracks / Settings</i>
                                     </button>
                                 </td>
@@ -191,7 +198,7 @@
 
         <div id="wrapper">
             <%--<canvas id="myCanvas" width="200" height="100"--%>
-                    <%--style="border:1px solid #000000;">--%>
+            <%--style="border:1px solid #000000;">--%>
             <%--</canvas>--%>
             <div id=tracks>
             </div>
@@ -201,14 +208,15 @@
             <div id="sequence">
 
                 <center>
-                    <div id="marker_div" style="position: absolute; top: 0px; left: 0px; height: 20px; width: 100%;"></div>
+                    <div id="marker_div"
+                         style="position: absolute; top: 0px; left: 0px; height: 20px; width: 100%;"></div>
                     <div id="sequenceString"></div>
                     <div id="translation_div"></div>
                 </center>
 
 
             </div>
-                <span id="ruler"></span>
+            <span id="ruler"></span>
 
         </div>
     </div>
@@ -229,7 +237,8 @@
             <div class="modal-body">
                 <div id="controlpanel" style="font-family: Arial;">
 
-                    <div class="sectionDivider" onclick="toggleLeftInfo(jQuery('#displayoptions_arrowclick'), 'displayoptions');">
+                    <div class="sectionDivider"
+                         onclick="toggleLeftInfo(jQuery('#displayoptions_arrowclick'), 'displayoptions');">
                         Settings
                         <div id="displayoptions_arrowclick" class="toggleLeftDown"></div>
                     </div>
@@ -251,7 +260,8 @@
                         </select>
                     </div>
 
-                    <div class="sectionDivider" onclick="toggleLeftInfo(jQuery('#Tracksdiv_arrowclick'), 'Tracksdiv');">Tracks List
+                    <div class="sectionDivider" onclick="toggleLeftInfo(jQuery('#Tracksdiv_arrowclick'), 'Tracksdiv');">
+                        Tracks List
                         <div id="Tracksdiv_arrowclick" class="toggleLeftDown"></div>
                     </div>
 
@@ -283,7 +293,8 @@
                         </table>
                     </div>
 
-                    <div class="sectionDivider" onclick="toggleLeftInfo(jQuery('#MergeTracksdiv_arrowclick'), 'MergeTracksdiv');">
+                    <div class="sectionDivider"
+                         onclick="toggleLeftInfo(jQuery('#MergeTracksdiv_arrowclick'), 'MergeTracksdiv');">
                         Merge
                         Tracks List
                         <div id="MergeTracksdiv_arrowclick" class="toggleLeftDown"></div>
@@ -316,8 +327,6 @@
 
     </div>
 </div>
-
-
 
 
 <div id="menu">
@@ -635,7 +644,7 @@
 </div>
 
 <div class="modal fade tgacbrowsermodal" id="uploadModal" role="dialog">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
 
         <!-- Modal content-->
         <div class="modal-content">
@@ -647,74 +656,174 @@
                 Current supported formats are GFF, VCF, GAPIT and GEM.
                 <br>
                 example: File should have extension matching type. <br>
-                GAPIT and GEM files must match column labels shown below, but not order of column. <br>
-                <table class="table table-bordered">
-                    <thead>
-                    <tr>
-                        <th>
 
-                        </th>
-                        <th>
-                            P.value
-                        </th>
-                        <th>
-                            Loc
-                        </th>
-                        <th>
-                            Chr
-                        </th>
-                        <th>TAIR_id</th>
-                        <th>
-                            ...
-                        </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>
-                            ref:pos:base
-                        </td>
-                        <td>
-                            log10P
-                        </td>
-                        <td>
-                            Chr_start_pos(ref)_end-pos(ref)
-                        </td>
-                        <td>
-                            Chr
-                        </td>
-                        <td>TAIR_gene_id</td>
-                        <td>
-                            ...
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            cds1:105:A
-                        </td>
-                        <td>
-                            1.62E
-                        </td>
-                        <td>
-                            A01-11658_11788
-                        </td>
-                        <td>
-                            A01
-                        </td>
-                        <td>AT4G30996.1</td>
-                        <td>
-                            ...
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+                <div class="sectionDivider" onclick="toggleLeftInfo(jQuery('#uploadFormats_arrowclick'), 'uploadFormats');">
+                    Formats Description:
+                    <div id="uploadFormats_arrowclick" class="toggleLeft"></div>
+                </div>
+
+                <div id="uploadFormats" style="display: none;" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+                    <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+                        <li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active">
+                            <a href="#formatGFF"><span>GFF</span></a>
+                        </li>
+                        <li class="ui-state-default ui-corner-top">
+                            <a href="#formatVCF"><span>VCF</span></a>
+                        </li>
+                        <li class="ui-state-default ui-corner-top">
+                            <a href="#formatGAPIT"><span>GAPIT</span></a>
+                        </li>
+                        <li class="ui-state-default ui-corner-top">
+                            <a href="#formatGEM"><span>GEM</span></a>
+                        </li>
+                    </ul>
+                    <div id="formatGFF" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
+                        GFF
+                    <br>
+
+                    </div>
+                    <div id="formatVCF" class="ui-tabs-panel ui-widget-content ui-corner-bottom ">
+                        VCF
+                    <br>
+                    </div>
+                    <div id="formatGAPIT" class="ui-tabs-panel ui-widget-content ui-corner-bottom ">
+                        GAPIT
+                    <br>
+                        GAPIT and GEM files must match column labels shown below, but not order of column. <br>
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th>
+
+                                </th>
+                                <th>
+                                    P.value
+                                </th>
+                                <th>
+                                    Loc
+                                </th>
+                                <th>
+                                    Chr
+                                </th>
+                                <th>TAIR_id</th>
+                                <th>
+                                    ...
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>
+                                    ref:pos:base
+                                </td>
+                                <td>
+                                    log10P
+                                </td>
+                                <td>
+                                    Chr_start_pos(ref)_end-pos(ref)
+                                </td>
+                                <td>
+                                    Chr
+                                </td>
+                                <td>TAIR_gene_id</td>
+                                <td>
+                                    ...
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    cds1:105:A
+                                </td>
+                                <td>
+                                    1.62E
+                                </td>
+                                <td>
+                                    A01-11658_11788
+                                </td>
+                                <td>
+                                    A01
+                                </td>
+                                <td>AT4G30996.1</td>
+                                <td>
+                                    ...
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="formatGEM" class="ui-tabs-panel ui-widget-content ui-corner-bottom ">
+                        GEM
+                    <br>
+                        GAPIT and GEM files must match column labels shown below, but not order of column. <br>
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th>
+
+                                </th>
+                                <th>
+                                    P.value
+                                </th>
+                                <th>
+                                    Loc
+                                </th>
+                                <th>
+                                    Chr
+                                </th>
+                                <th>TAIR_id</th>
+                                <th>
+                                    ...
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>
+                                    ref:pos:base
+                                </td>
+                                <td>
+                                    log10P
+                                </td>
+                                <td>
+                                    Chr_start_pos(ref)_end-pos(ref)
+                                </td>
+                                <td>
+                                    Chr
+                                </td>
+                                <td>TAIR_gene_id</td>
+                                <td>
+                                    ...
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    cds1:105:A
+                                </td>
+                                <td>
+                                    1.62E
+                                </td>
+                                <td>
+                                    A01-11658_11788
+                                </td>
+                                <td>
+                                    A01
+                                </td>
+                                <td>AT4G30996.1</td>
+                                <td>
+                                    ...
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table></div>
+                </div>
+
                 <article>
-                    <div id="holder" class="">  Drop files here
+                    <div id="holder" class=""> Drop files here
 
                     </div>
                     <p id="upload" class="hidden">
                         <label>Drag &amp; drop not supported, but you can still upload via this input field:<br>
-                        <input type="file"></label>
+                            <input type="file"></label>
                     </p>
                 </article>
             </div>
