@@ -51,7 +51,6 @@ function removePopup() {
 
 // create a new for each track
 function newpopup(track, i, j) {
-    console.log(track + " " + i + " " + j)
     removePopup()
     var width = jQuery("#popup").width();
     jQuery('#blastselector').hide();
@@ -93,16 +92,16 @@ function newpopup(track, i, j) {
         jQuery("#EditDescription").html('<span title="Edit" class="ui-button ui-icon ui-icon-pencil" onclick=showSNPs(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
         jQuery("#deleteTrack").html('<span title="Remove" class="ui-button ui-icon ui-icon-trash" onclick=deleteTrack(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
         jQuery("#flagTrack").html('<span title="Flag" class="ui-button ui-icon ui-icon-flag" onclick=flagTrack(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
-        if(window["track_list"+track] != null){
-            jQuery("#Linkme").html("<a target='_blank' href='" + window["track_list"+track].ensembl + "" + window[track][i].desc + "'> <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\"></span></a>");
+        if (window["track_list" + track] != null) {
+            jQuery("#Linkme").html("<a target='_blank' href='" + window["track_list" + track].ensembl + "" + window[track][i].desc + "'> <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\"></span></a>");
         }
         jQuery("#revertme").html('<span title="Revert_Name" class="ui-button ui-icon ui-icon-arrowreturnthick-1-w" onclick=revertTrack(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
         jQuery("#Detail").html(stringTrim(window[track][i].transcript[j].desc + "(" + window[track][i].desc + ")", width));
 
     }
     else {
-        if(window["track_list"+track] != null){
-            jQuery("#Linkme").html("<a target='_blank' href='" + window["track_list"+track].ensembl + "" + window[track][i].desc + "'> <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\"></span></a>");
+        if (window["track_list" + track] != null) {
+            jQuery("#Linkme").html("<a target='_blank' href='" + window["track_list" + track].ensembl + "" + window[track][i].desc + "'> <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\"></span></a>");
         }
         jQuery("#makemetop").html('');
         jQuery("#peptides").html('');
@@ -121,9 +120,9 @@ function newpopup(track, i, j) {
 
         }
         jQuery("#ZoomHere").html('<span title="Zoom Here" class="ui-button ui-icon ui-icon-zoomin" onclick=zoomHere(' + window[track][i].start + ',' + endposition + ');></span>');
-        if(track.toLowerCase().indexOf('snp')>0){
+        if (track.toLowerCase().indexOf('snp') > 0) {
             jQuery("#EditDescription").html('<span title="Edit" class="ui-button ui-icon ui-icon-pencil" onclick=showOtherSNPs(\"' + track + '\",\'' + i + '\');></span>');
-        }else{
+        } else {
             jQuery("#EditDescription").html('<span title="Edit" class="ui-button ui-icon ui-icon-pencil" onclick=showSNPs(\"' + track + '\",\'' + i + '\');></span>');
 
         }
@@ -140,7 +139,7 @@ function newpopup(track, i, j) {
             jQuery("#Detail").html(stringTrim(window[track][i].desc, width));
         }
 
-        if(window[track][i].domain){
+        if (window[track][i].domain) {
             jQuery("#exdetails").html('<span title="Attributes" class="ui-button ui-icon ui-icon-note" onclick=showDetails(\"' + track + "\",\"" + i + '\");></span>');
 
         }
@@ -401,89 +400,88 @@ function editDesc(track, i, j) {
 }
 
 function showSNPs(track, i, j) {
-    console.log("showSNPS")
     jQuery.colorbox({
         width: "90%",
         height: "100%",
-        html: "<div id=\"SNPs\"><img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'></div>"});
-
+        html: "<div id=\"SNPs\"><img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'></div>"
+    });
 
 
     var start = 0;
     var end = 0;
-    if(j){
+    if (j) {
         start = window[track][i].transcript[j].start;
         end = window[track][i].transcript[j].end;
 
-    }else{
+    } else {
         start = window[track][i].start;
         end = window[track][i].end;
     }
     Fluxion.doAjax(
         'dnaSequenceService',
         'getSNPs',
-        {'id': seqregname,'start': start, 'end': end, 'coord':coord, 'url': ajaxurl},
-        {'doOnSuccess': function (json) {
-            var file_Text = "\#CHROM,POS,ID,REF,ALT,QUAL,FILTER,INFO-";
-            var html_string = "<div id=vcfdownload></div>" +
-                "SNPs in between " +start +" and "+end+" <br>"+
-                "<table class='list' id='SNP_hit' width=100%><thead><tr><th>#CHROM</th><th>POS</th><th>ID</th><th>REF</th><th>ALT</th><th>QUAL</th><th>FILTER</th><th>INFO</th></tr></thead>";
-            for (var k = 0; k < json.SNP.length; k++) {
-                file_Text += seqregname+","+json.SNP[k].seq_region_start+","+json.SNP[k].hit_name+","+json.SNP[k].ref+","+json.SNP[k].cigar_line+","+json.SNP[k].score+","+json.SNP[k].info+"-"
-                html_string +=  "<tr><td>"+seqregname+"<td>"+json.SNP[k].seq_region_start+"<td>"+json.SNP[k].hit_name+"<td>"+json.SNP[k].ref+"<td>"+json.SNP[k].cigar_line+"<td>"+json.SNP[k].score+"<td><td>"+json.SNP[k].info
+        {'id': seqregname, 'start': start, 'end': end, 'coord': coord, 'url': ajaxurl},
+        {
+            'doOnSuccess': function (json) {
+                var file_Text = "\#CHROM,POS,ID,REF,ALT,QUAL,FILTER,INFO-";
+                var html_string = "<div id=vcfdownload></div>" +
+                    "SNPs in between " + start + " and " + end + " <br>" +
+                    "<table class='list' id='SNP_hit' width=100%><thead><tr><th>#CHROM</th><th>POS</th><th>ID</th><th>REF</th><th>ALT</th><th>QUAL</th><th>FILTER</th><th>INFO</th></tr></thead>";
+                for (var k = 0; k < json.SNP.length; k++) {
+                    file_Text += seqregname + "," + json.SNP[k].seq_region_start + "," + json.SNP[k].hit_name + "," + json.SNP[k].ref + "," + json.SNP[k].cigar_line + "," + json.SNP[k].score + "," + json.SNP[k].info + "-"
+                    html_string += "<tr><td>" + seqregname + "<td>" + json.SNP[k].seq_region_start + "<td>" + json.SNP[k].hit_name + "<td>" + json.SNP[k].ref + "<td>" + json.SNP[k].cigar_line + "<td>" + json.SNP[k].score + "<td><td>" + json.SNP[k].info
 
-                if (k == json.SNP.length - 1) {
-                    html_string += "</table>";
-                    jQuery('#SNPs').html(html_string);
+                    if (k == json.SNP.length - 1) {
+                        html_string += "</table>";
+                        jQuery('#SNPs').html(html_string);
+                    }
                 }
+                //generateFileLink(file_Text)
+                file_Text = file_Text.replace(/\s+/gi, "_")
+                jQuery("#SNP_hit").tablesorter();
+                jQuery('#vcfdownload').html("<button class='ui-state-default ui-corner-all' " +
+                    "onclick=VCFFile('" + file_Text + "') \">Prepare Download VCF File</button>");
+
+
             }
-            //generateFileLink(file_Text)
-            file_Text = file_Text.replace(/\s+/gi, "_")
-            console.log(file_Text)
-            jQuery("#SNP_hit").tablesorter();
-            jQuery('#vcfdownload').html("<button class='ui-state-default ui-corner-all' " +
-                "onclick=VCFFile('" + file_Text + "') \">Prepare Download VCF File</button>");
-
-
-        }
         });
     removePopup();
 }
 
 function showOtherSNPs(track, i) {
-    console.log("showOtherSNPS")
 
     jQuery.colorbox({
         width: "90%",
         height: "100%",
-        html: "<div id=\"SNPs\"><img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'></div>"});
+        html: "<div id=\"SNPs\"><img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'></div>"
+    });
 
 
     var start = window[track][i].start;
     Fluxion.doAjax(
         'dnaSequenceService',
         'getOtherSNPs',
-        {'id': seqregname,'start': start, 'coord':coord, 'url': ajaxurl},
-        {'doOnSuccess': function (json) {
-            var file_Text = "\#CHROM,POS,ID,REF,ALT,QUAL,FILTER,INFO-";
-            var html_string = "<div id=vcfdownload></div>" +
-                "SNPs at position " +start +" <br>"+
-                "<table class='list' id='SNP_hit' width=100%><thead><tr><th>#CHROM</th><th>POS</th><th>ID</th><th>REF</th><th>ALT</th><th>QUAL</th><th>FILTER</th><th>INFO</th></tr></thead>";
-            for (var k = 0; k < json.SNP.length; k++) {
-                file_Text += seqregname+","+json.SNP[k].seq_region_start+","+json.SNP[k].hit_name+","+json.SNP[k].ref+","+json.SNP[k].cigar_line+","+json.SNP[k].score+","+json.SNP[k].info+"-"
-                html_string +=  "<tr><td>"+seqregname+"<td>"+json.SNP[k].seq_region_start+"<td>"+json.SNP[k].hit_name+"<td>"+json.SNP[k].ref+"<td>"+json.SNP[k].cigar_line+"<td>"+json.SNP[k].score+"<td><td>"+json.SNP[k].info
+        {'id': seqregname, 'start': start, 'coord': coord, 'url': ajaxurl},
+        {
+            'doOnSuccess': function (json) {
+                var file_Text = "\#CHROM,POS,ID,REF,ALT,QUAL,FILTER,INFO-";
+                var html_string = "<div id=vcfdownload></div>" +
+                    "SNPs at position " + start + " <br>" +
+                    "<table class='list' id='SNP_hit' width=100%><thead><tr><th>#CHROM</th><th>POS</th><th>ID</th><th>REF</th><th>ALT</th><th>QUAL</th><th>FILTER</th><th>INFO</th></tr></thead>";
+                for (var k = 0; k < json.SNP.length; k++) {
+                    file_Text += seqregname + "," + json.SNP[k].seq_region_start + "," + json.SNP[k].hit_name + "," + json.SNP[k].ref + "," + json.SNP[k].cigar_line + "," + json.SNP[k].score + "," + json.SNP[k].info + "-"
+                    html_string += "<tr><td>" + seqregname + "<td>" + json.SNP[k].seq_region_start + "<td>" + json.SNP[k].hit_name + "<td>" + json.SNP[k].ref + "<td>" + json.SNP[k].cigar_line + "<td>" + json.SNP[k].score + "<td><td>" + json.SNP[k].info
+                }
+                jQuery('#SNPs').html(html_string);
+                jQuery("#SNP_hit").tablesorter();
+                file_Text = file_Text.replace(/\s+/gi, "_")
+                jQuery('#vcfdownload').html("<button class='ui-state-default ui-corner-all' " +
+                    "onclick=VCFFile('" + file_Text + "') \">Prepare Download VCF File</button>");
             }
-            jQuery('#SNPs').html(html_string);
-            jQuery("#SNP_hit").tablesorter();
-            file_Text = file_Text.replace(/\s+/gi, "_")
-            jQuery('#vcfdownload').html("<button class='ui-state-default ui-corner-all' " +
-                "onclick=VCFFile('" + file_Text + "') \">Prepare Download VCF File</button>");
-        }
         });
 
     removePopup();
 }
-
 
 
 // removes data from variables and display again
@@ -538,10 +536,11 @@ function revertTrack(track, i, j) {
             'dnaSequenceService',
             'loadTranscriptName',
             {'id': id, 'url': ajaxurl, 'track': track},
-            {'doOnSuccess': function (json) {
-                window[track][i].transcript[j].desc = json.name;
-                trackToggle(track);
-            }
+            {
+                'doOnSuccess': function (json) {
+                    window[track][i].transcript[j].desc = json.name;
+                    trackToggle(track);
+                }
             });
 
 
@@ -552,10 +551,11 @@ function revertTrack(track, i, j) {
             'dnaSequenceService',
             'loadTrackName',
             {'id': id, 'url': ajaxurl, 'track': track},
-            {'doOnSuccess': function (json) {
-                window[track][i].desc = json.name;
-                trackToggle(track);
-            }
+            {
+                'doOnSuccess': function (json) {
+                    window[track][i].desc = json.name;
+                    trackToggle(track);
+                }
             });
     }
     removePopup();
@@ -624,96 +624,122 @@ function rightClickMenu(e) {
 }
 
 function showDetails(track, i, j) {
-    if(j){
+    if (j) {
         if (window[track][i].transcript[j].domain.length > 1) {
             var details = window[track][i].transcript[j].domain.replace(/,/g, "<br>");
 
             jQuery.colorbox({
                 width: "90%",
-                html: "<b>Attributes</b><hr><span id=domain>" + window[track][i].transcript[j].domain.replace(/(GO:[0-9]+)/g, "<a href='http://www.ebi.ac.uk/QuickGO/GTerm?id=$1' target='_blank'>$1</a>").replace(/,/g, "<br>") + "</span>" });
+                html: "<b>Attributes</b><hr><span id=domain>" + window[track][i].transcript[j].domain.replace(/(GO:[0-9]+)/g, "<a href='http://www.ebi.ac.uk/QuickGO/GTerm?id=$1' target='_blank'>$1</a>").replace(/,/g, "<br>") + "</span>"
+            });
         }
-    }else{
+    } else {
         if (window[track][i].domain.length > 1) {
             //var details = window[track][i].domain.replace(/,/g, "<br>");
 
             jQuery.colorbox({
                 width: "90%",
-                html: "<b>Details</b><hr><span id=domain>" + window[track][i].domain + "</span>" });
+                html: "<b>Details</b><hr><span id=domain>" + window[track][i].domain + "</span>"
+            });
         }
     }
 }
 
 function showPeptides(track, i, k) {
+
     var seq = "";
     Fluxion.doAjax(
         'dnaSequenceService',
         'loadSequence',
-        {'query': seqregname, 'from': window[track][i].start, 'to': window[track][i].end, 'coord': coord, 'url': ajaxurl},
-        {'doOnSuccess': function (json) {
+        {
+            'query': seqregname,
+            'from': window[track][i].start,
+            'to': window[track][i].end,
+            'coord': coord,
+            'url': ajaxurl
+        },
+        {
+            'doOnSuccess': function (json) {
 
-            seq = json.seq;
-            var cdnaseq = "";
-            var noofexons = window[track][i].transcript[k].Exons.length;
-            if (noofexons > 0) {
-                for (var j = 0; j < noofexons; j++) {
-                    var exon_start = window[track][i].transcript[k].Exons[j].start;
-                    var exon_end = window[track][i].transcript[k].Exons[j].end;
-                    var transcript_start = window[track][i].transcript[k].transcript_start;
-                    var transcript_end = window[track][i].transcript[k].transcript_end;
-                    var track_start = window[track][i].transcript[k].start;
-                    var track_end = window[track][i].transcript[k].end;
+                seq = json.seq;
+                var cdnaseq = "";
+                var noofexons = window[track][i].transcript[k].Exons.length;
 
-                    if (exon_start <= transcript_start && exon_end >= transcript_end) {
-                        cdnaseq = seq.substring(parseInt(transcript_start) - parseInt(track_start), parseInt(transcript_end) - parseInt(track_start));
-                    }
-                    else if (exon_start <= transcript_start) {
-                        cdnaseq = seq.substring(parseInt(transcript_start) - parseInt(track_start), parseInt(exon_end) - parseInt(track_start));
-                    }
-                    else if (exon_end >= transcript_end) {
-                        cdnaseq += seq.substring(parseInt(exon_start) - parseInt(track_start), parseInt(transcript_end) - parseInt(track_start));
-                        break;
-                    }
-                    else if (exon_start > transcript_start) {
-                        cdnaseq += seq.substring(parseInt(exon_start) - parseInt(track_start), parseInt(exon_end) - parseInt(track_start));
-                    }
-                    else {
-                    }
 
-                }
-                if (window[track][i].strand == -1) {
-                    var temp = "";
-                    var temp2 = cdnaseq.split("").reverse();
-                    for (var j = 0; j < temp2.length; j++) {
-                        if (temp2[j] == "A") {
-                            temp += "T";
+                if (noofexons > 0) {
+
+                    for (var j = 0; j < noofexons; j++) {
+
+
+                        var exon_start = window[track][i].transcript[k].Exons[j].start;
+                        var exon_end = window[track][i].transcript[k].Exons[j].end;
+                        var transcript_start = window[track][i].transcript[k].transcript_start ? window[track][i].transcript[k].transcript_start : window[track][i].transcript[k].start;
+                        var transcript_end = window[track][i].transcript[k].transcript_end ? window[track][i].transcript[k].transcript_end : window[track][i].transcript[k].end;
+                        var track_start = window[track][i].transcript[k].start;
+                        var track_end = window[track][i].transcript[k].end;
+
+                        if (exon_start <= transcript_start && exon_end >= transcript_end) {
+                            cdnaseq = seq.substring(parseInt(transcript_start) - parseInt(track_start), parseInt(transcript_end) - parseInt(track_start)+ 1);
                         }
-                        else if (temp2[j] == "C") {
-                            temp += "G";
+                        else if (exon_start <= transcript_start) {
+                            cdnaseq = seq.substring(parseInt(transcript_start) - parseInt(track_start), parseInt(exon_end) - parseInt(track_start)+ 1);
                         }
-                        else if (temp2[j] == "G") {
-                            temp += "C";
+                        else if (exon_end >= transcript_end) {
+                            cdnaseq += seq.substring(parseInt(exon_start) - parseInt(track_start), parseInt(transcript_end) - parseInt(track_start) + 1);
+                            break;
                         }
-                        else if (temp2[j] == "T") {
-                            temp += "A";
+                        else if (exon_start > transcript_start) {
+                            cdnaseq += seq.substring(parseInt(exon_start) - parseInt(track_start), parseInt(exon_end) - parseInt(track_start)+ 1);
                         }
                         else {
-                            temp += "N";
                         }
+
                     }
-                    cdnaseq = temp;
+
+                    if (window[track][i].strand == -1) {
+
+                        var temp = "";
+                        var temp2 = cdnaseq.split("").reverse();
+                        for (var j = 0; j < temp2.length; j++) {
+                            if (temp2[j] == "A") {
+                                temp += "T";
+                            }
+                            else if (temp2[j] == "C") {
+                                temp += "G";
+                            }
+                            else if (temp2[j] == "G") {
+                                temp += "C";
+                            }
+                            else if (temp2[j] == "T") {
+                                temp += "A";
+                            }
+                            else {
+                                temp += "N";
+                            }
+                        }
+                        cdnaseq = temp;
+                    }
                 }
+
+
+                var oldcdnaseq = cdnaseq;
+                var oldPeptideSeq = convertPeptide(oldcdnaseq);
+                cdnaseq = convertFasta(cdnaseq)
+                var peptideseq = convertFasta(oldPeptideSeq);
+
+                jQuery.colorbox({
+                    width: "90%",
+                    html: "<table><tr><td><button id=\"peptidebutton\" class='ui-state-default ui-corner-all' " +
+                    "onclick=\"sequenceToogle();\">Peptide Sequence</button><br/>" +
+                    "</td></td></tr></table><br/>" +
+                    "<div id='cdnasequence' style='display : inline; font-family: Courier, \"Courier New\", monospace'>" +
+                    "<b>cDNA Seq</b>" +
+                    "<hr>" + cdnaseq + "</div>" +
+                    "<div id='peptidesequence' style='display : none; font-family: Courier, \"Courier New\", monospace'>" +
+                    "<b>Peptide Seq</b><hr>" + peptideseq + "" +
+                    "</div>"
+                });
             }
-            var oldcdnaseq = cdnaseq;
-            var oldPeptideSeq = convertPeptide(oldcdnaseq);
-            cdnaseq = convertFasta(cdnaseq)
-            var peptideseq = convertFasta(oldPeptideSeq);
-            jQuery.colorbox({
-                width: "90%",
-                html: "<table><tr><td><button id=\"peptidebutton\" class='ui-state-default ui-corner-all' " +
-                "onclick=\"sequenceToogle();\">Peptide Sequence</button><br/>" +
-                "</td></td></tr></table><br/>" +
-                "<div id='cdnasequence' style='display : inline; font-family: Courier, \"Courier New\", monospace'><b>cDNA Seq</b><hr>" + cdnaseq + "</div><div id='peptidesequence' style='display : none; font-family: Courier, \"Courier New\", monospace'><b>Peptide Seq</b><hr>" + peptideseq + "</div>" });
-        }
         });
 
 }
@@ -856,103 +882,97 @@ function fetchFasta(begin, end, track, i, j) {
         "<td><div id=fastadownload></div></td></td></tr></table><br/>" +
             // "<b>Position: </b>" + begin + " - " + end+
         "<br/><b>Fasta:</b> <br/>" + reverseText +
-        "<div id=\"fastaoutput\" style=' font-family: Courier, \"Courier New\", monospace'><img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'></div>"});
+        "<div id=\"fastaoutput\" style=' font-family: Courier, \"Courier New\", monospace'><img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'></div>"
+    });
 
     Fluxion.doAjax(
         'dnaSequenceService',
         'loadSequence',
         {'query': seqregname, 'from': begin, 'to': end, 'coord': coord, 'url': ajaxurl},
-        {'doOnSuccess': function (json) {
-            var seq = (json.seq).toLowerCase();
-            if (i) {
-                var start, stop;
-                console.log(1)
-
-                if (window[track][i].transcript[j].start > window[track][i].transcript[j].end) {
-                    start = window[track][i].transcript[j].end;
-                    stop = window[track][i].transcript[j].start;
-                }
-                else {
-                    start = window[track][i].transcript[j].start;
-                    stop = window[track][i].transcript[j].end;
-                }
-
-                console.log(3)
-
-                var exons = window[track][i].transcript[j].Exons.length;
-                for (var k = 0; k < exons; k++) {
-                    var substart, subend;
+        {
+            'doOnSuccess': function (json) {
+                var seq = (json.seq).toLowerCase();
+                if (i) {
+                    var start, stop;
                     if (window[track][i].transcript[j].start > window[track][i].transcript[j].end) {
-                        substart = window[track][i].transcript[j].Exons[k].end - start;
-                        subend = window[track][i].transcript[j].Exons[k].start - start;
+                        start = window[track][i].transcript[j].end;
+                        stop = window[track][i].transcript[j].start;
                     }
                     else {
-                        substart = window[track][i].transcript[j].Exons[k].start - start;
-                        subend = window[track][i].transcript[j].Exons[k].end - start;
+                        start = window[track][i].transcript[j].start;
+                        stop = window[track][i].transcript[j].end;
                     }
-                    var exonSeq = seq.substring(substart, subend);
-                    seq = seq.substring(0, substart) + exonSeq.toUpperCase() + seq.substring(subend + 1, seq.length);
-                }
 
-                console.log(4)
-
-
-                console.log(5)
-
-                if (window[track][i].strand == -1) {
-                    var temp = "";
-                    var temp2 = seq.split("").reverse();
-                    for (var k = 0; k < temp2.length; k++) {
-                        if (temp2[k] == "a") {
-                            temp += "t";
-                        }
-                        else if (temp2[k] == "c") {
-                            temp += "g";
-                        }
-                        else if (temp2[k] == "g") {
-                            temp += "c";
-                        }
-                        else if (temp2[k] == "t") {
-                            temp += "a";
-                        }
-                        else if (temp2[k] == "A") {
-                            temp += "T";
-                        }
-                        else if (temp2[k] == "C") {
-                            temp += "G";
-                        }
-                        else if (temp2[k] == "G") {
-                            temp += "C";
-                        }
-                        else if (temp2[k] == "T") {
-                            temp += "A";
+                    var exons = window[track][i].transcript[j].Exons.length;
+                    for (var k = 0; k < exons; k++) {
+                        var substart, subend;
+                        if (window[track][i].transcript[j].start > window[track][i].transcript[j].end) {
+                            substart = window[track][i].transcript[j].Exons[k].end - start;
+                            subend = window[track][i].transcript[j].Exons[k].start - start;
                         }
                         else {
-                            temp += "n";
+                            substart = window[track][i].transcript[j].Exons[k].start - start;
+                            subend = window[track][i].transcript[j].Exons[k].end - start;
                         }
+                        var exonSeq = seq.substring(substart, subend);
+                        seq = seq.substring(0, substart) + exonSeq.toUpperCase() + seq.substring(subend + 1, seq.length);
                     }
-                    seq = temp;
-                }
 
+                    if (window[track][i].strand == -1) {
+                        var temp = "";
+                        var temp2 = seq.split("").reverse();
+                        for (var k = 0; k < temp2.length; k++) {
+                            if (temp2[k] == "a") {
+                                temp += "t";
+                            }
+                            else if (temp2[k] == "c") {
+                                temp += "g";
+                            }
+                            else if (temp2[k] == "g") {
+                                temp += "c";
+                            }
+                            else if (temp2[k] == "t") {
+                                temp += "a";
+                            }
+                            else if (temp2[k] == "A") {
+                                temp += "T";
+                            }
+                            else if (temp2[k] == "C") {
+                                temp += "G";
+                            }
+                            else if (temp2[k] == "G") {
+                                temp += "C";
+                            }
+                            else if (temp2[k] == "T") {
+                                temp += "A";
+                            }
+                            else {
+                                temp += "n";
+                            }
+                        }
+                        seq = temp;
+                    }
 
-                jQuery('#fastaoutput').each(function () {
-                    var pattern = /([ATCG]+)/g;
-                    var before = '<span style="color: red;">';
-                    var after = '</span>';
-                    jQuery(this).html(jQuery('#fastaoutput').html().replace(pattern, before + "$1" + after));
-                });
-
-            }
-            else {
-                if (scale != 1) {
                     jQuery('#fastaoutput').html(">" + seqregname + ": " + (begin * scale).toFixed(2) + "" + unit + " - " + (end * scale).toFixed(2) + "" + unit + convertFasta(seq));
-                } else {
-                    jQuery('#fastaoutput').html(">" + seqregname + ": " + (begin) + "" + unit + " - " + (end) + "" + unit + convertFasta(seq));
+
+                    jQuery('#fastaoutput').each(function () {
+                        var pattern = /([ATCG]+)/g;
+                        var before = '<span style="color: red;">';
+                        var after = '</span>';
+                        jQuery(this).html(jQuery('#fastaoutput').html().replace(pattern, before + "$1" + after));
+                    });
+
                 }
+                else {
+                    if (scale != 1) {
+                        jQuery('#fastaoutput').html(">" + seqregname + ": " + (begin * scale).toFixed(2) + "" + unit + " - " + (end * scale).toFixed(2) + "" + unit + convertFasta(seq));
+                    } else {
+                        jQuery('#fastaoutput').html(">" + seqregname + ": " + (begin) + "" + unit + " - " + (end) + "" + unit + convertFasta(seq));
+                    }
+                }
+                jQuery('#fastadownload').html("<button class='ui-state-default ui-corner-all' " +
+                    "onclick=fastaFile('" + seq + "'," + begin + "," + end + ") \">Prepare Download Sequence File</button>");
             }
-            jQuery('#fastadownload').html("<button class='ui-state-default ui-corner-all' " +
-                "onclick=fastaFile('" + seq + "'," + begin + "," + end + ") \">Prepare Download Sequence File</button>");
-        }
         });
 
 }
@@ -964,10 +984,11 @@ function blast(begin, end, hit, blastdb, type) {
         'dnaSequenceService',
         'loadSequence',
         {'query': seqregname, 'from': begin, 'to': end, 'url': ajaxurl},
-        {'doOnSuccess': function (json) {
-            var seq = json.seq;
-            blastTrackSearch(seq, begin, end, hit, blastdb, type);
-        }
+        {
+            'doOnSuccess': function (json) {
+                var seq = json.seq;
+                blastTrackSearch(seq, begin, end, hit, blastdb, type);
+            }
         });
 
 
