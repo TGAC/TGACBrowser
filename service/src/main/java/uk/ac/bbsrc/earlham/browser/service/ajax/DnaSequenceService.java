@@ -25,6 +25,7 @@
 
 package uk.ac.bbsrc.earlham.browser.service.ajax;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sourceforge.fluxion.ajax.Ajaxified;
 import net.sourceforge.fluxion.ajax.util.JSONUtils;
@@ -415,7 +416,7 @@ public class DnaSequenceService {
 
                 log.info("\n\n\ngene count " + count);
                 if (count == 0) {
-                    response.put(trackName, "getGene no result found");
+                    response.put(trackName, new JSONArray());
                 } else if (count < 1000) {
                     response.put(trackName, geneStore.processGenes(geneStore.getGenes(queryid, trackId, start, end), start, end, delta, queryid, trackId));
                 } else {

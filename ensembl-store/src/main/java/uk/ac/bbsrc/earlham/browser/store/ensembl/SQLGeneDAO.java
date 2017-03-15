@@ -338,8 +338,9 @@ public class SQLGeneDAO implements GeneStore {
                 int count = template.queryForInt(SQL, new Object[]{});
                 String cmp_seq_region_id = "select cmp_seq_region_id from assembly where asm_seq_region_id = " + id + " limit 1";
 
-                id = template.queryForInt(cmp_seq_region_id, new Object[]{});
                 if (count > 0) {
+                    id = template.queryForInt(cmp_seq_region_id, new Object[]{});
+
                     query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id " + query + ")";
                     log.info("\n\n new query = " + query);
                     gene_size += countRecursiveGene(query, id, trackId, 0, 0);
@@ -367,10 +368,13 @@ public class SQLGeneDAO implements GeneStore {
      */
     public int countGene(int id, String trackId, long start, long end) throws Exception {
 
-        log.info("\n\n\n countGenes " + trackId + " " + id);
+        log.info("\n\n\n countGenes " + trackId + " " + id + " " + start + " " +  end + " " + start + " " +  end + " " + start + " " +  end + " " + start + " " +  end);
 
         try {
             int gene_size = template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{id, trackId, start, end,start, end,start, end,start, end}, Integer.class);
+
+            log.info("\n\n\n\t gene_size "+gene_size);
+
             if (gene_size == 0) {
                 String query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id = " + id;
                 gene_size = countRecursiveGene(query, id, trackId, start, end);
