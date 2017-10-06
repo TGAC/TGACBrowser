@@ -44,7 +44,7 @@ function readGFF(trackName, trackId, div) {
                         gene[feature['id']] = feature
                         geneid++;
                     }
-                } else if (parts[2].toLowerCase() == 'transcript') {
+                } else if (parts[2].toLowerCase() == 'transcript' || parts[2].toLowerCase() == 'mrna') {
                     feature["Exons"] = []
                     feature["Translation"] = {}
                     feature["Translation"]["CDS"] = []
