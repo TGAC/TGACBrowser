@@ -539,6 +539,7 @@ public class SQLGeneDAO implements GeneStore {
             JSONArray GeneList = new JSONArray();
             JSONObject eachGene = new JSONObject();
             JSONObject eachTrack = new JSONObject();
+            JSONObject Translation = new JSONObject();
             JSONArray exonList = new JSONArray();
             JSONArray transcriptList = new JSONArray();
 
@@ -574,6 +575,7 @@ public class SQLGeneDAO implements GeneStore {
                     if (!transcript_id.equalsIgnoreCase(genes.get(i).get("transcript_id").toString())) {
                         if (!transcript_id.equalsIgnoreCase("")) {
                             eachTrack.put("Exons", exonList);
+                            eachTrack.put("Translation", Translation);
                             transcriptList.add(eachTrack);
                         }
                         transcript_id = genes.get(i).get("transcript_id").toString();
@@ -651,9 +653,12 @@ public class SQLGeneDAO implements GeneStore {
                     eachExon.put("end", start_addition+start_add + Integer.parseInt(genes.get(i).get("exon_end").toString()));
                     if(genes.get(i).get("translation_start") != null){
                         eachTrack.put("transcript_start", start_addition+Integer.parseInt(genes.get(i).get("translation_start").toString()));
+                        Translation.put("start" ,  start_addition+Integer.parseInt(genes.get(i).get("translation_start").toString()));
                     }
                     if(genes.get(i).get("translation_end") != null){
                         eachTrack.put("transcript_end", start_addition+Integer.parseInt(genes.get(i).get("translation_end").toString()));
+                        Translation.put("end" ,  start_addition+Integer.parseInt(genes.get(i).get("translation_end").toString()));
+
                     }
                     exonList.add(eachExon);
 
