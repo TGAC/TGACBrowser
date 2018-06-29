@@ -32,8 +32,8 @@
     <script type="text/javascript" src="<c:url value='/scripts/DataTables-1.10.11/js/jquery.dataTables.js'/>"></script>
     <%--<script type="text/javascript" src="<c:url value='/scripts/jquery/js/jcanvas.min.js'/>"></script>--%>
     <%--BioJS--%>
-    <%--<script type="text/javascript" src="<c:url value='/scripts/BioJS/Biojs.js'/>"></script>--%>
-    <%--<script type="text/javascript" src="<c:url value='/scripts/BioJS/Biojs.Sequence.js'/>"></script>--%>
+    <script type="text/javascript" src="<c:url value='/scripts/biojs/wigExplorer/resources/Biojs.js'/>"></script>
+    <script type="text/javascript" src="<c:url value='/scripts/biojs/wigExplorer/Biojs.wigExplorer.js'/>"></script>
 
     <script src="<c:url value='/scripts/d3.js/d3.v3.min.js'/>"></script>
     <script src="<c:url value='/scripts/d3.js/venn.js'/>"></script>
