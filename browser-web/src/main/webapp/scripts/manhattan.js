@@ -4,6 +4,7 @@
 
 var duration = 10;
 function readGem(trackName, trackId, div) {
+    console.log("readGem")
     var data = window[trackName]
     var keys = d3.keys(window[trackName][0])
     window[trackName] = []
@@ -30,7 +31,7 @@ function readGem(trackName, trackId, div) {
 
             window[trackName].push({
                 "ref": d.ref,
-                "position": d.position,
+                "start": d.position,
                 "refbase": d.refbase,
                 "log10P": noExponents(d.log10P),
                 "cds": d.cds,
@@ -40,6 +41,7 @@ function readGem(trackName, trackId, div) {
 
     });
 
+    console.log(window[trackName])
     window['track_list' + trackName].data = window[trackName]
 
     var margin = {top: 10, right: 0, bottom: 10, left: 0};
@@ -124,10 +126,14 @@ function readCDSfromGem(trackName, trackId, div) {
 
         }
 
-        window[trackName] = temp_data
-        window['track_list' + trackName].data = window[trackName]
+
 
     });
+    console.log(temp_data)
+
+
+    window[trackName] = temp_data
+    window['track_list' + trackName].data = window[trackName]
 
     trackToggle(trackName)
 }
@@ -144,82 +150,90 @@ function dispGraphManhattan(div, trackName, trackId) {
     var partial = (newEnd_temp - newStart_temp) / 2;
 
 
-    data.forEach(function (d, i) {
-        if(d.position >= newStart_temp-partial && d.position <= parseInt(newEnd_temp) + parseInt(partial)){
-            gem.push(d)
+    if(data.length > 0){
+        console.log(data.length)
+        data.forEach(function (d, i) {
+            if(d.start >= newStart_temp-partial && d.start <= parseInt(newEnd_temp) + parseInt(partial)){
+                gem.push(d)
+            }
+        });
+
+        console.log(gem.length)
+
+
+        var width = jQuery("#wrapper").width(),
+            height = 90;
+        var margin = {top: 10, right: 0, bottom: 10, left: 0};
+
+
+        var radious = (width / (newEnd_temp - newStart_temp) )/ 4;
+        if(radious < 1)
+        {
+            radious = 1
         }
-    });
-
-    var width = jQuery("#wrapper").width(),
-        height = 90;
-    var margin = {top: 10, right: 0, bottom: 10, left: 0};
 
 
-    var radious = (width / (newEnd_temp - newStart_temp) )/ 4;
-    if(radious < 1)
-    {
-        radious = 1
+        var svg = window[trackName+"svg"]
+
+        var xScale = d3.scale.linear()
+            .domain([newStart_temp - partial, parseInt(newEnd_temp) + parseInt(partial)])
+            .range([0, width]), // value -> display
+            xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+
+        var yScale = d3.scale.linear()
+            .domain(d3.extent(gem, function (d) {
+                return d.log10P;
+            }))
+            .range([height, 0]);
+
+        svg.selectAll(".dot")
+            .remove();
+
+        var dot = svg.selectAll(".dot")
+            .data(gem);
+
+        var dotEnter = dot.enter().append("circle")
+            .attr("class", "dot")
+            .attr("r", function(){
+                return radious
+            })
+            .attr("cx", function (d) {
+                return xScale(d.start);
+            })
+            .attr("cy", function (d) {
+                return yScale(d.log10P);
+            })
+            .style("fill", "black")
+            .append("svg:title")
+            .text(function (d) {
+                return d.ref+":"+d.start
+            })
+            .attr("transform",
+                "translate(" + margin.left + "," + margin.top + ")");
+
+        var dotUpdate = dot.transition()
+            .duration(duration)
+            .attr("cx", function (d) {
+                return xScale(d.start);
+            })
+            .attr("cy", function (d) {
+                return yScale(d.log10P);
+            })
+            .attr("transform",
+                "translate(" + margin.left + "," + margin.top + ")");
+
+        var dotExit = dot.exit().transition()
+            .duration(duration)
+            .attr("cx", function (d) {
+                return xScale(d.start);
+            })
+            .attr("cy", function (d) {
+                return yScale(d.log10P);
+            })
+            .remove();
     }
 
 
-    var svg = window[trackName+"svg"]
-
-    var xScale = d3.scale.linear()
-        .domain([newStart_temp - partial, parseInt(newEnd_temp) + parseInt(partial)])
-        .range([0, width]), // value -> display
-        xAxis = d3.svg.axis().scale(xScale).orient("bottom");
-
-    var yScale = d3.scale.linear()
-        .domain(d3.extent(gem, function (d) {
-            return d.log10P;
-        }))
-        .range([height, 0]);
-
-    svg.selectAll(".dot")
-        .remove();
-
-    var dot = svg.selectAll(".dot")
-        .data(gem);
-
-    var dotEnter = dot.enter().append("circle")
-        .attr("class", "dot")
-        .attr("r", function(){
-            return radious
-        })
-        .attr("cx", function (d) {
-            return xScale(d.position);
-        })
-        .attr("cy", function (d) {
-            return yScale(d.log10P);
-        })
-        .style("fill", "black")
-        .append("svg:title")
-        .text(function (d) {
-            return d.ref+":"+d.position
-        })
-        .attr("transform",
-            "translate(" + margin.left + "," + margin.top + ")");
-
-    var dotUpdate = dot.transition()
-        .duration(duration)
-        .attr("cx", function (d) {
-            return xScale(d.position);
-        })
-        .attr("cy", function (d) {
-            return yScale(d.log10P);
-        })
-        .attr("transform",
-            "translate(" + margin.left + "," + margin.top + ")");
-
-    var dotExit = dot.exit().transition()
-        .duration(duration)
-        .attr("cx", function (d) {
-            return xScale(d.position);
-        })
-        .attr("cy", function (d) {
-            return yScale(d.log10P);
-        })
-        .remove();
 }
 
 function noExponents(n) {

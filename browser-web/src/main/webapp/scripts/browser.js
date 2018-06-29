@@ -558,6 +558,7 @@ function addJSON(from, to, trackName, trackId) {
 
 function updateUploadedTrack(trackName) {
     console.log("updateUploadedTrack")
+    console.log(trackName)
 
     var temp_data = []
     var start = getBegin();
@@ -581,12 +582,27 @@ function updateUploadedTrack(trackName) {
 
     window['track_list' + trackName].graph = "false";
     var temp_data = []
-    data.forEach(function(value){
-        if(parseInt(value.start) > parseInt(start) && parseInt(value.start) < parseInt(end)){
-            temp_data.push(value)
-        }
 
-    })
+    console.log(data.length)
+
+    if(trackName.indexOf("uploadWig") >= 0){
+        // var bin_array = data.split("\n")
+
+        //     for (var i = 0; i < bin_array.length; i++) {
+
+        //        // if(parseInt(bin_array[i].split("\t")[0])>parseInt(start) && parseInt(bin_array[i].split("\t")[0]) < parseInt(end)){
+        //             temp_data.push(bin_array[i])
+        //        // }
+        //     }
+        temp_data = data
+    }else{
+        data.forEach(function(value){
+            if(parseInt(value.start) > parseInt(start) && parseInt(value.start) < parseInt(end)){
+                temp_data.push(value)
+            }
+        })
+    }
+
 
     console.log(temp_data.length)
 
@@ -684,12 +700,16 @@ function removeJSON(from, to) {
                 window['track_list' + Tracklist[i].name].graph = "false";
                 console.log(data.length)
                 var temp_data = []
-                jQuery.each(data, function (index, value) {
-                    if(parseInt(value.start) > parseInt(from) && parseInt(value.start) < parseInt(to)){
-                        temp_data.push(value)
-                    }
+                if(Tracklist[i].name.indexOf("uploadWig") >= 0){
+                    temp_data = data
+                }else{
+                    jQuery.each(data, function (index, value) {
+                        if(parseInt(value.start) > parseInt(from) && parseInt(value.start) < parseInt(to)){
+                            temp_data.push(value)
+                        }
 
-                })
+                    })
+                }
                 console.log(temp_data.length)
 
                 window[Tracklist[i].name] = temp_data

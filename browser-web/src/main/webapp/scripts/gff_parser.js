@@ -3,6 +3,7 @@
  */
 
 function readGFF(trackName, trackId, div) {
+    console.log("readGFF")
     var gene = {}, transcript = {}, exon = {}, cds = {}, fiveUTR = {}, threeUTR = {};
     var geneid = 1, transcriptid = 1, exonid = 1, cdsid = 1, threeUTRid = 1, fiveUTRid = 1;
     var data = window[trackName].split(/\r\n|\n/)

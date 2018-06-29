@@ -980,7 +980,7 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
 
 function dispTrack(div, trackName, className) {
 
-
+    console.log("dispTrack "+trackName)
     var d = new Date();
     var track_div = document.getElementById(trackName + "_div")
 
@@ -1186,8 +1186,8 @@ function dispTrack(div, trackName, className) {
             }
         }
         else if (track.length >= 1000) {
-            trackToGraph(trackName)
-            dispGraph(div, trackName, className)
+            console.log(track.length)
+            trackToGraph(div, trackName, className)
         }
     }
 

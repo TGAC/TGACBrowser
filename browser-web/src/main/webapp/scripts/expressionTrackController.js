@@ -8,28 +8,60 @@
 
 function dispGraphWig(div, trackName, trackId, className) {
 
+    console.log("dispGraphWig " + trackName)
     var track_html = "";
-    jQuery(div).html("");
+    // jQuery(div).html("");
     jQuery(div).fadeIn();
     jQuery(trackName + "_wrapper").fadeIn();
 
     var track = window[trackName];
 
-    if (track) {
-        if (track[0] == null) {
-            track_html = [];
-            track_html.push("<font size=4><center>No data available for selected region</center></font>");
-        } else {
-            if (track[0][1] > 0) {
-                posGraphWig(div, trackName, trackId, className)
+    if(trackName.indexOf("uploadWig") >= 0){
+
+        console.log("if")
+
+        if (track) {
+            if (track[0] == null) {
+                track_html = [];
+                track_html.push("<font size=4><center>No data available for selected region</center></font>");
             } else {
-                negGraphWig(div, trackName, trackId, className)
+
+                var instance = window[trackName + "biojs"];
+
+                var partial = (parseInt(getEnd()) - parseInt(getBegin())) / 2;
+                var start = parseInt(getBegin()) - parseInt(partial)
+                var end = parseInt(getEnd()) + parseInt(partial);
+
+                instance._updateDraw(start, end)
+
             }
+
+        } else {
+            jQuery(div).html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
         }
 
-    } else {
-        jQuery(div).html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
     }
+    else{
+
+
+
+        if (track) {
+            if (track[0] == null) {
+                track_html = [];
+                track_html.push("<font size=4><center>No data available for selected region</center></font>");
+            } else {
+                if (track[0][1] > 0) {
+                    posGraphWig(div, trackName, trackId, className)
+                } else {
+                    negGraphWig(div, trackName, trackId, className)
+                }
+            }
+
+        } else {
+            jQuery(div).html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
+        }
+    }
+
     jQuery(div).css('height', '70px');
     jQuery(div).fadeIn();
     jQuery("#" + trackName + "_wrapper").fadeIn();
