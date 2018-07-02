@@ -671,6 +671,9 @@
                             <a href="#formatVCF"><span>VCF</span></a>
                         </li>
                         <li class="ui-state-default ui-corner-top">
+                            <a href="#formatWig"><span>Wig</span></a>
+                        </li>
+                        <li class="ui-state-default ui-corner-top">
                             <a href="#formatGAPIT"><span>GAPIT</span></a>
                         </li>
                         <li class="ui-state-default ui-corner-top">
@@ -679,12 +682,51 @@
                     </ul>
                     <div id="formatGFF" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
                         GFF
-                    <br>
+                        <table cellspacing="10" cellpadding="20" border="0" style="border-collapse: separate;">
+                            <tr>
+                                <td>chr1	<td>EVM	<td>gene	<td>8287	<td>16179	<td>.	<td>-	<td>.	<td>ID=geneid;Name=genename
+                            <tr>
+                            <tr><td>chr1	<td>EVM	<td>mRNA	<td>8287	<td>16179	<td>.	<td>-	<td>.	<td>ID=transcriptid;Parent=geneid;Name=transcriptname
+                            <tr><td>chr1	<td>EVM	<td>exon	<td>15864	<td>16179	<td>.	<td>-	<td>.	<td>ID=exonid;Parent=transcriptid
+                            <tr><td>chr1	<td>EVM	<td>CDS	<td>15864	<td>16179	<td>.	<td>-	<td>0	<td>ID=cdsid;Parent=transcriptid
+                                </td>
+                                </tr>
+                            </table>
+                        <br>
+                        File should match column labels shown in example file,
+                        <a target="_blank" href="files/test.gff3"> example file </a>
 
                     </div>
                     <div id="formatVCF" class="ui-tabs-panel ui-widget-content ui-corner-bottom ">
                         VCF
-                    <br>
+                        <br>
+                        <table cellspacing="10" cellpadding="20" border="0" style="border-collapse: separate;">
+                            <tr><td>#chrOM<td>POS<td>ID<td>REF<td>ALT<td>QUAL<td>FILTER<td>INFO<td>FORMAT
+                            <tr><td>chr1<td>14370<td>rs6054257<td>G<td>A<td>29<td>PASS<td>NS=3;DP=14;AF=0.5;DB;H2<td>GT:GQ:DP:HQ
+                            <tr><td>chr1<td>17330<td>.<td>T<td>A<td>3<td>q10<td>NS=3;DP=11;AF=0.017<td>GT:GQ:DP:HQ
+                            <tr><td>chr1<td>1110696<td>rs6040355<td>A<td>G,T<td>67<td>PASS<td>NS=2;DP=10;AF=0.333,0.667;AA=T;DB<td>GT:GQ:DP:HQ
+                            </td>
+                            </tr>
+                            </table>
+                        <br>
+                        File should match column labels shown in example file,
+                        <a target="_blank" href="files/test.vcf"> example file </a>
+
+                    </div>
+                    <div id="formatWig" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
+                        Wig
+                        <table cellspacing="10" cellpadding="20" border="0">
+                            <tr><td>variableStep<td>chrom=chr1
+                            <tr><td>10<td>34
+                            <tr><td>20<td>41
+                            <tr><td>30<td>46
+                            <tr><td>40<td>49
+                            <tr><td>50<td>52
+                        </table>
+                        <br>
+                        File should match column labels shown in example file,
+                        <a target="_blank" href="files/test.wig"> example file </a>
+
                     </div>
                     <div id="formatGAPIT" class="ui-tabs-panel ui-widget-content ui-corner-bottom ">
                         GAPIT
@@ -750,6 +792,9 @@
                             </tr>
                             </tbody>
                         </table>
+                        <br>
+                        File should match column labels shown in example file,
+                        <a target="_blank" href="files/test_gapit.csv"> example file </a>
                     </div>
                     <div id="formatGEM" class="ui-tabs-panel ui-widget-content ui-corner-bottom ">
                         GEM
