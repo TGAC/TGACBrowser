@@ -568,7 +568,7 @@
 
 <div id=blastselector class="popupmenu" style="display: none">
 
-    <div id=blastdbs style="position: absolute; display: none">
+    <div id=blastdbs style="display: none">
         Blast DB <select name="blastdb" id="blastdb">
         <c:set var="databases">${initParam.blastdblink} </c:set>
 
