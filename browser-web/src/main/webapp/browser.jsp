@@ -693,7 +693,7 @@
                                 </tr>
                             </table>
                         <br>
-                        File should match column labels shown in example file,
+                        File should match column labels shown in
                         <a target="_blank" href="files/test.gff3"> example file </a>
 
                     </div>
@@ -709,7 +709,7 @@
                             </tr>
                             </table>
                         <br>
-                        File should match column labels shown in example file,
+                        File should match column labels shown in
                         <a target="_blank" href="files/test.vcf"> example file </a>
 
                     </div>
@@ -724,7 +724,7 @@
                             <tr><td>50<td>52
                         </table>
                         <br>
-                        File should match column labels shown in example file,
+                        File should match column labels shown in
                         <a target="_blank" href="files/test.wig"> example file </a>
 
                     </div>
@@ -793,7 +793,7 @@
                             </tbody>
                         </table>
                         <br>
-                        File should match column labels shown in example file,
+                        File should match column labels shown in
                         <a target="_blank" href="files/test_gapit.csv"> example file </a>
                     </div>
                     <div id="formatGEM" class="ui-tabs-panel ui-widget-content ui-corner-bottom ">
