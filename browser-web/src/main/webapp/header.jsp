@@ -133,7 +133,7 @@
         ${initParam.fasta == "true" && length > 1 ? "| <a href=\"blast.jsp\"><span>Blast Search</span></a>" : ""}
 
 
-        | <a href="<c:url value="filter.jsp"/>"><span>Load SNPs filtering</span></a>
+        <%--| <a href="<c:url value="filter.jsp"/>"><span>Load SNPs filtering</span></a>--%>
     </div>
 </div>
 
