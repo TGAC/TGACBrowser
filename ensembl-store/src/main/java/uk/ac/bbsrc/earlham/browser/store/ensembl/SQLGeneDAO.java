@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import uk.ac.bbsrc.earlham.browser.core.store.GeneStore;
 import uk.ac.bbsrc.earlham.browser.core.store.UtilsStore;
@@ -222,7 +223,7 @@ public class SQLGeneDAO implements GeneStore {
             return assemblyTracks;
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
-            throw new IOException("getHit no result found");
+            throw new IOException("getGene no result found");
         }
     }
 
@@ -261,7 +262,7 @@ public class SQLGeneDAO implements GeneStore {
             return trackList;
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
-            throw new IOException("getHit no result found");
+            throw new IOException("getGene no result found");
         }
     }
 
@@ -302,7 +303,7 @@ public class SQLGeneDAO implements GeneStore {
             return trackList;
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
-            throw new IOException("getHit no result found");
+            throw new IOException("getGene no result found");
         }
     }
 
@@ -319,8 +320,8 @@ public class SQLGeneDAO implements GeneStore {
     public int countRecursiveGene(String query, int id, String trackId, long start, long end) throws Exception {
         log.info("\n\n\n countRecursiveGenes " + trackId + " " + id);
 
+        int gene_size = 0;
         try {
-            int gene_size = 0;
 
             String new_query = query + ")";
             log.info("\n\n new query = " + query);
@@ -350,7 +351,10 @@ public class SQLGeneDAO implements GeneStore {
 
 
             return gene_size;
-        } catch (Exception e) {
+        } catch (EmptyResultDataAccessException erdae){
+            return gene_size;
+        }
+        catch (Exception e) {
             e.printStackTrace();
             throw new Exception("count recursive gene " + e.getMessage());
         }
@@ -369,9 +373,9 @@ public class SQLGeneDAO implements GeneStore {
     public int countGene(int id, String trackId, long start, long end) throws Exception {
 
         log.info("\n\n\n countGenes " + trackId + " " + id + " " + start + " " +  end + " " + start + " " +  end + " " + start + " " +  end + " " + start + " " +  end);
-
+        int gene_size = 0;
         try {
-            int gene_size = template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{id, trackId, start, end,start, end,start, end,start, end}, Integer.class);
+            gene_size = template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{id, trackId, start, end,start, end,start, end,start, end}, Integer.class);
 
             log.info("\n\n\n\t gene_size "+gene_size);
 
@@ -380,7 +384,10 @@ public class SQLGeneDAO implements GeneStore {
                 gene_size = countRecursiveGene(query, id, trackId, start, end);
             }
             return gene_size;
-        } catch (Exception e) {
+        }catch (IncorrectResultSizeDataAccessException irsde){
+            return gene_size;
+        }
+        catch (Exception e) {
             e.printStackTrace();
             throw new Exception("Count Gene " + e.getMessage());
         }
