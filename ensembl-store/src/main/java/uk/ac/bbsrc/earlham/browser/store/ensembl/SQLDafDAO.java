@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import uk.ac.bbsrc.earlham.browser.core.store.DafStore;
 import uk.ac.bbsrc.earlham.browser.core.store.UtilsStore;
@@ -255,8 +256,8 @@ public class SQLDafDAO implements DafStore {
      * @return number of hit per region
      */
     public int countRecursiveHit(String query, int id, String trackId, long start, long end) throws Exception {
+        int hit_size = 0;
         try {
-            int hit_size = 0;
             String new_query = query + ")";
 
             String GET_DAF_SIZE_SLICE_IN = "SELECT COUNT(dna_align_feature_id) FROM dna_align_feature where seq_region_id " +
@@ -279,7 +280,9 @@ public class SQLDafDAO implements DafStore {
             }
 
             return hit_size;
-        } catch (Exception e) {
+        }  catch (IncorrectResultSizeDataAccessException irsde){
+        return hit_size;
+    }catch (Exception e) {
             e.printStackTrace();
             throw new Exception("count recursive hit " + e.getMessage());
         }
@@ -336,7 +339,7 @@ public class SQLDafDAO implements DafStore {
      */
     public List<Map<String, Object>> getHit(int id, String trackId, long start, long end) throws IOException {
         try {
-            String GET_HIT = "SELECT dna_align_feature_id as id,cast(seq_region_start as signed) as start, cast(seq_region_end as signed) as end,seq_region_strand as strand,hit_start as hitstart, hit_end as hitend, hit_name as 'desc', cigar_line as cigarline , external_data as domain " +
+            String GET_HIT = "SELECT dna_align_feature_id as id,cast(seq_region_start as signed) as start, cast(seq_region_end as signed) as end,seq_region_strand as strand,hit_start as hitstart, hit_end as hitend, hit_name as 'desc', cigar_line as cigarline " +
                     "FROM dna_align_feature " +
                     "WHERE seq_region_id = " + id + " AND analysis_id = " + trackId + " and ((seq_region_start >= " + start + " AND seq_region_end <= " + end + ") OR (seq_region_start <= " + start + " AND seq_region_end >= " + end + ") OR (seq_region_end >= " + start + "  AND  seq_region_end <= " + end + ") OR (seq_region_start <= " + start + " AND seq_region_start <= " + end + "))" +
                     " order by seq_region_start";
@@ -354,7 +357,7 @@ public class SQLDafDAO implements DafStore {
         try {
 
 
-            String GET_HIT = "SELECT dna_align_feature_id as id,cast(seq_region_start as signed) as start, cast(seq_region_end as signed) as end,seq_region_strand as strand,hit_start as hitstart, hit_end as hitend, hit_name as 'desc', cigar_line as cigarline, external_data as domain " +
+            String GET_HIT = "SELECT dna_align_feature_id as id,cast(seq_region_start as signed) as start, cast(seq_region_end as signed) as end,seq_region_strand as strand,hit_start as hitstart, hit_end as hitend, hit_name as 'desc', cigar_line as cigarline " +
                     "FROM dna_align_feature " +
                     "WHERE seq_region_id " + query + " AND analysis_id = " + trackId +
                     " order by seq_region_start";
