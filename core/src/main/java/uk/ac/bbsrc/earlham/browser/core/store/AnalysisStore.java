@@ -46,4 +46,12 @@ public interface AnalysisStore extends Store {
     public String getLogicNameByAnalysisId(int query) throws IOException;
 
     public List<Map<String, Object>> listSNPs() throws IOException;
+
+    public boolean presentInGene(String id) throws IOException;
+
+    public boolean presentInRepeat(String id) throws IOException;
+
+    public boolean presentInDAF(String id) throws IOException;
+
+    public boolean presentInMarker(String id) throws IOException;
 }
