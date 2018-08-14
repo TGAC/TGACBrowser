@@ -8,7 +8,6 @@
 
 function dispGraphWig(div, trackName, trackId, className) {
 
-    console.log("dispGraphWig " + trackName)
     var track_html = "";
     // jQuery(div).html("");
     jQuery(div).fadeIn();
@@ -18,7 +17,6 @@ function dispGraphWig(div, trackName, trackId, className) {
 
     if(trackName.indexOf("uploadWig") >= 0){
 
-        console.log("if")
 
         if (track) {
             if (track[0] == null) {

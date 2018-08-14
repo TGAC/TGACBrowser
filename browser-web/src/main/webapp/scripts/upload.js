@@ -264,7 +264,6 @@ function readerLoaded(e, files, i, name) {
         var end = parseInt(getEnd()) + parseInt(partial);
 
 
-        console.log(start+" "+end)
         track_list.push({
             name: "uploadWig"+count,
             display_label: "uploadWig"+count,
@@ -320,7 +319,6 @@ function readerLoaded(e, files, i, name) {
 
         window["uploadWig"+count] = wig.join("\n")
 
-        console.log("count "+count)
         window["uploadWig"+count+"biojs"] = new Biojs.wigExplorer({
             target: "uploadWig"+count+"_div",
             selectionBackgroundColor: 'red',
@@ -351,7 +349,6 @@ function processFile(bin){
 
 function processData(allText) {
 
-    console.log("processData")
 
     var allTextLines = allText.split(/\r\n|\n/);
     var headers = allTextLines[0].split(',');

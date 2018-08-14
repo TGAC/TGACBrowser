@@ -3,7 +3,6 @@
  */
 
 function readVCF(trackName, trackId, div) {
-    console.log("red VCF")
     var vcf = [];
     var vcfid = 1;
     var data = window[trackName].split(/\r\n|\n/)
@@ -12,7 +11,6 @@ function readVCF(trackName, trackId, div) {
     data.forEach(function (line) {
         if (line.indexOf('#') != 0) {
             var parts = line.split('\t');
-            console.log(parts.length)
             if (parts.length >= 8  && parts[0] == seqregname && parseInt(parts[1]) < sequencelength) {
                 var attParts = parts[7].split(';');
                 var arrayObject = {};
@@ -47,26 +45,19 @@ function readVCF(trackName, trackId, div) {
             var err = new Error('9 parts of feature not found');
         }
     });
-    console.log(counter + " "+ vcf.length)
     window['track_list' + trackName].data = vcf
     window[trackName] = filterData(trackName);
     trackToggle(trackName)
 }
 
 function filterData(trackName){
-    console.log("filterData")
     var data;
     if(window['track_list' + trackName].data){
-        console.log("filterData if")
-
         data = window['track_list' + trackName].data;
     }else{
-        console.log("filterData else")
-
         data = window[trackName];
     }
 
-    console.log(data.length)
     var temp_data = []
     var start = getBegin();
     var end = getEnd();
@@ -82,8 +73,6 @@ function filterData(trackName){
         }
 
     })
-    console.log(temp_data.length)
-
     return temp_data;
 }
 

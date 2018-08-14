@@ -124,7 +124,6 @@ function browser_coordinates() {
 }
 
 function trackToggle(trackname) {
-    console.log("trackToggle "+trackname)
     var index = 0;
     var graph = "false";
     var trackid = "";
@@ -139,45 +138,34 @@ function trackToggle(trackname) {
             if (jQuery("#" + track_list[i].name + "Checkbox").is(':checked')) {
                 if (graph == "true") {
                     if (window['track_list' + trackName].graphtype == "bar") {
-                        console.log("calling dispGraph")
                         dispGraph("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
                     } else if (window['track_list' + trackName].graphtype == "heat") {
-                        console.log("calling dispGraphHeat")
                         dispGraphHeat("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
                     } else if (window['track_list' + trackName].graphtype == "wig") {
-                        console.log("calling dispGraphWig")
                         dispGraphWig("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
                     }else if (window['track_list' + trackName].graphtype == "manhattan"){
-                        console.log("calling dispGraphManhattan")
                         dispGraphManhattan("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
                     }
                 }
                 else if (trackName.toLowerCase().indexOf("blasttrack") >= 0) {
-                    console.log("calling dispBLAST")
                     dispBLAST("#" + trackName + "_div", 'blasttrack');
                 }
                 else if (trackName.toLowerCase().indexOf("manhattan") >= 0) {
-                    console.log("calling dispGraphManhattan")
                     dispGraphManhattan( "#" + trackName + "_div",trackName, window['track_list' + trackName].display_label);
                 }
                 else if (trackName.toLowerCase().indexOf("gene") >= 0 || trackName.toLowerCase().indexOf("gff") >= 0) {
-                    console.log("calling dispGenes")
                     dispGenes("#" + trackName + "_div", trackName, window['track_list' + trackName].expand, window['track_list' + trackName].display_label);
                 }
                 else if (trackName.toLowerCase().indexOf("vcf") >= 0) {
-                    console.log("calling dispVCF")
                     dispVCF("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
                 }
                 else if (trackid.toString().toLowerCase().indexOf("wig") >= 0 || trackid.toString().toLowerCase().indexOf("bw") >= 0 || trackid.toString().toLowerCase().indexOf("bigwig") >= 0) {
-                    console.log("calling dispGraphWig")
                     dispGraphWig("#" + trackName + "_div", trackName, trackid, window['track_list' + trackName].display_label);
                 }
                 else if (trackName.toLowerCase().indexOf("bed") >= 0) {
-                    console.log("calling dispGraphBed")
                     dispGraphBed("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
                 }
                 else {
-                    console.log("calling dispTrack")
                     dispTrack("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
                 }
             }
@@ -194,46 +182,34 @@ function trackToggle(trackname) {
         if (jQuery('#' + trackname + 'Checkbox').is(':checked')) {
             if (graph == "true") {
                 if (window['track_list' + trackname].graphtype == "bar") {
-                    console.log("calling dispBLAST")
                     dispGraph("#" + trackname + "_div", trackname, window['track_list' + trackname].display_label);
                 } else if (window['track_list' + trackname].graphtype == "heat") {
-                    console.log("calling dispGraphHeat")
                     dispGraphHeat("#" + trackname + "_div", trackname, window['track_list' + trackname].display_label);
                 } else if (window['track_list' + trackname].graphtype == "wig") {
-                    console.log("calling dispGraphWig")
                     dispGraphWig("#" + trackname + "_div", trackname, window['track_list' + trackname].display_label);
                 }else if (window['track_list' + trackname].graphtype == "manhattan"){
-                    console.log("calling dispGraphManhattan")
                     dispGraphManhattan("#" + trackname + "_div", trackname, window['track_list' + trackname].display_label);
                 }
             }
             else if (trackname.toLowerCase().indexOf("blasttrack") >= 0) {
-                console.log("calling dispBLAST")
                 dispBLAST("#" + trackname + "_div", 'blasttrack');
             }
             else if (trackname.toLowerCase().indexOf("manhattan") >= 0) {
-                // dispGraphManhattan( "#upload_div","gem", "noid");
-                console.log("calling dispGraphManhattan")
                 dispGraphManhattan( "#" + trackname + "_div",trackname, window['track_list' + trackname].display_label);
             }
             else if (trackname.toLowerCase().indexOf("gene") >= 0 || trackname.toLowerCase().indexOf("gff") >= 0) {
-                console.log("calling dispGenes")
                 dispGenes("#" + trackname + "_div", trackname, window['track_list' + trackname].expand, window['track_list' + trackname].display_label);
             }
             else if (trackname.toLowerCase().indexOf("vcf") >= 0) {
-                console.log("calling dispVCF")
                 dispVCF("#" + trackname + "_div", trackname, window['track_list' + trackname].display_label);
             }
             else if (trackid.toString().toLowerCase().indexOf("wig") >= 0 || trackid.toString().toLowerCase().indexOf("bw") >= 0 || trackid.toString().toLowerCase().indexOf("bigwig") >= 0) {
-                console.log("calling dispGraphWig")
                 dispGraphWig("#" + trackname + "_div", trackname, trackid, window['track_list' + trackname].display_label);
             }
             else if (trackname.toLowerCase().indexOf("bed") >= 0) {
-                console.log("calling dispGraphBed")
                 dispGraphBed("#" + trackname + "_div", trackname, window['track_list' + trackname].display_label);
             }
             else {
-                console.log("calling dispTrack")
                 dispTrack("#" + trackname + "_div", trackname, window['track_list' + trackname].display_label);
             }
         }
@@ -677,7 +653,6 @@ function trackToGraph(div, trackName, className){
 
     window[trackName] = graph;
     dispGraph(div, trackName, className)
-    console.log(trackName)
     window['track_list' + trackName].graph = "true";
     window['track_list' + trackName].graphType = "bar"
 

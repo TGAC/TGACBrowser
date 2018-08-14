@@ -4,7 +4,6 @@
 
 var duration = 10;
 function readGem(trackName, trackId, div) {
-    console.log("readGem")
     var data = window[trackName]
     var keys = d3.keys(window[trackName][0])
     window[trackName] = []
@@ -41,7 +40,6 @@ function readGem(trackName, trackId, div) {
 
     });
 
-    console.log(window[trackName])
     window['track_list' + trackName].data = window[trackName]
 
     var margin = {top: 10, right: 0, bottom: 10, left: 0};
@@ -88,7 +86,6 @@ function readGem(trackName, trackId, div) {
 }
 
 function readCDSfromGem(trackName, trackId, div) {
-    console.log("readCDSfromGem")
     var data = window[trackName]
     var temp_data = []
     var outputList = [];
@@ -129,7 +126,6 @@ function readCDSfromGem(trackName, trackId, div) {
 
 
     });
-    console.log(temp_data)
 
 
     window[trackName] = temp_data
@@ -140,7 +136,6 @@ function readCDSfromGem(trackName, trackId, div) {
 
 
 function dispGraphManhattan(div, trackName, trackId) {
-    console.log("dispGraphManhattan")
 
     var data = window[trackName];
     var gem = []
@@ -151,14 +146,12 @@ function dispGraphManhattan(div, trackName, trackId) {
 
 
     if(data.length > 0){
-        console.log(data.length)
         data.forEach(function (d, i) {
             if(d.start >= newStart_temp-partial && d.start <= parseInt(newEnd_temp) + parseInt(partial)){
                 gem.push(d)
             }
         });
 
-        console.log(gem.length)
 
 
         var width = jQuery("#wrapper").width(),

@@ -980,7 +980,6 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
 
 function dispTrack(div, trackName, className) {
 
-    console.log("dispTrack "+trackName)
     var d = new Date();
     var track_div = document.getElementById(trackName + "_div")
 
@@ -1186,7 +1185,6 @@ function dispTrack(div, trackName, className) {
             }
         }
         else if (track.length >= 1000) {
-            console.log(track.length)
             trackToGraph(div, trackName, className)
         }
     }
@@ -1207,7 +1205,6 @@ function dispTrack(div, trackName, className) {
 }
 
 function dispVCF(div, trackName, className) {
-    console.log("dispVCF")
     var labelclass = "label" + trackName;
     var modi_style;
     var labeltoogle = "display : in-line;";

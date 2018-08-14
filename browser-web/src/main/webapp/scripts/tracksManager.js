@@ -360,12 +360,10 @@ function toggleLeftInfo(div, id) {
 }
 
 function loadDefaultTrack(tracklist) {
-    console.log("loadDefaultTrack")
     var Tracklist = tracklist;
     var cookietest = []
     if (JSON.parse(jQuery.cookie('trackslist')).length > 1) {
         cookietest = JSON.parse(jQuery.cookie('trackslist'));
-        console.log(cookietest)
     }
     //else {
         for (var i = 0; i < Tracklist.length; i++) {
@@ -422,7 +420,6 @@ function loadDefaultTrack(tracklist) {
 
         jQuery.each(cookietest, function (j, v) {
             if (v.name == Tracklist[i].name && v.disp == 1 && Tracklist[i].id.toString().indexOf('noid') < 0) {
-                console.log("v "+v.name)
                 jQuery('#' + Tracklist[i].name + 'Checkbox').attr('checked', true);
                 mergeTrackList(Tracklist[i].name);
                 var partial = (getEnd() - getBegin()) + ((getEnd() - getBegin()) / 2);

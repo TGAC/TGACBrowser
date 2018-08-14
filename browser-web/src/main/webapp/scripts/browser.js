@@ -62,18 +62,9 @@ function scrollZoom(event) {
 }
 
 function zoomIn(zoom_len) {
-    console.log("zoomin")
-    console.log(getBegin())
-    console.log(getEnd())
     var tempBegin = (parseInt(getBegin()) + parseInt(zoom_len));
     var tempEnd = (parseInt(getEnd()) - parseInt(zoom_len));
 
-    console.log(tempBegin)
-    console.log(tempEnd)
-
-    console.log(tempEnd - tempBegin)
-
-    console.log(minWidth)
 
 //    if ((tempEnd - tempBegin) <= minWidth) {
 //        var diff = minWidth - (tempEnd - tempBegin);
@@ -264,13 +255,12 @@ function seqRight() {
 function auto_drag() {
     var drag = parseFloat(getDragableLeft());
     setbglayerLeft(drag, true);
-    window.history.pushState('TGAC Browser', 'Title', "index.jsp?query="+seqregname+"&&coord="+coord+"&&from="+getBegin()+'&&to='+getEnd());
+    window.history.pushState('TGAC Browser', 'Title', "index.jsp?query=" + seqregname + "&&coord=" + coord + "&&from=" + getBegin() + '&&to=' + getEnd());
 
 }
 
 
 function setNavPanel() {
-    console.log("setnavpanel")
 //    var left = 0;
 //    var height = parseFloat(jQuery("#sequence").position().top) - (parseFloat(jQuery("#draggable").position().top) + parseFloat(jQuery("#draggable").css("height"))) + "px solid #cccccc";
 //    console.log("setnavpanel h"+height)
@@ -315,9 +305,7 @@ function setNavPanel() {
 // Tracks can be drag
 function trackDrag() {
 
-    console.log("track drag")
     var temp = parseFloat(1) - parseFloat(jQuery('#wrapper').css("left"));
-    console.log(temp)
     if (temp > 10 || temp < -10) {
 
 
@@ -333,9 +321,6 @@ function trackDrag() {
             beginnew = beginnew - (endnew - sequencelength);
             endnew = sequencelength;
         }
-
-        console.log(beginnew)
-        console.log(endnew)
 
         setBegin(beginnew);
         setEnd(endnew);
@@ -353,13 +338,10 @@ function updateJSON() {
     var partial = (getEnd() - getBegin()) / 2;
     from = Math.ceil(parseInt(getEnd()) - partial);
     to = Math.ceil(parseInt(getEnd()) + partial);
-    console.log(lastStart + " " + lastEnd)
-    console.log(getBegin() + " " + getEnd())
 
     if (lastStart >= 0 || lastEnd >= 0) {
 
         if (parseInt(lastStart) < parseInt(getBegin()) && parseInt(lastEnd) > parseInt(getEnd())) {
-            console.log("zoomin");
             // removeJSON(null, parseInt((parseInt(getEnd()) + parseInt(partial))));
             // removeJSON(parseInt(parseInt(getBegin() - partial)), null);
 
@@ -372,7 +354,6 @@ function updateJSON() {
             lastStart = getBegin();
         }
         else if (parseInt(lastStart) < parseInt(getBegin()) || parseInt(lastEnd) < parseInt(getEnd())) {
-            console.log("right");
             from = Math.ceil(parseInt(getBegin()) - partial);
             to = Math.ceil(parseInt(getEnd()) + partial);
 
@@ -382,7 +363,6 @@ function updateJSON() {
             lastStart = getBegin();
         }
         else if (parseInt(lastStart) > parseInt(getBegin()) || parseInt(lastEnd) > parseInt(getEnd())) {
-            console.log("left");
             from = Math.floor((parseInt(getBegin()) - parseInt(partial)));
             to = Math.ceil(parseInt(getEnd()) + partial);
 
@@ -391,7 +371,6 @@ function updateJSON() {
             lastStart = getBegin();
         }
         else if (parseInt(lastStart) > parseInt(getBegin()) || parseInt(lastEnd) < parseInt(getEnd())) {
-            console.log("zoomout");
             from = Math.floor((getBegin() - partial));
             to = Math.ceil(parseInt(getEnd()) + parseInt(partial));
 
@@ -415,7 +394,7 @@ function updateJSON() {
 
 function addJSON(from, to, trackName, trackId) {
 
-    console.log("add json")
+    console.log("add json " + trackName)
 
     if (from < 0) {
         from = 0;
@@ -490,7 +469,6 @@ function addJSON(from, to, trackName, trackId) {
                     trackToggle(Tracklist[i].name);
                 }
                 else if (Tracklist[i].name.indexOf("upload") >= 0) {
-                    console.log("upload")
                     updateUploadedTrack(Tracklist[i].name)
                     trackToggle(Tracklist[i].name);
                 }
@@ -557,35 +535,28 @@ function addJSON(from, to, trackName, trackId) {
 }
 
 function updateUploadedTrack(trackName) {
-    console.log("updateUploadedTrack")
-    console.log(trackName)
 
     var temp_data = []
     var start = getBegin();
     var end = getEnd();
 
-    var diff = (end-start)/2
+    var diff = (end - start) / 2
 
     start = start - diff
     end = parseInt(end) + parseInt(diff)
 
 
     var data;
-    if(window['track_list' + trackName].data){
-        console.log("filterData if")
+    if (window['track_list' + trackName].data) {
         data = window['track_list' + trackName].data;
-    }else{
-        console.log("filterData else")
-
+    } else {
         data = window[trackName];
     }
 
     window['track_list' + trackName].graph = "false";
     var temp_data = []
 
-    console.log(data.length)
-
-    if(trackName.indexOf("uploadWig") >= 0){
+    if (trackName.indexOf("uploadWig") >= 0) {
         // var bin_array = data.split("\n")
 
         //     for (var i = 0; i < bin_array.length; i++) {
@@ -595,16 +566,14 @@ function updateUploadedTrack(trackName) {
         //        // }
         //     }
         temp_data = data
-    }else{
-        data.forEach(function(value){
-            if(parseInt(value.start) > parseInt(start) && parseInt(value.start) < parseInt(end)){
+    } else {
+        data.forEach(function (value) {
+            if (parseInt(value.start) > parseInt(start) && parseInt(value.start) < parseInt(end)) {
                 temp_data.push(value)
             }
         })
     }
 
-
-    console.log(temp_data.length)
 
     window[trackName] = temp_data
     trackToggle(trackName)
@@ -688,30 +657,25 @@ function removeJSON(from, to) {
 
 
                 var data;
-                if(window['track_list' + Tracklist[i].name].data){
-                    console.log("filterData if")
+                if (window['track_list' + Tracklist[i].name].data) {
                     data = window['track_list' + Tracklist[i].name].data;
-                }else{
-                    console.log("filterData else")
-
+                } else {
                     data = window[Tracklist[i].name];
                 }
 
                 window['track_list' + Tracklist[i].name].graph = "false";
-                console.log(data.length)
+                //console.log(data.length)
                 var temp_data = []
-                if(Tracklist[i].name.indexOf("uploadWig") >= 0){
+                if (Tracklist[i].name.indexOf("uploadWig") >= 0) {
                     temp_data = data
-                }else{
+                } else {
                     jQuery.each(data, function (index, value) {
-                        if(parseInt(value.start) > parseInt(from) && parseInt(value.start) < parseInt(to)){
+                        if (parseInt(value.start) > parseInt(from) && parseInt(value.start) < parseInt(to)) {
                             temp_data.push(value)
                         }
 
                     })
                 }
-                console.log(temp_data.length)
-
                 window[Tracklist[i].name] = temp_data
                 trackToggle(Tracklist[i].name)
 

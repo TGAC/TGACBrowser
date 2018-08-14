@@ -135,7 +135,6 @@ function jumpToSeqFromGo() {
 
 
 function jumpToSeq() {
-    console.log("jumptoseq")
     var begin = getBegin();
     var end = getEnd();
 

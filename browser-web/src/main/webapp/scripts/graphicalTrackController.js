@@ -24,7 +24,6 @@
  */
 
 function dispGraph(div, trackName, className) {
-    console.log("dispGraph")
     var track_html = "";
     jQuery(div).html("");
 
