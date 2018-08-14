@@ -25,7 +25,6 @@
 
 package uk.ac.bbsrc.earlham.browser.service.ajax;
 
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sourceforge.fluxion.ajax.Ajaxified;
 import net.sourceforge.fluxion.ajax.util.JSONUtils;
@@ -319,9 +318,6 @@ public class DnaSequenceService {
             } else if (trackId.contains(".sam") || trackId.contains(".bam")) {
                 count = SamBamService.countBAM(start, end, delta, trackId, seqName);
 
-                log.info("\n\n\nBAM count " + count);
-
-
                 if (count == 0) {
                     response.put(trackName, "getHit no result found");
 
@@ -334,10 +330,8 @@ public class DnaSequenceService {
                 }
             } else if (trackId.contains(".gff") || trackId.contains(".GFF")) {
                 count = GFFService.countGFF(start, end, delta, trackId, seqName);
-                log.info("\n\n\nGFF count " + count);
-
                 if (count == 0) {
-                    response.put(trackName, "getHit no result found");
+                    response.put(trackName, "getGene no result found");
 
                 } else if (count < 5000) {
                     response.put(trackName, gffService.getGFFReads(start, end, delta, trackId, seqName));
@@ -348,9 +342,6 @@ public class DnaSequenceService {
                 }
             } else if (trackId.contains(".vcf") || trackId.contains(".VCF")) {
                 count = VCFService.countVCF(start, end, delta, trackId, seqName);
-
-                log.info("\n\n\nVCF count " + count);
-
 
 //                if (count ==0) {
 //                    response.put(trackName, "getHit no result found");
@@ -367,7 +358,6 @@ public class DnaSequenceService {
                 response.put(trackName, SamBamService.getBed(start, end, delta, trackId, seqName));
             } else if (trackId.indexOf("cs") >= 0) {
                 count = assemblyStore.countAssembly(queryid, trackId, start, end);
-                log.info("\n\n\nassembly count " + count);
                 if (count == 0) {
                     response.put(trackName, "getHit no result found");
 
@@ -382,10 +372,8 @@ public class DnaSequenceService {
                     response.put("graphtype", "heat");
                     response.put(trackName, assemblyStore.getAssemblyOverviewGraph(queryid, trackId, start, end));
                 }
-            } else if (analysisStore.getLogicNameByAnalysisId(Integer.parseInt(trackId)).matches("(?i).*repeat.*")) {
+            } else if (analysisStore.presentInRepeat(trackId.toString())) {
                 count = repeatStore.countRepeat(queryid, trackId, start, end);
-                log.info("\n\n\nrepeat count " + count);
-
                 if (count == 0) {
                     response.put(trackName, "getHit no result found");
 
@@ -396,10 +384,8 @@ public class DnaSequenceService {
                     response.put("graphtype", "bar");
                     response.put(trackName, repeatStore.getRepeatGraph(queryid, trackId, start, end));
                 }
-            } else if (analysisStore.getLogicNameByAnalysisId(Integer.parseInt(trackId)).matches("(?i).*marker.*")) {
+            } else if (analysisStore.presentInMarker(trackId.toString())) {
                 count = markerStore.countMarker(queryid, trackId, start, end);
-                log.info("\n\n\nrepeat count " + count);
-
                 if (count == 0) {
                     response.put(trackName, "getHit no result found");
 
@@ -410,13 +396,10 @@ public class DnaSequenceService {
                     response.put("graphtype", "bar");
                     response.put(trackName, markerStore.getMarkerGraph(queryid, trackId, start, end));
                 }
-            } else if (analysisStore.getLogicNameByAnalysisId(Integer.parseInt(trackId)).matches("(?i).*gene.*")) {
+            } else if (analysisStore.presentInGene(trackId.toString())) {
                 count = geneStore.countGene(queryid, trackId, start, end);
-
-
-                log.info("\n\n\ngene count " + count);
                 if (count == 0) {
-                    response.put(trackName, new JSONArray());
+                    response.put(trackName, "getGene no result found");
                 } else if (count < 1000) {
                     response.put(trackName, geneStore.processGenes(geneStore.getGenes(queryid, trackId, start, end), start, end, delta, queryid, trackId));
                 } else {
@@ -426,9 +409,6 @@ public class DnaSequenceService {
                 }
             } else {
                 count = dafStore.countHit(queryid, trackId, start, end);
-
-                log.info("\n\n\nhit count " + count);
-
                 if (count == 0) {
                     response.put(trackName, "getHit no result found");
                 } else if (count < 5000) {
