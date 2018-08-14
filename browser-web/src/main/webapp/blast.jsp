@@ -252,16 +252,11 @@
 
                 var match_mismatch = jQuery("#match-mismatch").val();
                 var gap = jQuery("#gap_cost").val();
-                console.log(match_mismatch)
-                console.log(gap)
-
                 params += " -reward " + match_mismatch.split(",")[0] + " -penalty " + match_mismatch.split(",")[1] + " -gapopen " + gap.split(",")[0] + " -gapextend " + gap.split(",")[1];
             }
             else {
                 var matrix = jQuery("#matrix").val();
                 var gap = jQuery("#penalty").val();
-                console.log(matrix)
-                console.log(gap)
 
                 params += " -matrix " + matrix + " -gapopen " + gap.split(",")[0] + " -gapextend " + gap.split(",")[1];
             }
