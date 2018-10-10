@@ -49,7 +49,7 @@ function blastSearch(query, db, type, params) {
     Fluxion.doAjax(
         'blastservicelocal',
         'blastSearchSequence',
-        {'query': query, 'blastdb': db, 'location': location, 'type': type, 'url': ajaxurl, 'BlastAccession': id, 'blastBinary': blastbinary, 'link': link, 'params': params, 'format': '6 qseqid sseqid qstart qend bitscore qseq sseq btop'},
+        {'query': query, 'blastdb': db, 'location': location, 'type': type, 'url': ajaxurl, 'BlastAccession': id, 'blastBinary': blastbinary, 'link': link, 'params': params, 'format': '6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore sseq qseq'},
         {'doOnSuccess': function (json) {
             jQuery('#main').animate({"height": "0px"}, { duration: 300, queue: false});
             jQuery('#main').fadeOut();

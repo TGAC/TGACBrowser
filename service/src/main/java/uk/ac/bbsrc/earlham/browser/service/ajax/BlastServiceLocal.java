@@ -30,21 +30,19 @@ import net.sf.json.JSONObject;
 import net.sourceforge.fluxion.ajax.Ajaxified;
 import net.sourceforge.fluxion.ajax.util.JSONUtils;
 import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpSession;
-import java.io.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
-import java.lang.*;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.w3c.dom.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXParseException;
 import uk.ac.bbsrc.earlham.browser.blastmanager.store.BLASTManagerStore;
 
-import static org.apache.commons.lang.StringUtils.split;
+import javax.servlet.http.HttpSession;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created with IntelliJ IDEA.
@@ -108,8 +106,22 @@ public class BlastServiceLocal {
                 out.flush();
                 out.close();
 
-                String execBlast = blastBinary + "/" + type + " -db " + blastdb + " -query " + fastaTmp + "  -outfmt 6 -task blastn";
-                Process proc = Runtime.getRuntime().exec(execBlast);
+                String execBlast = "/mnt/TGACbrowser/BLASTscript/software/blast+/ncbi-blast-2.7.1+/bin/blastn -db " + blastdb + " -query " + fastaTmp.getAbsolutePath() + " -outfmt \'6 qseqid sseqid qstart qend bitscore qseq sseq btop\' -task blastn";
+                String[] execBlast2 = new String[]{blastBinary + "/" + type, " -db", blastdb, "-query ", fastaTmp.getAbsolutePath(), "-outfmt '6 qseqid sseqid qstart qend bitscore qseq sseq btop'", "-task blastn"};
+                log.info("\n\n\n\t execBlast " + execBlast);
+                log.info("\n\n\n\t execBlast " + execBlast2);
+//                Process proc = Runtime.getRuntime().exec(blastBinary);
+
+                ProcessBuilder pb = new ProcessBuilder(
+                        "/mnt/TGACbrowser/BLASTscript/software/blast+/ncbi-blast-2.7.1+/bin/blastn",
+                        "-db",blastdb,
+                        "-query", fastaTmp.getAbsolutePath(),
+                        "-outfmt", format,
+                        "-task", "blastn"
+                );
+
+                log.info("\n\n\n\t pb " +   pb.command());
+                Process proc = pb.start();
                 proc.waitFor();
                 int i = 0;
 
@@ -134,6 +146,7 @@ public class BlastServiceLocal {
                         if (matcher_score.find()) {
                         } else {
                             String str1 = str.replaceAll("\\s+", "<td>");
+                            log.info("\n\n\n output"+str1);
                             String[] id;
                             id = str1.split("<td>");
                             String seqregionName = id[1];
@@ -159,6 +172,8 @@ public class BlastServiceLocal {
                             eachBlast.put("e_value", id[10]);
                             eachBlast.put("bit_score", id[11]);
                             eachBlast.put("s_db", blastdb.substring(blastdb.lastIndexOf("/") + 1));
+                            eachBlast.put("sequence", id[12]);
+                            eachBlast.put("qsequence", id[13]);
 
 
                             i++;
@@ -173,6 +188,7 @@ public class BlastServiceLocal {
                     System.out.println(str);
                 }
 
+                blastManagerStore.updateDatabase(blastAccession, "COMPLETED");
                 blastManagerStore.setResultToDatabase(blastAccession, blasts);
                 String result = null;
                 if (i > 0) {

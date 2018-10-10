@@ -31,8 +31,15 @@ import net.sourceforge.fluxion.ajax.Ajaxified;
 import net.sourceforge.fluxion.ajax.util.JSONUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXParseException;
+import uk.ac.bbsrc.earlham.browser.blastmanager.store.BLASTManagerStore;
 
 import javax.servlet.http.HttpSession;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -42,13 +49,6 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.lang.*;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.w3c.dom.*;
-import org.xml.sax.SAXParseException;
-import uk.ac.bbsrc.earlham.browser.blastmanager.store.BLASTManagerStore;
 
 
 /**

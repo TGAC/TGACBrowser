@@ -265,7 +265,7 @@ public class BLASTManagerDAO implements BLASTManagerStore {
             for (int i = 0; i < jsonArray.size(); i++) {
                 JSONObject explrObject = jsonArray.getJSONObject(i);
                 String s_id = explrObject.get("s_id").toString();
-                if (s_id.matches(seqRegion)) {
+                if (s_id.matches(seqRegion) || (s_id.contains("href") && s_id.contains(seqRegion))) {
                     eachBlast.put("start", explrObject.get("s_start"));
                     eachBlast.put("end", explrObject.get("s_end"));
                     eachBlast.put("desc", explrObject.get("s_id"));
