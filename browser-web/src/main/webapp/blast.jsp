@@ -222,7 +222,7 @@
 
         var dbs = jQuery('#blastdb').val()
         var count = jQuery("#blastsearch").val().match(/>/g);
-        var params = "-num_threads  4 ";
+        var params = "-num_threads 2 ";
 
         if(count != null && count.length > 0){
             var no_of_seq = parseInt(100/count.length)
