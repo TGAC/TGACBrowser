@@ -76,10 +76,10 @@ public class BLASTManagerDAO implements BLASTManagerStore {
     public static final String GET_RESULT_FROM_ID = "select * from blast_result where id_blast= ?";
     public static final String INSERT_PARAMS = "insert into blast_params values (?,?,?,?,?,?,?)";
     public static final String INSERT_STATUS = "insert into blast_status values(?,?)";
+    public static final String GET_STATUS_FROM_ID = "select * from blast_status where id_blast = ?";
 
 
     /**
-     *
      * @param query
      * @param db
      * @param link
@@ -90,15 +90,16 @@ public class BLASTManagerDAO implements BLASTManagerStore {
      * @throws Exception
      */
     public boolean checkDatabase(String query, String db, String link, String type, String filter, String format) throws Exception {
+        log.info("\n\n\t checkDatabase " + query);
         try {
             boolean check = false;
             if (format.indexOf("\"") >= 0) {
                 format = format.replaceAll("\"", "");
             }
-            if(query.indexOf("\\n") >= 0){
+            if (query.indexOf("\\n") >= 0) {
                 query = query.replaceAll("\\n", "");
             }
-            int str = template.queryForObject(COUNT_BLAST_ID_FROM_PARAMS, new Object[]{"'"+db+"'", "'"+query+"'", "'"+filter+"'", "'"+type+"'", "'"+link+"'", "'"+format+"'"}, Integer.class);
+            int str = template.queryForObject(COUNT_BLAST_ID_FROM_PARAMS, new Object[]{"'" + db + "'", "'" + query + "'", "'" + filter + "'", "'" + type + "'", "'" + link + "'", "'" + format + "'"}, Integer.class);
 
             if (str > 0) {
                 check = true;
@@ -112,12 +113,13 @@ public class BLASTManagerDAO implements BLASTManagerStore {
     }
 
     /**
-     *
      * @param query
      * @return
      * @throws Exception
      */
     public boolean checkResultDatabase(String query) throws Exception {
+        log.info("\n\n\t checkResultDatabase " + query);
+
         boolean check = false;
 
         int str = template.queryForObject(COUNT_BLAST_ID_FROM_RESULTS, new Object[]{query}, Integer.class);
@@ -130,7 +132,6 @@ public class BLASTManagerDAO implements BLASTManagerStore {
     }
 
     /**
-     *
      * @param id
      * @return
      * @throws ClassNotFoundException
@@ -147,7 +148,6 @@ public class BLASTManagerDAO implements BLASTManagerStore {
 
 
     /**
-     *
      * @param query
      * @param db
      * @param link
@@ -164,14 +164,25 @@ public class BLASTManagerDAO implements BLASTManagerStore {
             format = format.replaceAll("\"", "");
         }
 
-        id = template.queryForObject(GET_ID_FROM_PARAMS, new Object[]{"'"+db+"'", "'"+query+"'", "'"+filter+"'", "'"+type+"'", "'"+link+"'", "'"+format+"'"}, String.class);
+        id = template.queryForObject(GET_ID_FROM_PARAMS, new Object[]{"'" + db + "'", "'" + query + "'", "'" + filter + "'", "'" + type + "'", "'" + link + "'", "'" + format + "'"}, String.class);
 
         return id;
     }
 
+    /**
+     * @param query
+     * @return
+     * @throws Exception
+     */
+    public String getStatusFromDatabase(String query) throws Exception {
+        Map<String, Object> status = null;
+        log.info("\n\n\t getStatusFromDatabase " + query);
+        status = template.queryForMap(GET_STATUS_FROM_ID, new Object[]{query});
+        return status.get("status").toString();
+    }
+
 
     /**
-     *
      * @param blastAccession
      * @param result
      * @throws Exception
@@ -181,7 +192,6 @@ public class BLASTManagerDAO implements BLASTManagerStore {
     }
 
     /**
-     *
      * @param taskId
      * @param status
      * @throws Exception
@@ -191,7 +201,6 @@ public class BLASTManagerDAO implements BLASTManagerStore {
     }
 
     /**
-     *
      * @param id
      * @param link
      * @return
@@ -245,7 +254,6 @@ public class BLASTManagerDAO implements BLASTManagerStore {
     }
 
     /**
-     *
      * @param id
      * @param seqRegion
      * @return
@@ -284,7 +292,6 @@ public class BLASTManagerDAO implements BLASTManagerStore {
     }
 
     /**
-     *
      * @param id
      * @param query_start
      * @return
@@ -325,7 +332,6 @@ public class BLASTManagerDAO implements BLASTManagerStore {
     }
 
     /**
-     *
      * @param taskId
      * @param query
      * @param db
@@ -336,10 +342,11 @@ public class BLASTManagerDAO implements BLASTManagerStore {
      * @throws Exception
      */
     public void insertintoDatabase(String taskId, String query, String db, String link, String type, String filter, String format) throws Exception {
+        log.info("\n\n\t insertintoDatabase " + query);
         if (format.indexOf("\"") >= 0) {
             format = format.replaceAll("\"", "");
         }
-        template.update(INSERT_STATUS, new Object[]{taskId,"RUNNING"});
+        template.update(INSERT_STATUS, new Object[]{taskId, "RUNNING"});
         template.update(INSERT_PARAMS, new Object[]{taskId, db, query, filter, type, link, format});
     }
 }

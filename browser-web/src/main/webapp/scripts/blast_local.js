@@ -32,6 +32,7 @@
  */
 var blastbinary = jQuery("#blastLocation").html();
 
+
 function blastSearch(query, db, type, params) {
     blastbinary = jQuery("#blastLocation").html();
     jQuery("#notifier").html("<img src='images/browser/loading2.gif' height='10px'> BLAST running ");
@@ -40,41 +41,36 @@ function blastSearch(query, db, type, params) {
     db = database[0];
     var id = randomString(8);
     var link = database[1];
-    jQuery("#blast_list").append("<div id='" + id + "' class='blast_list_node'> <b>BLAST job " + id + " </b> <img style='position: relative;' src='./images/browser/loading_big.gif' height=15px alt='Loading'></div>")
-
+    jQuery("#blast_list").append("<div style=\"height:50px;\" id='" + id + "' class='blast_list_node'> <b>BLAST job " + id + " </b> <img style='position: relative;' src='./images/browser/loading_big.gif' height=15px alt='Loading'></div>")
+    var format = "6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore sseq qseq"
 
     var location = jQuery('#title').text();
 
     ajaxurl = '/' + jQuery('#title').text() + '/' + jQuery('#title').text() + '/fluxion.ajax';
     Fluxion.doAjax(
         'blastservicelocal',
-        'blastSearchSequence',
-        {'query': query, 'blastdb': db, 'location': location, 'type': type, 'url': ajaxurl, 'BlastAccession': id, 'blastBinary': blastbinary, 'link': link, 'params': params, 'format': '6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore sseq qseq'},
-        {'doOnSuccess': function (json) {
-            jQuery('#main').animate({"height": "0px"}, { duration: 300, queue: false});
-            jQuery('#main').fadeOut();
+        'submitBlastTask',
+        {
+            'url': ajaxurl,
+            'querystring': query,
+            'blastdb': db,
+            'location': link,
+            'BlastAccession': id,
+            'format': format,
+            "type": type,
+            "params": params
+        },
+        {
+            'doOnSuccess': function (json) {
 
-
-            if (json.html == "No hits found.") {
-                jQuery("#" + json.id).html("<b>BLAST job " + json.id + "</b><br> No hits found. <span onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
+                    checkTask(id, db, format, link, id, type);
+            },
+            'doOnError': function (json) {
+                alert(json.error);
             }
-            else if (json.html == "FAILED") {
-                jQuery("#" + json.id).html("<b>BLAST job " + json.id + "</b><br> Failed. <span onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
-            }
-            else if (json.error == "error") {
-                jQuery("#" + json.id).html("<b>BLAST job " + json.id + "</b><br> Failed. <span onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
-            }
-            else {
-                jQuery("#" + json.id).html("BLAST job " + json.id + " <span title=\"Finished\" class=\"ui-button ui-icon ui-icon-check\"></span> <br>  <span onclick=toogleTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-zoomin\" > </span> <span onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
-                jQuery('#main').animate({"height": "0px"}, { duration: 300, queue: false});
-                jQuery('#main').fadeOut();
-                parseBLAST(json);
-            }
-            jQuery("#notifier").hide()
-            jQuery("#notifier").html("");
-        }
         });
 }
+
 
 
 function blastTrackSearch(query, start, end, hit, db, type) {
@@ -157,52 +153,116 @@ function blastTrackSearch(query, start, end, hit, db, type) {
         });
 }
 
-function checkTask(task, db, format, start, end, hit, link) {
+function checkTask(task, db, format, link, old_id, type) {
+    console.log("check task "+ task +","+ db +","+ format +","+ ","+ link +","+ old_id +","+ type)
     jQuery("#notifier").html("<img src='images/browser/loading2.gif' height='10px'> BLAST running ");
     jQuery("#notifier").show();
-    if (!window['blasttrack']) {
-
-        jQuery("#tracklist").append("<p title='blast' id=blastcheck><input type=\"checkbox\" checked id='blasttrackCheckbox' name='blasttrackCheckbox' onClick=loadTrackAjax(\"blasttrack\",\"blasttrack\");\>  Blasttrack\  </p>");
-
-        jQuery("#mergetracklist").append("<span id=blasttrackspan> <input type=\"checkbox\" id='blasttrackmergedCheckbox' name='blasttrackmergedCheckbox' onClick=mergeTrack(\"blasttrack\"); value=blasttrack >Blast Track</span>");
-
-        jQuery("#tracks").append("<div id='blasttrack_div' class='feature_tracks'> Blast Track </div>");
-
-        jQuery("#blasttrack_div").html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
-        jQuery("#blasttrack_div").fadeIn();
-
-        track_list.push(
-            {name: "blasttrack", display_label: "blasttrack", id: "noid", desc: "blast from browser", disp: 1, merge: 0}
-        );
-        window['blasttrack'] = "running";
-    }
-
-    ajaxurl = '/' + jQuery('#title').text() + '/' + jQuery('#title').text() + '/fluxion.ajax';
-    var location = jQuery('#title').text();
-
     Fluxion.doAjax(
         'blastservicelocal',
-        'checkBlast',
-        {'url': ajaxurl, 'start': start, 'end': end, 'hit': hit, 'BlastAccession': task, 'location': location, 'link': link},
-        {'doOnSuccess': function (json) {
+        'checkTask',
+        {'url': ajaxurl, 'taskid': task, 'old_taskid': old_id},
+        {
+            'doOnSuccess': function (json) {
+                if (json.result == "PENDING" || json.result == "RUNNING" || json.result == "COMPLETING") {
+                    setTimeout(function () {
+                        checkTask(task, db, format, start, end, hit, link, old_id, type, slurm_id)
+                    }, 1000);
+                } else if (json.result == 'FAILED' || json.result == "SUSPENDED" || json.result == "CANCELLED" || json.result == "TIMEOUT") {
+                    alert('Blast search: ' + json.result);
+                    jQuery("#notifier").hide();
+                    jQuery("#notifier").html("");
+                }
+                else if (json.result == 'COMPLETED') {
+                    if (format == "6 qseqid sseqid qstart qend bitscore qseq sseq btop") {
+                        Fluxion.doAjax(
+                            'blastservicelocal',
+                            'blastSearchTrack',
+                            {
+                                'start': start,
+                                'end': end,
+                                'hit': hit,
+                                'accession': task,
+                                'location': link,
+                                'db': db,
+                                'url': ajaxurl,
+                                'old_taskid': json.old_id,
+                                'slurm_id': slurm_id
+                            },
+                            {
+                                'doOnSuccess': function (json) {
+                                    jQuery("#notifier").hide()
+                                    jQuery("#notifier").html("");
+                                    findAndRemove(blastsdata, 'id', task);
+                                    if (!window['blasttrack']) {
+                                        window['blasttrack'] = "running";
+                                    }
+                                    if (window['blasttrack'] == "running") {
+                                        window['blasttrack'] = json.blast;//(decodeURIComponent(json.blast.replace(/\s+/g, ""))).replace(/>/g, "");
+                                    }
+                                    else {
+                                        jQuery.merge(window['blasttrack'], json.blast);
+                                    }
+                                    jQuery('input[name=blasttrackCheckbox]').attr('checked', true);
+                                    trackToggle("blasttrack");
+                                }
+                            });
+                    } else {
 
-            findAndRemove(blastsdata, 'id', json.id);
+                        Fluxion.doAjax(
+                            'blastservicelocal',
+                            'blastSearchSequence',
+                            {
+                                'accession': task,
+                                'db': db,
+                                'location': link,
+                                'url': ajaxurl,
+                                'old_taskid': json.old_id,
+                                'type': type
+                            },
+                            {
+                                'doOnSuccess': function (json) {
+                                    if (json.html == "error") {
+                                        jQuery("#" + json.id).removeClass("list-group-item-info")
+                                        jQuery("#" + json.id).addClass("list-group-item-danger")
+                                        jQuery("#" + json.id).html("<b>BLAST job " + json.id + "</b><br> "+stringTrim(json.error, 250)+" <span style=\"float: right; position: relative;\" onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
+                                    }else if (json.html == "No hits found.") {
+                                        jQuery("#" + json.id).removeClass("list-group-item-info")
+                                        jQuery("#" + json.id).addClass("list-group-item-danger")
+                                        jQuery("#" + json.id).html("<b>BLAST job " + json.id + "</b><br> No hits found. <span style=\"float: right; position: relative;\" onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
+                                    }
+                                    else if (json.html == "FAILED") {
+                                        jQuery("#" + json.id).removeClass("list-group-item-info")
+                                        jQuery("#" + json.id).addClass("list-group-item-danger")
+                                        jQuery("#" + json.id).html("<b>BLAST job " + json.id + "</b><br> Failed. <span style=\"float: right; position: relative;\" onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
+                                    }
+                                    else if (json.error == "error") {
+                                        jQuery("#" + json.id).removeClass("list-group-item-info")
+                                        jQuery("#" + json.id).addClass("list-group-item-danger")
+                                        jQuery("#" + json.id).html("<b>BLAST job " + json.id + "</b><br> Failed. <span style=\"float: right; position: relative;\" onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
+                                    }
+                                    else {
+                                        jQuery("#" + json.id).removeClass("list-group-item-info")
+                                        jQuery("#" + json.id).addClass("list-group-item-success")
+                                        jQuery("#" + json.id).html("BLAST job " + json.id + " <br>  <span onclick=toogleTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-zoomin\" style=\"float: right; position: relative;\"> </span> <span style=\"float: right; position: relative;\" onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
+                                        jQuery('#main').animate({"height": "0px"}, {duration: 300, queue: false});
+                                        jQuery('#main').fadeOut();
+                                        parseBLAST(json);
+                                    }
+                                    jQuery("#notifier").hide()
+                                    jQuery("#notifier").html("");
+                                },
+                                'doOnError': function (json) {
+                                    if (json.html.toLowerCase() == "error") {
+                                        jQuery("#" + json.id).removeClass("list-group-item-info")
+                                        jQuery("#" + json.id).addClass("list-group-item-danger")
+                                        jQuery("#" + json.id).html("<b>BLAST job " + json.id + "</b><br> "+stringTrim(json.error, 200)+" <span style=\"float: right; position: relative;\" onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
+                                    }
+                                }
+                            });
+                    }
 
-            if (blastsdata.length == 0) {
-                jQuery("#notifier").hide()
-                jQuery("#notifier").html("");
+                }
             }
-            if (!window['blasttrack']) {
-                window['blasttrack'] = "running";
-            }
-            if (window['blasttrack'] == "running") {
-                window['blasttrack'] = json.blast;//(decodeURIComponent(json.blast.replace(/\s+/g, ""))).replace(/>/g, "");
-            }
-            else {
-                jQuery.merge(window['blasttrack'], json.blast);
-            }
-            jQuery('input[name=blasttrackCheckbox]').attr('checked', true);
-            trackToggle("blasttrack");
-        }
-        });
+        })
 }
+
