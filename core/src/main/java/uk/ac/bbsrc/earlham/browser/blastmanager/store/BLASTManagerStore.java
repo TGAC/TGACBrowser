@@ -46,4 +46,6 @@ public interface BLASTManagerStore extends Store {
     public JSONArray getBLASTEntryFromDatabase(String id, String seqRegion) throws Exception;
     public JSONArray getTrackFromDatabase(String id, int query_start) throws Exception;
     public void insertintoDatabase(String taskId, String query, String db, String link, String type, String filter, String format) throws Exception;
+    public String getStatusFromDatabase(String query) throws Exception;
+
 }
