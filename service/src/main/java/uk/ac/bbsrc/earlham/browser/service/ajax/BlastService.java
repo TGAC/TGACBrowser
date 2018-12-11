@@ -93,7 +93,6 @@ public class BlastService {
             String old_blastAccession = json.getString("old_taskid");
 
             if (blastManagerStore.checkResultDatabase(old_blastAccession)) {
-                log.info("already in db");
                 blasts = blastManagerStore.getFromDatabase(old_blastAccession, location);
                 html.put("id", blastAccession);
                 html.put("html", blasts);
@@ -349,7 +348,6 @@ public class BlastService {
             // Send data
             wr.write(query + "\r\n");
             wr.flush();
-            log.info("send Message " + query);
             // Get response
             BufferedReader rd = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String line;
@@ -398,9 +396,7 @@ public class BlastService {
             params.put("name", taskId);
             q1.put("params", params);
             String query = q1.toString();
-            log.info(">>>>>" + query);
             String response = sendMessage(prepareSocket("v0376.nbi.ac.uk", 7899), query);
-            log.info("\n\n\n<<<<" + response);
             if (!"".equals(response)) {
                 JSONArray r = JSONArray.fromObject(response);
                 return r;
