@@ -30,6 +30,7 @@ import edu.unc.genomics.io.VCFFileReader;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sourceforge.fluxion.ajax.Ajaxified;
+import org.slf4j.LoggerFactory;
 import uk.ac.bbsrc.earlham.browser.store.ensembl.Util;
 
 import java.nio.file.Path;
@@ -48,8 +49,9 @@ import java.util.List;
 @Ajaxified
 public class VCFService {
 
-////    protected static final Logger log = LoggerFactory.getLogger(VCFService.class);
-//
+    protected static final org.slf4j.Logger log = LoggerFactory.getLogger(VCFService.class);
+
+    //
 //
     private Util util = new Util();
 
@@ -116,8 +118,9 @@ public class VCFService {
             VCFFileReader reader = new VCFFileReader(path);
 
             JSONObject eachEntry = new JSONObject();
-
+            int counter = 0;
             for (VCFEntry entry : reader) { // All entries in the file
+                counter++;
                 // do what you want with the entry
                 // maybe store entries from chr1
                 int start_pos, end_pos;
@@ -127,8 +130,11 @@ public class VCFService {
                     start_pos = entry.getStart();
                     end_pos = entry.getStop();
 
-
-                    eachEntry.put("id", entry.getId());
+                    String id = entry.getId();
+                    if (id.equals(".")) {
+                        id = String.valueOf(counter);
+                    }
+                    eachEntry.put("id", id);
                     eachEntry.put("start", start_pos);
                     eachEntry.put("end", end_pos);
                     eachEntry.put("info", entry.getInfoString());
@@ -136,8 +142,9 @@ public class VCFService {
                     eachEntry.put("alt", entry.getAlt());
                     eachEntry.put("filter", entry.getFilter());
                     eachEntry.put("genotype", entry.getGenotypes());
-                    eachEntry.put("ref",entry.getRef());
-                    eachEntry.put("desc", entry.getRef()+":"+entry.getAlt().toString()+" "+entry.getInfoString());
+                    eachEntry.put("ref", entry.getRef());
+                    eachEntry.put("desc", entry.getRef() + ":" + entry.getAlt().toString() + " " + entry.getInfoString());
+                    eachEntry.put("cigarline", entry.getAlt());
 
 
                     VCF.add(eachEntry);
@@ -146,8 +153,8 @@ public class VCFService {
 
             }
 
-            if(VCF.size() == 0){
-                    VCF.add("getHit no result found");
+            if (VCF.size() == 0) {
+                VCF.add("getHit no result found");
             }
             return VCF;
         } catch (Exception e) {
@@ -172,8 +179,6 @@ public class VCFService {
 
     public static JSONArray getVCFGraphs(long start, long end, int delta, String trackId, String reference) throws Exception {
 
-//        log.info("\n\n\n\n\nVCF graphs");
-
         JSONArray VCF = new JSONArray();
         JSONObject response = new JSONObject();
 
@@ -182,29 +187,28 @@ public class VCFService {
         try {
             JSONObject read = new JSONObject();
             List<Integer> eachEntry_start = new ArrayList<Integer>();
-            List<Integer> eachEntry_end = new ArrayList<Integer>();
 
             long diff = (end - start) / 400;
             long temp_start, temp_end;
 
             VCFFileReader reader = new VCFFileReader(path);
+
             for (VCFEntry entry : reader) { // All entries in the file
                 if (entry.getChr().equals(reference) && entry.getStart() >= start && entry.getStop() <= end) {
                     eachEntry_start.add(entry.getStart());
-                    eachEntry_end.add(entry.getStop());
                 }
             }
 
             for (int i = 0; i < 400; i++) {
                 temp_start = start + (i * diff);
                 temp_end = temp_start + diff;
+
+
                 int count = 0;
 
                 for (Integer entry : eachEntry_start) { // All entries in the file
-                    if (entry < temp_end && entry > temp_start) ;
-                    {
+                    if (entry < temp_end && entry > temp_start) {
                         count++;
-                        eachEntry_start.remove(entry);
                     }
                 }
                 read.put("start", temp_start);
