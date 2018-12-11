@@ -59,30 +59,8 @@ function blastTrackSearch(query, start, end, hit, db, type) {
   var format = "format";
   if (!window['blasttrack']) {
 
-    jQuery("#tracklist").append("<p title='blast' id=blastcheck><input type=\"checkbox\" checked id='blasttrackCheckbox' name='blasttrackCheckbox' onClick=loadTrackAjax(\"blasttrack\",\"blasttrack\");\>  Blasttrack\  </p>");
+   setBLASTTrack()
 
-    jQuery("#mergetracklist").append("<span id=blasttrackspan> <input type=\"checkbox\" id='blasttrackmergedCheckbox' name='blasttrackmergedCheckbox' onClick=mergeTrack(\"blasttrack\"); value=blasttrack >Blast Track</span>");
-
-    jQuery("#tracks").append("<div id='blasttrack_div' class='feature_tracks'> Blast Track </div>");
-
-    jQuery("#blasttrack_div").html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
-    jQuery("#blasttrack_div").fadeIn();
-
-    track_list.push(
-            {name: "blasttrack", display_label: "blasttrack", id: "noid", desc: "blast from browser", disp: 1, merge: 0}
-    );
-    window['blasttrack'] = "running";
-
-      window['track_listblasttrack'] = {
-          name: "blasttrack",
-          id: "noid",
-          display_label: "blasttrack",
-          desc: "blast from browser",
-          disp: 1,
-          merge: 0,
-          label: 0,
-          graph: false
-      }
   }
 
   Fluxion.doAjax(

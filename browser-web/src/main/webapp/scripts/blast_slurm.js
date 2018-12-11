@@ -58,14 +58,7 @@ function blastTrackSearch(query, start, end, hit, blastdb, type) {
             graph: false
         }
 
-        jQuery("#tracklist").append("<p title='blast' id=blastcheck><input type=\"checkbox\" checked id='blasttrackCheckbox' name='blasttrackCheckbox' onClick=loadTrackAjax(\"blasttrack\",\"blasttrack\");\>  Blasttrack\  </p>");
-
-        jQuery("#mergetracklist").append("<span id=blasttrackspan> <input type=\"checkbox\" id='blasttrackmergedCheckbox' name='blasttrackmergedCheckbox' onClick=mergeTrack(\"blasttrack\"); value=blasttrack >Blast Track</span>");
-
-        jQuery("#tracks").append("<div id='blasttrack_div' class='feature_tracks'> Blast Track </div>");
-
-        jQuery("#blasttrack_div").html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
-        jQuery("#blasttrack_div").fadeIn();
+       setBLASTTrack()
 
         track_list.push(
             {name: "blasttrack", display_label: "blasttrack", id: "noid", desc: "blast from browser", disp: 1, merge: 0}

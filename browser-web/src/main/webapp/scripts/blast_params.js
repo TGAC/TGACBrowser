@@ -104,3 +104,37 @@ function toogleParams(){
 
     }
 }
+
+function setBLASTTrack(){
+
+    window['track_listblasttrack'] = {
+        name: "blasttrack",
+        id: "noid",
+        display_label: "blasttrack",
+        desc: "blast from browser",
+        disp: 1,
+        merge: 0,
+        label: 0,
+        graph: false
+    }
+
+    jQuery("#tracklist").append("<div style='padding: 5px; margin: 10px; position: relative; border: 1px solid lightgray; top: 10px' id='BLASTgroup'> </div>")
+    jQuery("#mergetracklist").append("<div style='padding: 5px;  margin: 10px; position: relative; border: 1px solid lightgray; top: 10px' id='BLASTmergegroup'></div>")
+    jQuery("#BLASTgroup").append("<table id='BLASTgroup-table' width=100%> <tr>");
+    jQuery("#BLASTmergegroup").append("<table id='BLASTmergegroup-table' width=100%> <tr>");
+
+    jQuery("#BLASTgroup-table").append("<div title='blast' id=blastcheck><input type=\"checkbox\" checked id='blasttrackCheckbox' name='blasttrackCheckbox' onClick=loadTrackAjax(\"blasttrack\",\"blasttrack\");>  Blasttrack  </div>");
+
+    jQuery("#BLASTmergegroup-table").append("<div id=blasttrackspan> <input type=\"checkbox\" id='blasttrackmergedCheckbox' name='blasttrackmergedCheckbox' onClick=mergeTrack(\"blasttrack\"); value=blasttrack >Blast Track</div>");
+
+    jQuery("#tracks").append("<div id='blasttrack_div' class='feature_tracks'> Blast Track </div>");
+
+    jQuery("#blasttrack_div").html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
+
+    jQuery("#blasttrack_div").fadeIn();
+
+    track_list.push(
+        {name: "blasttrack", display_label: "blasttrack", id: "noid", desc: "blast from browser", disp: 1, merge: 0}
+    );
+    window['blasttrack'] = "running";
+}

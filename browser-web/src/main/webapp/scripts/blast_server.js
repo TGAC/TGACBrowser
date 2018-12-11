@@ -46,31 +46,7 @@ function blastSearch(query, blastdb, type, params) {
 
 function blastTrackSearch(query, start, end, hit, blastdb, type) {
   if (!window['blasttrack']) {
-
-    window['track_listblasttrack'] = {
-         name: "blasttrack",
-         id: "noid",
-         display_label: "blasttrack",
-         desc: "blast from browser",
-         disp: 1,
-         merge: 0,
-         label: 0,
-         graph: false
-       }
-
-    jQuery("#tracklist").append("<p title='blast' id=blastcheck><input type=\"checkbox\" checked id='blasttrackCheckbox' name='blasttrackCheckbox' onClick=loadTrackAjax(\"blasttrack\",\"blasttrack\");\>  Blasttrack\  </p>");
-
-    jQuery("#mergetracklist").append("<span id=blasttrackspan> <input type=\"checkbox\" id='blasttrackmergedCheckbox' name='blasttrackmergedCheckbox' onClick=mergeTrack(\"blasttrack\"); value=blasttrack >Blast Track</span>");
-
-    jQuery("#tracks").append("<div id='blasttrack_div' class='feature_tracks'> Blast Track </div>");
-
-    jQuery("#blasttrack_div").html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
-    jQuery("#blasttrack_div").fadeIn();
-
-    track_list.push(
-            {name: "blasttrack", display_label: "blasttrack", id: "noid", desc: "blast from browser", disp: 1, merge: 0}
-    );
-    window['blasttrack'] = "running";
+    setBLASTTrack()
   }
 
   submitBlastTask(query, blastdb, "6 qseqid sseqid qstart qend bitscore qseq sseq btop", type, start, end, hit, " -num_threads  4 ");

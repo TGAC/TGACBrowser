@@ -79,30 +79,9 @@ function blastTrackSearch(query, start, end, hit, db, type) {
     jQuery("#notifier").show();
     if (!window['blasttrack']) {
 
-        jQuery("#tracklist").append("<p title='blast' id=blastcheck><input type=\"checkbox\" checked id='blasttrackCheckbox' name='blasttrackCheckbox' onClick=loadTrackAjax(\"blasttrack\",\"blasttrack\");\>  Blasttrack\  </p>");
+setBLASTTrack()
 
-        jQuery("#mergetracklist").append("<span id=blasttrackspan> <input type=\"checkbox\" id='blasttrackmergedCheckbox' name='blasttrackmergedCheckbox' onClick=mergeTrack(\"blasttrack\"); value=blasttrack >Blast Track</span>");
 
-        jQuery("#tracks").append("<div id='blasttrack_div' class='feature_tracks'> Blast Track </div>");
-
-        jQuery("#blasttrack_div").html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
-        jQuery("#blasttrack_div").fadeIn();
-
-        track_list.push(
-            {name: "blasttrack", display_label: "blasttrack", id: "noid", desc: "blast from browser", disp: 1, merge: 0}
-        );
-        window['blasttrack'] = "running";
-
-        window['track_listblasttrack'] = {
-            name: "blasttrack",
-            id: "noid",
-            display_label: "blasttrack",
-            desc: "blast from browser",
-            disp: 1,
-            merge: 0,
-            label: 0,
-            graph: false
-        }
     }
 
     ajaxurl = '/' + jQuery('#title').text() + '/' + jQuery('#title').text() + '/fluxion.ajax';
@@ -165,7 +144,7 @@ function checkTask(task, db, format, link, old_id, type) {
             'doOnSuccess': function (json) {
                 if (json.result == "PENDING" || json.result == "RUNNING" || json.result == "COMPLETING") {
                     setTimeout(function () {
-                        checkTask(task, db, format, start, end, hit, link, old_id, type, slurm_id)
+                        checkTask(task, db, format, link, old_id, type)
                     }, 1000);
                 } else if (json.result == 'FAILED' || json.result == "SUSPENDED" || json.result == "CANCELLED" || json.result == "TIMEOUT") {
                     alert('Blast search: ' + json.result);
