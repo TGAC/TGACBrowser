@@ -242,7 +242,8 @@ function prepare_track_list(Tracklist, i){
             'style': "position: relative; width: 70%; word-wrap: break-word;",
             'id': Tracklist[i].name + "span",
             'title': Tracklist[i].desc
-        }).html("<input type=\"checkbox\" "+checked+" id='" + Tracklist[i].name + "Checkbox' name='" + Tracklist[i].name + "Checkbox' onClick=loadTrackAjax(\"" + Tracklist[i].id + "\",\"" + Tracklist[i].name + "\"); value=" + Tracklist[i].name + " >" + Tracklist[i].display_label).appendTo("#nogroup-table");
+        }).html("<input type=\"checkbox\" "+checked+" id='" + Tracklist[i].name + "Checkbox' name='" + Tracklist[i].name + "Checkbox' onClick=loadTrackAjax(\"" + Tracklist[i].id + "\",\"" + Tracklist[i].name + "\"); value=" + Tracklist[i].name + " >" + Tracklist[i].display_label)
+            .appendTo("#nogroup-table");
 
         jQuery("<div>").attr({
             'style': "position: relative; width: 70%; word-wrap: break-word;",
