@@ -90,7 +90,6 @@ public class BLASTManagerDAO implements BLASTManagerStore {
      * @throws Exception
      */
     public boolean checkDatabase(String query, String db, String link, String type, String filter, String format) throws Exception {
-        log.info("\n\n\t checkDatabase " + query);
         try {
             boolean check = false;
             if (format.indexOf("\"") >= 0) {
@@ -118,7 +117,6 @@ public class BLASTManagerDAO implements BLASTManagerStore {
      * @throws Exception
      */
     public boolean checkResultDatabase(String query) throws Exception {
-        log.info("\n\n\t checkResultDatabase " + query);
 
         boolean check = false;
 
@@ -176,7 +174,6 @@ public class BLASTManagerDAO implements BLASTManagerStore {
      */
     public String getStatusFromDatabase(String query) throws Exception {
         Map<String, Object> status = null;
-        log.info("\n\n\t getStatusFromDatabase " + query);
         status = template.queryForMap(GET_STATUS_FROM_ID, new Object[]{query});
         return status.get("status").toString();
     }
@@ -342,7 +339,6 @@ public class BLASTManagerDAO implements BLASTManagerStore {
      * @throws Exception
      */
     public void insertintoDatabase(String taskId, String query, String db, String link, String type, String filter, String format) throws Exception {
-        log.info("\n\n\t insertintoDatabase " + query);
         if (format.indexOf("\"") >= 0) {
             format = format.replaceAll("\"", "");
         }
