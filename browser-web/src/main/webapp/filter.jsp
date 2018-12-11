@@ -87,7 +87,6 @@
                             jQuery("#drop1").droppable({
                                 accept: ".draggable",
                                 drop: function (event, ui) {
-                                    console.log("drop");
                                     jQuery(this).removeClass("border").removeClass("over");
                                     var dropped = ui.draggable;
                                     var droppedOn = $(this);
@@ -97,7 +96,6 @@
                                 },
                                 over: function (event, elem) {
                                     jQuery(this).addClass("over");
-                                    console.log("over");
                                 }
                                 ,
                                 out: function (event, elem) {
@@ -110,7 +108,6 @@
                             jQuery("#drop2").droppable({
                                 accept: ".draggable",
                                 drop: function (event, ui) {
-                                    console.log("drop");
                                     jQuery(this).removeClass("border").removeClass("over");
                                     var dropped = ui.draggable;
                                     var droppedOn = $(this);
@@ -120,7 +117,6 @@
                                 },
                                 over: function (event, elem) {
                                     jQuery(this).addClass("over");
-                                    console.log("over");
                                 }
                                 ,
                                 out: function (event, elem) {
@@ -132,7 +128,6 @@
 
                             jQuery("#origin").droppable({
                                 accept: ".draggable", drop: function (event, ui) {
-                                    console.log("drop");
                                     jQuery(this).removeClass("border").removeClass("over");
                                     var dropped = ui.draggable;
                                     var droppedOn = $(this);
@@ -148,12 +143,9 @@
         }
 
         function changeFilter(group, id) {
-            console.log("change filter")
             if (group.indexOf("A_") >= 0) {
-                console.log("if " + group + " " + id)
                 jQuery("#B_" + id).attr("disabled", true)
             } else {
-                console.log("else " + group + " " + id)
                 jQuery("#A_" + id).attr("disabled", true)
             }
         }
@@ -185,13 +177,10 @@
                             jQuery("#venn").html("")
                             jQuery("#selected_results").html("")
 
-                            console.log(json.group_A.size())
                             var sets = [{sets: ['GroupA-'+json.group_A.size()], size: json.group_A.size()},
                                 {sets: ['GroupB-'+json.group_B.size()], size: json.group_B.size()},
                                 {sets: ['GroupA-'+json.group_A.size(), 'GroupB-'+json.group_B.size()], size: findIntersect(json.group_A, json.group_B)}];
 
-
-                            console.log(sets)
 
                             var chart = venn.VennDiagram();
                             var div = d3.select("#venn");
@@ -218,13 +207,10 @@
                                                 .style("stroke-opacity", 0);
                                     })
                                     .on("click", function (d, i) {
-                                        console.log(d)
                                         if (d.size == json.group_A.size()) {
-                                            console.log(1)
                                             showResult(json.group_A)
                                         }
                                         else if (d.size == json.group_B.size()) {
-                                            console.log(2)
                                             showResult(json.group_B)
 
                                         }
@@ -251,9 +237,7 @@
                                                 .style("stroke-opacity", 0);
                                     })
                                     .on("click", function (d, i) {
-                                        console.log(d)
                                         if(d.size == common.size()){
-                                            console.log(3)
                                             showResult(common)
                                         }
                                     });
