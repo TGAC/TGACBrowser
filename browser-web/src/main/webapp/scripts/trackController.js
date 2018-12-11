@@ -179,7 +179,7 @@ function dispBLAST(div, track) {
     else {
 
         if (blasts.length > 0) {
-            var track_html = "<div align='left' class='handle'><table><tr><td><b>" + track + "</b>(" + blasts.length + ")</td><td><div title='Label Toggle' class=\"closehandle ui-icon ui-icon-comment\" onclick=toogleLabel(\"" + track + "\");> </div></td><td><div title='Close' class='closehandle ui-icon ui-icon-close' onclick=removeTrack(\"" + div + "\",\"" + track + "\");></div></td></tr></table></div>";
+            var track_html = "<div align='left' class='handle'><table><tr><td><b>" + track + "</b></td><td><div title='Label Toggle' class=\"closehandle ui-icon ui-icon-comment\" onclick=toogleLabel(\"" + track + "\");> </div></td><td><div title='Close' class='closehandle ui-icon ui-icon-close' onclick=removeTrack(\"" + div + "\",\"" + track + "\");></div></td></tr></table></div>";
 
 
             var layers = blasts.length + 1;
@@ -364,10 +364,10 @@ function dispGenes(div, track, expand, className) {
     else if (genes == "getGene no result found") {
         if (div.indexOf("mergedtrack") <= 0) {
             jQuery('#' + track + 'Checkbox').attr('checked', false);
+            jQuery("#" + track + "Checkbox").attr("disabled", true);
             jQuery(div).html();
             jQuery(div).fadeOut();
             jQuery("#" + track + "_wrapper").fadeOut();
-            jQuery("#" + track + "span").remove();
         }
     }
 
@@ -1049,6 +1049,7 @@ function dispTrack(div, trackName, className) {
     else if (window[trackName] == "getHit no result found") {
         if (div.indexOf("mergedtrack") <= 0) {
             jQuery('#' + trackName + 'Checkbox').attr('checked', false);
+            jQuery("#" + trackName + "Checkbox").attr("disabled", true);
             jQuery(div).html();
             jQuery(div).fadeOut();
             jQuery("#" + trackName + "_wrapper").fadeOut();
@@ -1250,6 +1251,7 @@ function dispVCF(div, trackName, className) {
     else if (window[trackName] == "getHit no result found") {
         if (div.indexOf("mergedtrack") <= 0) {
             jQuery('#' + trackName + 'Checkbox').attr('checked', false);
+            jQuery('#' + trackName + 'Checkbox').attr('disabled', true);
             jQuery(div).html();
             jQuery(div).fadeOut();
             jQuery("#" + trackName + "_wrapper").fadeOut();
