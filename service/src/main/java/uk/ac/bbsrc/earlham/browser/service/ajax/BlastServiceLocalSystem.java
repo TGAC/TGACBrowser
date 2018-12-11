@@ -48,7 +48,7 @@ public class BlastServiceLocalSystem {
 
     private Logger log = LoggerFactory.getLogger(getClass());
 
-    static String dir = "/home/thankia/";
+    static String dir = "/usr/users/ga002/tgacbrowser";
     static String script = "blast.sh";
     static String job = "job";
     static String output = "%t";
@@ -58,9 +58,7 @@ public class BlastServiceLocalSystem {
 
     public String submitJob(JSONObject parameters) throws IOException {
         try {
-            String jobid = null;
             String cmd = dir + script + " " + parameters.get("accession").toString();
-            log.info(" \n\n\n\t cmd " + cmd);
             Process proc = Runtime.getRuntime().exec(cmd);
             proc.waitFor();
             BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
@@ -87,83 +85,7 @@ public class BlastServiceLocalSystem {
         return null;
     }
 
-//    public String checkJob(String id) throws IOException {
-//
-//        String state = null;
-//        try {
-//            String cmd = scontrol + " " + show + " " + job + " " + id;
-//            Process proc = Runtime.getRuntime().exec(cmd);
-//            proc.waitFor();
-//            BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-//            BufferedReader stdError = new BufferedReader(new
-//                    InputStreamReader(proc.getErrorStream()));
-//
-//            String line = reader.readLine();
-//
-//
-//            while (line != null && state == null) {
-//                state = consoleValueByKey(line, "JobState=", "[A-Z]+");
-//                line = reader.readLine();
-//            }
-//            String error = null;
-//            while ((error = stdError.readLine()) != null) {
-//                System.out.println(error);
-//            }
-//
-//        } catch (IOException e1) {
-//            return "Pblm found1.";
-//        } catch (InterruptedException e2) {
-//            return "Pblm found2.";
-//        }
-//        log.info("\n\n\n checkjob " + state);
-//
-//        return state;
-//    }
-
-//    public JSONObject checkError(String id) throws IOException {
-//        log.info("\n\tcheckError "+id);
-//        JSONObject error = new JSONObject();
-//        error.put("found", false);
-//        try {
-//            String cmd = scontrol + " " + show + " " + job + " " + id;
-//            Process proc = Runtime.getRuntime().exec(cmd);
-//            proc.waitFor();
-//            BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-//
-//            String line = reader.readLine();
-//            String file = null;
-//
-//
-//            while (line != null && file == null) {
-//                file = consoleValueByKey(line, "StdErr=", ".*");
-//                line = reader.readLine();
-//            }
-//
-//            if(file != null){
-//                String sCurrentLine;
-//                BufferedReader br = null;
-//                br = new BufferedReader(new FileReader(file));
-//                while ((sCurrentLine = br.readLine()) != null) {
-//                    log.info("\n\t\t"+sCurrentLine);
-//                    if(sCurrentLine.toLowerCase().indexOf("error")>=0){
-//                        error.put("found", true);
-//                        error.put("error", sCurrentLine);
-//                        break;
-//                    }
-//                }
-//            }
-//        } catch (IOException e1) {
-//            return JSONObject.fromObject("Check Error IO Exception.");
-//        } catch (InterruptedException e2) {
-//            return JSONObject.fromObject("Check Error InterruptedException.");
-//        }
-//        return error;
-//    }
-
-
     public String consoleValueByKey(String input, String key, String regex) {
-        log.info("\n\n\n consoleValueByKey " + input);
-
         final Pattern pattern = Pattern.compile(key + regex);
         Matcher matcher;
         String rtn = null;
@@ -171,7 +93,6 @@ public class BlastServiceLocalSystem {
         if (matcher.find()) {
             rtn = matcher.group(0).substring(key.length());
         }
-
         return rtn;
     }
 

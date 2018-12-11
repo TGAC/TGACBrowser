@@ -90,14 +90,7 @@ public class BlastServiceLocal {
             String old_blastAccession = json.getString("old_taskid");
 
 
-//            JSONObject error = blastServiceLocalSystem.checkError(slurm_id);
-//            if (error.getBoolean("found") == true) {
-//                html.put("id", blastAccession);
-//                html.put("html", "error");
-//                html.put("error", error.getString("error"));
-//            } else
             if (blastManagerStore.checkResultDatabase(old_blastAccession)) {
-                log.info("already in db");
                 blasts = blastManagerStore.getFromDatabase(old_blastAccession, location);
                 html.put("id", blastAccession);
                 html.put("html", blasts);

@@ -64,7 +64,6 @@ public class BlastServiceSystem {
         try {
             String jobid = null;
             String cmd = sbatch + " " + dir + script + " " + parameters.get("accession").toString();
-            log.info(" \n\n\n\t cmd " + cmd);
             Process proc = Runtime.getRuntime().exec(cmd);
             proc.waitFor();
             BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
@@ -128,13 +127,11 @@ public class BlastServiceSystem {
         } catch (InterruptedException e2) {
             return "Pblm found2.";
         }
-        log.info("\n\n\n checkjob " + state);
 
         return state;
     }
 
     public JSONObject checkError(String id) throws IOException {
-        log.info("\n\tcheckError "+id);
         JSONObject error = new JSONObject();
         error.put("found", false);
         try {
@@ -157,7 +154,6 @@ public class BlastServiceSystem {
                 BufferedReader br = null;
                 br = new BufferedReader(new FileReader(file));
                 while ((sCurrentLine = br.readLine()) != null) {
-                    log.info("\n\t\t"+sCurrentLine);
                     if(sCurrentLine.toLowerCase().indexOf("error")>=0){
                         error.put("found", true);
                         error.put("error", sCurrentLine);
@@ -175,8 +171,6 @@ public class BlastServiceSystem {
 
 
     public String consoleValueByKey(String input, String key, String regex) {
-        log.info("\n\n\n consoleValueByKey " + input);
-
         final Pattern pattern = Pattern.compile(key + regex);
         Matcher matcher;
         String rtn = null;
