@@ -670,7 +670,7 @@ function removeJSON(from, to) {
                     temp_data = data
                 } else {
                     jQuery.each(data, function (index, value) {
-                        if (parseInt(value.start) > parseInt(from) && parseInt(value.start) < parseInt(to)) {
+                        if ((parseInt(value.start) >= parseInt(from) && parseInt(value.end) <= parseInt(to)) || (parseInt(value.start) <= parseInt(from) && parseInt(value.end) >= parseInt(to)) || (parseInt(value.end) >= parseInt(from) && parseInt(value.end) <= parseInt(to)) || (parseInt(value.start) >= parseInt(from) && parseInt(value.start) <= parseInt(to))) {
                             temp_data.push(value)
                         }
 
