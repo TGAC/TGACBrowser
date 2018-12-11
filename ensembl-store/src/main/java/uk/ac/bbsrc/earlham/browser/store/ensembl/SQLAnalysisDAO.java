@@ -183,6 +183,7 @@ public class SQLAnalysisDAO implements AnalysisStore {
 
                 } else {
                     annotationid.put("name", map.get("name").toString().replaceAll("\\s+", "_").replaceAll("[.]", "_"));
+                    annotationlist.add(annotationid);
 
                 }
 
