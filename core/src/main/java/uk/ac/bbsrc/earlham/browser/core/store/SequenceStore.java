@@ -44,7 +44,7 @@ public interface SequenceStore extends Store {
     public Integer getSeqRegionWithCoord(String searchQuery, String coord) throws IOException;
     public String getSeqLengthbyId(int query) throws IOException;
     public String getSeqRegionName(int query) throws IOException;
-    public String getSeqLengthbyId(int query, String coord) throws IOException;
+    public int getSeqLengthbyId(int query, String coord) throws IOException;
     public String getSeqRegionName(int query, String coord) throws IOException;
     public Map<String, Object> getStartEndAnalysisIdBySeqRegionId(int query) throws IOException;
 

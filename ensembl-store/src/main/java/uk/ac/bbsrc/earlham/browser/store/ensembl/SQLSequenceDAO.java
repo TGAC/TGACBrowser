@@ -293,9 +293,9 @@ public class SQLSequenceDAO implements SequenceStore {
         }
     }
 
-    public String getSeqLengthbyId(int query, String coord) throws IOException {
+    public int getSeqLengthbyId(int query, String coord) throws IOException {
         try {
-            String i = template.queryForObject(GET_SEQ_LENGTH_FROM_ID_AND_COORD, new Object[]{query, coord}, String.class);
+            int i = template.queryForObject(GET_SEQ_LENGTH_FROM_ID_AND_COORD, new Object[]{query, coord}, Integer.class);
             return i;
         } catch (EmptyResultDataAccessException e) {
             throw new IOException(" getSeqlength no result found");
