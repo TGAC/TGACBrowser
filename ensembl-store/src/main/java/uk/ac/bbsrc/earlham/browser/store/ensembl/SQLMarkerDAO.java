@@ -240,8 +240,8 @@ public class SQLMarkerDAO implements MarkerStore {
             int count = template.queryForInt(SQL, new Object[]{});
             String cmp_seq_region_id = "select cmp_seq_region_id from assembly where asm_seq_region_id = " + id + " limit 1";
 
-            id = template.queryForInt(cmp_seq_region_id, new Object[]{});
             if (count > 0) {
+                id = template.queryForInt(cmp_seq_region_id, new Object[]{});
                 query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id " + query + ")";
                 marker_size += countRecursiveMarker(query, id, trackId, 0, 0);
             }

@@ -270,13 +270,16 @@ public class SQLDafDAO implements DafStore {
             } else {
                 String SQL = "SELECT count(cmp_seq_region_id) from assembly where asm_seq_region_id " + query + ")";
                 int count = template.queryForInt(SQL, new Object[]{});
-                String cmp_seq_region_id = "select cmp_seq_region_id from assembly where asm_seq_region_id = " + id + " limit 1";
+                if (count > 0){
+                    String cmp_seq_region_id = "select cmp_seq_region_id from assembly where asm_seq_region_id = " + id + " limit 1";
 
-                id = template.queryForInt(cmp_seq_region_id, new Object[]{});
-                if (count > 0) {
-                    query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id " + query + ")";
-                    hit_size += countRecursiveHit(query, id, trackId, 0, 0);
+                    if (count > 0) {
+                        id = template.queryForInt(cmp_seq_region_id, new Object[]{});
+                        query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id " + query + ")";
+                        hit_size += countRecursiveHit(query, id, trackId, 0, 0);
+                    }
                 }
+
             }
 
             return hit_size;

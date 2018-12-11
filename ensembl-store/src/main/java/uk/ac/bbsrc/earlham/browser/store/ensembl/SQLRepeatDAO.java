@@ -26,9 +26,6 @@
 package uk.ac.bbsrc.earlham.browser.store.ensembl;
 
 
-import com.googlecode.ehcache.annotations.Cacheable;
-import com.googlecode.ehcache.annotations.KeyGenerator;
-import com.googlecode.ehcache.annotations.Property;
 import net.sf.ehcache.CacheManager;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -240,8 +237,8 @@ public class SQLRepeatDAO implements RepeatStore {
             int count = template.queryForInt(SQL, new Object[]{});
             String cmp_seq_region_id = "select cmp_seq_region_id from assembly where asm_seq_region_id = " + id + " limit 1";
 
-            id = template.queryForInt(cmp_seq_region_id, new Object[]{});
             if (count > 0) {
+                id = template.queryForInt(cmp_seq_region_id, new Object[]{});
                 query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id " + query + ")";
                 repeat_size += countRecursiveRepeat(query, id, trackId, 0, 0);
             }
