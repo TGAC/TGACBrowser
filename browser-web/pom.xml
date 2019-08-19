@@ -111,9 +111,9 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>net.sourceforge.fluxion.ajax</groupId>
+                                    <groupId>uk.ac.tgac.fluxion.ajax</groupId>
                                     <artifactId>fluxion-ajax-js</artifactId>
-                                    <version>1.0-alpha-12</version>
+                                    <version>1.0</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
                                 </artifactItem>
@@ -131,17 +131,17 @@
     </build>
 
     <repositories>
-        <repository>
-            <id>hasbanana-repo</id>
-            <name>hasBanana Repository</name>
-            <url>http://www.hasbanana.com/maven/repo</url>
-        </repository>
+<!--        <repository>-->
+<!--            <id>hasbanana-repo</id>-->
+<!--            <name>hasBanana Repository</name>-->
+<!--            <url>http://www.hasbanana.com/maven/repo</url>-->
+<!--        </repository>-->
 
-        <!--<repository>-->
-            <!--<id>sonatype-sourceforge-snapshots</id>-->
-            <!--<name>Sonatype SF Repository</name>-->
-            <!--<url>http://oss.sonatype.org/content/repositories/sourceforge-snapshots/</url>-->
-        <!--</repository>-->
+        <repository>
+            <id>tgac-repo2</id>
+            <name>tgac-repo2</name>
+            <url>https://repos.tgac.ac.uk/maven/fluxion/releases/</url>
+        </repository>
 
         <repository>
             <id>Atlassian Maven Repository</id>
@@ -166,22 +166,22 @@
             <version>0.2.0</version>
         </dependency>
         <dependency>
-            <groupId>net.sourceforge.fluxion.ajax</groupId>
+            <groupId>uk.ac.tgac.fluxion.ajax</groupId>
             <artifactId>fluxion-ajax-3</artifactId>
-            <version>1.0-alpha-4</version>
+            <version>1.0</version>
             <!--<version>1.0-alpha-12</version>-->
         </dependency>
 
         <dependency>
-            <groupId>net.sourceforge.fluxion.ajax</groupId>
+            <groupId>uk.ac.tgac.fluxion.ajax</groupId>
             <artifactId>fluxion-ajax-js</artifactId>
-            <version>1.0-alpha-11</version>
+            <version>1.0</version>
         </dependency>
 
         <dependency>
-            <groupId>net.sourceforge.fluxion.ajax.beans</groupId>
+            <groupId>uk.ac.tgac.fluxion.ajax.beans</groupId>
             <artifactId>fluxion-ajax-beans</artifactId>
-            <version>1.0-alpha-3</version>
+            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>

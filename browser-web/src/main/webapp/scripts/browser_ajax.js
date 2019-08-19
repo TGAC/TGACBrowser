@@ -564,7 +564,7 @@ function getReferences(callback) {
                         else {
                             jQuery("#refmap").append("<div length=" + json.seqregion[referenceLength].length + " onclick='jumpToOther(event, " + length + ",\"" + json.seqregion[referenceLength].name + "\",\"" + json.seqregion[referenceLength].coord + "\");' class='refmap' id='" + json.seqregion[referenceLength].name + "' style='left: " + left + "px; width:" + width + "px; height:" + height + "px;'></div>");
                         }
-                        jQuery("#refmap").append("<div onclick='jumpToOther(event, " + length + ",\"" + json.seqregion[referenceLength].name + "\",\"" + json.seqregion[referenceLength].coord + "\");' style='position:absolute; cursor: pointer; color:blue; bottom: 0px; left: " + (left) + "px; '> <u>" + stringTrim(json.seqregion[referenceLength].name, width * 3) + "</u></div>");
+                        jQuery("#refmap").append("<div onclick='jumpToOther(event, " + length + ",\"" + json.seqregion[referenceLength].name + "\",\"" + json.seqregion[referenceLength].coord + "\");' style='position:absolute; cursor: pointer; color:blue; bottom: 0px; left: " + (left) + "px; '> <u>" + stringTrim(json.seqregion[referenceLength].name, (width +distance)) + "</u></div>");
                         jQuery("#map").fadeIn();
                     }
                 }

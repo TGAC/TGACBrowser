@@ -167,24 +167,38 @@
         </site>
     </distributionManagement>
 
+
+
     <!-- Maven repository download -->
     <repositories>
-        <repository>
-            <id>hasbanana-repo</id>
-            <name>hasbanana Maven Repository</name>
-            <url>http://www.hasbanana.com/maven/repo</url>
-        </repository>
+<!--        <repository>-->
+<!--            <id>hasbanana-repo</id>-->
+<!--            <name>hasbanana Maven Repository</name>-->
+<!--            <url>http://www.hasbanana.com/maven/repo</url>-->
+<!--        </repository>-->
 
         <repository>
             <id>tgac-repo</id>
             <name>TGAC Maven Repository</name>
             <url>https://repos.tgac.ac.uk/maven/repo</url>
             <releases>
-                <updatePolicy>always</updatePolicy>
+                <updatePolicy>never</updatePolicy>
             </releases>
             <snapshots>
                 <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>tgac-repo2</id>
+            <name>TGAC Maven Repository</name>
+            <url>https://repos.tgac.ac.uk/maven/fluxion/releases</url>
+            <releases>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
             </snapshots>
         </repository>
 
@@ -207,14 +221,14 @@
         </repository>
 
 
-        <!--<repository>-->
-            <!--<id>net.sourceforge.sam</id>-->
-            <!--<name>sam</name>-->
-            <!--<url>https://repos.tgac.bbsrc.ac.uk/maven/repo</url>-->
-            <!--<snapshots>-->
-                <!--<enabled>true</enabled>-->
-            <!--</snapshots>-->
-        <!--</repository>-->
+        <repository>
+            <id>net.sourceforge.sam</id>
+            <name>sam</name>
+            <url>https://repos.tgac.bbsrc.ac.uk/maven/repo</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
 
         <repository>
             <id>spring-maven-release</id>
@@ -252,6 +266,20 @@
             <id>tgac-repo</id>
             <name>TGAC Maven Repository</name>
             <url>https://repos.tgac.ac.uk/maven/repo</url>
+
+            <!--
+            <releases>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+            -->
+        </pluginRepository>
+        <pluginRepository>
+            <id>tgac-repo2</id>
+            <name>TGAC Maven Repository</name>
+            <url>https://repos.tgac.ac.uk/maven</url>
 
             <!--
             <releases>
@@ -332,7 +360,7 @@
         <module>ensembl-store</module>
         <module>service</module>
         <module>browser-web</module>
-        <module>browser-process</module>
+<!--        <module>browser-process</module>-->
     </modules>
 
 

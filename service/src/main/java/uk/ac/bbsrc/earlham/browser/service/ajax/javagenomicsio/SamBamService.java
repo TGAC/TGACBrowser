@@ -38,11 +38,17 @@ import uk.ac.bbsrc.earlham.browser.store.ensembl.Util;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.MemoryUsage;
 import java.nio.file.Paths;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created with IntelliJ IDEA.
@@ -54,10 +60,12 @@ import java.util.List;
 @Ajaxified
 public class SamBamService {
 
-////    protected static final Logger log = LoggerFactory.getLogger(SamBamService.class);
-////
+    protected static final Logger log = LoggerFactory.getLogger(SamBamService.class);
+    MemoryMXBean memoryBean = ManagementFactory.getMemoryMXBean();
+    ////
 ////
     private Util util = new Util();
+
     /**
      * Return JSONArray
      * <p>
@@ -129,12 +137,32 @@ public class SamBamService {
      * @throws Exception
      */
     public static int countBAM(long start, long end, int delta, String trackId, String reference) throws Exception {
+        log.info("\n\ncount bam");
         Path path = Paths.get(trackId);
 
         try {
+//            IntervalFileReader<? extends Interval> readers = IntervalFileReader.autodetect(path);
+
             IntervalFileReader<? extends Interval> readers = IntervalFileReader.autodetect(path);
-            int count = readers.load(reference, (int) start, (int) end).size();
+            int count = 0;
+            long diff = (end - start) / 400;
+            long temp_start, temp_end;
+            long span[] = new long[2];
+
+            for (int i = 0; i < 400; i++) {
+                temp_start = start + (i * diff);
+                temp_end = temp_start + diff;
+                count += readers.load(reference, (int) temp_start, (int) temp_end).size();
+
+                temp_start = start + (i * diff);
+                temp_end = temp_start + diff;
+
+            }
+
+
             return count;
+        } catch (OutOfMemoryError e) {
+            return 50000;
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             throw new Exception("count BAM :" + e.getMessage());
@@ -153,13 +181,14 @@ public class SamBamService {
      * @throws Exception
      */
     public JSONArray getBAMReads(long start, long end, int delta, String trackId, String reference) throws Exception {
+        log.info("\n\ngetBAMReads");
+
         JSONArray wig = new JSONArray();
         JSONObject response = new JSONObject();
         List<Integer> ends = new ArrayList<Integer>();
         ends.add(0, 0);
 
         Path path = Paths.get(trackId);
-
 
 
         try {
@@ -176,48 +205,50 @@ public class SamBamService {
 
             while (result.hasNext()) {
                 record = result.next();
+                String sam = record.getSAMString();
 
-                start_pos = record.getAlignmentStart();
-                end_pos = record.getAlignmentEnd();
 
-                read.put("start", start_pos);
-                read.put("end", end_pos);
-                read.put("desc", record.getReadName());
-                if(record.getMateNegativeStrandFlag() == true){
-                    read.put("strand", false);
-                }  else{
-                    read.put("strand", true);
-
-                }
-                if (record.getProperPairFlag()) {
-                    if (record.getFirstOfPairFlag()) {
-                        read.put("colour", "steelblue");
-                    } else if (record.getSecondOfPairFlag()) {
-                        read.put("colour", "brown");
-                    }
-                } else {
-                    read.put("colour", "orange");
-                }
-                /**
-                 * flags that csn be used in future
-                 */
-//                read.put("flag0", record.getFlags());
-//                read.put("flag1", record.getDuplicateReadFlag());
-//                read.put("flag4", record.getReadPairedFlag());
-//                read.put("flag3", record.getProperPairFlag());
-//                read.put("flag8", record.getSecondOfPairFlag());
-//                read.put("flag7", record.getDuplicateReadFlag());
-//                read.put("flag6", record.getMateNegativeStrandFlag());
-//                read.put("flag9", record.getReadFailsVendorQualityCheckFlag());
-//                read.put("flag10", record.getReadUnmappedFlag());
-//                read.put("flag2", record.getMateUnmappedFlag());
-//                read.put("flag11", record.getNotPrimaryAlignmentFlag());
-//                read.put("flag12", record.getNotPrimaryAlignmentFlag());
-
-                read.put("cigars", record.getCigarString());
-                read.put("layer", util.stackLayerInt(ends, start_pos, delta, end_pos));
-                ends = util.stackLayerList(ends, start_pos, delta, end_pos);
-                wig.add(read);
+//                start_pos = record.getAlignmentStart();
+//                end_pos = record.getAlignmentEnd();
+//
+//                read.put("start", start_pos);
+//                read.put("end", end_pos);
+//                read.put("desc", record.getReadName());
+//                if (record.getMateNegativeStrandFlag() == true) {
+//                    read.put("strand", false);
+//                } else {
+//                    read.put("strand", true);
+//
+//                }
+//                if (record.getProperPairFlag()) {
+//                    if (record.getFirstOfPairFlag()) {
+//                        read.put("colour", "steelblue");
+//                    } else if (record.getSecondOfPairFlag()) {
+//                        read.put("colour", "brown");
+//                    }
+//                } else {
+//                    read.put("colour", "orange");
+//                }
+//                /**
+//                 * flags that csn be used in future
+//                 */
+////                read.put("flag0", record.getFlags());
+////                read.put("flag1", record.getDuplicateReadFlag());
+////                read.put("flag4", record.getReadPairedFlag());
+////                read.put("flag3", record.getProperPairFlag());
+////                read.put("flag8", record.getSecondOfPairFlag());
+////                read.put("flag7", record.getDuplicateReadFlag());
+////                read.put("flag6", record.getMateNegativeStrandFlag());
+////                read.put("flag9", record.getReadFailsVendorQualityCheckFlag());
+////                read.put("flag10", record.getReadUnmappedFlag());
+////                read.put("flag2", record.getMateUnmappedFlag());
+////                read.put("flag11", record.getNotPrimaryAlignmentFlag());
+////                read.put("flag12", record.getNotPrimaryAlignmentFlag());
+//
+//                read.put("cigars", record.getCigarString());
+//                read.put("layer", util.stackLayerInt(ends, start_pos, delta, end_pos));
+//                ends = util.stackLayerList(ends, start_pos, delta, end_pos);
+                wig.add(sam);
             }
 
             return wig;
@@ -243,6 +274,8 @@ public class SamBamService {
      * @throws Exception
      */
     public static JSONArray getBAMGraphs(long start, long end, int delta, String trackId, String reference) throws Exception {
+        log.info("\n\ngetBAMGraphs");
+
         JSONArray bam = new JSONArray();
         JSONObject response = new JSONObject();
 
@@ -265,12 +298,8 @@ public class SamBamService {
                 temp_end = temp_start + diff;
 
 
-
-                    span[0] =temp_start;
-                    span[1] = (long) count;
-//                read.put("start", temp_start);
-//                read.put("end", temp_end);
-//                read.put("graph", count);
+                span[0] = temp_start;
+                span[1] = (long) count;
                 bam.add(span);
             }
             return bam;

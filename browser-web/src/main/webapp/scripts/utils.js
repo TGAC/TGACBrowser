@@ -60,12 +60,12 @@ function visualLength(temp) {
     var inLength = 0;
     var tempStr = "";
     ruler.innerHTML = "N";
-    if (jQuery.browser.webkit) {
-        inLength = (ruler.offsetWidth - 1) * temp;
-    }
-    else {
+    // if (jQuery.browser.webkit) {
+    //     inLength = (ruler.offsetWidth - 1) * temp;
+    // }
+    // else {
         inLength = (ruler.offsetWidth) * temp;
-    }
+    // }
     return inLength;
 }
 
@@ -164,6 +164,9 @@ function trackToggle(trackname) {
                 }
                 else if (trackName.toLowerCase().indexOf("bed") >= 0) {
                     dispGraphBed("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
+                }
+                else if (trackName.toLowerCase().indexOf("bam") >= 0) {
+                    dispGraphWig("#" + trackName + "_div", trackName, trackid, window['track_list' + trackName].display_label);
                 }
                 else {
                     dispTrack("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
@@ -321,6 +324,8 @@ function groupCancel() {
 }
 
 function stringTrim(string, width, newClass) {
+    console.log(string)
+    console.log(width)
     if (newClass) {
         jQuery("#ruler").addClass(newClass.toString())
     }
@@ -340,6 +345,7 @@ function stringTrim(string, width, newClass) {
     else {
         jQuery("#ruler").removeClass("ruler")
     }
+
 
     if (inLength < width) {
         return string;

@@ -340,6 +340,7 @@ public class DnaSequenceService {
                 log.info("\n\n\n loading gff");
 
                 count = GFFService.countGFF(start, end, delta, trackId, seqName);
+                log.info("\n\n GFF count "+count);
                 if (count == 0) {
                     count = GFFService.countGFF(0, sequenceStore.getSeqLengthbyId(queryid, coord), delta, trackId, seqName);
                     if (count == 0) {

@@ -87,7 +87,6 @@
                                 </tr>
                             </table>
 
-                            <div id=alertDiv></div>
                             <div id="notifier" class="rightAlertdiv"></div>
                         </div>
                     </td>

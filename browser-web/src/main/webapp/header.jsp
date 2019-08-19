@@ -22,18 +22,19 @@
     <script type="text/javascript" src="<c:url value='/scripts/scriptaculous/prototype.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/fluxion-ajax/fluxion-ajax-compiled.js'/>"></script>
 
-    <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery-1.12.0.min.js'/>"></script>
-    <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery-migrate-git.js'/>"></script>
+    <script type="text/javascript" src="<c:url value='https://code.jquery.com/jquery-1.12.0.min.js'/>"></script>
+    <script type="text/javascript" src="<c:url value='https://code.jquery.com/jquery-migrate-git.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery-ui-1.11.2.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery.tablesorter.min.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery.drawinglibrary.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery.cookie.js'/>"></script>
 
-    <script type="text/javascript" src="<c:url value='/scripts/DataTables-1.10.11/js/jquery.dataTables.js'/>"></script>
+    <script type="text/javascript" src="<c:url value='https://cdn.datatables.net/v/dt/dt-1.10.18/datatables.min.js'/>"></script>
     <%--<script type="text/javascript" src="<c:url value='/scripts/jquery/js/jcanvas.min.js'/>"></script>--%>
     <%--BioJS--%>
     <script type="text/javascript" src="<c:url value='/scripts/biojs/wigExplorer/resources/Biojs.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/biojs/wigExplorer/Biojs.wigExplorer.js'/>"></script>
+    <script type="text/javascript" src="<c:url value='/scripts/biojs/SAM/biojs-vis-sam.js'/>"></script>
 
     <script src="<c:url value='/scripts/d3.js/d3.v3.min.js'/>"></script>
     <script src="<c:url value='/scripts/d3.js/venn.js'/>"></script>
@@ -51,7 +52,7 @@
 
 
 
-    <link rel="stylesheet" href="<c:url value='/scripts/DataTables-1.10.11/css/jquery.dataTables.css'/>"          type="text/css">
+    <link rel="stylesheet" href="<c:url value='https://cdn.datatables.net/v/dt/dt-1.10.18/datatables.min.css'/>"          type="text/css">
 
 
     <link rel="stylesheet" href="<c:url value='/scripts/jquery/css/smoothness/jquery-ui-1.8.custom.css'/>"

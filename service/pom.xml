@@ -55,6 +55,19 @@
             </plugin>
         </plugins>
     </build>
+    <repositories>
+        <!--        <repository>-->
+        <!--            <id>hasbanana-repo</id>-->
+        <!--            <name>hasBanana Repository</name>-->
+        <!--            <url>http://www.hasbanana.com/maven/repo</url>-->
+        <!--        </repository>-->
+
+        <repository>
+            <id>tgac-repo2</id>
+            <name>tgac-repo2</name>
+            <url>https://repos.tgac.ac.uk/maven/fluxion/releases/</url>
+        </repository>
+    </repositories>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -108,15 +121,15 @@
         </dependency>
 
         <dependency>
-            <groupId>net.sourceforge.fluxion.ajax</groupId>
+            <groupId>uk.ac.tgac.fluxion.ajax</groupId>
             <artifactId>fluxion-ajax-3</artifactId>
-            <version>1.0-alpha-3</version>
+            <version>1.0</version>
         </dependency>
 
         <dependency>
-            <groupId>net.sourceforge.fluxion.ajax.beans</groupId>
+            <groupId>uk.ac.tgac.fluxion.ajax.beans</groupId>
             <artifactId>fluxion-ajax-beans</artifactId>
-            <version>1.0-alpha-3</version>
+            <version>1.0</version>
         </dependency>
 
         <dependency>
@@ -125,29 +138,30 @@
             <version>2.4</version>
             <classifier>jdk15</classifier>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>net.sf.sam</groupId>-->
-            <!--<artifactId>sam</artifactId>-->
-            <!--<version>1.96</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>net.sf.sam</groupId>
+            <artifactId>sam</artifactId>
+            <version>1.96</version>
+        </dependency>
 
-        <!--<dependency>-->
-            <!--<groupId>java-genomics</groupId>-->
-            <!--<artifactId>java-genomics</artifactId>-->
-            <!--<version>0.1.0</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>java-genomics</groupId>
+            <artifactId>java-genomics</artifactId>
+            <version>0.1.0</version>
+        </dependency>
 
-        <!--<dependency>-->
-            <!--<groupId>broad-inst</groupId>-->
-            <!--<artifactId>igv</artifactId>-->
-            <!--<version>2.3.23</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>broad-inst</groupId>
+            <artifactId>igv</artifactId>
+            <version>2.3.23</version>
+        </dependency>
 
-        <!--<dependency>-->
-            <!--<groupId>broad-inst.tribble</groupId>-->
-            <!--<artifactId>tribble</artifactId>-->
-            <!--<version>1.91</version>-->
-        <!--</dependency>-->
+
+        <dependency>
+            <groupId>broad-inst.tribble</groupId>
+            <artifactId>tribble</artifactId>
+            <version>1.91</version>
+        </dependency>
 
             <dependency>
                 <groupId>java-genomics</groupId>

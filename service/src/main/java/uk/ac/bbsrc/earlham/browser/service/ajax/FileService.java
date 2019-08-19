@@ -34,7 +34,7 @@ import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.util.Random;
 
-//import net.sf.samtools.*;
+import net.sf.samtools.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -77,15 +77,15 @@ function onLoad() {
     jQuery("#map").hide()
 
 
-    jQuery(document).ready(function () {
-        if (jQuery.browser.msie) {
-            jQuery("#alertDiv").html("<img src=\"images/browser/alert.gif\" alt=\"\">Internet Explorer detected. Please use Google Chrome, Safari or Mozilla Firefox");
-            jQuery("#alertDiv").show();
-        }
-        else {
-            jQuery("#alertDiv").hide()
-        }
-    });
+    // jQuery(document).ready(function () {
+    //     if (jQuery.browser.msie) {
+    //         jQuery("#alertDiv").html("<img src=\"images/browser/alert.gif\" alt=\"\">Internet Explorer detected. Please use Google Chrome, Safari or Mozilla Firefox");
+    //         jQuery("#alertDiv").show();
+    //     }
+    //     else {
+    //         jQuery("#alertDiv").hide()
+    //     }
+    // });
 
     jQuery(function () {
         jQuery(".feature_tracks").resizable({
@@ -160,7 +160,7 @@ function onLoad() {
         jumpToSeq();
     });
 
-    jQuery(".track").live('click', function (e) {
+    jQuery(".track").on('click', function (e) {
         if (e.ctrlKey) {
             removeAllPopup();
             jQuery(this).css("border", "1px solid black");

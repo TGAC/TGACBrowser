@@ -27,6 +27,8 @@ package uk.ac.bbsrc.earlham.browser.service.ajax.javagenomicsio;
 
 import edu.unc.genomics.*;
 import edu.unc.genomics.io.GFFFileReader;
+import edu.unc.genomics.io.GeneTrackFileReader;
+import edu.unc.genomics.io.IntervalFileReader;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sourceforge.fluxion.ajax.Ajaxified;
@@ -36,6 +38,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -48,7 +53,7 @@ import java.util.List;
 @Ajaxified
 public class GFFService {
 //
-//    protected static final Logger log = LoggerFactory.getLogger(GFFService.class);
+    protected static final Logger log = LoggerFactory.getLogger(GFFService.class);
 //
 //
     private Util util = new Util();
@@ -70,16 +75,26 @@ public class GFFService {
         int gene = 0;
 
         try {
-            GFFFileReader reader = new GFFFileReader(path);
-            for (GFFEntry entry : reader) { // All entries in the file
-                if (entry.getChr().equals(reference) && entry.getStart() >= start && entry.getStop() <= end) {
-                    if (entry.getFeature().toLowerCase().contains("gene")) {
-                        gene++;
-                    }
-                }
+            GFFFileReader readers = new GFFFileReader(path);
+//            GeneTrackFileReader readers = new GeneTrackFileReader(path);
+//            IntervalFileReader<? extends Interval> readers = IntervalFileReader.autodetect(path);
+            int count = 0;
+            long diff = (end - start) / 400;
+            long temp_start, temp_end;
+            long span[] = new long[2];
+
+            for (int i = 0; i < 400; i++) {
+                temp_start = start + (i * diff);
+                temp_end = temp_start + diff;
+                count += readers.load(reference, (int) temp_start, (int) temp_end).size();
+                log.info("temp_start "+temp_start+" temp_end "+temp_end+ " count "+count);
+
+                temp_start = start + (i * diff);
+                temp_end = temp_start + diff;
+
             }
 
-            return gene;
+            return count;
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             throw new Exception("count GFF :" + e.getMessage());
@@ -98,6 +113,8 @@ public class GFFService {
      * @throws Exception
      */
     public JSONArray getGFFReads(long start, long end, int delta, String trackId, String reference) throws Exception {
+
+        log.info("\n\n\t getGFFreads "+start+" "+end+" "+reference);
         JSONArray wig = new JSONArray();
         JSONObject response = new JSONObject();
         List<Integer> ends = new ArrayList<Integer>();
@@ -110,7 +127,7 @@ public class GFFService {
 
 
         try {
-            GFFFileReader reader = new GFFFileReader(path);
+            GFFFileReader readers = new GFFFileReader(path);
 
             JSONObject gene = new JSONObject();
             JSONObject transcript = new JSONObject();
@@ -121,12 +138,14 @@ public class GFFService {
             boolean genes = false;
             boolean transcripts = false;
 
+            List<GFFEntry> reader = readers.load(reference, (int) start, (int) end);
+
             for (GFFEntry entry : reader) { // All entries in the file
                 // do what you want with the entry
                 // maybe store entries from chr1
                 int start_pos, end_pos;
-
-                if (entry.getChr().equals(reference) && entry.getStart() >= start && entry.getStop() <= end) {
+                log.info(String.valueOf(entry));
+//                if (entry.getChr().equals(reference) && entry.getStart() >= start && entry.getStop() <= end) {
 
                     start_pos = entry.getStart();
                     end_pos = entry.getStop();
@@ -164,7 +183,7 @@ public class GFFService {
                         exon.put("end", end_pos);
                         exonList.add(exon);
                     }
-                }
+//                }
             }
             if (genes) {
                 gene.put("transcript", transcriptList);
@@ -192,6 +211,7 @@ public class GFFService {
      */
 
     public static JSONArray getGFFGraphs(long start, long end, int delta, String trackId, String reference) throws Exception {
+        log.info("\n\n\t getGFFGraphs");
 
         JSONArray gff = new JSONArray();
         JSONObject response = new JSONObject();
@@ -200,32 +220,47 @@ public class GFFService {
 
         try {
             JSONObject read = new JSONObject();
-            List<Integer> gene_start = new ArrayList<Integer>();
-            List<Integer> gene_end = new ArrayList<Integer>();
-
+//            List<Integer> gene_start = new ArrayList<Integer>();
+//            List<Integer> gene_end = new ArrayList<Integer>();
+//
+//            long diff = (end - start) / 400;
+//            long temp_start, temp_end;
+//
+//            GFFFileReader reader = new GFFFileReader(path);
+//            for (GFFEntry entry : reader) { // All entries in the file
+//                if (entry.getChr().equals(reference) && entry.getStart() >= start && entry.getStop() <= end) {
+//                        gene_start.add(entry.getStart());
+//                        gene_end.add(entry.getStop());
+//                }
+//            }
+//
+//            for (int i = 0; i < 400; i++) {
+//                temp_start = start + (i * diff);
+//                temp_end = temp_start + diff;
+//                int count = 0;
+//
+//                for (Integer entry : gene_start) { // All entries in the file
+//                    if(entry < temp_end && entry > temp_start);
+//                    {
+//                        count++;
+//                        gene_start.remove(entry);
+//                    }
+//                }
+            GFFFileReader readers = new GFFFileReader(path);
+            int count = 0;
             long diff = (end - start) / 400;
             long temp_start, temp_end;
-
-            GFFFileReader reader = new GFFFileReader(path);
-            for (GFFEntry entry : reader) { // All entries in the file
-                if (entry.getChr().equals(reference) && entry.getStart() >= start && entry.getStop() <= end) {
-                        gene_start.add(entry.getStart());
-                        gene_end.add(entry.getStop());
-                }
-            }
+            long span[] = new long[2];
 
             for (int i = 0; i < 400; i++) {
                 temp_start = start + (i * diff);
                 temp_end = temp_start + diff;
-                int count = 0;
+                count = readers.load(reference, (int) temp_start, (int) temp_end).size();
 
-                for (Integer entry : gene_start) { // All entries in the file
-                    if(entry < temp_end && entry > temp_start);
-                    {
-                        count++;
-                        gene_start.remove(entry);
-                    }
-                }
+                temp_start = start + (i * diff);
+                temp_end = temp_start + diff;
+
+
                 read.put("start", temp_start);
                 read.put("end", temp_end);
                 read.put("graph", count);
