@@ -22,8 +22,8 @@
     <script type="text/javascript" src="<c:url value='/scripts/scriptaculous/prototype.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/fluxion-ajax/fluxion-ajax-compiled.js'/>"></script>
 
-    <script type="text/javascript" src="<c:url value='https://code.jquery.com/jquery-1.12.0.min.js'/>"></script>
-    <script type="text/javascript" src="<c:url value='https://code.jquery.com/jquery-migrate-git.js'/>"></script>
+    <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery-1.11.2.min.js'/>"></script>
+    <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery-migrate-1.2.1.min.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery-ui-1.11.2.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery.tablesorter.min.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery.drawinglibrary.js'/>"></script>
