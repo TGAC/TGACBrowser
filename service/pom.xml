@@ -184,6 +184,6 @@
 
     <properties>
         <javamail-version>1.4.1</javamail-version>
-        <spring-version>3.0.5.RELEASE</spring-version>
+        <spring-version>3.2.8.RELEASE</spring-version>
     </properties>
 </project>
