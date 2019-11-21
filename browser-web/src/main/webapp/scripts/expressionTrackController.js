@@ -48,10 +48,10 @@ function dispGraphWig(div, trackName, trackId, className) {
                 track_html = [];
                 track_html.push("<font size=4><center>No data available for selected region</center></font>");
             } else {
-                if (track[0][1] > 0) {
-                    posGraphWig(div, trackName, trackId, className)
-                } else {
+                if (track[0][1] < 0) {
                     negGraphWig(div, trackName, trackId, className)
+                } else {
+                    posGraphWig(div, trackName, trackId, className)
                 }
             }
 
@@ -112,6 +112,7 @@ function posGraphWig(div, trackName, trackId, className) {
 
     d3.json(track, function () {
         data = track;
+
         var length = data.length - 1;
         var end_val = parseInt(data[length][0]) + parseInt(data[1][0] - data[0][0]);
         var start_val = parseInt(data[0][0]) - (parseInt(data[1][0] - data[0][0]));
