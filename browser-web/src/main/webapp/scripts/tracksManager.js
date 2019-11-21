@@ -63,7 +63,6 @@ function tracklistopenclose() {
 function tracks_div(Tracklist, i) {
 
 
-
     if (i) {
 
         track_div_html(Tracklist, i)
@@ -176,6 +175,10 @@ function trackList(tracklist, i) {
 
         }
 
+        // jQuert('#my-select').searchableOptionList({
+        //     data: 'testdata.json'
+        // });
+
         tracks_div(tracklist);
         tracks_css(tracklist);
 
@@ -212,6 +215,8 @@ function prepare_track_list(Tracklist, i){
         if (document.getElementById("group" + Tracklist[i].web.trackgroup) == null) {
             jQuery("#tracklist").append("<div style='padding: 5px; margin: 10px; position: relative; border: 1px solid lightgray; top: 10px' id='group" + Tracklist[i].web.trackgroup + "'> <b>" + Tracklist[i].web.trackgroup + "</b> <p></div>")
             jQuery("#mergetracklist").append("<div style='padding: 5px;  margin: 10px; position: relative; border: 1px solid lightgray; top: 10px' id='mergegroup" + Tracklist[i].web.trackgroup + "'><b>" + Tracklist[i].web.trackgroup + "</b> <p></div>")
+            // jQuery('#group'+Tracklist[i].web.trackgroup).html("<input id=\"SearchBar"+Tracklist[i].web.trackgroup+"\" placeholder=\"Search for options..\" type=\"text\" oninput=\"updateCheckboxes('SearchBar"+Tracklist[i].web.trackgroup+',','"+Tracklist[i].web.trackgroup+"')\" autocomplete=\"off\">")
+
         }
 
         jQuery("<div>").attr({
@@ -350,6 +355,18 @@ function prepare_track_css (Tracklist, i){
     }
 }
 
+function updateCheckboxes(searchbox, checkboxes) {
+    // console.log("updateCheckboxes")
+    // console.log(searchbox)
+    // console.log(checkboxes)
+    // if (jQuery(searchbox).val() == '') {
+    //     jQuery('#checkboxes > label').show();
+    // } else {
+    //     jQuery('#checkboxes > label').hide();
+    //     jQuery('#checkboxes > label:contains('+jQuery('#SearchBar').val()+')').show();
+    // }
+}
+
 function toggleLeftInfo(div, id) {
     if (jQuery(div).hasClass("toggleRight")) {
         jQuery(div).removeClass("toggleRight").addClass("toggleRightDown");
@@ -381,7 +398,7 @@ function loadDefaultTrack(tracklist) {
                 if (end > sequencelength) {
                     end = sequencelength;
                 }
-                deltaWidth = parseInt(end - start) * 2 / parseInt(maxLen);
+                deltaWidth = parseInt(end - start) / parseInt(maxLen);
                 window[Tracklist[i].name] == "loading";
                 trackToggle(Tracklist[i].name);
                 Fluxion.doAjax(
@@ -434,7 +451,7 @@ function loadDefaultTrack(tracklist) {
                     end = sequencelength;
                 }
 
-                deltaWidth = parseInt(end - start) * 2 / parseInt(maxLen);
+                deltaWidth = parseInt(end - start) / parseInt(maxLen);
 
                 window[Tracklist[i].name] == "loading";
 

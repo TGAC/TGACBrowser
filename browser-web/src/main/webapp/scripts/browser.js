@@ -409,7 +409,7 @@ function addJSON(from, to, trackName, trackId) {
         to = sequencelength;
     }
     if ((to - from) > 0) {
-        deltaWidth = parseInt(to - from) * 2 / parseInt(maxLen);
+        deltaWidth = parseInt(to - from) / parseInt(maxLen);
 
         if (trackName && trackId && trackId.toString().indexOf('noid') < 0) {
             Fluxion.doAjax(
@@ -599,6 +599,7 @@ function removeJSON(from, to) {
 
     var Tracklist = track_list;
     var query = jQuery('#search').val();
+    deltaWidth = parseInt(to - from) / parseInt(maxLen);
 
     for (var i = 0; i < Tracklist.length; i++) {
         if (jQuery("#" + Tracklist[i].name + "Checkbox").is(':checked')) {

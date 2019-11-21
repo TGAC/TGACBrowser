@@ -147,7 +147,17 @@ function generateFileLink(data) {
         });
 }
 
+function checkMaxTracks(trackId, trackname) {
+    var selected = [];
+    jQuery('#checkboxes input:checked').each(function() {
+        selected.push(jQuery(this).attr('name'));
+    });
+}
+
 function loadTrackAjax(trackId, trackname) {
+
+    checkMaxTracks(trackId, trackname)
+
     mergeTrackList(trackname);
     var query = jQuery('#search').val();
 
@@ -178,7 +188,7 @@ function loadTrackAjax(trackId, trackname) {
         if (end > sequencelength) {
             end = sequencelength;
         }
-        deltaWidth = parseInt(end - start) * 2 / parseInt(maxLen);
+        deltaWidth = parseInt(end - start) / parseInt(maxLen);
         window[trackname] == "loading";
         trackToggle(trackname);
         Fluxion.doAjax(
@@ -346,7 +356,7 @@ function reloadTracks(tracks, tracklist, blast) {
             if (end > sequencelength) {
                 end = sequencelength;
             }
-            var deltaWidth = parseInt(end - start) * 2 / parseInt(maxLen);
+            var deltaWidth = parseInt(end - start) / parseInt(maxLen);
             window[tracklist[i].name] == "loading";
             trackToggle(tracklist[i].name);
             Fluxion.doAjax(
