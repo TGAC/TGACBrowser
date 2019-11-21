@@ -91,7 +91,6 @@ public class SamBamService {
             String sCurrentLine;
 
             br = new BufferedReader(new FileReader(inputfile));
-//       Pattern p = Pattern.compile(".*" + reference + "$");
 
             while ((sCurrentLine = br.readLine()) != null) {
                 String[] line = sCurrentLine.split("\t");
@@ -141,27 +140,32 @@ public class SamBamService {
         Path path = Paths.get(trackId);
 
         try {
-//            IntervalFileReader<? extends Interval> readers = IntervalFileReader.autodetect(path);
-
             IntervalFileReader<? extends Interval> readers = IntervalFileReader.autodetect(path);
+
             int count = 0;
-            long diff = (end - start) / 400;
-            long temp_start, temp_end;
-            long span[] = new long[2];
 
-            for (int i = 0; i < 400; i++) {
-                temp_start = start + (i * diff);
-                temp_end = temp_start + diff;
-                count += readers.load(reference, (int) temp_start, (int) temp_end).size();
+            count = readers.load(reference, (int) start, (int) end).size();
 
-                temp_start = start + (i * diff);
-                temp_end = temp_start + diff;
-
-            }
+//            long diff = (end - start) / 400;
+//            long temp_start, temp_end;
+//            long span[] = new long[2];
+//
+//            for (int i = 0; i < 400; i++) {
+//                temp_start = start + (i * diff);
+//                temp_end = temp_start + diff;
+////                log.info("\n\n\n\t loop count "+count);
+//
+//                count += readers.load(reference, (int) temp_start, (int) temp_end).size();
+//
+//                temp_start = start + (i * diff);
+//                temp_end = temp_start + diff;
+//
+//            }
 
 
             return count;
         } catch (OutOfMemoryError e) {
+            log.info("\n\n\n\t out of memory 50000");
             return 50000;
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -208,47 +212,50 @@ public class SamBamService {
                 String sam = record.getSAMString();
 
 
-//                start_pos = record.getAlignmentStart();
-//                end_pos = record.getAlignmentEnd();
+                start_pos = record.getAlignmentStart();
+                end_pos = record.getAlignmentEnd();
+
+                read.put("start", start_pos);
+                read.put("end", end_pos);
+                read.put("desc", record.getReadName());
+                if (record.getMateNegativeStrandFlag() == true) {
+                    read.put("strand", false);
+                } else {
+                    read.put("strand", true);
+
+                }
+                if (record.getProperPairFlag()) {
+                    if (record.getFirstOfPairFlag()) {
+                        read.put("colour", "steelblue");
+                    } else if (record.getSecondOfPairFlag()) {
+                        read.put("colour", "brown");
+                    }
+                } else {
+                    read.put("colour", "orange");
+                }
+                /**
+                 * flags that csn be used in future
+                 */
+//                read.put("flag0", record.getFlags());
+//                read.put("flag1", record.getDuplicateReadFlag());
+//                read.put("flag4", record.getReadPairedFlag());
+//                read.put("flag3", record.getProperPairFlag());
+//                read.put("flag8", record.getSecondOfPairFlag());
+//                read.put("flag7", record.getDuplicateReadFlag());
+//                read.put("flag6", record.getMateNegativeStrandFlag());
+//                read.put("flag9", record.getReadFailsVendorQualityCheckFlag());
+//                read.put("flag10", record.getReadUnmappedFlag());
+//                read.put("flag2", record.getMateUnmappedFlag());
+//                read.put("flag11", record.getNotPrimaryAlignmentFlag());
+//                read.put("flag12", record.getNotPrimaryAlignmentFlag());
 //
-//                read.put("start", start_pos);
-//                read.put("end", end_pos);
-//                read.put("desc", record.getReadName());
-//                if (record.getMateNegativeStrandFlag() == true) {
-//                    read.put("strand", false);
-//                } else {
-//                    read.put("strand", true);
-//
-//                }
-//                if (record.getProperPairFlag()) {
-//                    if (record.getFirstOfPairFlag()) {
-//                        read.put("colour", "steelblue");
-//                    } else if (record.getSecondOfPairFlag()) {
-//                        read.put("colour", "brown");
-//                    }
-//                } else {
-//                    read.put("colour", "orange");
-//                }
-//                /**
-//                 * flags that csn be used in future
-//                 */
-////                read.put("flag0", record.getFlags());
-////                read.put("flag1", record.getDuplicateReadFlag());
-////                read.put("flag4", record.getReadPairedFlag());
-////                read.put("flag3", record.getProperPairFlag());
-////                read.put("flag8", record.getSecondOfPairFlag());
-////                read.put("flag7", record.getDuplicateReadFlag());
-////                read.put("flag6", record.getMateNegativeStrandFlag());
-////                read.put("flag9", record.getReadFailsVendorQualityCheckFlag());
-////                read.put("flag10", record.getReadUnmappedFlag());
-////                read.put("flag2", record.getMateUnmappedFlag());
-////                read.put("flag11", record.getNotPrimaryAlignmentFlag());
-////                read.put("flag12", record.getNotPrimaryAlignmentFlag());
-//
-//                read.put("cigars", record.getCigarString());
-//                read.put("layer", util.stackLayerInt(ends, start_pos, delta, end_pos));
-//                ends = util.stackLayerList(ends, start_pos, delta, end_pos);
-                wig.add(sam);
+//                read.put("attribultes", record.getAttributes());
+
+                read.put("cigars", record.getCigarString());
+                read.put("layer", util.stackLayerInt(ends, start_pos, delta, end_pos));
+                read.put("sam", sam);
+                ends = util.stackLayerList(ends, start_pos, delta, end_pos);
+                wig.add(read);
             }
 
             return wig;
