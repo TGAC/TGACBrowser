@@ -31,16 +31,11 @@ import edu.unc.genomics.io.IntervalFileReader;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sourceforge.fluxion.ajax.Ajaxified;
-
 import edu.unc.genomics.Interval;
 import uk.ac.bbsrc.earlham.browser.store.ensembl.Util;
-//
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryMXBean;
-import java.lang.management.MemoryUsage;
 import java.nio.file.Paths;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -61,9 +56,6 @@ import org.slf4j.LoggerFactory;
 public class SamBamService {
 
     protected static final Logger log = LoggerFactory.getLogger(SamBamService.class);
-    MemoryMXBean memoryBean = ManagementFactory.getMemoryMXBean();
-    ////
-////
     private Util util = new Util();
 
     /**
@@ -83,7 +75,6 @@ public class SamBamService {
      */
     public static JSONArray getBed(long start, long end, int delta, String trackId, String reference) throws Exception {
         JSONArray bed = new JSONArray();
-        boolean found = false;
         try {
             File inputfile = new File(trackId);
 
@@ -136,36 +127,14 @@ public class SamBamService {
      * @throws Exception
      */
     public static int countBAM(long start, long end, int delta, String trackId, String reference) throws Exception {
-        log.info("\n\ncount bam");
         Path path = Paths.get(trackId);
 
         try {
             IntervalFileReader<? extends Interval> readers = IntervalFileReader.autodetect(path);
-
             int count = 0;
-
             count = readers.load(reference, (int) start, (int) end).size();
-
-//            long diff = (end - start) / 400;
-//            long temp_start, temp_end;
-//            long span[] = new long[2];
-//
-//            for (int i = 0; i < 400; i++) {
-//                temp_start = start + (i * diff);
-//                temp_end = temp_start + diff;
-////                log.info("\n\n\n\t loop count "+count);
-//
-//                count += readers.load(reference, (int) temp_start, (int) temp_end).size();
-//
-//                temp_start = start + (i * diff);
-//                temp_end = temp_start + diff;
-//
-//            }
-
-
             return count;
         } catch (OutOfMemoryError e) {
-            log.info("\n\n\n\t out of memory 50000");
             return 50000;
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -185,8 +154,6 @@ public class SamBamService {
      * @throws Exception
      */
     public JSONArray getBAMReads(long start, long end, int delta, String trackId, String reference) throws Exception {
-        log.info("\n\ngetBAMReads");
-
         JSONArray wig = new JSONArray();
         JSONObject response = new JSONObject();
         List<Integer> ends = new ArrayList<Integer>();
@@ -209,9 +176,6 @@ public class SamBamService {
 
             while (result.hasNext()) {
                 record = result.next();
-                String sam = record.getSAMString();
-
-
                 start_pos = record.getAlignmentStart();
                 end_pos = record.getAlignmentEnd();
 
@@ -252,10 +216,13 @@ public class SamBamService {
 //                read.put("attribultes", record.getAttributes());
 
                 read.put("cigars", record.getCigarString());
+                read.put("alignment", record.getSequence());
                 read.put("layer", util.stackLayerInt(ends, start_pos, delta, end_pos));
-                read.put("sam", sam);
+//                read.put("sam", sam);
                 ends = util.stackLayerList(ends, start_pos, delta, end_pos);
                 wig.add(read);
+
+
             }
 
             return wig;
@@ -289,7 +256,6 @@ public class SamBamService {
         Path path = Paths.get(trackId);
 
         try {
-            JSONObject read = new JSONObject();
             IntervalFileReader<? extends Interval> readers = IntervalFileReader.autodetect(path);
 
             long diff = (end - start) / 400;
@@ -302,8 +268,6 @@ public class SamBamService {
                 int count = readers.load(reference, (int) temp_start, (int) temp_end).size();
 
                 temp_start = start + (i * diff);
-                temp_end = temp_start + diff;
-
 
                 span[0] = temp_start;
                 span[1] = (long) count;
