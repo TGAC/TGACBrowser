@@ -123,6 +123,9 @@ function seqBar(seqStart, seqEnd) {
     }
 }
 
+function isSequence() {
+        console.log(isDef(jQuery('#seqbar')[0]))
+}
 
 function jumpToSeqFromGo() {
     var begin = jQuery("#begin_scale").val()/scale;
@@ -281,8 +284,8 @@ function translate(sequence) {
 
     if (space >= 0) {
         jQuery("#translation_div").show();
-        jQuery("#tracks").css('top', '60px');
-        jQuery("#sequence").css('height', '60px');
+        jQuery("#tracks").css('top', '72px');
+        jQuery("#sequence").css('height', '71px');
         jQuery("#translation_div").html("<br>" + ptn_seq);
     }
     else {
