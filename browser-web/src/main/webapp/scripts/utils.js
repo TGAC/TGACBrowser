@@ -166,7 +166,7 @@ function trackToggle(trackname) {
                     dispGraphBed("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
                 }
                 else if (trackName.toLowerCase().indexOf("bam") >= 0) {
-                    dispGraphWig("#" + trackName + "_div", trackName, trackid, window['track_list' + trackName].display_label);
+                    dispSAMTrack("#" + trackName + "_div", trackName, trackid, window['track_list' + trackName].display_label);
                 }
                 else {
                     dispTrack("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
@@ -211,6 +211,8 @@ function trackToggle(trackname) {
             }
             else if (trackname.toLowerCase().indexOf("bed") >= 0) {
                 dispGraphBed("#" + trackname + "_div", trackname, window['track_list' + trackname].display_label);
+            }else if (trackname.toLowerCase().indexOf("bam") >= 0) {
+                dispSAMTrack("#" + trackname + "_div", trackname, window['track_list' + trackname].display_label);
             }
             else {
                 dispTrack("#" + trackname + "_div", trackname, window['track_list' + trackname].display_label);
