@@ -86,11 +86,7 @@ public class Util implements UtilsStore {
                     position = (a + 1);
                     break;
                 } else if ((start_pos - ends.get(a) <= delta && (a + 1) == ends.size()) || start_pos == ends.get(a)) {
-                    if (a == 0) {
-                        position = ends.size();
-                    } else {
-                        position = ends.size()+1;
-                    }
+                    position = ends.size() + 1;
                     break;
                 } else {
                     continue;
@@ -119,11 +115,7 @@ public class Util implements UtilsStore {
                     ends.set(a, end_pos);
                     break;
                 } else if ((start_pos - ends.get(a) <= delta && (a + 1) == ends.size()) || start_pos == ends.get(a)) {
-                    if (a == 0) {
-                        ends.add(a, end_pos);
-                    } else {
-                        ends.add(ends.size(), end_pos);
-                    }
+                    ends.add(ends.size(), end_pos);
                     break;
                 } else {
                     continue;
