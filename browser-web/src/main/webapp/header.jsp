@@ -50,6 +50,9 @@
     <script type="text/javascript" src="http://canvg.googlecode.com/svn/trunk/rgbcolor.js"></script>
     <script type="text/javascript" src="http://canvg.googlecode.com/svn/trunk/canvg.js"></script>
 
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/js/select2.min.js"></script>
+
 
 
     <link rel="stylesheet" href="<c:url value='https://cdn.datatables.net/v/dt/dt-1.10.18/datatables.min.css'/>"          type="text/css">
