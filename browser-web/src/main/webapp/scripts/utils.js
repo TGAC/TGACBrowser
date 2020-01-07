@@ -34,23 +34,25 @@
 function stringColour(temp) {
     var letters = temp.split('');
     var newSeq = "";
-    var width = maxLen / (getEnd()-getBegin() + 1)
+    var width = maxLen / (getEnd() - getBegin() + 1)
+    var count = 0;
     for (var i = 0; i < letters.length; i++) {
+        count++;
         if (letters[i] == 'A') {
-            newSeq += "<span class=\"span_str\" style=\"background:#ff8c00; width: "+width+"px; LEFT: " + (i * width) + "px;\">" + letters[i] + "</span>";
+            newSeq += "<span class=\"span_str\" style=\"background:#ff8c00; width: " + width + "px; LEFT: " + (count * width) + "px;\">" + letters[i] + "</span>";
+        } else if (letters[i] == 'C') {
+            newSeq += "<span class=\"span_str\" style=\"background:green; width: " + width + "px; left: " + (count * width) + "px;\">" + letters[i] + "</span>";
+        } else if (letters[i] == 'G') {
+            newSeq += "<span class=\"span_str\" style=\"background:blue; width: " + width + "px; left: " + (count * width) + "px;\">" + letters[i] + "</span>";
+        } else if (letters[i] == 'T') {
+            newSeq += "<span class=\"span_str\" style=\"background:red; width: " + width + "px; left:  " + (count * width) + "px;\">" + letters[i] + "</span>";
+        } else if (letters[i] == '|') {
+            newSeq += "<span class=\"span_str\" style=\"background:red; font-weight:bold; width: 0px; z-index:999; color: black; border: 2px solid black;height: 17px;margin-left: -1px;margin-top: -1px; left:  " + (count * width) + "px;\"> </span>";
+            count--;
+        } else {
+            newSeq += "<span class=\"span_str\" style=\"background:black; width: " + width + "px; left:  " + (count * width) + "px;\">" + letters[i] + "</span>";
         }
-        else if (letters[i] == 'C') {
-            newSeq += "<span class=\"span_str\" style=\"background:green; width: "+width+"px; left: " + (i * width) + "px;\">" + letters[i] + "</span>";
-        }
-        else if (letters[i] == 'G') {
-            newSeq += "<span class=\"span_str\" style=\"background:blue; width: "+width+"px; left: " + (i * width) + "px;\">" + letters[i] + "</span>";
-        }
-        else if (letters[i] == 'T') {
-            newSeq += "<span class=\"span_str\" style=\"background:red; width: "+width+"px; left:  " + (i * width) + "px;\">" + letters[i] + "</span>";
-        }
-        else {
-            newSeq += "<span class=\"span_str\" style=\"background:black; width: "+width+"px; left:  " + (i * width) + "px;\">" + letters[i] + "</span>";
-        }
+
     }
     return newSeq;
 }
@@ -64,14 +66,14 @@ function visualLength(temp) {
     //     inLength = (ruler.offsetWidth - 1) * temp;
     // }
     // else {
-        inLength = (ruler.offsetWidth) * temp;
+    inLength = (ruler.offsetWidth) * temp;
     // }
     return inLength;
 }
 
 function findminwidth() {
     maxLen = jQuery(window).width();
-    var seqWidth = parseInt(maxLen*sequencelength/visualLength(sequencelength)); //maxLen / 10; //parseFloat(maxLen) * sequencelength / parseFloat(len);
+    var seqWidth = parseInt(maxLen * sequencelength / visualLength(sequencelength)); //maxLen / 10; //parseFloat(maxLen) * sequencelength / parseFloat(len);
     deltaWidth = parseInt(sequencelength) * 2 / parseInt(maxLen);
 
 //    if (sequencelength < seqWidth) {
@@ -93,6 +95,7 @@ function findminwidth() {
 
     return parseInt(seqWidth);
 }
+
 function browser_coordinates() {
 
     var temp = "";
@@ -112,12 +115,12 @@ function browser_coordinates() {
         jQuery("#vertical0").html(temp + format_numbers(Math.round(getBegin())));
         jQuery("#vertical1").html(temp + format_numbers(Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.1))));
         jQuery("#vertical2").html(temp + format_numbers(Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.2))));
-        jQuery("#vertical3").html(temp + format_numbers(Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.3))) );
-        jQuery("#vertical4").html(temp + format_numbers(Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.4))) );
-        jQuery("#vertical5").html(temp + format_numbers(Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.5))) );
+        jQuery("#vertical3").html(temp + format_numbers(Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.3))));
+        jQuery("#vertical4").html(temp + format_numbers(Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.4))));
+        jQuery("#vertical5").html(temp + format_numbers(Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.5))));
         jQuery("#vertical6").html(temp + format_numbers(Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.6))));
-        jQuery("#vertical7").html(temp + format_numbers(Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.7))) );
-        jQuery("#vertical8").html(temp +format_numbers( Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.8))) );
+        jQuery("#vertical7").html(temp + format_numbers(Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.7))));
+        jQuery("#vertical8").html(temp + format_numbers(Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.8))));
         jQuery("#vertical9").html(temp + format_numbers(Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin()) * 0.9))));
         jQuery("#vertical10").html(temp + format_numbers(Math.round(parseFloat(getBegin()) + parseFloat((getEnd() - getBegin())))));
     }
@@ -135,7 +138,7 @@ function trackToggle(trackname) {
             var trackName = track_list[i].name;
             trackid = window['track_list' + trackName].id;
             graph = window['track_list' + trackName].graph;
-            if (jQuery("#" + track_list[i].name + "Checkbox").is(':checked')) {
+            if (jQuery("#" + track_list[i].name + "Checkbox").is(':checked') || jQuery("#track_files").val().indexOf(trackid) >= 0) {
                 if (graph == "true") {
                     if (window['track_list' + trackName].graphtype == "bar") {
                         dispGraph("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
@@ -143,46 +146,36 @@ function trackToggle(trackname) {
                         dispGraphHeat("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
                     } else if (window['track_list' + trackName].graphtype == "wig") {
                         dispGraphWig("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
-                    }else if (window['track_list' + trackName].graphtype == "manhattan"){
+                    } else if (window['track_list' + trackName].graphtype == "manhattan") {
                         dispGraphManhattan("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
                     }
-                }
-                else if (trackName.toLowerCase().indexOf("blasttrack") >= 0) {
+                } else if (trackName.toLowerCase().indexOf("blasttrack") >= 0) {
                     dispBLAST("#" + trackName + "_div", 'blasttrack');
-                }
-                else if (trackName.toLowerCase().indexOf("manhattan") >= 0) {
-                    dispGraphManhattan( "#" + trackName + "_div",trackName, window['track_list' + trackName].display_label);
-                }
-                else if (trackName.toLowerCase().indexOf("gene") >= 0 || trackName.toLowerCase().indexOf("gff") >= 0) {
+                } else if (trackName.toLowerCase().indexOf("manhattan") >= 0) {
+                    dispGraphManhattan("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
+                } else if (trackName.toLowerCase().indexOf("gene") >= 0 || trackName.toLowerCase().indexOf("gff") >= 0) {
                     dispGenes("#" + trackName + "_div", trackName, window['track_list' + trackName].expand, window['track_list' + trackName].display_label);
-                }
-                else if (trackName.toLowerCase().indexOf("vcf") >= 0) {
+                } else if (trackName.toLowerCase().indexOf("vcf") >= 0) {
                     dispVCF("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
-                }
-                else if (trackid.toString().toLowerCase().indexOf("wig") >= 0 || trackid.toString().toLowerCase().indexOf("bw") >= 0 || trackid.toString().toLowerCase().indexOf("bigwig") >= 0) {
+                } else if (trackid.toString().toLowerCase().indexOf("wig") >= 0 || trackid.toString().toLowerCase().indexOf("bw") >= 0 || trackid.toString().toLowerCase().indexOf("bigwig") >= 0) {
                     dispGraphWig("#" + trackName + "_div", trackName, trackid, window['track_list' + trackName].display_label);
-                }
-                else if (trackName.toLowerCase().indexOf("bed") >= 0) {
+                } else if (trackName.toLowerCase().indexOf("bed") >= 0) {
                     dispGraphBed("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
-                }
-                else if (trackName.toLowerCase().indexOf("bam") >= 0) {
+                } else if (trackName.toLowerCase().indexOf("bam") >= 0) {
                     dispSAMTrack("#" + trackName + "_div", trackName, trackid, window['track_list' + trackName].display_label);
-                }
-                else {
+                } else {
                     dispTrack("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
                 }
-            }
-            else {
+            } else {
                 jQuery("#" + track_list[i].name + "_wrapper").fadeOut();
             }
         }
-    }
-    else {
+    } else {
         layers = jQuery("#rowoftracks").val();
         trackid = window['track_list' + trackname].id;
         graph = window['track_list' + trackname].graph;
 
-        if (jQuery('#' + trackname + 'Checkbox').is(':checked')) {
+        if (jQuery('#' + trackname + 'Checkbox').is(':checked') || jQuery("#track_files").val().indexOf(trackid) >= 0) {
             if (graph == "true") {
                 if (window['track_list' + trackname].graphtype == "bar") {
                     dispGraph("#" + trackname + "_div", trackname, window['track_list' + trackname].display_label);
@@ -190,35 +183,27 @@ function trackToggle(trackname) {
                     dispGraphHeat("#" + trackname + "_div", trackname, window['track_list' + trackname].display_label);
                 } else if (window['track_list' + trackname].graphtype == "wig") {
                     dispGraphWig("#" + trackname + "_div", trackname, window['track_list' + trackname].display_label);
-                }else if (window['track_list' + trackname].graphtype == "manhattan"){
+                } else if (window['track_list' + trackname].graphtype == "manhattan") {
                     dispGraphManhattan("#" + trackname + "_div", trackname, window['track_list' + trackname].display_label);
                 }
-            }
-            else if (trackname.toLowerCase().indexOf("blasttrack") >= 0) {
+            } else if (trackname.toLowerCase().indexOf("blasttrack") >= 0) {
                 dispBLAST("#" + trackname + "_div", 'blasttrack');
-            }
-            else if (trackname.toLowerCase().indexOf("manhattan") >= 0) {
-                dispGraphManhattan( "#" + trackname + "_div",trackname, window['track_list' + trackname].display_label);
-            }
-            else if (trackname.toLowerCase().indexOf("gene") >= 0 || trackname.toLowerCase().indexOf("gff") >= 0) {
+            } else if (trackname.toLowerCase().indexOf("manhattan") >= 0) {
+                dispGraphManhattan("#" + trackname + "_div", trackname, window['track_list' + trackname].display_label);
+            } else if (trackname.toLowerCase().indexOf("gene") >= 0 || trackname.toLowerCase().indexOf("gff") >= 0) {
                 dispGenes("#" + trackname + "_div", trackname, window['track_list' + trackname].expand, window['track_list' + trackname].display_label);
-            }
-            else if (trackname.toLowerCase().indexOf("vcf") >= 0) {
+            } else if (trackname.toLowerCase().indexOf("vcf") >= 0) {
                 dispVCF("#" + trackname + "_div", trackname, window['track_list' + trackname].display_label);
-            }
-            else if (trackid.toString().toLowerCase().indexOf("wig") >= 0 || trackid.toString().toLowerCase().indexOf("bw") >= 0 || trackid.toString().toLowerCase().indexOf("bigwig") >= 0) {
+            } else if (trackid.toString().toLowerCase().indexOf("wig") >= 0 || trackid.toString().toLowerCase().indexOf("bw") >= 0 || trackid.toString().toLowerCase().indexOf("bigwig") >= 0) {
                 dispGraphWig("#" + trackname + "_div", trackname, trackid, window['track_list' + trackname].display_label);
-            }
-            else if (trackname.toLowerCase().indexOf("bed") >= 0) {
+            } else if (trackname.toLowerCase().indexOf("bed") >= 0) {
                 dispGraphBed("#" + trackname + "_div", trackname, window['track_list' + trackname].display_label);
-            }else if (trackname.toLowerCase().indexOf("bam") >= 0) {
+            } else if (trackname.toLowerCase().indexOf("bam") >= 0) {
                 dispSAMTrack("#" + trackname + "_div", trackname, window['track_list' + trackname].display_label);
-            }
-            else {
+            } else {
                 dispTrack("#" + trackname + "_div", trackname, window['track_list' + trackname].display_label);
             }
-        }
-        else {
+        } else {
             jQuery("#" + trackname + "_wrapper").fadeOut();
         }
 
@@ -236,8 +221,7 @@ function mergeTrack(check) {
         if (jQuery("#" + track_list[index].name + "mergedCheckbox").attr('checked')) {//
 //            this.merge = 1;
             window['track_list' + track_list[index].name].merge = 1;
-        }
-        else {
+        } else {
 //            this.merge = 0;
             window['track_list' + track_list[index].name].merge = 0;
         }
@@ -252,9 +236,9 @@ function mergeTrack(check) {
             trackToggle(track);
         }
     });
-    if (!jQuery('input[name=' + check + 'mergedCheckbox]').is(':checked')) {
-        trackToggle(check);
-    }
+    // if (!jQuery('input[name=' + check + 'mergedCheckbox]').is(':checked')) {
+    //     trackToggle(check);
+    // }
 }
 
 //remove tracklist when reload
@@ -270,8 +254,7 @@ function removeTrackslist(trackList) {
 function toggleLeftInfo(div, id) {
     if (jQuery(div).hasClass("toggleLeft")) {
         jQuery(div).removeClass("toggleLeft").addClass("toggleLeftDown");
-    }
-    else {
+    } else {
         jQuery(div).removeClass("toggleLeftDown").addClass("toggleLeft");
     }
     jQuery("#" + id).toggle("blind", {}, 500);
@@ -299,8 +282,9 @@ function groupTogether() {
             a += 1;
         }
     }
+
     function SortByLayer(x, y) {
-        return ((x.layer == y.layer) ? 0 : ((x.layer > y.layer) ? 1 : -1 ));
+        return ((x.layer == y.layer) ? 0 : ((x.layer > y.layer) ? 1 : -1));
     }
 
     // Call Sort By Name
@@ -330,8 +314,7 @@ function stringTrim(string, width, newClass) {
     console.log(width)
     if (newClass) {
         jQuery("#ruler").addClass(newClass.toString())
-    }
-    else {
+    } else {
         jQuery("#ruler").addClass("ruler")
     }
     var ruler = jQuery("#ruler");
@@ -343,16 +326,14 @@ function stringTrim(string, width, newClass) {
 
     if (newClass) {
         jQuery("#ruler").removeClass(newClass.toString())
-    }
-    else {
+    } else {
         jQuery("#ruler").removeClass("ruler")
     }
 
 
     if (inLength < width) {
         return string;
-    }
-    else {
+    } else {
         width = parseInt(string.length * width / inLength);
         return "<span title='" + string + "'>" + string.substring(0, width) + "... </span>";
     }
@@ -375,8 +356,7 @@ function backup_tracks(track, i) {
         add.edited = 1;
         window[track + "_edited"] = [];
         window[track + "_edited"].push(add);
-    }
-    else {
+    } else {
         jQuery.each(window[track + "_edited"], function (b, w) {
             if (w.id == add.id) {
                 index = b;
@@ -453,13 +433,14 @@ function sub_seq(seq, qseq) {
         width: "90%",
         height: "100%",
         html: "<table><tr><td><button id=\"subbutton\" class='ui-state-default ui-corner-all' " +
-        "onclick=\"blastToogle();\">Alignemt Sequence</button><br/>" +
-        "</td></td></tr></table><br/>" +
-        "<br/><b>Subject Sequence:</b> <br/>" +
-        "<div id=\"btop_output\" style='display : inline;  font-family: Courier, \"Courier New\", monospace'> " + id + "<br>" + convertSeqtoBLAST(seq, qseq) + "</div>" +
-        "<div id=\"sub_output\" style=' display: none; font-family: Courier, \"Courier New\", monospace'> <table><tr><td><button class='ui-state-default ui-corner-all' " +
-        "onclick=\"selectText('sub_output');\"')\">Select Sequence</button><br/>" +
-        "<td><div id=fastadownload></div></td></td></tr></table><br/> " + id + "<br>" + convertFasta(seq) + "</div>"});
+            "onclick=\"blastToogle();\">Alignemt Sequence</button><br/>" +
+            "</td></td></tr></table><br/>" +
+            "<br/><b>Subject Sequence:</b> <br/>" +
+            "<div id=\"btop_output\" style='display : inline;  font-family: Courier, \"Courier New\", monospace'> " + id + "<br>" + convertSeqtoBLAST(seq, qseq) + "</div>" +
+            "<div id=\"sub_output\" style=' display: none; font-family: Courier, \"Courier New\", monospace'> <table><tr><td><button class='ui-state-default ui-corner-all' " +
+            "onclick=\"selectText('sub_output');\"')\">Select Sequence</button><br/>" +
+            "<td><div id=fastadownload></div></td></td></tr></table><br/> " + id + "<br>" + convertFasta(seq) + "</div>"
+    });
 }
 
 function blastToogle() {
@@ -467,8 +448,7 @@ function blastToogle() {
     jQuery("#sub_output").toggle();
     if (jQuery("#subbutton").text() == "Alignemt Sequence") {
         jQuery("#subbutton").text("Sub Sequence");
-    }
-    else {
+    } else {
         jQuery("#subbutton").text("Alignemt Sequence");
     }
 
@@ -504,8 +484,7 @@ function convertSeqtoBLAST(seq, qseq) {
     while (i < oldStringlength) {
         if (oldString.charAt(i) == oldQString.charAt(i)) {
             oldbtopString += "|";
-        }
-        else {
+        } else {
             oldbtopString += " ";
         }
         i++;
@@ -569,20 +548,15 @@ function processURL(urlParam) {
 
     if (jQuery.urlParam("query") != null && jQuery.urlParam("from") != null && jQuery.urlParam("to") != null && jQuery.urlParam("coord") != null && jQuery.urlParam("blasttrack") != null) {
         seqregionSearchwithCoord(urlParam("query"), urlParam("coord"), urlParam("from"), urlParam("to"), urlParam("blasttrack"))
-    }
-    else if (jQuery.urlParam("query") != null && jQuery.urlParam("from") != null && jQuery.urlParam("to") != null && jQuery.urlParam("blasttrack") != null) {
+    } else if (jQuery.urlParam("query") != null && jQuery.urlParam("from") != null && jQuery.urlParam("to") != null && jQuery.urlParam("blasttrack") != null) {
         seqregionSearchPopup(urlParam("query"), urlParam("from"), urlParam("to"), urlParam("blasttrack"))
-    }
-    else if (jQuery.urlParam("query") != null && jQuery.urlParam("from") != null && jQuery.urlParam("to") != null && jQuery.urlParam("coord") != null) {
+    } else if (jQuery.urlParam("query") != null && jQuery.urlParam("from") != null && jQuery.urlParam("to") != null && jQuery.urlParam("coord") != null) {
         seqregionSearchwithCoord(urlParam("query"), urlParam("coord"), urlParam("from"), urlParam("to"))
-    }
-    else if (jQuery.urlParam("query") != null && jQuery.urlParam("from") && jQuery.urlParam("to") != null) {
+    } else if (jQuery.urlParam("query") != null && jQuery.urlParam("from") && jQuery.urlParam("to") != null) {
         search(urlParam("query"), urlParam("from"), urlParam("to"))
-    }
-    else if (jQuery.urlParam("query") != null && jQuery.urlParam("coord") != null) {
+    } else if (jQuery.urlParam("query") != null && jQuery.urlParam("coord") != null) {
         seqregionSearchwithCoord(jQuery.urlParam("query"), jQuery.urlParam("coord"))
-    }
-    else if (jQuery.urlParam("query") != null) {
+    } else if (jQuery.urlParam("query") != null) {
         search(jQuery.urlParam("query"))
     } else if (jQuery("#search").val().length > 0) {
         search(jQuery("#search").val())
@@ -591,47 +565,45 @@ function processURL(urlParam) {
     }
 }
 
-function format_numbers(number){
+function format_numbers(number) {
     var diff = parseInt(number);
     var bp = "";
 
     if (diff > 1000000000) {
         diff = (diff / 1000000000);
         bp = "Gbp";
-    }
-    else if (diff > 1000000) {
+    } else if (diff > 1000000) {
         diff = (diff / 1000000);
         bp = "Mbp";
-    }
-    else if (diff > 1000) {
+    } else if (diff > 1000) {
         diff = diff / 1000;
         bp = "Kbp";
     }
-    return diff.toFixed(2)+""+bp;
+    return diff.toFixed(2) + "" + bp;
 }
 
-function trackToGraph(div, trackName, className){
+function trackToGraph(div, trackName, className) {
 
     var start = getBegin();
     var end = getEnd();
 
-    var diff = (end-start)/2
+    var diff = (end - start) / 2
 
     start = start - diff
     end = parseInt(end) + parseInt(diff)
 
     var i = 1;
-    if(start < 0){
+    if (start < 0) {
         start = 0
     }
-    if(end > sequencelength){
+    if (end > sequencelength) {
         end = sequencelength
     }
 
     diff = parseInt((end - start) / 400);
 
     var threshold_lower = parseInt(start) + parseInt(diff * i)
-    var threshold_upper = parseInt(start) + parseInt(diff * parseInt(i+1))
+    var threshold_upper = parseInt(start) + parseInt(diff * parseInt(i + 1))
 
     var data = window[trackName];
 
@@ -640,18 +612,23 @@ function trackToGraph(div, trackName, className){
 
     temp_data[threshold_lower] = []
     jQuery.each(data, function (index, value) {
-        if(parseInt(value.start) > parseInt(threshold_lower) && parseInt(value.start) < parseInt(threshold_upper)){
+        if (parseInt(value.start) > parseInt(threshold_lower) && parseInt(value.start) < parseInt(threshold_upper)) {
             temp_data[threshold_lower].push(value)
-        }else if(parseInt(value.start) > parseInt(threshold_upper)){
-            graph.push({start: threshold_lower, end: threshold_upper, graph: temp_data[threshold_lower].length, data:temp_data[threshold_lower] })
-            while(parseInt(value.start) > parseInt(threshold_upper)){
+        } else if (parseInt(value.start) > parseInt(threshold_upper)) {
+            graph.push({
+                start: threshold_lower,
+                end: threshold_upper,
+                graph: temp_data[threshold_lower].length,
+                data: temp_data[threshold_lower]
+            })
+            while (parseInt(value.start) > parseInt(threshold_upper)) {
                 updateThreshold()
             }
             temp_data[threshold_lower].push(value)
         }
     })
 
-    function updateThreshold(){
+    function updateThreshold() {
         i++;
         threshold_lower += parseInt(diff)
         threshold_upper += parseInt(diff)
