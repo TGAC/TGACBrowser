@@ -113,6 +113,7 @@ public class DnaSequenceService {
     private GFFService gffService = new GFFService();
     private VCFService vcfService = new VCFService();
 
+    static String dir = null;
 
     /**
      * Returns a JSONObject that can be read as single reference or a list of results
@@ -128,8 +129,6 @@ public class DnaSequenceService {
      */
 
     public JSONObject searchSequence(HttpSession session, JSONObject json) {
-//        log.info("\n\n\n\n\n\n\nsearchsequence");
-
         String seqName = json.getString("query");
         JSONObject response = new JSONObject();
         try {
@@ -162,13 +161,15 @@ public class DnaSequenceService {
                 response.put("seqregname", seqRegName);
                 response.put("tracklists", analysisStore.getAnnotationId(query));
                 response.put("coord_sys", sequenceStore.getSeqRegionCoordId(seqName));
+                if(dir != null){
+                    response.put("filetrack", analysisStore.tracksFromDir(dir));
+                }
             }
             return response;
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             return JSONUtils.SimpleJSONError(e.getMessage());
         }
-
     }
 
     /**
@@ -186,6 +187,7 @@ public class DnaSequenceService {
         try {
             JSONObject response = new JSONObject();
             String seqName = json.getString("query");
+
 
             Integer queryid = sequenceStore.getSeqRegionearchsizeformatch(seqName);
             if (queryid > 1) {
@@ -221,6 +223,9 @@ public class DnaSequenceService {
                 response.put("seqregname", seqRegName);
                 response.put("tracklists", analysisStore.getAnnotationId(query));
                 response.put("coord_sys", sequenceStore.getSeqRegionCoordId(seqName));
+                if(dir != null){
+                    response.put("filetrack", analysisStore.tracksFromDir(dir));
+                }
             }
             return response;
         } catch (Exception e) {
@@ -259,12 +264,14 @@ public class DnaSequenceService {
             response.put("seqregname", seqRegName);
             response.put("tracklists", analysisStore.getAnnotationId(query));
             response.put("coord_sys", coord);
+            if(dir != null){
+                response.put("filetrack", analysisStore.tracksFromDir(dir));
+            }
             return response;
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             return JSONUtils.SimpleJSONError(e.getMessage());
         }
-
     }
 
     public JSONObject searchSeqRegionforMap(HttpSession session, JSONObject json) {
@@ -315,12 +322,9 @@ public class DnaSequenceService {
         try {
             Integer queryid = sequenceStore.getSeqRegionWithCoord(seqName, coord);
             if (trackId.toLowerCase().contains(".bw") || trackId.toLowerCase().contains(".bigwig") || trackId.toLowerCase().contains(".wig")) {
-                log.info("\n\n\n loading bigwig");
                 response.put(trackName, BigWigService.getWig(start, end, delta, trackId, seqName));
             } else if (trackId.contains(".sam") || trackId.contains(".bam")) {
-                log.info("\n\n\n loading sam bam");
                 count = SamBamService.countBAM(start, end, delta, trackId, seqName);
-
                 if (count == 0) {
                     count = SamBamService.countBAM(0, sequenceStore.getSeqLengthbyId(queryid, coord), delta, trackId, seqName);
                     if (count == 0) {
@@ -358,7 +362,6 @@ public class DnaSequenceService {
                 }
             } else if (trackId.contains(".vcf") || trackId.contains(".VCF")) {
                 log.info("\n\n\n loading vcf");
-
                 count = VCFService.countVCF(start, end, delta, trackId, seqName);
                 log.info("\n\n\n count VCF " + count);
                 if (count == 0) {
@@ -499,6 +502,7 @@ public class DnaSequenceService {
      */
     public JSONObject metaInfo(HttpSession session, JSONObject json) {
         JSONObject response = new JSONObject();
+        dir = json.getString("dir");
         try {
             response.put("metainfo", sequenceStore.getdbinfo());
             response.put("chr", searchStore.checkChromosome());
