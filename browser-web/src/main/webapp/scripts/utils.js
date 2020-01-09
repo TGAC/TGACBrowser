@@ -138,7 +138,8 @@ function trackToggle(trackname) {
             var trackName = track_list[i].name;
             trackid = window['track_list' + trackName].id;
             graph = window['track_list' + trackName].graph;
-            if (jQuery("#" + track_list[i].name + "Checkbox").is(':checked') || jQuery("#track_files").val().indexOf(trackid) >= 0) {
+
+            if (jQuery("#" + track_list[i].name + "Checkbox").is(':checked') || (jQuery("#track_files").val() != null && jQuery("#track_files").val().indexOf(trackName) >= 0)) {
                 if (graph == "true") {
                     if (window['track_list' + trackName].graphtype == "bar") {
                         dispGraph("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
@@ -168,6 +169,7 @@ function trackToggle(trackname) {
                 }
             } else {
                 jQuery("#" + track_list[i].name + "_wrapper").fadeOut();
+                window[trackName] = []
             }
         }
     } else {
@@ -175,7 +177,7 @@ function trackToggle(trackname) {
         trackid = window['track_list' + trackname].id;
         graph = window['track_list' + trackname].graph;
 
-        if (jQuery('#' + trackname + 'Checkbox').is(':checked') || jQuery("#track_files").val().indexOf(trackid) >= 0) {
+        if (jQuery('#' + trackname + 'Checkbox').is(':checked') || (jQuery("#track_files").val() != null && jQuery("#track_files").val().indexOf(trackname) >= 0)) {
             if (graph == "true") {
                 if (window['track_list' + trackname].graphtype == "bar") {
                     dispGraph("#" + trackname + "_div", trackname, window['track_list' + trackname].display_label);
@@ -205,6 +207,8 @@ function trackToggle(trackname) {
             }
         } else {
             jQuery("#" + trackname + "_wrapper").fadeOut();
+            window[trackname] = []
+
         }
 
     }

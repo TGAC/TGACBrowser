@@ -139,7 +139,7 @@ function removeMergedTrack() {
 //      this.disp = 0;
             window['track_list' + track_list[index].name].disp = 0
 
-            jQuery('input[name=' + track_list[index].name + 'mergedCheckbox]').attr('checked', false);
+            // jQuery('input[name=' + track_list[index].name + 'mergedCheckbox]').attr('checked', false);
             trackToggle(track_list[index].name);
         }
     });

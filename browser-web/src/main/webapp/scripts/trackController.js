@@ -239,14 +239,7 @@ function dispBLAST(div, track) {
                     track_html += dispBLASTindel(i, blast_start);
                 }
             }
-            if (jQuery('input[name=' + track + 'mergedCheckbox]').is(':checked')) {
-                jQuery(div).fadeOut();
-                jQuery(div).html();
-                jQuery("#mergedtrack").css('height', (parseInt(layers * 15) + parseInt(50)));
-                jQuery("#mergedtrack").append(track_html);
-                jQuery("#mergedtrack").fadeIn();
-            }
-            else {
+
                 jQuery(div).css('height', (parseInt(layers * 15) + parseInt(50)));
                 jQuery(div).fadeIn();
                 jQuery("#blasttrack_wrapper").fadeIn();
@@ -254,7 +247,6 @@ function dispBLAST(div, track) {
                     track_html = track_html.replace(/tracks_image/g, 'merged_tracks_image')
                 }
                 jQuery(div).html(track_html);
-            }
         }
         else {
             alert(track + " not Found");
@@ -331,23 +323,9 @@ function dispGenes(div, track, expand, className) {
         labeltoogle = "none"
     }
 
-    if (jQuery('input[name=' + track + 'mergedCheckbox]').is(':checked')) {
-        jQuery(div).fadeOut();
-        jQuery("#" + track + "_wrapper").fadeOut();
-        div = "#mergedtrack";
-        jQuery("#mergedtrack").fadeIn();
-        jQuery("#mergedtrack_wrapper").fadeIn();
 
-        track_html.push("(" + merged_track_list + ")");
-        jQuery("#mergelabel").html(track_html.join(""));
-
-        trackClass += " mergedtrack";
-        labelclass = "Merged_Track";
-    }
-    else {
         jQuery(div).fadeIn();
         jQuery("#" + track + "_wrapper").fadeIn();
-    }
 
 
     var genes = window[track];
@@ -980,7 +958,6 @@ function dispGeneExon(track, genestrand, className, div, trackName) {
 
 function dispSAMTrack(div, trackName, className) {
 
-    var d = new Date();
     var track_div = document.getElementById(trackName + "_div")
 
     var new_div = document.createElement("div");
@@ -1002,17 +979,6 @@ function dispSAMTrack(div, trackName, className) {
     var trackId;
     var trackClass, label;
     var track_html = [];
-    var max = 110;
-
-    if (window['track_list' + trackName].id.toString().indexOf('cs') > -1) {
-        coord = true;
-        trackClass = "track";
-    }
-    else {
-        coord = false;
-        trackClass = "track";
-    }
-
 
     var j = 0;
 
@@ -1020,23 +986,9 @@ function dispSAMTrack(div, trackName, className) {
         labeltoogle = "none;";
     }
 
-    if (jQuery('input[name=' + trackName + 'mergedCheckbox]').is(':checked')) {
-        jQuery(div).fadeOut();
-        jQuery("#" + trackName + "_wrapper").fadeOut();
-        div = "#mergedtrack";
-        jQuery("#mergedtrack").fadeIn();
-        jQuery("#mergedtrack_wrapper").fadeIn();
 
-        track_html.push("(" + merged_track_list + ")");
-        jQuery("#mergelabel").html(track_html.join(""));
-
-        trackClass += " mergedtrack";
-        labelclass = "Merged_Track";
-    }
-    else {
         jQuery(div).fadeIn();
         jQuery("#" + trackName + "_wrapper").fadeIn();
-    }
 
 
     if (!window[trackName] || window[trackName] == "loading") {
@@ -1110,7 +1062,7 @@ function dispSAMTrack(div, trackName, className) {
                 var track_desc = track[track_len].desc;
 
 
-                if (coord || track[track_len].layer) {
+                if (track[track_len].layer) {
                     top = (track[track_len].layer) * 16 + 16;
                     if (track[track_len].layer > j) {
                         j = track[track_len].layer;
@@ -1129,17 +1081,7 @@ function dispSAMTrack(div, trackName, className) {
                 }
 
 
-                if (trackName.toLowerCase().indexOf("snp") >= 0) {
-                    spanclass = "";
-                    if (stopposition < 2) {
-                        stopposition = 2;
-                    }
-                    trackClass = 'snp' + track[track_len].cigarline;
-                    new_div.style.height = "10px";
-
-                    label = track[track_len].cigarline;
-                }
-                else if (track_desc) {
+                if (track_desc) {
                     label = track_desc + ":" + track_start + "-" + track_stop;
 
                 } else {
@@ -1211,7 +1153,7 @@ function dispSAMTrack(div, trackName, className) {
         }
     }
 
-    max = parseInt(jQuery(div)[0].scrollHeight) + 50;
+    var max = parseInt(jQuery(div)[0].scrollHeight) + 50;
 
     jQuery("#" + trackName + "_wrapper").css("max-height", max);
 
@@ -1221,9 +1163,6 @@ function dispSAMTrack(div, trackName, className) {
         jQuery("#" + trackName + "_wrapper").children(".ui-resizable-handle").removeClass("resize-arrow")
 
     }
-
-    var d = new Date();
-
 }
 
 function dispTrack(div, trackName, className) {
@@ -1268,23 +1207,9 @@ function dispTrack(div, trackName, className) {
         labeltoogle = "none;";
     }
 
-    if (jQuery('input[name=' + trackName + 'mergedCheckbox]').is(':checked')) {
-        jQuery(div).fadeOut();
-        jQuery("#" + trackName + "_wrapper").fadeOut();
-        div = "#mergedtrack";
-        jQuery("#mergedtrack").fadeIn();
-        jQuery("#mergedtrack_wrapper").fadeIn();
 
-        track_html.push("(" + merged_track_list + ")");
-        jQuery("#mergelabel").html(track_html.join(""));
-
-        trackClass += " mergedtrack";
-        labelclass = "Merged_Track";
-    }
-    else {
         jQuery(div).fadeIn();
         jQuery("#" + trackName + "_wrapper").fadeIn();
-    }
 
 
     if (!window[trackName] || window[trackName] == "loading") {
@@ -1476,23 +1401,9 @@ function dispVCF(div, trackName, className) {
     var j = 0;
 
 
-    if (jQuery('input[name=' + trackName + 'mergedCheckbox]').is(':checked')) {
-        jQuery(div).fadeOut();
-        jQuery("#" + trackName + "_wrapper").fadeOut();
-        div = "#mergedtrack";
-        jQuery("#mergedtrack").fadeIn();
-        jQuery("#mergedtrack_wrapper").fadeIn();
 
-        track_html.push("(" + merged_track_list + ")");
-        jQuery("#mergelabel").html(track_html.join(""));
-
-        trackClass += " mergedtrack";
-        labelclass = "Merged_Track";
-    }
-    else {
         jQuery(div).fadeIn();
         jQuery("#" + trackName + "_wrapper").fadeIn();
-    }
 
 
     if (!window[trackName] || window[trackName] == "loading") {
@@ -1680,7 +1591,7 @@ function dispCigarLine(cigars, start, top) {
             else if (key == "I") {
                 trackClass = "insert";
                 startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp) + 1) + parseFloat(maxLentemp) / 2;
-                stopposition = (length) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp) + 1);
+                stopposition = 1;//(length) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp) + 1);
                 track_html += trackHTML(startposition, stopposition, top, trackClass);
                 cigar_pos = parseInt(cigar_pos) + parseInt(length)
             } else if (key == "N") {
@@ -1693,7 +1604,7 @@ function dispCigarLine(cigars, start, top) {
             else if (key == "D") {
                 trackClass = "delete";
                 startposition = (cigar_pos - newStart_temp) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp) + 1) + parseFloat(maxLentemp) / 2;
-                stopposition = 1
+                stopposition = (length) * parseFloat(maxLentemp) / ((newEnd_temp - newStart_temp) + 1);
                 track_html += trackHTML(startposition, stopposition, top, trackClass);
             }
 
@@ -1755,7 +1666,7 @@ function dispCigar(cigars, aln) {
                     cigar_pos = parseInt(cigar_pos) + parseInt(length);
                 } else if (key == "I") {
                     trackClass = "insert";
-                    // track_html_local += seq.substr(cigar_pos, length)
+                    track_html_local += "|"//seq.substr(cigar_pos, length)
                     cigar_pos = parseInt(cigar_pos) + parseInt(length)
                 } else if (key == "N") {
                     trackClass = "skip";

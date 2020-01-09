@@ -147,18 +147,10 @@ function generateFileLink(data) {
         });
 }
 
-function checkMaxTracks(trackId, trackname) {
-    var selected = [];
-    jQuery('#checkboxes input:checked').each(function() {
-        selected.push(jQuery(this).attr('name'));
-    });
-}
-
 function loadTrackAjax(trackId, trackname) {
+    console.log(trackId+" "+trackname)
 
-    checkMaxTracks(trackId, trackname)
-
-    mergeTrackList(trackname);
+    // mergeTrackList(trackname);
     var query = jQuery('#search').val();
 
     jQuery(track_list).each(function (index) {
@@ -172,13 +164,15 @@ function loadTrackAjax(trackId, trackname) {
             jQuery("#selectAllCheckbox").attr('checked', false)
         }
     });
-
+    console.log("here")
     if (window[trackname] || window[trackname] == "running" || window[trackname] == "loading") {
-        trackToggle(trackname);
+       trackToggle(trackname);
 //    need to think abt it
     }
-
-    if (jQuery("#" + trackname + "Checkbox").attr('checked') && trackId.indexOf('noid') < 0) {
+    console.log("herreee")
+    console.log(jQuery("#track_files").val())
+    if ((jQuery("#" + trackname + "Checkbox").attr('checked') && trackId.indexOf('noid') < 0) || (jQuery("#track_files").val() != null && jQuery("#track_files").val().indexOf(trackname) >=0)) {
+        console.log("here")
         var partial = (getEnd() - getBegin()) + ((getEnd() - getBegin()) / 2);
         var start = (getBegin() - partial);
         var end = parseInt(getEnd()) + parseFloat(partial);
@@ -190,7 +184,8 @@ function loadTrackAjax(trackId, trackname) {
         }
         deltaWidth = parseInt(end - start) / parseInt(maxLen);
         window[trackname] == "loading";
-        trackToggle(trackname);
+       // trackToggle(trackname);
+        console.log("here")
         Fluxion.doAjax(
             'dnaSequenceService',
             'loadTrack',
@@ -228,7 +223,7 @@ function metaData() {
     Fluxion.doAjax(
         'dnaSequenceService',
         'metaInfo',
-        {'url': ajaxurl},
+        {'url': ajaxurl, 'dir': jQuery("#filetrack").html()},
         {
             'doOnSuccess': function (json) {
                 jQuery("#dbinfo").html("Species Name: <i>" + json.metainfo[0].name + "</i> Database Version: " + json.metainfo[0].version);
@@ -292,6 +287,7 @@ function loadSession(query) {
                 sequencelength = json.seqlen;
                 track_list = json.tracklist;
                 randomnumber = json.session;
+                var filetrack = json.filetrack
                 coord = json.coord_sys;
                 jQuery("#sessionid").html("<b>Session Id: </b><a  href='./session.jsp?query=" + randomnumber + "' target='_blank'>" + randomnumber + "</a> Saved at " + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds());
                 jQuery("#sessionid").show();
@@ -303,6 +299,7 @@ function loadSession(query) {
                 jQuery('#sessioninput').fadeOut();
                 seqregname = json.reference;
                 trackList(track_list);
+                trackListfromFiles(filetrack)
                 minWidth = findminwidth();
                 setBegin(json.from);
                 setEnd(json.to)
@@ -824,28 +821,29 @@ function drawBrowser(json, from, to, blast) {
 
     seqregname = json.seqregname;
     coord = json.coord_sys;
-    tracks = jQuery("#filetrack").html().split(',');
-    if (tracks[0].length) {
-        for (var i = 0; i < tracks.length; i++) {
-            var filename = tracks[i].substring(tracks[i].lastIndexOf("/") + 1, tracks[i].lastIndexOf("."));
-            var type = tracks[i].substring(tracks[i].lastIndexOf(".") + 1, tracks[i].length);
-            track_list.push(
-                {
-                    name: filename + "_" + type,
-                    id: tracks[i],
-                    display_label: filename,
-                    desc: tracks[i],
-                    disp: 1,
-                    merge: 0,
-                    graph: "false",
-                    display_lable: tracks[i],
-                    label: 0
-                }
-            );
-        }
-    }
+    // tracks = jQuery("#filetrack").html().split(',');
+    // if (tracks[0].length) {
+    //     for (var i = 0; i < tracks.length; i++) {
+    //         var filename = tracks[i].substring(tracks[i].lastIndexOf("/") + 1, tracks[i].lastIndexOf("."));
+    //         var type = tracks[i].substring(tracks[i].lastIndexOf(".") + 1, tracks[i].length);
+    //         track_list.push(
+    //             {
+    //                 name: filename + "_" + type,
+    //                 id: tracks[i],
+    //                 display_label: filename,
+    //                 desc: tracks[i],
+    //                 disp: 1,
+    //                 merge: 0,
+    //                 graph: "false",
+    //                 display_lable: tracks[i],
+    //                 label: 0
+    //             }
+    //         );
+    //     }
+    // }
 
     trackList(track_list);
+    trackListfromFiles(json.filetrack)
 
     minWidth = findminwidth();
     if (maxLen > minWidth) {
