@@ -29,6 +29,7 @@ package uk.ac.bbsrc.earlham.browser.store.ensembl;
 import net.sf.ehcache.CacheManager;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,9 +37,12 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import uk.ac.bbsrc.earlham.browser.core.store.AnalysisStore;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
+import static org.apache.commons.lang.ArrayUtils.contains;
 
 /**
  * Created by IntelliJ IDEA.
@@ -81,6 +85,8 @@ public class SQLAnalysisDAO implements AnalysisStore {
     public static final String GET_SNPS = "SELECT a.analysis_id, ad.display_label FROM analysis a, analysis_description ad where a.logic_name like '%SNP%' and a.analysis_id = ad.analysis_id";
 
     private JdbcTemplate template;
+
+    static final String[] ALLOWED_DATATYPES = {"BAM", "bam"};
 
     public void setJdbcTemplate(JdbcTemplate template) {
         this.template = template;
@@ -277,5 +283,47 @@ public class SQLAnalysisDAO implements AnalysisStore {
             e.printStackTrace();
             throw new IOException("listSNPs not found -" + e.getMessage());
         }
+    }
+
+    public JSONArray tracksFromDir(String dir) throws IOException {
+        File f = null;
+        String[] paths;
+
+        JSONArray annotationlist = new JSONArray();
+
+        f = new File(dir);
+
+        paths = f.list();
+
+        for(String path:paths) {
+
+            JSONObject annotation = new JSONObject();
+            JSONObject web = new JSONObject();
+
+            String ext = FilenameUtils.getExtension(path);
+            String name = FilenameUtils.getBaseName(path);
+
+            if(contains(ALLOWED_DATATYPES,ext)){
+                annotation.put("name",name+"_"+ext);
+                annotation.put("type", ext);
+                annotation.put("path", dir);
+                annotation.put("id", dir+"/"+path);
+                annotation.put("display_label",name);
+                annotation.put("disp", 0);
+                annotation.put("merge", 0);
+                annotation.put("graph", false);
+                annotation.put("desc", "");
+                web.put("colour", "green");
+                web.put("filepath", dir+"/"+path);
+                web.put("source", "file");
+                web.put("trackgroup", ext);
+                annotation.put("web", web);
+                annotationlist.add(annotation);
+//                break;
+            }
+
+        }
+
+        return annotationlist;
     }
 }

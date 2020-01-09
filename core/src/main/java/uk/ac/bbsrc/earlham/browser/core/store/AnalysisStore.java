@@ -54,4 +54,7 @@ public interface AnalysisStore extends Store {
     public boolean presentInDAF(String id) throws IOException;
 
     public boolean presentInMarker(String id) throws IOException;
+
+    public JSONArray tracksFromDir(String dir) throws IOException;
+
 }
