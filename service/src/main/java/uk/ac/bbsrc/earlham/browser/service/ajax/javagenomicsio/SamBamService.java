@@ -25,9 +25,9 @@
 
 package uk.ac.bbsrc.earlham.browser.service.ajax.javagenomicsio;
 
+import com.google.common.collect.Iterators;
 import edu.unc.genomics.SAMEntry;
 import edu.unc.genomics.io.BAMFileReader;
-import edu.unc.genomics.io.IntervalFileReader;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sourceforge.fluxion.ajax.Ajaxified;
@@ -130,10 +130,10 @@ public class SamBamService {
         Path path = Paths.get(trackId);
 
         try {
-            IntervalFileReader<? extends Interval> readers = IntervalFileReader.autodetect(path);
-            int count = 0;
-            count = readers.load(reference, (int) start, (int) end).size();
-            return count;
+            BAMFileReader reader = new BAMFileReader(path);
+            Iterator<? extends Interval> count;
+            count = reader.query(reference, (int) start, (int) end);
+            return Iterators.size(count);
         } catch (OutOfMemoryError e) {
             return 50000;
         } catch (Exception e) {
@@ -197,31 +197,12 @@ public class SamBamService {
                 } else {
                     read.put("colour", "orange");
                 }
-                /**
-                 * flags that csn be used in future
-                 */
-//                read.put("flag0", record.getFlags());
-//                read.put("flag1", record.getDuplicateReadFlag());
-//                read.put("flag4", record.getReadPairedFlag());
-//                read.put("flag3", record.getProperPairFlag());
-//                read.put("flag8", record.getSecondOfPairFlag());
-//                read.put("flag7", record.getDuplicateReadFlag());
-//                read.put("flag6", record.getMateNegativeStrandFlag());
-//                read.put("flag9", record.getReadFailsVendorQualityCheckFlag());
-//                read.put("flag10", record.getReadUnmappedFlag());
-//                read.put("flag2", record.getMateUnmappedFlag());
-//                read.put("flag11", record.getNotPrimaryAlignmentFlag());
-//                read.put("flag12", record.getNotPrimaryAlignmentFlag());
-//
-//                read.put("attribultes", record.getAttributes());
 
                 read.put("cigars", record.getCigarString());
                 read.put("alignment", record.getSequence());
                 read.put("layer", util.stackLayerInt(ends, start_pos, delta, end_pos));
-//                read.put("sam", sam);
                 ends = util.stackLayerList(ends, start_pos, delta, end_pos);
                 wig.add(read);
-
 
             }
 
@@ -256,7 +237,7 @@ public class SamBamService {
         Path path = Paths.get(trackId);
 
         try {
-            IntervalFileReader<? extends Interval> readers = IntervalFileReader.autodetect(path);
+            BAMFileReader reader = new BAMFileReader(path);
 
             long diff = (end - start) / 400;
             long temp_start, temp_end;
@@ -265,12 +246,14 @@ public class SamBamService {
             for (int i = 0; i < 400; i++) {
                 temp_start = start + (i * diff);
                 temp_end = temp_start + diff;
-                int count = readers.load(reference, (int) temp_start, (int) temp_end).size();
+
+                Iterator<? extends Interval> count;
+                count = reader.query(reference, (int) temp_start, (int) temp_end);
 
                 temp_start = start + (i * diff);
 
                 span[0] = temp_start;
-                span[1] = (long) count;
+                span[1] = Iterators.size(count);
                 bam.add(span);
             }
             return bam;
