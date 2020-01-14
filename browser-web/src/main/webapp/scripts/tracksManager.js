@@ -163,7 +163,7 @@ function trackListfromFiles(tracklist) {
         prepare_searchable_track_list(Tracklist, i)
     }
 
-    var track_html = "<select class=\"js-example-basic-multiple\" id=\"track_files\" name=\"sam_files\" multiple='multiple' style=\"width: 75%\">"
+    var track_html = "Genomic annotations from files: <br> <select class=\"js-example-basic-multiple\" id=\"track_files\" name=\"sam_files\" multiple='multiple' style=\"width: 75%\">"
 
     for (var i = 0; i < Tracklist.length; i++) {
         track_html += "<option value='" + Tracklist[i].name + "'>" + Tracklist[i].name + " </option>"
@@ -177,15 +177,18 @@ function trackListfromFiles(tracklist) {
     jQuery("#filetrackgroup").html(track_html)
 
     jQuery('.js-example-basic-multiple').select2({
+        placeholder: "Search here..",
         maximumSelectionLength: 4
     });
 
-    jQuery('.js-example-basic-multiple').on('select2:unselect', function (e) {
-        console.log(" unselect "+e)
-        // Do something
-        trackToggle("all")
-    });
-
+    jQuery('.js-example-basic-multiple').on('select2:unselecting',  function (e) {
+        var r = confirm("Do you want to disable this annotation")
+        if (r == false) {
+            e.preventDefault();
+        } else {
+            return true;
+        }
+    })
 
 
     jQuery("#filetrackgroup").append("<div><button onclick='loadSelectedTrack()'>Load Selected Track</button></div>")
