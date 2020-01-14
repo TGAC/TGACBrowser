@@ -411,7 +411,7 @@ function addJSON(from, to, trackName, trackId) {
     if ((to - from) > 0) {
         deltaWidth = parseInt(to - from) / parseInt(maxLen);
 
-        if ((trackName && trackId && trackId.toString().indexOf('noid') < 0) || jQuery("#track_files").val().indexOf(trackName) >= 0) {
+        if ((trackName && trackId && trackId.toString().indexOf('noid') < 0) || (jQuery("#track_files").val() != null && jQuery("#track_files").val().indexOf(trackName) >= 0)) {
             Fluxion.doAjax(
                 'dnaSequenceService',
                 'loadTrack',
@@ -472,7 +472,7 @@ function addJSON(from, to, trackName, trackId) {
                     updateUploadedTrack(Tracklist[i].name)
                     trackToggle(Tracklist[i].name);
                 }
-                else if ((jQuery("#" + Tracklist[i].name + "Checkbox").is(':checked') && Tracklist[i].id.toString().indexOf('noid') < 0) || jQuery("#track_files").val().indexOf(Tracklist[i].name) >= 0) {
+                else if ((jQuery("#" + Tracklist[i].name + "Checkbox").is(':checked') && Tracklist[i].id.toString().indexOf('noid') < 0) || (jQuery("#track_files").val() != null && jQuery("#track_files").val().indexOf(Tracklist[i].name) >= 0)) {
                     var trackname = Tracklist[i].name;
                     var trackid = Tracklist[i].id;
                     // if (trackid && Tracklist[i].graph == "false") { //because graph == true is already loaded
@@ -602,7 +602,7 @@ function removeJSON(from, to) {
     deltaWidth = parseInt(to - from) / parseInt(maxLen);
 
     for (var i = 0; i < Tracklist.length; i++) {
-        if (jQuery("#" + Tracklist[i].name + "Checkbox").is(':checked') || jQuery("#track_files").val().indexOf(Tracklist[i].name) >= 0) {
+        if (jQuery("#" + Tracklist[i].name + "Checkbox").is(':checked') || (jQuery("#track_files").val() != null && jQuery("#track_files").val().indexOf(Tracklist[i].name) >= 0)) {
             if (window['track_list' + Tracklist[i].name].graph == "true" && Tracklist[i].name.indexOf("upload") < 0) {
                 Fluxion.doAjax(
                     'dnaSequenceService',
