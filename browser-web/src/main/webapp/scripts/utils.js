@@ -37,7 +37,6 @@ function stringColour(temp) {
     var width = maxLen / (getEnd() - getBegin() + 1)
     var count = 0;
     for (var i = 0; i < letters.length; i++) {
-        count++;
         if (letters[i] == 'A') {
             newSeq += "<span class=\"span_str\" style=\"background:#ff8c00; width: " + width + "px; LEFT: " + (count * width) + "px;\">" + letters[i] + "</span>";
         } else if (letters[i] == 'C') {
@@ -52,6 +51,7 @@ function stringColour(temp) {
         } else {
             newSeq += "<span class=\"span_str\" style=\"background:black; width: " + width + "px; left:  " + (count * width) + "px;\">" + letters[i] + "</span>";
         }
+        count++;
 
     }
     return newSeq;
