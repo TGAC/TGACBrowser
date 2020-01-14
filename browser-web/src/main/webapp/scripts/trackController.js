@@ -123,7 +123,14 @@ function removeTrack(div, track) {
     jQuery(div).fadeOut();
     jQuery("#" + track + "_wrapper").fadeOut();
     window['track_list' + track].disp = 0
+    if (jQuery("#track_files").val().indexOf(track) >= 0) {
+        var tracks = jQuery("#track_files").val()
+        var i = tracks.indexOf(track)
+        tracks.splice(i,1)
+        jQuery('#track_files').val(tracks).trigger('change');
+    }
 }
+
 
 function removeMergedTrack() {
 
