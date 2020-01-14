@@ -26,7 +26,7 @@
 <div id="footer">
     <br/>
 
-    <p>&copy; 2011 - 2019 <a href="http://www.earlham.ac.uk/" target="_blank">Earlham Institute</a> | Version: 0.2.1 | <a href='mailto:tgac.browser@earlham.ac.uk?Subject=TGAC Browser - Feedback ${initParam.urlpath}'> Feedback </a></p>
+    <p>&copy; 2011 - 2020 <a href="http://www.earlham.ac.uk/" target="_blank">Earlham Institute</a> | Version: 0.2.1 | <a href='mailto:tgac.browser@earlham.ac.uk?Subject=TGAC Browser - Feedback ${initParam.urlpath}'> Feedback </a></p>
 </div>
 </body>
 </html>
