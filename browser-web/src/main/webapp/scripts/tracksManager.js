@@ -166,7 +166,7 @@ function trackListfromFiles(tracklist) {
     var track_html = "Genomic annotations from files: <br> <select class=\"js-example-basic-multiple\" id=\"track_files\" name=\"sam_files\" multiple='multiple' style=\"width: 75%\">"
 
     for (var i = 0; i < Tracklist.length; i++) {
-        track_html += "<option value='" + Tracklist[i].name + "'>" + Tracklist[i].name + " </option>"
+        track_html += "<option value='" + Tracklist[i].name + "'>" + Tracklist[i].name + "</option>"
         tracks_div(Tracklist, i)
         tracks_css(Tracklist, i);
 
@@ -181,21 +181,28 @@ function trackListfromFiles(tracklist) {
         maximumSelectionLength: 4
     });
 
-    jQuery('.js-example-basic-multiple').on('select2:unselecting',  function (e) {
-        var r = confirm("Do you want to disable this annotation")
+    jQuery('.js-example-basic-multiple').on('select2:unselecting', function (e) {
+        var r = confirm("Do you want to disable " + e["params"]["args"]["data"]["text"])
+
         if (r == false) {
             e.preventDefault();
         } else {
+            var item = e["params"]["args"]["data"]["text"]
+            jQuery("#" + item + "_wrapper").fadeOut();
+            window[item] = []
             return true;
         }
     })
+    jQuery('.js-example-basic-multiple').on('select2:select', function (evt) {
+        var args = JSON.stringify(evt.params, function (key, value) {
+            var item = evt["params"]["data"]["text"]
+            loadTrackAjax(window['track_list' + item].id, item);
+        });
+    })
 
-
-    jQuery("#filetrackgroup").append("<div><button onclick='loadSelectedTrack()'>Load Selected Track</button></div>")
-    //
-    // tracks_div(tracklist);
-    // tracks_css(tracklist);
+    // jQuery("#filetrackgroup").append("<div><button onclick='loadSelectedTrack()'>Load Selected Track</button></div>")
 }
+
 
 function loadSelectedTrack() {
     var tracks = jQuery("#track_files").val()
