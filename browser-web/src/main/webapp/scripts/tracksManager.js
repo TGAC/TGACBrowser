@@ -60,93 +60,87 @@ function tracklistopenclose() {
 
 // Generate automated tracks divs for each track
 
-function tracks_div(Tracklist, i) {
+function tracks_div(trackname) {
 
+    if (document.getElementById(trackname + "_wrapper") == null) {
+        if (trackname) {
+            track_div_html(trackname)
+        } else {
+            jQuery("#tracks").html("<div id='mergedtrack_wrapper' class='feature_tracks' style=\"display:none\">  " +
+                "<div align='left' class='handle'>" +
+                "<table>" +
+                "<tr>" +
+                "<td><b>Merged Track  </b></td>" +
+                "<td><div class=\"ui-icon ui-icon-comment\" onclick=toogleLabelMerged();> </div></td>" +
+                "<td><div class='closehandle ui-icon ui-icon-close' onclick=removeMergedTrack()></div></td>" +
+                "<td><div id= \"mergelabel\" align='left'></div></td>" +
+                "</tr>" +
+                "</table>" +
+                "</div>" +
+                "<div id=\"mergedtrack\" style=\"display:none\" > </div>" +
+                "</div>");
 
-    if (i >= 0) {
+            jQuery("#mergedtrack_wrapper").resizable({
+                handles: "s",
+                alsoResize: "#mergedtrack",
+                minHeight: "50px",
+                borderBottom: '1px solid black'
+            });
 
-        track_div_html(Tracklist, i)
-
-    } else {
-
-        jQuery("#tracks").html("<div id='mergedtrack_wrapper' class='feature_tracks' style=\"display:none\">  " +
-            "<div align='left' class='handle'>" +
-            "<table>" +
-            "<tr>" +
-            "<td><b>Merged Track  </b></td>" +
-            "<td><div class=\"ui-icon ui-icon-comment\" onclick=toogleLabelMerged();> </div></td>" +
-            "<td><div class='closehandle ui-icon ui-icon-close' onclick=removeMergedTrack()></div></td>" +
-            "<td><div id= \"mergelabel\" align='left'></div></td>" +
-            "</tr>" +
-            "</table>" +
-            "</div>" +
-            "<div id=\"mergedtrack\" style=\"display:none\" > </div>" +
-            "</div>");
-
-        jQuery("#mergedtrack_wrapper").resizable({
-            handles: "s",
-            alsoResize: "#mergedtrack",
-            minHeight: "50px",
-            borderBottom: '1px solid black'
-        });
-
-        for (var i = 0; i < Tracklist.length; i++) {
-
-            track_div_html(Tracklist, i)
-
-
+            for (var i = 0; i < track_list.length; i++) {
+                track_div_html(track_list[i].name)
+            }
         }
+
     }
-
-
 }
 
-function track_div_html(Tracklist, i) {
-
+function track_div_html(trackname) {
+    var track = window['track_list' + trackname]
     var style = "display:block;";
-    if (Tracklist[i].disp == false || Tracklist[i].disp == 0) {
+    if (track.disp == false || track.disp == 0) {
         style = "display:none;";
     }
-    jQuery("#tracks").append("<div id='" + Tracklist[i].name + "_wrapper' class='feature_tracks' style='" + style + " max-height:110px; overflow-x: hidden;'>" +
+    jQuery("#tracks").append("<div id='" + track.name + "_wrapper' class='feature_tracks' style='" + style + " max-height:110px; overflow-x: hidden;'>" +
         "</div>");
 
 
-    if (Tracklist[i].web && Tracklist[i].web.label == false) {
-        window['track_list' + Tracklist[i].name].label_show = false;
-        jQuery("#" + Tracklist[i].name + "_wrapper").append("<div align='left' class='handle'>" +
+    if (track.web && track.web.label == false) {
+        window['track_list' + track.name].label_show = false;
+        jQuery("#" + track.name + "_wrapper").append("<div align='left' class='handle'>" +
             "<table>" +
             "<tr>" +
-            "<td><div class='closehandle ui-icon ui-icon-close' onclick=removeTrack(\"" + Tracklist[i].name + "_div\",\"" + Tracklist[i].name + "\");></div></td>" +
+            "<td><div class='closehandle ui-icon ui-icon-close' onclick=removeTrack(\"" + track.name + "_div\",\"" + track.name + "\");></div></td>" +
             "</tr>" +
             "</table>" +
             "</div>" +
-            "<div id='" + Tracklist[i].name + "_div' class='feature_tracks' style=\"display:none; top:0px;\" > " + Tracklist[i].name + "</div>"
+            "<div id='" + track.name + "_div' class='feature_tracks' style=\"display:none; top:0px;\" > " + track.name + "</div>"
         );
     } else {
-        jQuery("#" + Tracklist[i].name + "_wrapper").append("<div align='left' class='handle'>" +
+        jQuery("#" + track.name + "_wrapper").append("<div align='left' class='handle'>" +
             "<table>" +
             "<tr>" +
-            "<td><b>" + Tracklist[i].display_label + "</b></td>" +
-            "<td><div class=\"ui-icon ui-icon-comment\" onclick=toogleLabel(\"" + Tracklist[i].name + "\");> </div></td>" + checkGene(Tracklist[i].name) +
-            "<td><div class='closehandle ui-icon ui-icon-close' onclick=removeTrack(\"" + Tracklist[i].name + "_div\",\"" + Tracklist[i].name + "\");></div></td>" +
+            "<td><b>" + track.display_label + "</b></td>" +
+            "<td><div class=\"ui-icon ui-icon-comment\" onclick=toogleLabel(\"" + track.name + "\");> </div></td>" + checkGene(track.name) +
+            "<td><div class='closehandle ui-icon ui-icon-close' onclick=removeTrack(\"" + track.name + "_div\",\"" + track.name + "\");></div></td>" +
             "</tr>" +
             "</table>" +
             "</div>" +
-            "<div id='" + Tracklist[i].name + "_div' class='feature_tracks' style=\"display:block; top:10px;\" > </div>"
+            "<div id='" + track.name + "_div' class='feature_tracks' style=\"display:block; top:10px;\" > </div>"
         );
     }
 
     jQuery(function () {
-        jQuery("#" + Tracklist[i].name + "_wrapper").resizable({
+        jQuery("#" + track.name + "_wrapper").resizable({
             handles: "s",
             minHeight: "50px",
             borderBottom: '1px solid black'
         });
     });
 
-    function checkGene(track) {
-        if (track.toLowerCase().indexOf('gene') >= 0 || track.toLowerCase().indexOf("gff") >= 0) {
-            return "<td><div title='Expand/Shrink' class=\"closehandle ui-icon ui-icon-carat-2-n-s\" onclick=toogleTrackView(\"" + track + "\");> </div></td>"
+    function checkGene(name) {
+        if (name.toLowerCase().indexOf('gene') >= 0 || name.toLowerCase().indexOf("gff") >= 0) {
+            return "<td><div title='Expand/Shrink' class=\"closehandle ui-icon ui-icon-carat-2-n-s\" onclick=toogleTrackView(\"" + name + "\");> </div></td>"
         } else {
             return "";
         }
@@ -167,10 +161,6 @@ function trackListfromFiles(tracklist) {
 
     for (var i = 0; i < Tracklist.length; i++) {
         track_html += "<option value='" + Tracklist[i].name + "'>" + Tracklist[i].name + "</option>"
-        tracks_div(Tracklist, i)
-        tracks_css(Tracklist, i);
-
-
     }
     track_html += "</select>"
 
@@ -196,6 +186,8 @@ function trackListfromFiles(tracklist) {
     jQuery('.js-example-basic-multiple').on('select2:select', function (evt) {
         var args = JSON.stringify(evt.params, function (key, value) {
             var item = evt["params"]["data"]["text"]
+            tracks_div(item)
+            tracks_css(item);
             loadTrackAjax(window['track_list' + item].id, item);
         });
     })
@@ -222,9 +214,6 @@ function trackList(tracklist, i) {
         for (var i = 0; i < Tracklist.length; i++) {
             prepare_track_list(Tracklist, i)
         }
-
-        tracks_div(tracklist);
-        tracks_css(tracklist);
     }
 }
 
@@ -266,8 +255,8 @@ function prepare_track_list(Tracklist, i) {
         ensembl: Tracklist[i].ensembl ? Tracklist[i].ensembl : null
     }
 
-    tracks_div(Tracklist, i);
-    tracks_css(Tracklist, i);
+    tracks_div(Tracklist[i].name);
+    tracks_css(Tracklist[i].name);
 
     var checked = "checked"
     if (Tracklist[i].disp == false || Tracklist[i].disp == 0) {
@@ -331,76 +320,81 @@ function prepare_track_list(Tracklist, i) {
 
 // Generate automated css classes for tracks
 
-function tracks_css(Tracklist, i) {
-    if (i) {
-        prepare_track_css(Tracklist, i)
-    } else {
-        for (var i = 0; i < Tracklist.length; i++) {
-            prepare_track_css(Tracklist, i)
+function tracks_css(trackname) {
+    var track = window["track_list" + trackname]
+
+    if(jQuery('.'+track.display_label).length <= 0) {
+        if (trackname) {
+            prepare_track_css(trackname)
+        } else {
+            for (var i = 0; i < track_list.length; i++) {
+                prepare_track_css(track_list[i])
+            }
         }
     }
 }
 
-function prepare_track_css(Tracklist, i) {
-    if (Tracklist[i].web && Tracklist[i].web.colour) {
+function prepare_track_css(trackname) {
+    var track = window["track_list" + trackname]
+    if (track.web && track.web.colour) {
 
-        if (Tracklist[i].name.toLowerCase().indexOf("snp") >= 0) {
+        if (track.name.toLowerCase().indexOf("snp") >= 0) {
 
-        } else if (Tracklist[i].web.source == "file" && (Tracklist[i].name.toLowerCase().indexOf("gene") >= 0 || Tracklist[i].name.toLowerCase().indexOf("gff") >= 0)) {
+        } else if (track.web.source == "file" && (track.name.toLowerCase().indexOf("gene") >= 0 || track.name.toLowerCase().indexOf("gff") >= 0)) {
 
-            jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_exon" + "{ background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
-            jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_utr" + "{  background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
-            jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_graph{ border:1px solid black; background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
-            jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_heatgraph{  background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
+            jQuery("<style type='text/css'> ." + track.display_label + "_exon" + "{ background:" + track.web.colour + ";} </style>").appendTo("head");
+            jQuery("<style type='text/css'> ." + track.display_label + "_utr" + "{  background:" + track.web.colour + ";} </style>").appendTo("head");
+            jQuery("<style type='text/css'> ." + track.display_label + "_graph{ border:1px solid black; background:" + track.web.colour + ";} </style>").appendTo("head");
+            jQuery("<style type='text/css'> ." + track.display_label + "_heatgraph{  background:" + track.web.colour + ";} </style>").appendTo("head");
 
         } else if (Tracklist[i].web.source == "file") {
             jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "" + "{ fill:" + Tracklist[i].web.colour + "; stroke: " + Tracklist[i].web.colour + "; background: " + Tracklist[i].web.colour + ";} </style>").appendTo("head");
         } else if (Tracklist[i].name.toLowerCase().indexOf("gene") >= 0 || Tracklist[i].name.toLowerCase().indexOf("gff") >= 0) {
 
-            jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_exon" + "{ background:" + Tracklist[i].web.colour + "; } </style>").appendTo("head");
-            jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_utr" + "{  background:" + Tracklist[i].web.colour + "; opacity: 0.5;} </style>").appendTo("head");
-            jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_graph{ border:1px solid black; background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
-            jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_heatgraph{ background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
+            jQuery("<style type='text/css'> ." + track.display_label + "_exon" + "{ background:" + track.web.colour + "; } </style>").appendTo("head");
+            jQuery("<style type='text/css'> ." + track.display_label + "_utr" + "{  background:" + track.web.colour + "; opacity: 0.5;} </style>").appendTo("head");
+            jQuery("<style type='text/css'> ." + track.display_label + "_graph{ border:1px solid black; background:" + track.web.colour + ";} </style>").appendTo("head");
+            jQuery("<style type='text/css'> ." + track.display_label + "_heatgraph{ background:" + track.web.colour + ";} </style>").appendTo("head");
 
         } else {
 
-            jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "{ background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
-            jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_graph { border:1px solid black; background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
-            jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_heatgraph {  background:" + Tracklist[i].web.colour + ";} </style>").appendTo("head");
+            jQuery("<style type='text/css'> ." + track.display_label + "{ background:" + track.web.colour + ";} </style>").appendTo("head");
+            jQuery("<style type='text/css'> ." + track.display_label + "_graph { border:1px solid black; background:" + track.web.colour + ";} </style>").appendTo("head");
+            jQuery("<style type='text/css'> ." + track.display_label + "_heatgraph {  background:" + track.web.colour + ";} </style>").appendTo("head");
 
         }
     } else {
 
-        if (Tracklist[i].name.toLowerCase().indexOf("snp") >= 0) {
+        if (track.name.toLowerCase().indexOf("snp") >= 0) {
 
-        } else if (Tracklist[i].name.toLowerCase().indexOf("gene") >= 0 || Tracklist[i].name.toLowerCase().indexOf("gff") >= 0) {
-            jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_exon" + "{ background: green; } </style>").appendTo("head");
-            jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_utr" + "{ background: steelblue; opacity: 0.5;} </style>").appendTo("head");
-            jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_graph { border:1px solid black; background:green;} </style>").appendTo("head");
-            jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_heatgraph {  background:green;} </style>").appendTo("head");
+        } else if (track.name.toLowerCase().indexOf("gene") >= 0 || track.name.toLowerCase().indexOf("gff") >= 0) {
+            jQuery("<style type='text/css'> ." + track.display_label + "_exon" + "{ background: green; } </style>").appendTo("head");
+            jQuery("<style type='text/css'> ." + track.display_label + "_utr" + "{ background: steelblue; opacity: 0.5;} </style>").appendTo("head");
+            jQuery("<style type='text/css'> ." + track.display_label + "_graph { border:1px solid black; background:green;} </style>").appendTo("head");
+            jQuery("<style type='text/css'> ." + track.display_label + "_heatgraph {  background:green;} </style>").appendTo("head");
 
         } else {
             var colour = "";
 
-            if (Tracklist[i].name.toLowerCase().indexOf("contig") >= 0) {
+            if (track.name.toLowerCase().indexOf("contig") >= 0) {
                 colour = "#ff8c00";
-            } else if (Tracklist[i].name.toLowerCase().indexOf("est") >= 0) {
+            } else if (track.name.toLowerCase().indexOf("est") >= 0) {
                 colour = "#556b2f";
-            } else if (Tracklist[i].name.toLowerCase().indexOf("clone") >= 0) {
+            } else if (track.name.toLowerCase().indexOf("clone") >= 0) {
                 colour = "#90ee90";
-            } else if (Tracklist[i].name.toLowerCase().indexOf("align") >= 0) {
+            } else if (track.name.toLowerCase().indexOf("align") >= 0) {
                 colour = "#a52a2a";
-            } else if (Tracklist[i].name.toLowerCase().indexOf("sam") >= 0 || Tracklist[i].name.toLowerCase().indexOf("bam") >= 0) {
+            } else if (track.name.toLowerCase().indexOf("sam") >= 0 || track.name.toLowerCase().indexOf("bam") >= 0) {
                 colour = "blue";
-            } else if (Tracklist[i].name.toLowerCase().indexOf("repeat") >= 0) {
+            } else if (track.name.toLowerCase().indexOf("repeat") >= 0) {
                 colour = "gray";
             } else {
                 colour = "green";
             }
 
-            jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "{ background:" + colour + ";} </style>").appendTo("head");
-            jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_graph{ border:1px solid black; background:" + colour + ";} </style>").appendTo("head");
-            jQuery("<style type='text/css'> ." + Tracklist[i].display_label + "_heatgraph{ background:" + colour + ";} </style>").appendTo("head");
+            jQuery("<style type='text/css'> ." + track.display_label + "{ background:" + colour + ";} </style>").appendTo("head");
+            jQuery("<style type='text/css'> ." + track.display_label + "_graph{ border:1px solid black; background:" + colour + ";} </style>").appendTo("head");
+            jQuery("<style type='text/css'> ." + track.display_label + "_heatgraph{ background:" + colour + ";} </style>").appendTo("head");
         }
     }
 }
