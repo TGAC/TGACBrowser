@@ -412,6 +412,12 @@ function addJSON(from, to, trackName, trackId) {
         deltaWidth = parseInt(to - from) / parseInt(maxLen);
 
         if ((trackName && trackId && trackId.toString().indexOf('noid') < 0) || (jQuery("#track_files").val() != null && jQuery("#track_files").val().indexOf(trackName) >= 0)) {
+
+            window[trackName] = "loading";
+            window[trackName].graph = "false";
+            trackToggle(trackName)
+
+
             Fluxion.doAjax(
                 'dnaSequenceService',
                 'loadTrack',
@@ -473,6 +479,9 @@ function addJSON(from, to, trackName, trackId) {
                     trackToggle(Tracklist[i].name);
                 }
                 else if ((jQuery("#" + Tracklist[i].name + "Checkbox").is(':checked') && Tracklist[i].id.toString().indexOf('noid') < 0) || (jQuery("#track_files").val() != null && jQuery("#track_files").val().indexOf(Tracklist[i].name) >= 0)) {
+                    window[Tracklist[i].name] = "loading";
+                    window['track_list' + Tracklist[i].name].graph = "false";
+                    trackToggle(Tracklist[i].name)
                     var trackname = Tracklist[i].name;
                     var trackid = Tracklist[i].id;
                     // if (trackid && Tracklist[i].graph == "false") { //because graph == true is already loaded
@@ -604,6 +613,10 @@ function removeJSON(from, to) {
     for (var i = 0; i < Tracklist.length; i++) {
         if (jQuery("#" + Tracklist[i].name + "Checkbox").is(':checked') || (jQuery("#track_files").val() != null && jQuery("#track_files").val().indexOf(Tracklist[i].name) >= 0)) {
             if (window['track_list' + Tracklist[i].name].graph == "true" && Tracklist[i].name.indexOf("upload") < 0) {
+                window[Tracklist[i].name] = "loading";
+                window['track_list' + Tracklist[i].name].graph = "false";
+                trackToggle(Tracklist[i].name)
+
                 Fluxion.doAjax(
                     'dnaSequenceService',
                     'loadTrack',

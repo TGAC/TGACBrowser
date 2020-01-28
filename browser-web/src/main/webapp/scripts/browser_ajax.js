@@ -165,6 +165,7 @@ function loadTrackAjax(trackId, trackname) {
         }
     });
     console.log("here")
+
     if (window[trackname] || window[trackname] == "running" || window[trackname] == "loading") {
        trackToggle(trackname);
 //    need to think abt it
@@ -183,8 +184,8 @@ function loadTrackAjax(trackId, trackname) {
             end = sequencelength;
         }
         deltaWidth = parseInt(end - start) / parseInt(maxLen);
-        window[trackname] == "loading";
-       // trackToggle(trackname);
+        window[trackname] = "loading";
+       trackToggle(trackname);
         console.log("here")
         Fluxion.doAjax(
             'dnaSequenceService',
