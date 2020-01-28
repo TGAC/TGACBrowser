@@ -26,12 +26,16 @@
 package uk.ac.bbsrc.earlham.browser.service.ajax.javagenomicsio;
 
 import com.google.common.collect.Iterators;
+
 import edu.unc.genomics.SAMEntry;
 import edu.unc.genomics.io.BAMFileReader;
+import edu.unc.genomics.io.SAMFileReader;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sourceforge.fluxion.ajax.Ajaxified;
 import edu.unc.genomics.Interval;
+import org.seqdoop.hadoop_bam.BAMInputFormat;
+import org.seqdoop.hadoop_bam.BAMRecordReader;
 import uk.ac.bbsrc.earlham.browser.store.ensembl.Util;
 import java.io.BufferedReader;
 import java.io.File;
@@ -39,11 +43,15 @@ import java.io.FileReader;
 import java.nio.file.Paths;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+
+import static org.seqdoop.hadoop_bam.SAMFormat.BAM;
 
 /**
  * Created with IntelliJ IDEA.
@@ -130,9 +138,12 @@ public class SamBamService {
         Path path = Paths.get(trackId);
 
         try {
-            BAMFileReader reader = new BAMFileReader(path);
+            BAMFileReader reader = new BAMFileReader(path, false);
+
+
             Iterator<? extends Interval> count;
             count = reader.query(reference, (int) start, (int) end);
+//            reader.close();
             return Iterators.size(count);
         } catch (OutOfMemoryError e) {
             return 50000;
@@ -164,7 +175,7 @@ public class SamBamService {
 
         try {
 
-            BAMFileReader reader = new BAMFileReader(path);
+            BAMFileReader reader = new BAMFileReader(path, false);
 
             Iterator<SAMEntry> result = reader.query(reference, (int) start, (int) end);
             JSONObject read = new JSONObject();
@@ -194,6 +205,8 @@ public class SamBamService {
                     } else if (record.getSecondOfPairFlag()) {
                         read.put("colour", "brown");
                     }
+                    read.put("mate", record.getReadName());
+
                 } else {
                     read.put("colour", "orange");
                 }
@@ -205,6 +218,7 @@ public class SamBamService {
                 wig.add(read);
 
             }
+            reader.close();
 
             return wig;
 
@@ -237,7 +251,7 @@ public class SamBamService {
         Path path = Paths.get(trackId);
 
         try {
-            BAMFileReader reader = new BAMFileReader(path);
+            BAMFileReader reader = new BAMFileReader(path, false);
 
             long diff = (end - start) / 400;
             long temp_start, temp_end;
@@ -247,15 +261,17 @@ public class SamBamService {
                 temp_start = start + (i * diff);
                 temp_end = temp_start + diff;
 
-                Iterator<? extends Interval> count;
-                count = reader.query(reference, (int) temp_start, (int) temp_end);
+                Iterator<SAMEntry> count;
 
-                temp_start = start + (i * diff);
+                count = reader.query(reference, (int) temp_start, (int) temp_end);
 
                 span[0] = temp_start;
                 span[1] = Iterators.size(count);
+
                 bam.add(span);
             }
+
+            reader.close();
             return bam;
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
