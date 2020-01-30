@@ -26,32 +26,24 @@
 package uk.ac.bbsrc.earlham.browser.service.ajax.javagenomicsio;
 
 import com.google.common.collect.Iterators;
-
 import edu.unc.genomics.SAMEntry;
 import edu.unc.genomics.io.BAMFileReader;
-import edu.unc.genomics.io.SAMFileReader;
 import net.sf.json.JSONArray;
+import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import net.sourceforge.fluxion.ajax.Ajaxified;
 import edu.unc.genomics.Interval;
-import org.seqdoop.hadoop_bam.BAMInputFormat;
-import org.seqdoop.hadoop_bam.BAMRecordReader;
 import uk.ac.bbsrc.earlham.browser.store.ensembl.Util;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.nio.file.Paths;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-import static org.seqdoop.hadoop_bam.SAMFormat.BAM;
 
 /**
  * Created with IntelliJ IDEA.
@@ -213,15 +205,22 @@ public class SamBamService {
 
                 read.put("cigars", record.getCigarString());
                 read.put("alignment", record.getSequence());
-                read.put("layer", util.stackLayerInt(ends, start_pos, delta, end_pos));
-                ends = util.stackLayerList(ends, start_pos, delta, end_pos);
                 wig.add(read);
 
             }
             reader.close();
 
-            return wig;
+            JSONArray sorted = sort(wig, "start");
 
+            for (int i=0; i < sorted.size(); i++){
+                start_pos = sorted.getJSONObject(i).getInt("start");
+                end_pos = sorted.getJSONObject(i).getInt("end");
+
+                sorted.getJSONObject(i).put("layer", util.stackLayerInt(ends, start_pos, delta, end_pos));
+                ends = util.stackLayerList(ends, start_pos, delta, end_pos);
+            }
+
+            return sorted;
 
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -229,6 +228,41 @@ public class SamBamService {
             wig.add(response);
             return wig;
         }
+    }
+
+    JSONArray sort(JSONArray jsonArr, String sortBy) {
+
+        JSONArray sortedJsonArray = new JSONArray();
+
+        List<JSONObject> jsonValues = new ArrayList<JSONObject>();
+        for (int i = 0; i < jsonArr.size(); i++) {
+            jsonValues.add(jsonArr.getJSONObject(i));
+        }
+        final String KEY_NAME = sortBy;
+        Collections.sort( jsonValues, new Comparator<JSONObject>() {
+
+            @Override
+            public int compare(JSONObject a, JSONObject b) {
+                int valA = 0, valB = 0;
+
+                try {
+                    valA = (Integer) a.get(KEY_NAME);
+                    valB = (Integer) b.get(KEY_NAME);
+
+                }
+                catch (JSONException e) {
+                    //exception
+                }
+                return (valA - valB);
+
+            }
+        });
+
+        for (int i = 0; i < jsonArr.size(); i++) {
+            sortedJsonArray.add(jsonValues.get(i));
+        }
+
+        return sortedJsonArray;
     }
 
     /**
