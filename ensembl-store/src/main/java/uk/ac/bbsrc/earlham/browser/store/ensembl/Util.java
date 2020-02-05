@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 
 import net.sf.ehcache.CacheManager;
+import net.sf.json.JSONObject;
+import netscape.javascript.JSObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,6 +95,34 @@ public class Util implements UtilsStore {
                 }
             }
             return position;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    public JSONObject stackLayer(List<Integer> ends, int start_pos, int delta, int end_pos) throws Exception {
+        try {
+            int position = 0;
+            delta = 1;
+            JSONObject response = new JSONObject();
+            for (int a = 0; a < ends.size(); a++) {
+                if (start_pos - ends.get(a) >= delta) {
+                    position = (a + 1);
+                    ends.set(a, end_pos);
+                    break;
+                } else if ((start_pos - ends.get(a) <= delta && (a + 1) == ends.size()) || start_pos == ends.get(a)) {
+                    position = ends.size() + 1;
+                    ends.add(ends.size(), end_pos);
+                    break;
+                } else {
+                    continue;
+                }
+            }
+            response.put("position", position);
+            response.put("ends", ends);
+
+            return response;
         } catch (Exception e) {
             e.printStackTrace();
             throw new Exception(e.getMessage());

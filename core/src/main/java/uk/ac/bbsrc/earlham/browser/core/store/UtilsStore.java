@@ -25,6 +25,8 @@
 
 package uk.ac.bbsrc.earlham.browser.core.store;
 
+import net.sf.json.JSONObject;
+
 import java.util.List;
 
 /**
@@ -36,6 +38,10 @@ import java.util.List;
  */
 public interface UtilsStore extends Store {
     public int stackLayerInt(List<Integer> ends, int start_pos, int delta, int end_pos) throws Exception;
+
+    public JSONObject stackLayer(List<Integer> ends, int start_pos, int delta, int end_pos) throws Exception;
+
     public List<Integer> stackLayerList(List<Integer> ends, int start_pos, int delta, int end_pos) throws Exception;
+
     public int countAssembly(int id, String trackId, long start, long end) throws Exception;
 }

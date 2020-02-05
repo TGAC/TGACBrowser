@@ -215,9 +215,9 @@ public class SamBamService {
             for (int i=0; i < sorted.size(); i++){
                 start_pos = sorted.getJSONObject(i).getInt("start");
                 end_pos = sorted.getJSONObject(i).getInt("end");
-
-                sorted.getJSONObject(i).put("layer", util.stackLayerInt(ends, start_pos, delta, end_pos));
-                ends = util.stackLayerList(ends, start_pos, delta, end_pos);
+                JSONObject layer = util.stackLayer(ends, start_pos, delta, end_pos);
+                sorted.getJSONObject(i).put("layer", layer.getInt("position"));
+                ends = (List<Integer>) layer.get("ends");
             }
 
             return sorted;
