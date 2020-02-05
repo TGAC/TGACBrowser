@@ -986,6 +986,7 @@ function dispSAMTrack(div, trackName, className) {
     var trackId;
     var trackClass, label;
     var track_html = [];
+    trackClass = "sam"
 
     var j = 0;
 
@@ -1070,13 +1071,13 @@ function dispSAMTrack(div, trackName, className) {
 
 
                 if (track[track_len].layer) {
-                    top = (track[track_len].layer) * 16 + 16;
+                    top = (track[track_len].layer) * 20 + 16;
                     if (track[track_len].layer > j) {
                         j = track[track_len].layer;
                     }
                 }
                 else {
-                    top = ((track_len) % (layers) + 1) * 20 + 15;
+                    top = ((track_len) % (layers) + 1) * 25 + 15;
                 }
 
 
@@ -1108,11 +1109,11 @@ function dispSAMTrack(div, trackName, className) {
 
 
                 clone_new_div.onmouseOver = (function () {
-                    clone_new_div.style.border = "1px solid black";
+                    // clone_new_div.style.border = "1px solid black";
                 })();
 
                 clone_new_div.onmouseOut = (function () {
-                    clone_new_div.style.border = "1px solid transparent";
+                    // clone_new_div.style.border = "1px solid transparent";
                 })();
 
                 clone_new_div.onclick = (function () {

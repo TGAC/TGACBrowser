@@ -1654,6 +1654,10 @@ span.counter {
     font-size: 9pt;
 }
 
+.sam{
+    box-shadow: 0px 0px 1px 1px black;
+}
+
 .browserimage {
     position: RELATIVE;
     top: 5px;
