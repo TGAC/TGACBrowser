@@ -180,17 +180,19 @@
             <div id="SeqLenEnd">&nbsp;</div>
         </div>
         <div id="nav_panel"> &nbsp;</div>
-        <div id="vertical0" style="left: 0%" class="vertical-line"></div>
-        <div id="vertical1" style="left: 10%" class="vertical-line"></div>
-        <div id="vertical2" style="left: 20%" class="vertical-line"></div>
-        <div id="vertical3" style="left: 30%" class="vertical-line"></div>
-        <div id="vertical4" style="left: 40%" class="vertical-line"></div>
-        <div id="vertical5" style="left: 50%" class="vertical-line"></div>
-        <div id="vertical6" style="left: 60%" class="vertical-line"></div>
-        <div id="vertical7" style="left: 70%" class="vertical-line"></div>
-        <div id="vertical8" style="left: 80%" class="vertical-line"></div>
-        <div id="vertical9" style="left: 90%" class="vertical-line"></div>
-        <div id="vertical10" style="right: 0%; margin-left: -20px; border-left: 0" class="vertical-line"></div>
+        <div id="vertical" style="left: 0%; width: 100%; background-color: white; height: 10px; overflow: visible;" class="vertical-line">
+            <div id="vertical0" style="left: 0%" class="vertical-line"></div>
+            <div id="vertical1" style="left: 10%" class="vertical-line"></div>
+            <div id="vertical2" style="left: 20%" class="vertical-line"></div>
+            <div id="vertical3" style="left: 30%" class="vertical-line"></div>
+            <div id="vertical4" style="left: 40%" class="vertical-line"></div>
+            <div id="vertical5" style="left: 50%" class="vertical-line"></div>
+            <div id="vertical6" style="left: 60%" class="vertical-line"></div>
+            <div id="vertical7" style="left: 70%" class="vertical-line"></div>
+            <div id="vertical8" style="left: 80%" class="vertical-line"></div>
+            <div id="vertical9" style="left: 90%" class="vertical-line"></div>
+            <div id="vertical10" style="right: 0%; margin-left: -20px; border-left: 0" class="vertical-line"></div>
+        </div>
         <div id="bg_layer"></div>
         <div id="draggable" onmouseup="auto_drag()" onmouseout="auto_drag()"></div>
 
