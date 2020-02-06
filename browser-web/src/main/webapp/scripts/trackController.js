@@ -1658,7 +1658,7 @@ function dispCigar(cigars, aln) {
         var track_html_local = "";
 
         if (cigars != '*') {
-            cigars = cigars.replace(/([SIXMND])/g, ":$1,");
+            cigars = cigars.replace(/([SIXMNDHP=])/g, ":$1,");
             var cigars_array = cigars.split(',');
             var cigar_pos = 0;
             for (var i = 0; i < cigars_array.length - 1; i++) {
@@ -1694,6 +1694,8 @@ function dispCigar(cigars, aln) {
                 } else if (key == "=") {
                     track_html_local += seq.substr(cigar_pos, length)
                     cigar_pos = parseInt(cigar_pos) + parseInt(length)
+                } else{
+                    continue;
                 }
             }
         }
