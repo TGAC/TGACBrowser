@@ -104,7 +104,7 @@ public class Util implements UtilsStore {
     public JSONObject stackLayer(List<Integer> ends, int start_pos, int delta, int end_pos) throws Exception {
         try {
             int position = 0;
-            delta = 1;
+            delta = 2;
             JSONObject response = new JSONObject();
             for (int a = 0; a < ends.size(); a++) {
                 if (start_pos - ends.get(a) >= delta) {
