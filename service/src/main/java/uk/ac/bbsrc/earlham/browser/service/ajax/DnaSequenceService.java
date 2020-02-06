@@ -325,6 +325,7 @@ public class DnaSequenceService {
                 response.put(trackName, BigWigService.getWig(start, end, delta, trackId, seqName));
             } else if (trackId.contains(".sam") || trackId.contains(".bam")) {
                 count = SamBamService.countBAM(start, end, delta, trackId, seqName);
+                log.info("\n\n\t\t count "+count);
                 if (count == 0) {
                     count = SamBamService.countBAM(0, sequenceStore.getSeqLengthbyId(queryid, coord), delta, trackId, seqName);
                     if (count == 0) {
@@ -333,7 +334,7 @@ public class DnaSequenceService {
                         response.put(trackName, new JSONArray());
                     }
 
-                } else if (count < 1000) {
+                } else if (count < 1000 || (end-start) < 400) {
                     response.put(trackName, samBamService.getBAMReads(start, end, delta, trackId, seqName));
                 } else {
                     response.put("type", "graph");
