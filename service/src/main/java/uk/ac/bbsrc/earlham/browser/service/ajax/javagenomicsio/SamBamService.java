@@ -284,14 +284,21 @@ public class SamBamService {
 
         Path path = Paths.get(trackId);
 
+        int chunks  = 400;
+
+        if((end - start)/chunks < 2)
+        {
+            chunks = 200;
+        }
+
         try {
             BAMFileReader reader = new BAMFileReader(path, false);
 
-            long diff = (end - start) / 400;
+            long diff = (end - start) / chunks;
             long temp_start, temp_end;
             long span[] = new long[2];
 
-            for (int i = 0; i < 400; i++) {
+            for (int i = 0; i < chunks; i++) {
                 temp_start = start + (i * diff);
                 temp_end = temp_start + diff;
 
