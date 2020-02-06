@@ -53,17 +53,11 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/js/select2.min.js"></script>
 
+    <link rel="stylesheet" href="<c:url value='https://cdn.datatables.net/v/dt/dt-1.10.18/datatables.min.css'/>" type="text/css">
 
-
-    <link rel="stylesheet" href="<c:url value='https://cdn.datatables.net/v/dt/dt-1.10.18/datatables.min.css'/>"          type="text/css">
-
-
-    <link rel="stylesheet" href="<c:url value='/scripts/jquery/css/smoothness/jquery-ui-1.8.custom.css'/>"
-
-          type="text/css">
+    <link rel="stylesheet" href="<c:url value='/scripts/jquery/css/smoothness/jquery-ui-1.8.custom.css'/>" type="text/css">
     <script type="text/javascript" src="<c:url value='/scripts/jquery/colorbox/jquery.colorbox-min.js'/>"></script>
-    <link rel="stylesheet" href="<c:url value='/scripts/jquery/colorbox/colorbox.css'/>"
-          type="text/css">
+    <link rel="stylesheet" href="<c:url value='/scripts/jquery/colorbox/colorbox.css'/>" type="text/css">
     <script type="text/javascript">jQuery.noConflict();</script>
 
     <!--Browser Functions-->
@@ -147,7 +141,5 @@
 <div id="blastLocation" style="visibility: hidden; position: fixed;">${initParam.blastLocation}</div>
 <div id="blastType" style="visibility: hidden; position: fixed;">${initParam.blastType}</div>
 <div id="fasta" style="visibility: hidden; position: fixed;">${initParam.fasta}</div>
-
-
 
 <div id="content">

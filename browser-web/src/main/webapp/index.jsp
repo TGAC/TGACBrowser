@@ -7,13 +7,6 @@
 
 </style>
 
-<%--<div id="searchseqregioninput">--%>
-<%--<input type="text" id="search" value="scaffold1.1-size1749886"/>--%>
-<%--<button class="ui-state-default ui-corner-all" onclick="search(jQuery('#search').val());">Search Seq Region Name--%>
-<%--</button>--%>
-<%--</div>--%>
-
-
 <center>
 
     <div id="mainsearch" style="top : 10px ;"></div>
@@ -39,14 +32,14 @@
         });
         return vars;
     }
+
     function getUrlVariables(chr) {
 
         jQuery.urlParam = function (name) {
             var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href);
             if (results == null) {
                 return null;
-            }
-            else {
+            } else {
                 return results[1] || 0;
             }
         }

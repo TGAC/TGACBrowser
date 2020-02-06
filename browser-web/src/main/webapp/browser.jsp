@@ -53,12 +53,10 @@
         </div>
     </div>
     <div id="canvas" style="display: none">
-
         <div id="controller">
             <table width=100%>
                 <tr>
                     <td>
-
                         <div id="coord" align="left">
                             <table>
                                 <tr>
@@ -80,9 +78,6 @@
                                     </td>
                                     <td>
                                         <input type="text" id="end" size="5" class="jump" style="visibility: hidden">
-                                    </td>
-                                    <td>
-
                                     </td>
                                 </tr>
                             </table>
@@ -152,7 +147,6 @@
                                         <i class="fa">Save Session</i>
                                     </button>
                                 </td>
-
                                 <td>
                                     <button type="button" class="btn btn-default btn-sm ui-btn ui-shadow ui-corner-all"
                                             data-toggle="modal" data-target="#controlModal">
@@ -162,12 +156,9 @@
                             </tr>
                         </table>
                         <div id=sessionid></div>
-
                     </td>
                 </tr>
             </table>
-
-
         </div>
 
 
@@ -180,7 +171,8 @@
             <div id="SeqLenEnd">&nbsp;</div>
         </div>
         <div id="nav_panel"> &nbsp;</div>
-        <div id="vertical" style="left: 0%; width: 100%; background-color: white; height: 10px; overflow: visible;" class="vertical-line">
+        <div id="vertical" style="left: 0%; width: 100%; background-color: white; height: 10px; overflow: visible;"
+             class="vertical-line">
             <div id="vertical0" style="left: 0%" class="vertical-line"></div>
             <div id="vertical1" style="left: 10%" class="vertical-line"></div>
             <div id="vertical2" style="left: 20%" class="vertical-line"></div>
@@ -198,30 +190,21 @@
 
 
         <div id="wrapper">
-            <%--<canvas id="myCanvas" width="200" height="100"--%>
-            <%--style="border:1px solid #000000;">--%>
-            <%--</canvas>--%>
             <div id=tracks>
             </div>
             <div class="fakediv">
-
             </div>
             <div id="sequence">
-
                 <center>
                     <div id="marker_div"
                          style="position: absolute; top: 0px; left: 0px; height: 20px; width: 100%;"></div>
                     <div id="sequenceString"></div>
                     <div id="translation_div"></div>
                 </center>
-
-
             </div>
             <span id="ruler"></span>
-
         </div>
     </div>
-
 </div>
 
 <%--<div id="openCloseIdentifier"></div>--%>
@@ -237,13 +220,11 @@
             </div>
             <div class="modal-body">
                 <div id="controlpanel" style="font-family: Arial;">
-
                     <div class="sectionDivider"
                          onclick="toggleLeftInfo(jQuery('#displayoptions_arrowclick'), 'displayoptions');">
                         Settings
                         <div id="displayoptions_arrowclick" class="toggleLeftDown"></div>
                     </div>
-
                     <div id="displayoptions" style="display: none" align="left">
                         <input id="guidelineswitch" type="checkbox"/>Guideline
                         <br/>
@@ -260,25 +241,23 @@
                             <option value=5> 5</option>
                         </select>
                     </div>
-
                     <div class="sectionDivider" onclick="toggleLeftInfo(jQuery('#Tracksdiv_arrowclick'), 'Tracksdiv');">
                         Tracks List
                         <div id="Tracksdiv_arrowclick" class="toggleLeftDown"></div>
                     </div>
-
                     <div id="Tracksdiv">
                         <table width=100%>
                             <tr>
                                 <th>
                                     Track List
 
-                        <span title='selectAll'><input type="checkbox" id='selectAllCheckbox'
-                                                       name='selectAllCheckbox'
-                                                       onClick=selectAllCheckbox();>  Select All</span>
+                                    <span title='selectAll'><input type="checkbox" id='selectAllCheckbox'
+                                                                   name='selectAllCheckbox'
+                                                                   onClick=selectAllCheckbox();>  Select All</span>
 
-                        <span title='unSelectAll'><input type="checkbox" id='unSelectAllCheckbox'
-                                                         name='unSelectAllCheckbox'
-                                                         onClick=unSelectAllCheckbox();>  Deselect All</span>
+                                    <span title='unSelectAll'><input type="checkbox" id='unSelectAllCheckbox'
+                                                                     name='unSelectAllCheckbox'
+                                                                     onClick=unSelectAllCheckbox();>  Deselect All</span>
 
                                 </th>
 
@@ -310,7 +289,6 @@
                                 </th>
                             </tr>
                             <tr>
-
                                 <td>
                                     <div id="mergetracklist" align="left"></div>
                                 </td>
@@ -658,12 +636,14 @@
                 <br>
                 example: File should have extension matching type. <br>
 
-                <div class="sectionDivider" onclick="toggleLeftInfo(jQuery('#uploadFormats_arrowclick'), 'uploadFormats');">
+                <div class="sectionDivider"
+                     onclick="toggleLeftInfo(jQuery('#uploadFormats_arrowclick'), 'uploadFormats');">
                     Formats Description:
                     <div id="uploadFormats_arrowclick" class="toggleLeft"></div>
                 </div>
 
-                <div id="uploadFormats" style="display: none;" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+                <div id="uploadFormats" style="display: none;"
+                     class="ui-tabs ui-widget ui-widget-content ui-corner-all">
                     <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
                         <li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active">
                             <a href="#formatGFF"><span>GFF</span></a>
@@ -685,14 +665,49 @@
                         GFF
                         <table cellspacing="10" cellpadding="20" border="0" style="border-collapse: separate;">
                             <tr>
-                                <td>chr1	<td>EVM	<td>gene	<td>8287	<td>16179	<td>.	<td>-	<td>.	<td>ID=geneid;Name=genename
+                                <td>chr1
+                                <td>EVM
+                                <td>gene
+                                <td>8287
+                                <td>16179
+                                <td>.
+                                <td>-
+                                <td>.
+                                <td>ID=geneid;Name=genename
                             <tr>
-                            <tr><td>chr1	<td>EVM	<td>mRNA	<td>8287	<td>16179	<td>.	<td>-	<td>.	<td>ID=transcriptid;Parent=geneid;Name=transcriptname
-                            <tr><td>chr1	<td>EVM	<td>exon	<td>15864	<td>16179	<td>.	<td>-	<td>.	<td>ID=exonid;Parent=transcriptid
-                            <tr><td>chr1	<td>EVM	<td>CDS	<td>15864	<td>16179	<td>.	<td>-	<td>0	<td>ID=cdsid;Parent=transcriptid
+                            <tr>
+                                <td>chr1
+                                <td>EVM
+                                <td>mRNA
+                                <td>8287
+                                <td>16179
+                                <td>.
+                                <td>-
+                                <td>.
+                                <td>ID=transcriptid;Parent=geneid;Name=transcriptname
+                            <tr>
+                                <td>chr1
+                                <td>EVM
+                                <td>exon
+                                <td>15864
+                                <td>16179
+                                <td>.
+                                <td>-
+                                <td>.
+                                <td>ID=exonid;Parent=transcriptid
+                            <tr>
+                                <td>chr1
+                                <td>EVM
+                                <td>CDS
+                                <td>15864
+                                <td>16179
+                                <td>.
+                                <td>-
+                                <td>0
+                                <td>ID=cdsid;Parent=transcriptid
                                 </td>
-                                </tr>
-                            </table>
+                            </tr>
+                        </table>
                         <br>
                         File should match column labels shown in
                         <a target="_blank" href="files/test.gff3"> example file </a>
@@ -702,13 +717,49 @@
                         VCF
                         <br>
                         <table cellspacing="10" cellpadding="20" border="0" style="border-collapse: separate;">
-                            <tr><td>#chrOM<td>POS<td>ID<td>REF<td>ALT<td>QUAL<td>FILTER<td>INFO<td>FORMAT
-                            <tr><td>chr1<td>14370<td>rs6054257<td>G<td>A<td>29<td>PASS<td>NS=3;DP=14;AF=0.5;DB;H2<td>GT:GQ:DP:HQ
-                            <tr><td>chr1<td>17330<td>.<td>T<td>A<td>3<td>q10<td>NS=3;DP=11;AF=0.017<td>GT:GQ:DP:HQ
-                            <tr><td>chr1<td>1110696<td>rs6040355<td>A<td>G,T<td>67<td>PASS<td>NS=2;DP=10;AF=0.333,0.667;AA=T;DB<td>GT:GQ:DP:HQ
-                            </td>
+                            <tr>
+                                <td>#chrOM
+                                <td>POS
+                                <td>ID
+                                <td>REF
+                                <td>ALT
+                                <td>QUAL
+                                <td>FILTER
+                                <td>INFO
+                                <td>FORMAT
+                            <tr>
+                                <td>chr1
+                                <td>14370
+                                <td>rs6054257
+                                <td>G
+                                <td>A
+                                <td>29
+                                <td>PASS
+                                <td>NS=3;DP=14;AF=0.5;DB;H2
+                                <td>GT:GQ:DP:HQ
+                            <tr>
+                                <td>chr1
+                                <td>17330
+                                <td>.
+                                <td>T
+                                <td>A
+                                <td>3
+                                <td>q10
+                                <td>NS=3;DP=11;AF=0.017
+                                <td>GT:GQ:DP:HQ
+                            <tr>
+                                <td>chr1
+                                <td>1110696
+                                <td>rs6040355
+                                <td>A
+                                <td>G,T
+                                <td>67
+                                <td>PASS
+                                <td>NS=2;DP=10;AF=0.333,0.667;AA=T;DB
+                                <td>GT:GQ:DP:HQ
+                                </td>
                             </tr>
-                            </table>
+                        </table>
                         <br>
                         File should match column labels shown in
                         <a target="_blank" href="files/test.vcf"> example file </a>
@@ -717,12 +768,24 @@
                     <div id="formatWig" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
                         Wig
                         <table cellspacing="10" cellpadding="20" border="0">
-                            <tr><td>variableStep<td>chrom=chr1
-                            <tr><td>10<td>34
-                            <tr><td>20<td>41
-                            <tr><td>30<td>46
-                            <tr><td>40<td>49
-                            <tr><td>50<td>52
+                            <tr>
+                                <td>variableStep
+                                <td>chrom=chr1
+                            <tr>
+                                <td>10
+                                <td>34
+                            <tr>
+                                <td>20
+                                <td>41
+                            <tr>
+                                <td>30
+                                <td>46
+                            <tr>
+                                <td>40
+                                <td>49
+                            <tr>
+                                <td>50
+                                <td>52
                         </table>
                         <br>
                         File should match column labels shown in
@@ -731,7 +794,7 @@
                     </div>
                     <div id="formatGAPIT" class="ui-tabs-panel ui-widget-content ui-corner-bottom ">
                         GAPIT
-                    <br>
+                        <br>
                         GAPIT and GEM files must match column labels shown below, but not order of column. <br>
                         <table class="table table-bordered">
                             <thead>
@@ -799,7 +862,7 @@
                     </div>
                     <div id="formatGEM" class="ui-tabs-panel ui-widget-content ui-corner-bottom ">
                         GEM
-                    <br>
+                        <br>
                         GAPIT and GEM files must match column labels shown below, but not order of column. <br>
                         <table class="table table-bordered">
                             <thead>
@@ -860,7 +923,8 @@
                                 </td>
                             </tr>
                             </tbody>
-                        </table></div>
+                        </table>
+                    </div>
                 </div>
 
                 <article>
