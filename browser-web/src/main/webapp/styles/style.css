@@ -2057,9 +2057,10 @@ span.counter {
     /*font-size: 15px;*/
     left: 25.2%;
     opacity: 0.9;
-    position: absolute;
+    position: sticky;
     top: 5px;
     z-index: 999;
+    background: white;
 }
 
 .handle-hover {

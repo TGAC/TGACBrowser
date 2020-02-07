@@ -253,7 +253,7 @@ function onLoad() {
                 });
             },
             stop: function () {
-                jQuery(".handle").css("position", 'absolute');
+                jQuery(".handle").css("position", 'sticky');
                 jQuery(".handle").css("left", '25.2%');
                 jQuery(".handle").css("top", '5px');
                 trackDrag();
