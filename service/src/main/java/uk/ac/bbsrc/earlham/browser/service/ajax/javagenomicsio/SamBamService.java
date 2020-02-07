@@ -86,7 +86,7 @@ public class SamBamService {
             while ((sCurrentLine = br.readLine()) != null) {
                 String[] line = sCurrentLine.split("\t");
                 JSONObject response = new JSONObject();
-                if (line[0].equalsIgnoreCase("MAL1")) {//reference) {
+                if (line[0].equalsIgnoreCase(reference)) {
                     if (Integer.parseInt(line[1].toString()) >= start && Integer.parseInt(line[2].toString()) <= end) {
                         response.put("start", line[1]);
                         response.put("end", line[2]);
