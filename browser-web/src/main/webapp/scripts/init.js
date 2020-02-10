@@ -236,7 +236,7 @@ function onLoad() {
             drag: function () {
 
                 jQuery(".handle").each(function (i) {
-                    jQuery(this).css("left", '1%');
+                    jQuery(this).css("left", '0.5%');
                     jQuery(this).css("top", parseInt(jQuery(this).parent().position().top) - parseInt(jQuery(window).scrollTop()) + (parseInt(jQuery("#wrapper").position().top) + parseInt(jQuery("#sequence").css('height'))) + (parseInt(jQuery("#canvas").position().top)) + 5);
                     jQuery(this).css("position", 'fixed');
                 });

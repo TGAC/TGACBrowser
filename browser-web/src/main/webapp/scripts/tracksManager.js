@@ -114,7 +114,7 @@ function track_div_html(trackname) {
             "</tr>" +
             "</table>" +
             "</div>" +
-            "<div id='" + track.name + "_div' class='feature_tracks' style=\"display:none; top:0px; overflow-y: auto\" > " + track.name + "</div>"
+            "<div id='" + track.name + "_div' class='feature_tracks' style=\"display:none; top:0px; overflow-y: auto; overflow-x: hidden\" > " + track.name + "</div>"
         );
     } else {
         jQuery("#" + track.name + "_wrapper").append("<div align='left' class='handle'>" +
@@ -126,7 +126,7 @@ function track_div_html(trackname) {
             "</tr>" +
             "</table>" +
             "</div>" +
-            "<div id='" + track.name + "_div' class='feature_tracks' style=\"display:block; top:10px; overflow-y: auto\" > </div>"
+            "<div id='" + track.name + "_div' class='feature_tracks' style=\"display:block; top:10px; overflow-y: auto; overflow-x: hidden\" > </div>"
         );
     }
 

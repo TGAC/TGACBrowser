@@ -2092,7 +2092,7 @@ span.counter {
 }
 
 .feature_tracks {
-    position: relative;
+    position: absolute;
     text-align: left;
     min-height: 100px;
     width: 100%;
