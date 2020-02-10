@@ -101,7 +101,7 @@ function track_div_html(trackname) {
     if (track.disp == false || track.disp == 0) {
         style = "display:none;";
     }
-    jQuery("#tracks").append("<div id='" + track.name + "_wrapper' class='feature_tracks' style='" + style + " max-height:110px; overflow-x: hidden;'>" +
+    jQuery("#tracks").append("<div id='" + track.name + "_wrapper' class='feature_tracks' style='" + style + " max-height:110px; overflow: hidden;'>" +
         "</div>");
 
 
@@ -114,7 +114,7 @@ function track_div_html(trackname) {
             "</tr>" +
             "</table>" +
             "</div>" +
-            "<div id='" + track.name + "_div' class='feature_tracks' style=\"display:none; top:0px;\" > " + track.name + "</div>"
+            "<div id='" + track.name + "_div' class='feature_tracks' style=\"display:none; top:0px; overflow-y: auto\" > " + track.name + "</div>"
         );
     } else {
         jQuery("#" + track.name + "_wrapper").append("<div align='left' class='handle'>" +
@@ -126,7 +126,7 @@ function track_div_html(trackname) {
             "</tr>" +
             "</table>" +
             "</div>" +
-            "<div id='" + track.name + "_div' class='feature_tracks' style=\"display:block; top:10px;\" > </div>"
+            "<div id='" + track.name + "_div' class='feature_tracks' style=\"display:block; top:10px; overflow-y: auto\" > </div>"
         );
     }
 
@@ -134,7 +134,8 @@ function track_div_html(trackname) {
         jQuery("#" + track.name + "_wrapper").resizable({
             handles: "s",
             minHeight: "50px",
-            borderBottom: '1px solid black'
+            borderBottom: '1px solid black',
+            alsoResize: "#" + track.name + "_div"
         });
     });
 
