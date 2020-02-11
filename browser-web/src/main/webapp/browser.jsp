@@ -333,25 +333,25 @@
 <div id="popup" class="bubbleleft">
 
 
-    <table id="dpop" width="100%">
+    <table cellpadding="5" id="dpop" width="100%">
 
-        <tr>
-            <td>
+        <tr bgcolor="#4682b4">
+            <td style="padding-left: 5px">
                 <div id="popuptrack" class="popuptrack"></div>
             </td>
             <td align="right">
-                <span class="ui-button ui-icon ui-icon-close" onclick=removePopup();></span>
+                <span style="color:white" class="ui-button" onclick=removePopup();> x</span>
             </td>
 
         </tr>
         <tr>
-            <td colspan="2">
+            <td colspan="2" style="padding: 5px">
                 <div id="position"></div>
             </td>
         </tr>
 
         <tr>
-            <td colspan="2">
+            <td colspan="2" style="padding: 5px">
                 <div id="Detail"></div>
             </td>
         </tr>
@@ -361,7 +361,7 @@
     <table width="100%">
         <tr>
 
-            <td align="right">
+            <td align="right" style="padding: 5px">
 
                 <div class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" id="exdetails">
                 </div>

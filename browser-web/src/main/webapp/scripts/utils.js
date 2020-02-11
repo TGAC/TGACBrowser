@@ -316,6 +316,7 @@ function groupCancel() {
 function stringTrim(string, width, newClass) {
     console.log(string)
     console.log(width)
+    console.log(newClass)
     if (newClass) {
         jQuery("#ruler").addClass(newClass.toString())
     } else {
@@ -338,7 +339,13 @@ function stringTrim(string, width, newClass) {
     if (inLength < width) {
         return string;
     } else {
+        jQuery("#ruler").html("...");
+        inLength += jQuery("#ruler").width();
+
         width = parseInt(string.length * width / inLength);
+        console.log(width)
+
+        console.log(string.length+ " "+inLength)
         return "<span title='" + string + "'>" + string.substring(0, width) + "... </span>";
     }
 

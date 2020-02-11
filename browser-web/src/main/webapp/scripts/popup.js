@@ -52,15 +52,15 @@ function removePopup() {
 // create a new for each track
 function newpopup(track, i, j) {
     removePopup()
-    var width = jQuery("#popup").width();
+    var width = jQuery("#popup").width() -10//padding;
     jQuery('#blastselector').hide();
     jQuery("#popuptrack").html(stringTrim(window['track_list' + track].display_label, 180, jQuery("#popuptrack").attr('class')));
 
     var position = "";
     if (scale != 1) {
-        position = (window[track][i].start * scale).toFixed(2) + "" + unit + position_func(window[track][i]);
+        position = (window[track][i].start * scale).toFixed(2) + "" + position_func(window[track][i]);
     } else {
-        position = (window[track][i].start) + "" + unit + position_func(window[track][i]);
+        position = (window[track][i].start) + "" + position_func(window[track][i]);
 
     }
     var endposition;
@@ -69,9 +69,9 @@ function newpopup(track, i, j) {
         if (test.end) {
             endposition = test.end;
             if (scale != 1) {
-                return "-" + (test.end * scale).toFixed(2) + "" + unit
+                return " - " + (test.end * scale).toFixed(2) + "" + unit
             } else {
-                return "-" + (test.end) + "" + unit
+                return " - " + (test.end) + "" + unit
             }
         }
         else {
@@ -96,7 +96,7 @@ function newpopup(track, i, j) {
             jQuery("#Linkme").html("<a target='_blank' href='" + window["track_list" + track].ensembl + "" + window[track][i].desc + "'> <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\"></span></a>");
         }
         jQuery("#revertme").html('<span title="Revert_Name" class="ui-button ui-icon ui-icon-arrowreturnthick-1-w" onclick=revertTrack(\"' + track + "\",\"" + i + "\",\"" + j + '\");></span>');
-        jQuery("#Detail").html(stringTrim(window[track][i].transcript[j].desc + "(" + window[track][i].desc + ")", width));
+        jQuery("#Detail").html(stringTrim(window[track][i].transcript[j].desc + "(" + window[track][i].desc + ")", width, jQuery("#popuptrack").attr('class')));
 
     }
     else {
@@ -136,7 +136,7 @@ function newpopup(track, i, j) {
                 jQuery("#Detail").html("<a target='_blank' href='index.jsp?query=" + window[track][i].desc + "&&coord=" + window['track_list' + track].id.replace("cs", "") + "' > " + stringTrim(window[track][i].desc, width) + "</a>");
             }
         } else {
-            jQuery("#Detail").html(stringTrim(window[track][i].desc, width));
+            jQuery("#Detail").html(stringTrim(window[track][i].desc, width, jQuery("#popuptrack").attr('class')));
         }
 
         if (window[track][i].domain) {

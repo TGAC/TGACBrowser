@@ -2363,12 +2363,12 @@ span.counter {
     background-image: -ms-linear-gradient(top, hsla(0, 0%, 100%, .5), hsla(0, 0%, 100%, 0));
     background-image: -o-linear-gradient(top, hsla(0, 0%, 100%, .5), hsla(0, 0%, 100%, 0));
     background-image: linear-gradient(top, hsla(0, 0%, 100%, .5), hsla(0, 0%, 100%, 0));
-    border-radius: 10px;
+    /*border-radius: 10px;*/
     box-shadow: 10px 10px 35px #888888;
     color: #333;
     display: inline-block;
     /*font: 16px/25px sans-serif;*/
-    padding: 5px 5px;
+    /*padding: 5px 5px;*/
     text-shadow: 0 1px 1px hsla(0, 0%, 100%, .5);
     border: 1px solid #888888;
     width: 200px;
@@ -2404,8 +2404,8 @@ span.counter {
     left: 22px;
 }
 .popuptrack{
-    font:bold 15px Arial;
-    color: gray;
+    font:15px Arial;
+    color: white;
 }
 
 .bubbleright {
