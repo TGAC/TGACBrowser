@@ -1463,10 +1463,10 @@ span.counter {
     opacity: 0.75;
     left: 0px;
     top: 75px;
-    /*border-bottom: 100px solid #cccccc;*/
-    /*border-left: 50px solid transparent;*/
-    /*border-right: 50px solid transparent;*/
-    /*height: 50px;*/
+    border-bottom: 20px solid #cccccc;
+    border-left: 50px solid transparent;
+    border-right: 50px solid transparent;
+    height: 36px;
     width: 100%;
     z-index: 999;
 }
