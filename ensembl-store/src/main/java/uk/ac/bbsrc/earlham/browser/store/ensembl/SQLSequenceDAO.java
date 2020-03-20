@@ -71,6 +71,9 @@ public class SQLSequenceDAO implements SequenceStore {
     public static final String GET_SIZE_SEQ_REGION_ID_SEARCH = "SELECT name FROM seq_region WHERE name like ? limit 10";
     public static final String GET_SIZE_SEQ_REGION_ID_SEARCH_FOR_MATCH = "SELECT count(length) FROM seq_region WHERE name = ?";
     public static final String GET_SEQ_REGION_ID_SEARCH_all = "SELECT * FROM seq_region WHERE coord_system_id = ?";
+    public static final String GET_CHR_MAP = "SELECT * FROM seq_region WHERE coord_system_id = ? and seq_region_id in (select distinct seq_region_id from karyotype)";
+    public static final String COUNT_KARYOTYPE = "SELECT count(*) FROM karyotype";
+    public static final String GET_SEQ_REGION_ID_IN_KARYOTYPE = "SELECT seq_region_id from karyotype";
     public static final String GET_SEQ_REGION_NAME_FROM_ID = "SELECT name FROM seq_region WHERE seq_region_id = ?";
     public static final String GET_SEQ_REGION_NAME_FROM_ID_AND_COORD = "SELECT name FROM seq_region WHERE seq_region_id = ? and coord_system_id = ?";
 
@@ -187,14 +190,14 @@ public class SQLSequenceDAO implements SequenceStore {
             JSONObject eachName = new JSONObject();
             if (attrib_temp.size() > 0) {
                 for (Map attrib : attrib_temp) {
-                    List<Map<String, Object>> maps = template.queryForList(GET_SEQ_REGION_ID_SEARCH_all, new Object[]{attrib.get("coord_system_id").toString()});
+                    List<Map<String, Object>> maps = template.queryForList(GET_CHR_MAP, new Object[]{attrib.get("coord_system_id").toString()});
                     for (Map map : maps) {
-                        eachName.put("name", map.get("name"));
-                        eachName.put("seq_region_id", map.get("seq_region_id"));
-                        eachName.put("length", map.get("length"));
-                        eachName.put("coord_name", attrib.get("name"));
-                        eachName.put("coord", attrib.get("coord_system_id"));
-                        names.add(eachName);
+                            eachName.put("name", map.get("name"));
+                            eachName.put("seq_region_id", map.get("seq_region_id"));
+                            eachName.put("length", map.get("length"));
+                            eachName.put("coord_name", attrib.get("name"));
+                            eachName.put("coord", attrib.get("coord_system_id"));
+                            names.add(eachName);
                     }
                 }
             }
