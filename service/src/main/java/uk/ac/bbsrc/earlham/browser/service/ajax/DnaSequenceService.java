@@ -385,27 +385,37 @@ public class DnaSequenceService {
                 log.info("\n\n\n loading bed");
                 response.put(trackName, SamBamService.getBed(start, end, delta, trackId, seqName));
             } else if (trackId.indexOf("cs") >= 0) {
-                log.info("\n\n\n loading assembly");
-                count = assemblyStore.countAssembly(queryid, trackId, start, end);
-                if (count == 0) {
-                    count = assemblyStore.countAssembly(queryid, trackId, 0, sequenceStore.getSeqLengthbyId(queryid, coord));
-                    if (count == 0) {
-                        response.put(trackName, "getHit no result found");
-                    } else {
-                        response.put(trackName, new JSONArray());
-                    }
+                int rank_track =  assemblyStore.getRank(trackId.replace("cs", ""));
+                int rank_query =  assemblyStore.getRank(trackId.replace("cs", ""));
 
-                } else if (count < 1000) {
-                    response.put(trackName, assemblyStore.getAssembly(queryid, trackId, delta, start, end));
-                } else if (count < 5000) {
-                    response.put("type", "graph");
-                    response.put("graphtype", "bar");
-                    response.put(trackName, assemblyStore.getAssemblyGraph(queryid, trackId, start, end));
-                } else {
-                    response.put("type", "graph");
-                    response.put("graphtype", "heat");
-                    response.put(trackName, assemblyStore.getAssemblyOverviewGraph(queryid, trackId, start, end));
+                if(rank_track > rank_query)
+                {
+                    log.info("\n\n\n loading assembly");
+                    count = assemblyStore.countAssembly(queryid, trackId, start, end);
+                    if (count == 0) {
+                        count = assemblyStore.countAssembly(queryid, trackId, 0, sequenceStore.getSeqLengthbyId(queryid, coord));
+                        if (count == 0) {
+                            response.put(trackName, "getHit no result found");
+                        } else {
+                            response.put(trackName, new JSONArray());
+                        }
+
+                    } else if (count < 1000) {
+                        response.put(trackName, assemblyStore.getAssembly(queryid, trackId, delta, start, end));
+                    } else if (count < 5000) {
+                        response.put("type", "graph");
+                        response.put("graphtype", "bar");
+                        response.put(trackName, assemblyStore.getAssemblyGraph(queryid, trackId, start, end));
+                    } else {
+                        response.put("type", "graph");
+                        response.put("graphtype", "heat");
+                        response.put(trackName, assemblyStore.getAssemblyOverviewGraph(queryid, trackId, start, end));
+                    }
                 }
+                else{
+                    response.put(trackName, "getHit no result found");
+                }
+
             } else if (analysisStore.presentInRepeat(trackId.toString())) {
                 log.info("\n\n\n loading repeat");
                 count = repeatStore.countRepeat(queryid, trackId, start, end);
