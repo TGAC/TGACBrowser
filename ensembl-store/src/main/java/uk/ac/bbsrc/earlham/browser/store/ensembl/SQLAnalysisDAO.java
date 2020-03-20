@@ -168,28 +168,35 @@ public class SQLAnalysisDAO implements AnalysisStore {
                 }
 
                 annotationid.put("desc", map.get("description"));
-                annotationid.put("disp", map.get("displayable"));
-                annotationid.put("display_label", map.get("display_label").toString().replaceAll("\\s+", "_").replaceAll("[.]", "_"));
+                annotationid.put("disp", 0);//map.get("displayable"));
+                annotationid.put("display_label", map.get("display_label").toString().replaceAll("[^A-Za-z0-9]+", "_"));
                 annotationid.put("merge", "0");
                 annotationid.put("label", "0");
                 annotationid.put("graph", "false");
 
+                JSONObject web = annotationid.getJSONObject("web");
                 if(presentInGene(map.get("id").toString())){
-                    annotationid.put("name", map.get("name").toString().replaceAll("\\s+", "_").replaceAll("[.]", "_")+"_gene");
+                    web.put("trackgroup","Genes");
+                    annotationid.put("name", map.get("name").toString().replaceAll("[^A-Za-z0-9]+", "_")+"_gene");
                     annotationlist.add(annotationid);
-
-
-                } else   if(presentInDAF(map.get("id").toString())){
-                    annotationid.put("name", map.get("name").toString().replaceAll("\\s+", "_").replaceAll("[.]", "_"));
+                } else  if(presentInDAF(map.get("id").toString())){
+                    web.put("trackgroup","Alignment features");
+                    annotationid.put("name", map.get("name").toString().replaceAll("[^A-Za-z0-9]+", "_"));
                     annotationlist.add(annotationid);
 
                 } else if(presentInRepeat(map.get("id").toString())){
-                    annotationid.put("name", map.get("name").toString().replaceAll("\\s+", "_").replaceAll("[.]", "_")+"_repeat");
+                    web.put("trackgroup","Repeats");
+                    annotationid.put("name", map.get("name").toString().replaceAll("[^A-Za-z0-9]+", "_")+"_repeat");
+                    annotationlist.add(annotationid);
+
+                } else if(presentInMarker(map.get("id").toString())){
+                    web.put("trackgroup","Markers");
+                    annotationid.put("name", map.get("name").toString().replaceAll("[^A-Za-z0-9]+", "_")+"_repeat");
                     annotationlist.add(annotationid);
 
                 } else {
-                    annotationid.put("name", map.get("name").toString().replaceAll("\\s+", "_").replaceAll("[.]", "_"));
-                    annotationlist.add(annotationid);
+//                    annotationid.put("name", map.get("name").toString().replaceAll("[^A-Za-z0-9]+", "_"));
+//                    annotationlist.add(annotationid);
 
                 }
 
