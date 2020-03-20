@@ -78,6 +78,7 @@ public class SQLMarkerDAO implements MarkerStore {
             "ORDER BY start,(end-start) asc";
     public static final String GET_MARKER_SIZE = "SELECT COUNT(marker_feature_id) FROM marker_feature where seq_region_id =? and analysis_id = ?";
     public static final String GET_MARKER_SIZE_SLICE = "SELECT COUNT(marker_feature_id) FROM marker_feature where seq_region_id =? and analysis_id = ? and seq_region_start >= ? and seq_region_start <= ?";
+    public static final String COUNT_ASSEMBLIES = "SELECT COUNT(asm_seq_region_id) FROM assembly WHERE asm_seq_region_id = ?";
 
     private JdbcTemplate template;
 
@@ -233,9 +234,11 @@ public class SQLMarkerDAO implements MarkerStore {
                 " and analysis_id = " + trackId;
 
         int size = template.queryForInt(GET_MARKER_SIZE_SLICE_IN, new Object[]{});
+        int assemblies = template.queryForInt(COUNT_ASSEMBLIES, new Object[]{id});
+
         if (size > 0) {
             marker_size += size;//template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end}, Integer.class);
-        } else {
+        } else if (assemblies > 0){
             String SQL = "SELECT count(cmp_seq_region_id) from assembly where asm_seq_region_id " + query + ")";
             int count = template.queryForInt(SQL, new Object[]{});
             String cmp_seq_region_id = "select cmp_seq_region_id from assembly where asm_seq_region_id = " + id + " limit 1";
@@ -261,7 +264,8 @@ public class SQLMarkerDAO implements MarkerStore {
     public int countMarker(int id, String trackId, long start, long end) {
         log.info("\n\n\n countMarker");
         int count_size = template.queryForObject(GET_MARKER_SIZE_SLICE, new Object[]{id, trackId, start, end}, Integer.class);
-        if (count_size == 0) {
+        int assemblies = template.queryForInt(COUNT_ASSEMBLIES, new Object[]{id});
+        if (count_size == 0 && assemblies > 0) {
             String query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id = " + id;
             count_size = countRecursiveMarker(query, id, trackId, start, end);
         }

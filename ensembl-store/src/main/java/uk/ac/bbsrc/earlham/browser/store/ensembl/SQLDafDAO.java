@@ -74,6 +74,7 @@ public class SQLDafDAO implements DafStore {
 
 
     public static final String GET_length_from_seqreg_id = "SELECT length FROM seq_region where seq_region_id =?";
+    public static final String COUNT_ASSEMBLIES = "SELECT COUNT(asm_seq_region_id) FROM assembly WHERE asm_seq_region_id = ?";
     public static final String GET_HIT_SIZE = "SELECT COUNT(dna_align_feature_id) FROM dna_align_feature where seq_region_id =? and analysis_id = ?";
     public static final String GET_HIT_SIZE_SLICE = "SELECT COUNT(dna_align_feature_id) FROM dna_align_feature where seq_region_id =? and analysis_id = ? and seq_region_start >= ? and seq_region_start <= ?";
     public static final String GET_HIT = "SELECT dna_align_feature_id as id,cast(seq_region_start as signed) as start, cast(seq_region_end as signed) as end,seq_region_strand as strand,hit_start as hitstart, hit_end as hitend, hit_name as 'desc', cigar_line as cigarline FROM dna_align_feature where seq_region_id =? and analysis_id = ? AND ((seq_region_start >= ? AND seq_region_end <= ?) OR (seq_region_start <= ? AND seq_region_end >= ?) OR (seq_region_end >= ? AND seq_region_end <= ?) OR (seq_region_start >= ? AND seq_region_start <= ?)) ORDER BY (end-start) desc"; //seq_region_start ASC";//" AND ((hit_start >= ? AND hit_end <= ?) OR (hit_start <= ? AND hit_end >= ?) OR (hit_end >= ? AND hit_end <= ?) OR (hit_start >= ? AND hit_start <= ?))";
@@ -265,9 +266,10 @@ public class SQLDafDAO implements DafStore {
                     " and analysis_id = " + trackId;
 
             int size = template.queryForInt(GET_DAF_SIZE_SLICE_IN, new Object[]{});
+            int assemblies = template.queryForInt(COUNT_ASSEMBLIES, new Object[]{id});
             if (size > 0) {
                 hit_size += size;
-            } else {
+            } else if (assemblies > 0){
                 String SQL = "SELECT count(cmp_seq_region_id) from assembly where asm_seq_region_id " + query + ")";
                 int count = template.queryForInt(SQL, new Object[]{});
                 if (count > 0){
@@ -305,7 +307,10 @@ public class SQLDafDAO implements DafStore {
         try {
             int hit_size = template.queryForObject(GET_HIT_SIZE_SLICE, new Object[]{id, trackId, start, end}, Integer.class);
 
-            if (hit_size == 0) {
+            int assemblies = template.queryForInt(COUNT_ASSEMBLIES, new Object[]{id});
+            log.info("\n\n\n\t assembly "+assemblies+"\n\n\n\n");
+
+            if (hit_size == 0 && assemblies > 0) {
 
                 String query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id = " + id;
 

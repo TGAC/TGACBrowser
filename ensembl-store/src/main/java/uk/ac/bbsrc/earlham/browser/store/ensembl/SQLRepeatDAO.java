@@ -75,6 +75,7 @@ public class SQLRepeatDAO implements RepeatStore {
     public static final String GET_REPEAT = "SELECT repeat_feature_id as id,seq_region_start as start, seq_region_end as end,seq_region_strand as strand, repeat_start as repeatstart,repeat_end as repeatend, score as score FROM repeat_feature where seq_region_id =? and analysis_id = ? AND ((seq_region_start > ? AND seq_region_end < ?) OR (seq_region_start < ? AND seq_region_end > ?) OR (seq_region_end > ? AND seq_region_end < ?) OR (seq_region_start > ? AND seq_region_start < ?)) ORDER BY start,(end-start) asc"; //seq_region_start ASC";//" AND ((hit_start >= ? AND hit_end <= ?) OR (hit_start <= ? AND hit_end >= ?) OR (hit_end >= ? AND hit_end <= ?) OR (hit_start >= ? AND hit_start <= ?))";
     public static final String GET_REPEAT_SIZE = "SELECT COUNT(repeat_feature_id) FROM repeat_feature where seq_region_id =? and analysis_id = ?";
     public static final String GET_REPEAT_SIZE_SLICE = "SELECT COUNT(repeat_feature_id) FROM repeat_feature where seq_region_id =? and analysis_id = ? and seq_region_start >= ? and seq_region_start <= ?";
+    public static final String COUNT_ASSEMBLIES = "SELECT COUNT(asm_seq_region_id) FROM assembly WHERE asm_seq_region_id = ?";
 
     private JdbcTemplate template;
 
@@ -230,9 +231,11 @@ public class SQLRepeatDAO implements RepeatStore {
                 " and analysis_id = " + trackId;
 
         int size = template.queryForInt(GET_REPEAT_SIZE_SLICE_IN, new Object[]{});
+        int assemblies = template.queryForInt(COUNT_ASSEMBLIES, new Object[]{id});
+
         if (size > 0) {
             repeat_size += size;//template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end}, Integer.class);
-        } else {
+        } else  if (assemblies > 0){
             String SQL = "SELECT count(cmp_seq_region_id) from assembly where asm_seq_region_id " + query + ")";
             int count = template.queryForInt(SQL, new Object[]{});
             String cmp_seq_region_id = "select cmp_seq_region_id from assembly where asm_seq_region_id = " + id + " limit 1";
@@ -258,7 +261,9 @@ public class SQLRepeatDAO implements RepeatStore {
     public int countRepeat(int id, String trackId, long start, long end) {
         log.info("\n\n\n countRepeat");
         int count_size = template.queryForObject(GET_REPEAT_SIZE_SLICE, new Object[]{id, trackId, start, end}, Integer.class);
-        if (count_size == 0) {
+        int assemblies = template.queryForInt(COUNT_ASSEMBLIES, new Object[]{id});
+
+        if (count_size == 0 && assemblies > 0) {
             String query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id = " + id;
             count_size = countRecursiveRepeat(query, id, trackId, start, end);
         }

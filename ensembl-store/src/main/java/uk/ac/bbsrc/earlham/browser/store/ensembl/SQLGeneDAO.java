@@ -79,6 +79,7 @@ public class SQLGeneDAO implements GeneStore {
 
     public static final String GET_length_from_seqreg_id = "SELECT length FROM seq_region where seq_region_id =?";
 //    public static final String GET_Gene_SIZE_SLICE = "SELECT COUNT(gene_id) FROM gene where seq_region_id =? and analysis_id = ? and seq_region_start >= ? and seq_region_start <= ?";
+    public static final String COUNT_ASSEMBLIES = "SELECT COUNT(asm_seq_region_id) FROM assembly WHERE asm_seq_region_id = ?";
     public static final String GET_Gene_SIZE_SLICE = "SELECT COUNT(gene_id) FROM gene where seq_region_id =? and analysis_id = ? and ((seq_region_start >= ? AND seq_region_end <= ?) OR (seq_region_start <= ? AND seq_region_end >= ?) OR (seq_region_end >= ?  AND  seq_region_end <= ?) OR (seq_region_start >= ? AND seq_region_start <= ?))";
     public static final String GET_GENE_SIZE = "SELECT COUNT(gene_id) FROM gene where seq_region_id =? and analysis_id = ?";
     public static final String GET_Gene_name_from_ID = "SELECT description FROM gene where gene_id =?";
@@ -331,9 +332,11 @@ public class SQLGeneDAO implements GeneStore {
 
 
             int size = template.queryForInt(GET_Gene_SIZE_SLICE_IN, new Object[]{});
+            int assemblies = template.queryForInt(COUNT_ASSEMBLIES, new Object[]{id});
+            log.info("\n\n\n\t recursive assembly "+assemblies+"\n\n\n\n");
             if (size > 0) {
                 gene_size += size;//template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{maps_one.get(j).get("cmp_seq_region_id"), trackId, track_start, track_end}, Integer.class);
-            } else {
+            } else if (assemblies > 0){
                 String SQL = "SELECT count(cmp_seq_region_id) from assembly where asm_seq_region_id " + query + ")";
                 log.info("\n\n countquery = " + SQL);
                 int count = template.queryForInt(SQL, new Object[]{});
@@ -379,7 +382,9 @@ public class SQLGeneDAO implements GeneStore {
 
             log.info("\n\n\n\t gene_size "+gene_size);
 
-            if (gene_size == 0) {
+            int assemblies = template.queryForInt(COUNT_ASSEMBLIES, new Object[]{id});
+            log.info("\n\n\n\t assembly "+assemblies+"\n\n\n\n");
+            if (gene_size == 0 && assemblies > 0) {
                 String query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id = " + id;
                 gene_size = countRecursiveGene(query, id, trackId, start, end);
             }
