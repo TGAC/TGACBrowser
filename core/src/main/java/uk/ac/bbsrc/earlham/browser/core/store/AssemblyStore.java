@@ -41,6 +41,6 @@ public interface AssemblyStore extends Store {
     public JSONArray getAssemblyGraph(int id, String trackId, long start, long end) throws IOException;
     public JSONArray getAssembly(int query, String trackId, int delta, long start, long end) throws Exception;
     public JSONArray getAssemblyOverviewGraph(int id, String trackId, long start, long end) throws IOException;
-
+    public int getRank(String trackId) throws Exception;;
 
 }

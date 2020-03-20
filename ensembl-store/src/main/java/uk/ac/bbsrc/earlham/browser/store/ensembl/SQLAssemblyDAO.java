@@ -83,6 +83,8 @@ public class SQLAssemblyDAO implements AssemblyStore {
             "FROM assembly a, seq_region s " +
             "WHERE a.asm_seq_region_id = ? AND a.cmp_seq_region_id = s.seq_region_id AND s.coord_system_id = ? AND ((a.asm_start >= ? AND a.asm_end <=?) OR (a.asm_start <= ? AND a.asm_end >= ?) OR (a.asm_end >= ? AND a.asm_start <= ?) OR (a.asm_start <= ? AND a.asm_end >=?)) ";
 
+    public static final String GET_RANK_from_Coord_systemid = "SELECT rank FROM coord_system where coord_system_id = ?";
+
     public static final String GET_Coord_systemid_FROM_ID = "SELECT coord_system_id FROM seq_region WHERE seq_region_id = ?";
     public static final String GET_ASSEMBLY_SIZE_SLICE_for_ref = "SELECT count(a.asm_seq_region_id) FROM assembly a, seq_region s where a.asm_seq_region_id = ? and a.cmp_seq_region_id = s.seq_region_id and  a.asm_start >= ? and a.asm_start <= ?";
     public static final String GET_Assembly_for_reference_SIZE_SLICE = "SELECT * FROM assembly a, seq_region s WHERE a.asm_seq_region_id = ? AND a.cmp_seq_region_id = s.seq_region_id AND ( (a.asm_start >= ? AND a.asm_end <=?) OR (a.asm_start <= ? AND a.asm_end >= ?) OR (a.asm_end >= ? AND a.asm_start <= ?) OR (a.asm_start <= ? AND a.asm_end >= ?))";
@@ -424,6 +426,25 @@ public class SQLAssemblyDAO implements AssemblyStore {
             throw new Exception("count recursive assembly " + e.getMessage());
         }
     }
+
+    public int getRank(String trackId) throws Exception{
+        int rank = 0;
+
+        try {
+            log.info("\n\n rank assembly daate " + trackId );
+
+            rank = template.queryForInt(GET_RANK_from_Coord_systemid, new Object[]{trackId});
+
+
+            return rank;
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new Exception("Rank Assembly " + e.getMessage());
+        }
+    }
+
 
     /**
      * count no of assembly present in the region
