@@ -19,34 +19,6 @@
             <td>
 
                 <div id="blastdbs" style="position: relative; top:0px; display: none">
-                    <select name="blastdb" id="blastdb">
-
-                        <c:set var="databases">${initParam.blastdblink} </c:set>
-
-                        <c:set var="dateParts" value="${fn:split(databases, ',')}"/>
-
-                        <c:set var="databasesloc">${initParam.blastdblocation} </c:set>
-
-                        <c:set var="datePartsloc" value="${fn:split(databasesloc, ',')}"/>
-
-
-                        <c:forEach var="i" begin="1" end='${fn:length(dateParts)}' step="1">
-                            <%--splitting by /--%>
-                            <c:set var="text" value="${fn:split(datePartsloc[i-1],'/')}"/>
-                            <%--considering last entry--%>
-                            <c:set var="text" value="${text[fn:length(text)-1]}"/>
-                            <%--index of . --%>
-                            <c:set var="to" value="${fn:indexOf(text,'.' )}"/>
-                            <%--substring to . --%>
-                            <c:set var="filename" value="${fn:substring(text,0,to) }"/>
-
-                            <option id=${dateParts[i-1]} value=
-                            "${datePartsloc[i-1]}:${dateParts[i-1]}">${filename}</option>
-                        </c:forEach>
-
-
-                    </select>
-
                 </div>
                 <div id="ncbiblastdbs" style="position: absolute; display: none"> NCBI BLAST
                     <select name="blastdb" id="ncbiblastdb">
@@ -271,6 +243,7 @@
         getUrlVars();
         setBlast();
         setBLASTParams();
+        setBLASTDB();
         var testTextBox = jQuery('#search');
         var code = null;
         testTextBox.keypress(function (e) {

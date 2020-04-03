@@ -26,7 +26,11 @@
 package uk.ac.bbsrc.earlham.browser.blastmanager.store;
 
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import uk.ac.bbsrc.earlham.browser.core.store.Store;
+
+import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * Created with IntelliJ IDEA.
@@ -47,5 +51,6 @@ public interface BLASTManagerStore extends Store {
     public JSONArray getTrackFromDatabase(String id, int query_start) throws Exception;
     public void insertintoDatabase(String taskId, String query, String db, String link, String type, String filter, String format) throws Exception;
     public String getStatusFromDatabase(String query) throws Exception;
+    public JSONObject getConnectioInfo() throws Exception;
 
-}
+    }

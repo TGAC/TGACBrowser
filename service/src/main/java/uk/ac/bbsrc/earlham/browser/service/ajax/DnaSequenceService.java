@@ -514,6 +514,7 @@ public class DnaSequenceService {
     public JSONObject metaInfo(HttpSession session, JSONObject json) {
         JSONObject response = new JSONObject();
         dir = json.getString("dir");
+        String blast_dir = json.getString("blast_dir");
         try {
             response.put("metainfo", sequenceStore.getdbinfo());
             response.put("chr", searchStore.checkChromosome());
@@ -525,6 +526,10 @@ public class DnaSequenceService {
             }
             if (sequenceStore.getLink().length() > 0) {
                 response.put("link", sequenceStore.getLink());
+            }
+
+            if(blast_dir != null){
+                response.put("blast", BlastServiceLocal.getDatabases(blast_dir));
             }
 
             return response;

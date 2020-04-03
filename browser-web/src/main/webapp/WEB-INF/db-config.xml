@@ -204,4 +204,15 @@
         </property>
     </bean>
 
+    <bean id="property" class="uk.ac.bbsrc.earlham.browser.store.blastmanager.BLASTManagerDAO">
+        <constructor-arg index="0" value="#{dbPropertyConfigurer.getPropertiesAsProperties()}" />
+    </bean>
+
+    <bean id="dbPropertyConfigurer"
+          class="uk.ac.bbsrc.earlham.browser.web.BrowserPropertyExporter">
+        <property name="location">
+            <value>/WEB-INF/browser.properties</value>
+        </property>
+    </bean>
+
 </beans>

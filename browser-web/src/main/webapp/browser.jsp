@@ -14,6 +14,8 @@
                 jQuery('#searchDiv').html('');
             }));
 
+            setBLASTDB()
+
             initUpload();
         });
     </script>
@@ -549,29 +551,29 @@
 
     <div id=blastdbs style="display: none">
         Blast DB <select name="blastdb" id="blastdb">
-        <c:set var="databases">${initParam.blastdblink} </c:set>
+<%--        <c:set var="databases">${initParam.blastdblink} </c:set>--%>
 
-        <c:set var="dateParts" value="${fn:split(databases, ',')}"/>
+<%--        <c:set var="dateParts" value="${fn:split(databases, ',')}"/>--%>
 
-        <c:set var="databasesloc">${initParam.blastdblocation} </c:set>
+<%--        <c:set var="databasesloc">${initParam.blastdblocation} </c:set>--%>
 
-        <c:set var="datePartsloc" value="${fn:split(databasesloc, ',')}"/>
+<%--        <c:set var="datePartsloc" value="${fn:split(databasesloc, ',')}"/>--%>
 
 
-        <c:forEach var="i" begin="1" end='${fn:length(dateParts)}' step="1">
-            <%--splitting by /--%>
-            <c:set var="text" value="${fn:split(datePartsloc[i-1],'/')}"/>
-            <%--considering last entry--%>
-            <c:set var="text" value="${text[fn:length(text)-1]}"/>
-            <%--index of . --%>
-            <c:set var="to" value="${fn:indexOf(text,'.' )}"/>
-            <%--substring to . --%>
-            <c:set var="filename" value="${fn:substring(text,0,to) }"/>
+<%--        <c:forEach var="i" begin="1" end='${fn:length(dateParts)}' step="1">--%>
+<%--            &lt;%&ndash;splitting by /&ndash;%&gt;--%>
+<%--            <c:set var="text" value="${fn:split(datePartsloc[i-1],'/')}"/>--%>
+<%--            &lt;%&ndash;considering last entry&ndash;%&gt;--%>
+<%--            <c:set var="text" value="${text[fn:length(text)-1]}"/>--%>
+<%--            &lt;%&ndash;index of . &ndash;%&gt;--%>
+<%--            <c:set var="to" value="${fn:indexOf(text,'.' )}"/>--%>
+<%--            &lt;%&ndash;substring to . &ndash;%&gt;--%>
+<%--            <c:set var="filename" value="${fn:substring(text,0,to) }"/>--%>
 
-            <option value="${datePartsloc[i-1]}:${dateParts[i-1]}">${filename}</option>
+<%--            <option value="${datePartsloc[i-1]}:${dateParts[i-1]}">${filename}</option>--%>
 
-            <%--<option value=${datePartsloc[i-1]}>${dateParts[i-1]}</option>--%>
-        </c:forEach>
+<%--            &lt;%&ndash;<option value=${datePartsloc[i-1]}>${dateParts[i-1]}</option>&ndash;%&gt;--%>
+<%--        </c:forEach>--%>
     </select>
 
     </div>

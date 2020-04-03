@@ -35,7 +35,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import uk.ac.bbsrc.earlham.browser.blastmanager.store.BLASTManagerStore;
 
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * Created by IntelliJ IDEA.
@@ -48,12 +52,12 @@ import java.util.Map;
 public class BLASTManagerDAO implements BLASTManagerStore {
     protected static final Logger log = LoggerFactory.getLogger(BLASTManagerDAO.class);
 
-    @Autowired
-    private CacheManager cacheManager;
-
-    public void setCacheManager(CacheManager cacheManager) {
-        this.cacheManager = cacheManager;
-    }
+//    @Autowired
+//    private CacheManager cacheManager;
+//
+//    public void setCacheManager(CacheManager cacheManager) {
+//        this.cacheManager = cacheManager;
+//    }
 
     public JdbcTemplate getJdbcTemplate() {
         return template;
@@ -77,6 +81,38 @@ public class BLASTManagerDAO implements BLASTManagerStore {
     public static final String INSERT_PARAMS = "insert into blast_params values (?,?,?,?,?,?,?)";
     public static final String INSERT_STATUS = "insert into blast_status values(?,?)";
     public static final String GET_STATUS_FROM_ID = "select * from blast_status where id_blast = ?";
+
+    private static Properties ppconfig;
+
+    public BLASTManagerDAO() {
+    }
+
+    public BLASTManagerDAO(Properties ppconfig) {
+        this.ppconfig = ppconfig;
+    }
+
+
+    /**
+     *
+     * @return JSONObject with DB credentials
+     * @throws Exception
+     */
+    public JSONObject getConnectioInfo() throws Exception {
+        try {
+            JSONObject connection = new JSONObject();
+            String url = ppconfig.getProperty("blast_db.url");
+            String username = ppconfig.getProperty("blast_db.username");
+            String password = ppconfig.getProperty("blast_db.password");
+            connection.put("url", url);
+            connection.put("usrname", username);
+            connection.put("pwd", password);
+            return connection;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception(e.getMessage());
+        }
+
+    }
 
 
     /**

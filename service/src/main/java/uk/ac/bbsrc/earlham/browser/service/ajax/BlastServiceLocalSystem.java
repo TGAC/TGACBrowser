@@ -26,8 +26,11 @@
 package uk.ac.bbsrc.earlham.browser.service.ajax;
 
 import net.sf.json.JSONObject;
+import net.sourceforge.fluxion.ajax.Ajaxified;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import uk.ac.bbsrc.earlham.browser.blastmanager.store.BLASTManagerStore;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -43,12 +46,18 @@ import java.util.regex.Pattern;
  * Time: 2:46 PM
  * To change this template use File | Settings | File Templates.
  */
-
 public class BlastServiceLocalSystem {
+
+    @Autowired
+    private BLASTManagerStore blastManagerStore;
+
+    public void setBlastManagerStore(BLASTManagerStore blastManagerStore) {
+        this.blastManagerStore = blastManagerStore;
+    }
 
     private Logger log = LoggerFactory.getLogger(getClass());
 
-    static String dir = "/usr/users/ga002/tgacbrowser";
+    static String dir = "/usr/local/bin/scripts/";
     static String script = "blast.sh";
     static String job = "job";
     static String output = "%t";
@@ -58,7 +67,12 @@ public class BlastServiceLocalSystem {
 
     public String submitJob(JSONObject parameters) throws IOException {
         try {
-            String cmd = dir + script + " " + parameters.get("accession").toString();
+            log.info("\n\n\n\t accesstion "+ parameters.get("accession").toString());
+            log.info("\n\n\n\t url "+ parameters.get("url").toString());
+            log.info("\n\n\n\t db "+ parameters.get("db").toString());
+            log.info("\n\n\n\t usrname "+ parameters.get("usrname").toString());
+            log.info("\n\n\n\t pwd "+ parameters.get("pwd").toString());
+            String cmd = dir + script + " " + parameters.get("accession").toString()+ " " + parameters.get("url").toString()+ " "+ parameters.get("db").toString()+ " " + parameters.get("usrname").toString()+ " " + parameters.get("pwd").toString();
             Process proc = Runtime.getRuntime().exec(cmd);
             proc.waitFor();
             BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
@@ -69,19 +83,20 @@ public class BlastServiceLocalSystem {
                 System.out.println("\t\t\t" + error);
             }
 
-
             String line = reader.readLine();
             while (line != null) {
+                log.info("\n\n line "+line);
                 line = reader.readLine();
             }
-            return line;
+            return parameters.get("accession").toString();
         } catch (IOException e1) {
             System.out.println("Pblm found1. " + e1.getMessage());
         } catch (InterruptedException e2) {
             System.out.println("Pblm found2.");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        System.out.println("finished.");
         return null;
     }
 

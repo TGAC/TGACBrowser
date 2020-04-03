@@ -29,6 +29,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sourceforge.fluxion.ajax.Ajaxified;
 import net.sourceforge.fluxion.ajax.util.JSONUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,8 @@ import java.io.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.apache.commons.lang.ArrayUtils.contains;
+
 
 /**
  * Created by IntelliJ IDEA.
@@ -55,7 +58,7 @@ import java.util.regex.Pattern;
 
 @Ajaxified
 public class BlastServiceLocal {
-    private Logger log = LoggerFactory.getLogger(getClass());
+    private static Logger log = LoggerFactory.getLogger(BlastServiceLocal.class);
 
     @Autowired
     private BLASTManagerStore blastManagerStore;
@@ -64,9 +67,31 @@ public class BlastServiceLocal {
         this.blastManagerStore = blastManagerStore;
     }
 
+    static final String[] ALLOWED_DATATYPES = {"fa", "fasta"};
 
     private BlastServiceLocalSystem blastServiceLocalSystem = new BlastServiceLocalSystem();
 
+    public static JSONArray getDatabases(String dir) {
+
+        File f = null;
+        String[] paths;
+
+        JSONArray annotationlist = new JSONArray();
+
+        f = new File(dir);
+
+        paths = f.list();
+
+        for (String path : paths) {
+
+            String ext = FilenameUtils.getExtension(path);
+
+            if (contains(ALLOWED_DATATYPES, ext)) {
+                annotationlist.add(dir + "/" + path);
+            }
+        }
+        return annotationlist;
+    }
 
     /**
      * Return JSONObject
@@ -121,8 +146,9 @@ public class BlastServiceLocal {
      * @throws IOException
      */
     public JSONObject blastSearchTrack(HttpSession session, JSONObject json) throws IOException {
-        String blastAccession = json.getString("accession");
+        String blastAccession = json.getString("BlastAccession");
         JSONArray blasts = new JSONArray();
+        String id = null;
 
         JSONObject blast_response = new JSONObject();
 
@@ -130,7 +156,12 @@ public class BlastServiceLocal {
         int query_end = json.getInt("end");
         int noofhits = json.getInt("hit");
         String location = json.getString("location");
-        String old_blastAccession = json.getString("old_taskid");
+        String old_blastAccession = json.getString("BlastAccession");
+        String blastdb = json.getString("blastdb");
+        String fasta = json.getString("query");
+        String type = json.getString("type");
+        String params = json.getString("params");
+        String format = json.getString("format");
 
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         Document dom;
@@ -142,9 +173,28 @@ public class BlastServiceLocal {
                 blast_response.put("blast", blasts);
 
             } else {
+                blastManagerStore.insertintoDatabase(blastAccession, fasta, blastdb, location, type, params, format);
+                JSONObject parameters = new JSONObject();
 
-                blasts = blastManagerStore.getTrackFromDatabase(blastAccession, query_start);
-                blast_response.put("blast", blasts);
+                JSONObject r = new JSONObject();
+
+                JSONObject db_conn = new JSONObject();
+
+                db_conn = blastManagerStore.getConnectioInfo();
+
+                String db_url = db_conn.getString("url").replace("jdbc:mysql://", "");
+
+                String url = db_url.split("/")[0];
+                String db = db_url.split("/")[1];
+                parameters.put("accession", blastAccession);
+
+                parameters.put("url", url);
+                parameters.put("db", db);
+                parameters.put("usrname", db_conn.getString("usrname"));
+                parameters.put("pwd", db_conn.getString("pwd"));
+                id = blastServiceLocalSystem.submitJob(parameters);
+                blast_response.put("slurm_id", id);
+                blast_response.put("response", "Task submitted: browser_blast");
             }
             return blast_response; //JSONUtils.JSONObjectResponse("blast", result);
 
@@ -285,6 +335,19 @@ public class BlastServiceLocal {
 
                 JSONObject r = new JSONObject();
 
+                JSONObject db_conn = new JSONObject();
+
+                db_conn = blastManagerStore.getConnectioInfo();
+
+                String db_url = db_conn.getString("url").replace("jdbc:mysql://", "");
+
+                String url = db_url.split("/")[0];
+                String db = db_url.split("/")[1];
+
+                parameters.put("url", url);
+                parameters.put("db", db);
+                parameters.put("usrname", db_conn.getString("usrname"));
+                parameters.put("pwd", db_conn.getString("pwd"));
                 id = blastServiceLocalSystem.submitJob(parameters);
                 r.put("slurm_id", id);
                 r.put("response", "Task submitted: browser_blast");

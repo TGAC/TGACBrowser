@@ -128,7 +128,7 @@
 
         <c:set var="length">${fn:length(databases)}</c:set>
 
-        ${initParam.fasta == "true" && length > 1 ? "| <a href=\"blast.jsp\"><span>Blast Search</span></a>" : ""}
+        ${length > 1 ? "| <a href=\"blast.jsp\"><span>Blast Search</span></a>" : ""}
 
 
         <%--| <a href="<c:url value="filter.jsp"/>"><span>Load SNPs filtering</span></a>--%>
@@ -141,5 +141,6 @@
 <div id="blastLocation" style="visibility: hidden; position: fixed;">${initParam.blastLocation}</div>
 <div id="blastType" style="visibility: hidden; position: fixed;">${initParam.blastType}</div>
 <div id="fasta" style="visibility: hidden; position: fixed;">${initParam.fasta}</div>
+<div id="blastDir" style="visibility: hidden; position: fixed;">${initParam.blastdblocation}</div>
 
 <div id="content">

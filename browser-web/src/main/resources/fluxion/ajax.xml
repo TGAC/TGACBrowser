@@ -32,6 +32,10 @@
           class="uk.ac.bbsrc.earlham.browser.service.ajax.BlastServiceLocal">
     </bean>
 
+    <bean id="blastservicelocalsystem"
+          class="uk.ac.bbsrc.earlham.browser.service.ajax.BlastServiceLocalSystem">
+    </bean>
+
     <bean id="blastServiceNCBI"
           class="uk.ac.bbsrc.earlham.browser.service.ajax.BlastNCBI">
     </bean>

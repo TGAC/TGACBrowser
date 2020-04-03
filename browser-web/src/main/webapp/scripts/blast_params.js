@@ -5,6 +5,36 @@
  * Time: 11:07
  * To change this template use File | Settings | File Templates.
  */
+
+function setBLASTDB() {
+    console.log("setBLASTDB")
+    var HTMLstring = "";
+    ajaxurl = '/' + jQuery('#title').text() + '/' + jQuery('#title').text() + '/fluxion.ajax';
+    Fluxion.doAjax(
+        'dnaSequenceService',
+        'metaInfo',
+        {'url': ajaxurl, 'dir': jQuery("#filetrack").html(), 'blast_dir': jQuery("#blastDir").html()},
+        {
+            'doOnSuccess': function (json) {
+                var blast = json.blast ? json.blast : null;
+
+                if(blast != null)
+                {
+                    HTMLstring = "<select name='blastdb' id='blastdb'>"
+                    for (var i=0; i<blast.length; i++){
+                        HTMLstring += "<option id=tgac_broiwser value='"+blast[i]+"'>"+blast[i]+" </option>"
+                    }
+                    HTMLstring +=  "</select>"
+                }
+                jQuery("#blastdbs").html(HTMLstring)
+
+            }
+        });
+
+
+}
+
+
 function setBLASTParams(){
     if (jQuery('#blast_type').val().indexOf('blastn') == 0) {
         jQuery("#blastn_para").show()
