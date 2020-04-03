@@ -27,6 +27,9 @@
 var seqregname = null;
 var coord = null;
 
+var databases = null;
+var blast_dir = null;
+
 var track_list, minWidth;
 var start_global, end_global, hit_global, blastid = 0, blastdb = "", oldTracklist;
 
@@ -224,7 +227,7 @@ function metaData() {
     Fluxion.doAjax(
         'dnaSequenceService',
         'metaInfo',
-        {'url': ajaxurl, 'dir': jQuery("#filetrack").html()},
+        {'url': ajaxurl, 'dir': jQuery("#filetrack").html(), 'blast_dir': jQuery("#blastDir").html()},
         {
             'doOnSuccess': function (json) {
                 jQuery("#dbinfo").html("Species Name: <i>" + json.metainfo[0].name + "</i> Database Version: " + json.metainfo[0].version);
@@ -232,6 +235,11 @@ function metaData() {
                 unit = json.unit ? json.unit : "bp";
                 scale = json.scale ? json.scale : 1;
                 link = json.link ? json.link : null;
+                var blast = json.blast ? json.blast : null;
+                if(blast != null)
+                {
+                    databases = json.blast.join(",")
+                }
                 jQuery(".unit").html(unit)
             }
         });

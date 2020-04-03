@@ -37,10 +37,8 @@ function blastSearch(query, db, type, params) {
     blastbinary = jQuery("#blastLocation").html();
     jQuery("#notifier").html("<img src='images/browser/loading2.gif' height='10px'> BLAST running ");
     jQuery("#notifier").show();
-    var database = db.split(":");
-    db = database[0];
     var id = randomString(8);
-    var link = database[1];
+    var link = jQuery('#title').text();
     jQuery("#blast_list").append("<div style=\"height:50px;\" id='" + id + "' class='blast_list_node'> <b>BLAST job " + id + " </b> <img style='position: relative;' src='./images/browser/loading_big.gif' height=15px alt='Loading'></div>")
     var format = "6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore sseq qseq"
 
@@ -63,7 +61,7 @@ function blastSearch(query, db, type, params) {
         {
             'doOnSuccess': function (json) {
 
-                    checkTask(id, db, format, link, id, type);
+                checkTask(id, db, format, link, id, type);
             },
             'doOnError': function (json) {
                 alert(json.error);
@@ -72,14 +70,13 @@ function blastSearch(query, db, type, params) {
 }
 
 
-
 function blastTrackSearch(query, start, end, hit, db, type) {
     blastbinary = jQuery("#blastLocation").html();
     jQuery("#notifier").html("<img src='images/browser/loading2.gif' height='10px'> BLAST running ");
     jQuery("#notifier").show();
     if (!window['blasttrack']) {
 
-setBLASTTrack()
+        setBLASTTrack()
 
 
     }
@@ -109,31 +106,45 @@ setBLASTTrack()
     Fluxion.doAjax(
         'blastservicelocal',
         'blastSearchTrack',
-        {'query': query, 'blastdb': db, 'location': location, 'url': ajaxurl, 'start': start, 'end': end, 'hit': hit, 'BlastAccession': id, 'type': type, 'format': format, 'blastBinary': blastbinary, 'params': ""},
-        {'doOnSuccess': function (json) {
-            findAndRemove(blastsdata, 'id', json.id);
+        {
+            'query': query,
+            'blastdb': db,
+            'location': location,
+            'url': ajaxurl,
+            'start': start,
+            'end': end,
+            'hit': hit,
+            'BlastAccession': id,
+            'type': type,
+            'format': format,
+            'blastBinary': blastbinary,
+            'params': ""
+        },
+        {
+            'doOnSuccess': function (json) {
+                findAndRemove(blastsdata, 'id', json.id);
 
-            if (blastsdata.length == 0) {
-                jQuery("#notifier").hide()
-                jQuery("#notifier").html("");
+                if (blastsdata.length == 0) {
+                    jQuery("#notifier").hide()
+                    jQuery("#notifier").html("");
+                }
+                if (!window['blasttrack']) {
+                    window['blasttrack'] = "running";
+                }
+                if (window['blasttrack'] == "running") {
+                    window['blasttrack'] = json.blast;
+                    checkTask(id, db, format, link, id, type);
+                } else {
+                    jQuery.merge(window['blasttrack'], json.blast);
+                }
+                jQuery('input[name=blasttrackCheckbox]').attr('checked', true);
+                trackToggle("blasttrack");
             }
-            if (!window['blasttrack']) {
-                window['blasttrack'] = "running";
-            }
-            if (window['blasttrack'] == "running") {
-                window['blasttrack'] = json.blast;
-            }
-            else {
-                jQuery.merge(window['blasttrack'], json.blast);
-            }
-            jQuery('input[name=blasttrackCheckbox]').attr('checked', true);
-            trackToggle("blasttrack");
-        }
         });
 }
 
 function checkTask(task, db, format, link, old_id, type) {
-    console.log("check task "+ task +","+ db +","+ format +","+ ","+ link +","+ old_id +","+ type)
+    console.log("check task " + task + "," + db + "," + format + "," + "," + link + "," + old_id + "," + type)
     jQuery("#notifier").html("<img src='images/browser/loading2.gif' height='10px'> BLAST running ");
     jQuery("#notifier").show();
     Fluxion.doAjax(
@@ -150,8 +161,7 @@ function checkTask(task, db, format, link, old_id, type) {
                     alert('Blast search: ' + json.result);
                     jQuery("#notifier").hide();
                     jQuery("#notifier").html("");
-                }
-                else if (json.result == 'COMPLETED') {
+                } else if (json.result == 'COMPLETED') {
                     if (format == "6 qseqid sseqid qstart qend bitscore qseq sseq btop") {
                         Fluxion.doAjax(
                             'blastservicelocal',
@@ -177,8 +187,7 @@ function checkTask(task, db, format, link, old_id, type) {
                                     }
                                     if (window['blasttrack'] == "running") {
                                         window['blasttrack'] = json.blast;//(decodeURIComponent(json.blast.replace(/\s+/g, ""))).replace(/>/g, "");
-                                    }
-                                    else {
+                                    } else {
                                         jQuery.merge(window['blasttrack'], json.blast);
                                     }
                                     jQuery('input[name=blasttrackCheckbox]').attr('checked', true);
@@ -203,23 +212,20 @@ function checkTask(task, db, format, link, old_id, type) {
                                     if (json.html == "error") {
                                         jQuery("#" + json.id).removeClass("list-group-item-info")
                                         jQuery("#" + json.id).addClass("list-group-item-danger")
-                                        jQuery("#" + json.id).html("<b>BLAST job " + json.id + "</b><br> "+stringTrim(json.error, 250)+" <span style=\"float: right; position: relative;\" onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
-                                    }else if (json.html == "No hits found.") {
+                                        jQuery("#" + json.id).html("<b>BLAST job " + json.id + "</b><br> " + stringTrim(json.error, 250) + " <span style=\"float: right; position: relative;\" onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
+                                    } else if (json.html == "No hits found.") {
                                         jQuery("#" + json.id).removeClass("list-group-item-info")
                                         jQuery("#" + json.id).addClass("list-group-item-danger")
                                         jQuery("#" + json.id).html("<b>BLAST job " + json.id + "</b><br> No hits found. <span style=\"float: right; position: relative;\" onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
-                                    }
-                                    else if (json.html == "FAILED") {
+                                    } else if (json.html == "FAILED") {
                                         jQuery("#" + json.id).removeClass("list-group-item-info")
                                         jQuery("#" + json.id).addClass("list-group-item-danger")
                                         jQuery("#" + json.id).html("<b>BLAST job " + json.id + "</b><br> Failed. <span style=\"float: right; position: relative;\" onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
-                                    }
-                                    else if (json.error == "error") {
+                                    } else if (json.error == "error") {
                                         jQuery("#" + json.id).removeClass("list-group-item-info")
                                         jQuery("#" + json.id).addClass("list-group-item-danger")
                                         jQuery("#" + json.id).html("<b>BLAST job " + json.id + "</b><br> Failed. <span style=\"float: right; position: relative;\" onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
-                                    }
-                                    else {
+                                    } else {
                                         jQuery("#" + json.id).removeClass("list-group-item-info")
                                         jQuery("#" + json.id).addClass("list-group-item-success")
                                         jQuery("#" + json.id).html("BLAST job " + json.id + " <br>  <span onclick=toogleTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-zoomin\" style=\"float: right; position: relative;\"> </span> <span style=\"float: right; position: relative;\" onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
@@ -234,7 +240,7 @@ function checkTask(task, db, format, link, old_id, type) {
                                     if (json.html.toLowerCase() == "error") {
                                         jQuery("#" + json.id).removeClass("list-group-item-info")
                                         jQuery("#" + json.id).addClass("list-group-item-danger")
-                                        jQuery("#" + json.id).html("<b>BLAST job " + json.id + "</b><br> "+stringTrim(json.error, 200)+" <span style=\"float: right; position: relative;\" onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
+                                        jQuery("#" + json.id).html("<b>BLAST job " + json.id + "</b><br> " + stringTrim(json.error, 200) + " <span style=\"float: right; position: relative;\" onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
                                     }
                                 }
                             });
