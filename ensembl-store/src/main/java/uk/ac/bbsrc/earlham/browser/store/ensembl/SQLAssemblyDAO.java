@@ -213,9 +213,6 @@ public class SQLAssemblyDAO implements AssemblyStore {
         Date date = new Date();
 
 
-        log.info("\n\n c getAssemblyGraph daate " + id + " " + " " + trackId+" "+date);
-
-
         try {
             trackId = trackId.replace("cs", "");
 
@@ -226,7 +223,6 @@ public class SQLAssemblyDAO implements AssemblyStore {
             long to = 0;
             int no_of_tracks = 0;
             String new_query = query;
-            log.info("\n\n new query = " + query);
             String GET_ASSEMBLY_SIZE_SLICE_IN = "SELECT COUNT(cmp_seq_region_id) FROM assembly, seq_region where asm_seq_region_id " +
                     new_query +
                     " and cmp_seq_region_id = seq_region_id and coord_system_id = " + trackId;
@@ -234,9 +230,6 @@ public class SQLAssemblyDAO implements AssemblyStore {
             int size = template.queryForInt(GET_ASSEMBLY_SIZE_SLICE_IN, new Object[]{});
 
             if (size > 0) {
-                log.info("\n\n c getAssemblyGraph if " + id + " " + " " + trackId);
-
-
                 for (int i = 1; i <= 200; i++) {
                     JSONObject eachTrack = new JSONObject();
                     to = start + (i * (end - start) / 200);
@@ -250,8 +243,6 @@ public class SQLAssemblyDAO implements AssemblyStore {
                 }
 
             } else {
-
-                log.info("\n\n c getAssemblyGraph else " + id + " " + " " + trackId);
 
                 GET_ASSEMBLY_SIZE_SLICE_IN = "SELECT count(*) FROM assembly where asm_seq_region_id " +
                         new_query ;
@@ -329,8 +320,6 @@ public class SQLAssemblyDAO implements AssemblyStore {
 
             date = new Date();
 
-            log.info("\n\n c getAssemblyGraph 2 daate " + id + " " + " " + trackId+" "+date);
-
             return trackList;
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
@@ -391,9 +380,6 @@ public class SQLAssemblyDAO implements AssemblyStore {
         int hit_size = 0;
         try {
 
-            Date date = new Date();
-
-            log.info("\n\n count recursive assembly daate " + id + " " + " " + trackId+" "+date);
             String new_query = query + ")";
             String GET_ASSEMBLY_SIZE_SLICE_IN = "SELECT COUNT(a.cmp_seq_region_id) FROM assembly a, seq_region s where a.asm_seq_region_id " +
                     new_query +
@@ -415,11 +401,6 @@ public class SQLAssemblyDAO implements AssemblyStore {
                 }
             }
 
-            date = new Date();
-
-            log.info("\n\n count recursive assembly 2 daate " + id + " " + " " + trackId+" "+date);
-
-
             return hit_size;
         } catch (Exception e) {
             e.printStackTrace();
@@ -431,11 +412,7 @@ public class SQLAssemblyDAO implements AssemblyStore {
         int rank = 0;
 
         try {
-            log.info("\n\n rank assembly daate " + trackId );
-
             rank = template.queryForInt(GET_RANK_from_Coord_systemid, new Object[]{trackId});
-
-
             return rank;
         }
         catch (Exception e)
@@ -460,7 +437,6 @@ public class SQLAssemblyDAO implements AssemblyStore {
         try {
             Date date = new Date();
 
-            log.info("\n\n count assembly daate " + id + " " + " " + trackId+" "+date);
             trackId = trackId.replace("cs", "");
             int hit_size = template.queryForObject(GET_ASSEMBLY_SIZE_SLICE, new Object[]{id, trackId, start, end, start, end, end, end, start, start}, Integer.class);
 
@@ -474,7 +450,6 @@ public class SQLAssemblyDAO implements AssemblyStore {
 
             date = new Date();
 
-            log.info("\n\n count assembly 2 daate " + id + " " + " " + trackId+" "+date);
             return hit_size;
         } catch (Exception e) {
             e.printStackTrace();
@@ -495,31 +470,19 @@ public class SQLAssemblyDAO implements AssemblyStore {
     public JSONArray getAssembly(int id, String trackId, int delta, long start, long end) throws Exception {
         try {
 
-            Date date = new Date();
-            log.info("\n\n\n new get assembly daate  "+date.toString());
-
-
             JSONArray trackList = new JSONArray();
             trackId = trackId.replace("cs", "");
             int size = template.queryForInt(GET_Assembly_size, new Object[]{id, trackId, start, end, start, end, end, end, start, start});
-            log.info("\n\n\n new get assembly 2 daate  "+size+" "+date.toString());
 
             if (size > 0) {
                 List<Map<String, Object>> maps = template.queryForList(GET_Assembly, new Object[]{id, trackId, start, end, start, end, end, end, start, start});
                 trackList = getAssemblyLevel(0, maps, delta);
             } else {
-//                String query = "in (select cmp_seq_region_id from assembly where asm_seq_region_id = "+id+" and " +
-//                        "((asm_start >= "+ start +" and asm_end <= "+end+") or (asm_start <= "+start+" AND asm_end >= "+end+") OR (asm_end >= "+end+" AND asm_start <= "+end+") OR (asm_start <= "+start+" AND asm_end >= "+start+")) ";
-
 
                 String query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id = " + id + " and ((asm_start >= "+start+" AND asm_end <= "+end+") OR (asm_start <= "+start+" AND asm_end >= "+end+") OR (asm_end >= "+start+"  AND  asm_end <= "+end+") OR (asm_start >= "+start+" AND asm_start <= "+end+"))";
 
-
                 trackList = recursiveAssembly(query, 0, id, trackId, delta, start, end);
             }
-
-            date = new Date();
-            log.info("\n\n\n new get assembly daate  "+date.toString());
 
             return trackList;
         } catch (Exception e) {
@@ -544,10 +507,6 @@ public class SQLAssemblyDAO implements AssemblyStore {
         try {
 
 
-            Date date = new Date();
-
-            log.info("\n\n\nrecursive assembly daate"+query+" "+ date);
-
             JSONArray assemblyTracks = new JSONArray();
             List<Map<String, Object>> maps_one = template.queryForList(GET_Assembly_for_reference_SIZE_SLICE, new Object[]{id, start, end, start, end, end, end, start, start});
 
@@ -558,11 +517,9 @@ public class SQLAssemblyDAO implements AssemblyStore {
                     new_query +
                      " and s.seq_region_id = a.cmp_seq_region_id and s.coord_system_id = " + trackId;
 
-            log.info("\n\n\nrecursive assembly "+GET_Assembly_SIZE_SLICE_IN);
 
             int size = template.queryForInt(GET_Assembly_SIZE_SLICE_IN, new Object[]{});
             if (size > 0) {
-                log.info("\n\n\nrecursive assembly if "+size);
 
                 String GET_Assembly_SLICE_IN = "SELECT a.asm_seq_region_id, a.cmp_seq_region_id, get_ref_coord(a.asm_seq_region_id,  "+id+") as asm_start, get_ref_coord(a.asm_seq_region_id,  "+id+") as asm_end,  s.name FROM assembly a, seq_region s where a.asm_seq_region_id " +
                         new_query +
@@ -572,11 +529,9 @@ public class SQLAssemblyDAO implements AssemblyStore {
 
 
                 String SQL = "SELECT count(cmp_seq_region_id) from assembly where asm_seq_region_id " + query + ")";
-                log.info("\n\n countquery = " + SQL);
                 int count = template.queryForInt(SQL, new Object[]{});
                 if (count > 0) {
                     query = " in (SELECT cmp_seq_region_id from assembly where asm_seq_region_id " + query + ")";
-                    log.info("\n\n\nrecursive assembly else "+query);
                     assemblyTracks.addAll(recursiveAssembly(query, start_pos, id, trackId, 0, 0, delta));
                 }
 
@@ -595,9 +550,6 @@ public class SQLAssemblyDAO implements AssemblyStore {
 //                    }
 //                }
 //            }
-
-            date = new Date();
-            log.info("\n\n\nrecursive assembly daate"+query+" "+ date);
 
             return assemblyTracks;
         } catch (Exception e) {
@@ -655,8 +607,6 @@ public class SQLAssemblyDAO implements AssemblyStore {
      * @throws Exception
      */
     public JSONArray getAssemblyLevel(int start, String query, int delta) throws Exception {
-        Date date = new Date();
-        log.info("\n\n\n new get assembly level daate "+query +" "+date.toString());
         try {
             List<Map<String, Object>> attribs;
             List<Integer> ends = new ArrayList<Integer>();
@@ -679,9 +629,6 @@ public class SQLAssemblyDAO implements AssemblyStore {
                 eachTrack_temp.put("desc", map_temp.get("name"));
                 assemblyTracks.add(eachTrack_temp);
             }
-
-            date = new Date();
-            log.info("\n\n\n new get assembly level daate "+query +" "+date.toString());
 
             return assemblyTracks;
         } catch (Exception e) {

@@ -188,8 +188,6 @@ public class SQLSeachDAO implements SearchStore {
                     eachGene.put("parent", getSeqRegionName(Integer.parseInt(map.get("seq_region_id").toString())));
                     eachGene.put("coord", template.queryForObject(GET_coord_sys_id, new Object[]{map.get("seq_region_id")}, String.class));
                 }
-                log.info("\n\n\t\tanalyisis " + map.get("analysis_id"));
-
                 eachGene.put("analysis_id", template.queryForObject(GET_LOGIC_NAME_FROM_ANALYSIS_ID, new Object[]{map.get("analysis_id")}, String.class));
                 genes.add(eachGene);
                 i++;
@@ -237,7 +235,6 @@ public class SQLSeachDAO implements SearchStore {
                         eachMarkerResult.put("parent", getSeqRegionName(Integer.parseInt(marker.get("seq_region_id").toString())));
                         eachMarkerResult.put("coord", template.queryForObject(GET_coord_sys_id, new Object[]{marker.get("seq_region_id")}, String.class));
                     }
-                    log.info("\n\n\t\tanalyisis " + map.get("analysis_id"));
 
                     eachMarkerResult.put("analysis_id", template.queryForObject(GET_LOGIC_NAME_FROM_ANALYSIS_ID, new Object[]{marker.get("analysis_id")}, String.class));
                     result_markers.add(eachMarkerResult);
@@ -376,9 +373,7 @@ public class SQLSeachDAO implements SearchStore {
 
     private boolean checkCoord(int id, String str) {
         boolean check = false;
-        log.info("\n\n\ncheckCoord = " + id);
         int cood_sys_id = template.queryForObject(GET_Coord_systemid_FROM_ID, new Object[]{id}, Integer.class);
-        log.info("\n\n\ncheckCoord = " + cood_sys_id);
 
         List<Map<String, Object>> maps = template.queryForList(CHECK_Coord_sys_attr, new Object[]{cood_sys_id, '%' + str + '%', '%' + str + '%'});
         if (maps.size() > 0) {
@@ -427,7 +422,6 @@ public class SQLSeachDAO implements SearchStore {
         if (checkCoord(id, "chr")) {
             ref_id = id;
         } else {
-            log.info("\n\n\t\tgetassemblyref " + id);
             List<Map<String, Object>> maps = template.queryForList(GET_reference_for_Assembly, new Object[]{id});
             for (Map map : maps) {
                 if (checkCoord(Integer.parseInt(map.get("asm_seq_region_id").toString()), "chr")) {
@@ -442,7 +436,6 @@ public class SQLSeachDAO implements SearchStore {
 
     public String getLogicNameByAnalysisId(int id) throws IOException {
         try {
-            log.info("\n\n\t\tanalyisis " + id);
             String str = template.queryForObject(GET_LOGIC_NAME_FROM_ANALYSIS_ID, new Object[]{id}, String.class);
             return str;
         } catch (EmptyResultDataAccessException e) {
@@ -459,8 +452,6 @@ public class SQLSeachDAO implements SearchStore {
             int i = 0;
 
             for (Map map : maps) {
-                log.info("\n\n\ntranscript " + map.toString());
-
                 JSONObject eachGene = new JSONObject();
                 eachGene.put("Type", "Transcript_" + getLogicNameByAnalysisId(Integer.parseInt(map.get("analysis_id").toString())));
                 eachGene.put("name", map.get("description"));
@@ -475,8 +466,6 @@ public class SQLSeachDAO implements SearchStore {
                     eachGene.put("parent", getSeqRegionName(Integer.parseInt(map.get("seq_region_id").toString())));
                     eachGene.put("coord", template.queryForObject(GET_coord_sys_id, new Object[]{map.get("seq_region_id")}, String.class));
                 }
-                log.info("\n\n\ntranscript " + eachGene.toString());
-                log.info("\n\n\t\tanalyisis " + map.get("analysis_id"));
 
                 eachGene.put("analysis_id", template.queryForObject(GET_LOGIC_NAME_FROM_ANALYSIS_ID, new Object[]{map.get("analysis_id")}, String.class));
                 genes.add(eachGene);
