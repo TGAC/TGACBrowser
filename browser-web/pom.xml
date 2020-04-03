@@ -196,7 +196,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.13</version>
+            <version>8.0.18</version>
         </dependency>
         <dependency>
             <groupId>net.sf.json-lib</groupId>
@@ -294,7 +294,7 @@
         <spring-version>3.0.5.RELEASE</spring-version>
         <spring-hibernate-version>2.0.8</spring-hibernate-version>
         <spring-integration-version>2.0.3.RELEASE</spring-integration-version>
-        <mysql-version>5.1.10</mysql-version>
+        <mysql-version>8.0.18</mysql-version>
     </properties>
 
 
