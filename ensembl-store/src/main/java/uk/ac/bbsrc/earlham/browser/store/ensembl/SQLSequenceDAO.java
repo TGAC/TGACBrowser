@@ -183,14 +183,20 @@ public class SQLSequenceDAO implements SequenceStore {
     }
 
 
-    public JSONArray getSeqRegionSearchMap(String searchQuery) throws IOException {
+    public JSONArray getSeqRegionSearchMap() throws IOException {
         try {
             JSONArray names = new JSONArray();
             List<Map<String, Object>> attrib_temp = template.queryForList(GET_coord_attrib_chr, new Object[]{"%chr%", "%chr%"});
             JSONObject eachName = new JSONObject();
             if (attrib_temp.size() > 0) {
                 for (Map attrib : attrib_temp) {
-                    List<Map<String, Object>> maps = template.queryForList(GET_CHR_MAP, new Object[]{attrib.get("coord_system_id").toString()});
+                    List<Map<String, Object>> maps;
+                    int count = template.queryForInt(COUNT_KARYOTYPE, new Object[]{});
+                    if (count > 0){
+                        maps = template.queryForList(GET_CHR_MAP, new Object[]{attrib.get("coord_system_id").toString()});
+                    }else{
+                        maps = template.queryForList(GET_SEQ_REGION_ID_SEARCH_all, new Object[]{attrib.get("coord_system_id").toString()});
+                    }
                     for (Map map : maps) {
                             eachName.put("name", map.get("name"));
                             eachName.put("seq_region_id", map.get("seq_region_id"));
