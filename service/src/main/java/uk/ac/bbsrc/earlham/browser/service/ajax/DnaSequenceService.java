@@ -41,6 +41,8 @@ import uk.ac.bbsrc.earlham.browser.service.ajax.javagenomicsio.VCFService;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -79,6 +81,14 @@ public class DnaSequenceService {
     public void setDafStore(DafStore dafStore) {
         this.dafStore = dafStore;
     }
+
+    @Autowired
+    private MiscFeatureStore mfStore;
+
+    public void setMiscFeatureStore(MiscFeatureStore mfStore) {
+        this.mfStore = mfStore;
+    }
+
 
     @Autowired
     private AssemblyStore assemblyStore;
@@ -278,7 +288,7 @@ public class DnaSequenceService {
         String seqName = "";
         JSONObject response = new JSONObject();
         try {
-            response.put("seqregion", sequenceStore.getSeqRegionSearchMap(seqName));
+            response.put("seqregion", sequenceStore.getSeqRegionSearchMap());
             return response;
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -468,6 +478,30 @@ public class DnaSequenceService {
                     response.put("type", "graph");
                     response.put("graphtype", "bar");
                     response.put(trackName, geneStore.getGeneGraph(queryid, trackId, start, end));
+                }
+            } else if (trackId.equals("ms1")) {
+                log.info("\n\n\n loading misc");
+                log.info("update1 graph");
+
+                count = mfStore.countMiscFeature(queryid, trackId, start, end);
+                log.info("\n\n update1 count "+ count);
+
+                response.put("count", count);
+
+                if (count == 0) {
+                    count = mfStore.countMiscFeature(queryid, trackId, 0, sequenceStore.getSeqLengthbyId(queryid, coord));
+                    if (count == 0) {
+                        response.put(trackName, "getMiscFeature no result found");
+                    } else {
+                        response.put(trackName, new JSONArray());
+                    }
+                } else if (count < 1000) {
+                    List<Map<String, Object>> features = mfStore.getFeatures(queryid, trackId, start, end);
+                    response.put(trackName, mfStore.processFeatures(features, start, end, delta, queryid, trackId));
+                } else {
+                    response.put("type", "graph");
+                    response.put("graphtype", "bar");
+                    response.put(trackName, mfStore.getFeatureGraph(queryid, trackId, start, end));
                 }
             } else {
                 log.info("\n\n\n loading dna_align_feature");
@@ -766,4 +800,54 @@ public class DnaSequenceService {
             return JSONUtils.SimpleJSONError(e.getMessage());
         }
     }
+
+    public JSONObject initMiscFeature(HttpSession session, JSONObject json) {
+
+        log.info("herere");
+        JSONObject response = new JSONObject();
+
+        try {
+            response.put("chromosomes", sequenceStore.getSeqRegionSearchMap());
+//            response.put("features", mfStore.getAllMiscFeatures());
+            response.put("lines", mfStore.getAllAttrib_type());
+            return response;
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return JSONUtils.SimpleJSONError(e.getMessage());
+        }
+    }
+
+    public JSONObject getMiscFeature(HttpSession session, JSONObject json) {
+
+        log.info("herere");
+        String name = json.getString("name");
+        JSONObject response = new JSONObject();
+        log.info("\n\n\t name "+name);
+        try {
+            if(name.equals("All")){
+                response.put("type", "graph");
+                response.put("features", mfStore.getAllMiscFeatures());
+            }else{
+                response.put("features", mfStore.getMiscFeaturesbyID(name));
+            }
+            return response;
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return JSONUtils.SimpleJSONError(e.getMessage());
+        }
+    }
+
+    public JSONObject getAllMiscFeature(HttpSession session, JSONObject json) {
+
+        JSONObject response = new JSONObject();
+
+        try {
+            response.put("features", mfStore.getAllMiscFeatures());
+            return response;
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return JSONUtils.SimpleJSONError(e.getMessage());
+        }
+    }
+
 }
