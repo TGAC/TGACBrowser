@@ -57,7 +57,7 @@ public interface SequenceStore extends Store {
 
     public String getDomains(String geneid) throws IOException;
     public String getSeq(String query, int from, int to) throws IOException;
-    public JSONArray getSeqRegionSearchMap(String query) throws IOException;
+    public JSONArray getSeqRegionSearchMap() throws IOException;
     public JSONArray getSeqRegionIdSearch(String query) throws IOException;
     public int getSeqRegionearchsize(String query) throws IOException;
     public int getSeqRegionearchsizeformatch(String query) throws IOException;
