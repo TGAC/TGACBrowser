@@ -83,10 +83,10 @@ public class SQLAnalysisDAO implements AnalysisStore {
     public static final String GET_DISTINCT_ANALYSIS_ID_FROM_DAF = "SELECT DISTINCT analysis_id from dna_align_feature where analysis_id = ? LIMIT 1";
     public static final String GET_DISTINCT_ANALYSIS_ID_FROM_Repeat = "SELECT DISTINCT analysis_id from repeat_feature where analysis_id = ? LIMIT 1";
     public static final String GET_SNPS = "SELECT a.analysis_id, ad.display_label FROM analysis a, analysis_description ad where a.logic_name like '%SNP%' and a.analysis_id = ad.analysis_id";
-
+    public static final String COUNT_MISC_FEATURE = "SELECT count(*) from misc_feature";
     private JdbcTemplate template;
 
-    static final String[] ALLOWED_DATATYPES = {"BAM", "bam"};
+    static final String[] ALLOWED_DATATYPES = {"BAM", "bam", "gff3"};
 
     public void setJdbcTemplate(JdbcTemplate template) {
         this.template = template;
@@ -152,7 +152,7 @@ public class SQLAnalysisDAO implements AnalysisStore {
                 JSONObject annotationid = new JSONObject();
 
 
-                try{
+                try {
                     JSONObject explrObject = JSONObject.fromObject(map.get("web_data"));
 
                     if (explrObject.get("source") != null && explrObject.get("source").toString().equals("file")) {
@@ -162,8 +162,7 @@ public class SQLAnalysisDAO implements AnalysisStore {
                     }
 
                     annotationid.put("web", map.get("web_data"));
-                }
-                catch (Exception e){
+                } catch (Exception e) {
                     annotationid.put("id", map.get("id"));
                 }
 
@@ -175,23 +174,23 @@ public class SQLAnalysisDAO implements AnalysisStore {
                 annotationid.put("graph", "false");
 
                 JSONObject web = annotationid.getJSONObject("web");
-                if(presentInGene(map.get("id").toString())){
-                    web.put("trackgroup","Genes");
-                    annotationid.put("name", map.get("name").toString().replaceAll("[^A-Za-z0-9]+", "_")+"_gene");
+                if (presentInGene(map.get("id").toString())) {
+                    web.put("trackgroup", "Genes");
+                    annotationid.put("name", map.get("name").toString().replaceAll("[^A-Za-z0-9]+", "_") + "_gene");
                     annotationlist.add(annotationid);
-                } else  if(presentInDAF(map.get("id").toString())){
-                    web.put("trackgroup","Alignment features");
+                } else if (presentInDAF(map.get("id").toString())) {
+                    web.put("trackgroup", "Alignment features");
                     annotationid.put("name", map.get("name").toString().replaceAll("[^A-Za-z0-9]+", "_"));
                     annotationlist.add(annotationid);
 
-                } else if(presentInRepeat(map.get("id").toString())){
-                    web.put("trackgroup","Repeats");
-                    annotationid.put("name", map.get("name").toString().replaceAll("[^A-Za-z0-9]+", "_")+"_repeat");
+                } else if (presentInRepeat(map.get("id").toString())) {
+                    web.put("trackgroup", "Repeats");
+                    annotationid.put("name", map.get("name").toString().replaceAll("[^A-Za-z0-9]+", "_") + "_repeat");
                     annotationlist.add(annotationid);
 
-                } else if(presentInMarker(map.get("id").toString())){
-                    web.put("trackgroup","Markers");
-                    annotationid.put("name", map.get("name").toString().replaceAll("[^A-Za-z0-9]+", "_")+"_repeat");
+                } else if (presentInMarker(map.get("id").toString())) {
+                    web.put("trackgroup", "Markers");
+                    annotationid.put("name", map.get("name").toString().replaceAll("[^A-Za-z0-9]+", "_") + "_repeat");
                     annotationlist.add(annotationid);
 
                 } else {
@@ -201,26 +200,46 @@ public class SQLAnalysisDAO implements AnalysisStore {
                 }
 
 
-
             }
             List<Map<String, Object>> coords = template.queryForList(GET_Coords_sys_API, new Object[]{rank});
 
             JSONObject web = new JSONObject();
-            web.put("trackgroup","Assembly_Tracks");
+            web.put("trackgroup", "Assembly_Tracks");
             for (Map map : coords) {
                 JSONObject annotationid = new JSONObject();
 
-                annotationid.put("name", map.get("name")+"-"+map.get("version"));
+                annotationid.put("name", map.get("name") + "-" + map.get("version"));
                 annotationid.put("id", "cs" + map.get("coord_system_id"));
                 annotationid.put("desc", "Coordinate System Rank-" + map.get("rank"));
                 annotationid.put("disp", 1);
-                annotationid.put("display_label", map.get("name")+"-"+map.get("version"));
+                annotationid.put("display_label", map.get("name") + "-" + map.get("version"));
                 annotationid.put("merge", "0");
                 annotationid.put("label", "0");
                 annotationid.put("graph", "false");
                 annotationid.put("web", web);
                 annotationlist.add(annotationid);
             }
+
+            web = new JSONObject();
+            web.put("trackgroup", "Miscellaneous");
+
+            int misc_feature = template.queryForInt(COUNT_MISC_FEATURE, new Object[]{});
+            if (misc_feature > 0) {
+                JSONObject annotationid = new JSONObject();
+
+                annotationid.put("name", "misc_feature");
+                annotationid.put("id", "ms1");
+                annotationid.put("desc", "Miscellaneous Features");
+                annotationid.put("disp", 0);
+                annotationid.put("display_label", "Misc Feature");
+                annotationid.put("merge", "0");
+                annotationid.put("label", "0");
+                annotationid.put("graph", "false");
+                annotationid.put("web", web);
+                annotationlist.add(annotationid);
+            }
+
+
             return annotationlist;
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
@@ -245,38 +264,38 @@ public class SQLAnalysisDAO implements AnalysisStore {
         }
     }
 
-    public boolean presentInGene(String id){
+    public boolean presentInGene(String id) {
         List<Map<String, Object>> distinct_id = template.queryForList(GET_DISTINCT_ANALYSIS_ID_FROM_GENE, new Object[]{id});
-        if(distinct_id.size() > 0){
+        if (distinct_id.size() > 0) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
-    public boolean presentInDAF(String id){
+    public boolean presentInDAF(String id) {
         List<Map<String, Object>> distinct_id = template.queryForList(GET_DISTINCT_ANALYSIS_ID_FROM_DAF, new Object[]{id});
-        if(distinct_id.size() > 0){
+        if (distinct_id.size() > 0) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
-    public boolean presentInMarker(String id){
+    public boolean presentInMarker(String id) {
         List<Map<String, Object>> distinct_id = template.queryForList(GET_DISTINCT_ANALYSIS_ID_FROM_Marker, new Object[]{id});
-        if(distinct_id.size() > 0){
+        if (distinct_id.size() > 0) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
-    public boolean presentInRepeat(String id){
-        List<Map<String, Object>> distinct_id  = template.queryForList(GET_DISTINCT_ANALYSIS_ID_FROM_Repeat, new Object[]{id});
-        if(distinct_id.size() > 0){
+    public boolean presentInRepeat(String id) {
+        List<Map<String, Object>> distinct_id = template.queryForList(GET_DISTINCT_ANALYSIS_ID_FROM_Repeat, new Object[]{id});
+        if (distinct_id.size() > 0) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -302,7 +321,7 @@ public class SQLAnalysisDAO implements AnalysisStore {
 
         paths = f.list();
 
-        for(String path:paths) {
+        for (String path : paths) {
 
             JSONObject annotation = new JSONObject();
             JSONObject web = new JSONObject();
@@ -310,18 +329,18 @@ public class SQLAnalysisDAO implements AnalysisStore {
             String ext = FilenameUtils.getExtension(path);
             String name = FilenameUtils.getBaseName(path);
 
-            if(contains(ALLOWED_DATATYPES,ext)){
-                annotation.put("name",name+"_"+ext);
+            if (contains(ALLOWED_DATATYPES, ext)) {
+                annotation.put("name", name + "_" + ext);
                 annotation.put("type", ext);
                 annotation.put("path", dir);
-                annotation.put("id", dir+"/"+path);
-                annotation.put("display_label",name);
+                annotation.put("id", dir + "/" + path);
+                annotation.put("display_label", name);
                 annotation.put("disp", 0);
                 annotation.put("merge", 0);
                 annotation.put("graph", false);
                 annotation.put("desc", "");
                 web.put("colour", "green");
-                web.put("filepath", dir+"/"+path);
+                web.put("filepath", dir + "/" + path);
                 web.put("source", "file");
                 web.put("trackgroup", ext);
                 annotation.put("web", web);
