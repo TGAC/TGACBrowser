@@ -45,6 +45,21 @@ function toogleLabel(trackName) {
     jQuery(".label" + trackName).toggle();
 }
 
+function exportTrack(trackName) {
+    var download_data = ""
+    var track = window[trackName];
+    download_data = "#seqregname\tstart\tend\tstrand\tdesc\n";
+    var start = getBegin();
+    var end = getEnd();
+    for(var track_len=0; track_len< track.length; track_len++) {
+        if((track[track_len].start >= start && track[track_len].start <= end) || (track[track_len].end <= end && track[track_len].end >= start) || (track[track_len].start < start && track[track_len].end > end) || (track[track_len].start > start && track[track_len].end < end))
+        {
+            download_data += seqregname+"\t"+track[track_len].start+"\t"+track[track_len].end+" "+track[track_len].strand+"\t"+track[track_len].desc+"\n";
+        }
+    }
+    download(download_data, trackName+".txt", "text/plain");
+}
+
 function toogleTrackView(trackName) {
     if (window['track_list' + trackName].expand == 1) {
         window['track_list' + trackName].expand = 0

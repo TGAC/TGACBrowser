@@ -230,7 +230,7 @@ public class SQLAnalysisDAO implements AnalysisStore {
                 annotationid.put("name", "misc_feature");
                 annotationid.put("id", "ms1");
                 annotationid.put("desc", "Miscellaneous Features");
-                annotationid.put("disp", 0);
+                annotationid.put("disp", 1);
                 annotationid.put("display_label", "Misc Feature");
                 annotationid.put("merge", "0");
                 annotationid.put("label", "0");

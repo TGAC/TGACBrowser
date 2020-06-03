@@ -79,6 +79,7 @@
     <script type="text/javascript" src="<c:url value='/scripts/manhattan.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/gff_parser.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/vcf_parser.js'/>"></script>
+    <script type="text/javascript" src="<c:url value='/scripts/download.js'/>"></script>
 
     <title>${initParam.pageTitle}</title>
     <script type="text/javascript">
