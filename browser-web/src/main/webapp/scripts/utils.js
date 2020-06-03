@@ -222,7 +222,7 @@ function mergeTrack(check) {
     jQuery(track_list).each(function (index) {
         //this is the object in the array, index is the index of the object in the array
 
-        if (jQuery("#" + track_list[index].name + "mergedCheckbox").attr('checked')) {//
+        if (jQuery("#" + track_list[index].name + "mergedCheckbox").prop('checked')) {//
 //            this.merge = 1;
             window['track_list' + track_list[index].name].merge = 1;
         } else {

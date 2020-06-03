@@ -158,7 +158,7 @@ function loadTrackAjax(trackId, trackname) {
 
     jQuery(track_list).each(function (index) {
         //this is the object in the array, index is the index of the object in the array
-        if (jQuery("#" + track_list[index].name + "Checkbox").attr('checked')) {//
+        if (jQuery("#" + track_list[index].name + "Checkbox").prop('checked')) {//
             window['track_list' + track_list[index].name].disp = 1
             jQuery("#unSelectAllCheckbox").attr('checked', false)
         }
@@ -175,7 +175,7 @@ function loadTrackAjax(trackId, trackname) {
     }
     console.log("herreee")
     console.log(jQuery("#track_files").val())
-    if ((jQuery("#" + trackname + "Checkbox").attr('checked') && trackId.indexOf('noid') < 0) || (jQuery("#track_files").val() != null && jQuery("#track_files").val().indexOf(trackname) >=0)) {
+    if ((jQuery("#" + trackname + "Checkbox").prop('checked') && trackId.indexOf('noid') < 0) || (jQuery("#track_files").val() != null && jQuery("#track_files").val().indexOf(trackname) >=0)) {
         console.log("here")
         var partial = (getEnd() - getBegin()) + ((getEnd() - getBegin()) / 2);
         var start = (getBegin() - partial);

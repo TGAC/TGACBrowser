@@ -203,7 +203,7 @@
 
         var type = jQuery('#blast_type').val();
 
-        if (jQuery("#short_seq").attr('checked')) {
+        if (jQuery("#short_seq").prop('checked')) {
             if (jQuery('#blast_type').val().indexOf('tblastn') >= 0 || jQuery('#blast_type').val().indexOf('blastx') >= 0) {
                 params += " -seg no -word_size 3";
             }
@@ -211,7 +211,7 @@
                 params += " -dust no -word_size 7";
             }
         } else {
-            if (jQuery("#filter").attr('checked')) {
+            if (jQuery("#filter").prop('checked')) {
                 if (jQuery('#blast_type').val().indexOf('tblastn') >= 0 || jQuery('#blast_type').val().indexOf('blastx') >= 0) {
                     params += " -seg no";
                 }
