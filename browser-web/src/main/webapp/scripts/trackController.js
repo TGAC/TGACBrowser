@@ -135,7 +135,7 @@ function removeTrack(div, track) {
 function removeMergedTrack() {
 
     jQuery(track_list).each(function (index) {
-        if (jQuery("#" + track_list[index].name + "mergedCheckbox").attr('checked')) {
+        if (jQuery("#" + track_list[index].name + "mergedCheckbox").prop('checked')) {
             window['track_list' + track_list[index].name].disp = 0
             jQuery('input[name=' + track_list[index].name + 'mergedCheckbox]').attr('checked', false);
             trackToggle(track_list[index].name);
@@ -149,7 +149,7 @@ function removeMergedTrack() {
 
 function toogleLabelMerged() {
     jQuery(track_list).each(function (index) {
-        if (jQuery("#" + track_list[index].name + "mergedCheckbox").attr('checked')) {
+        if (jQuery("#" + track_list[index].name + "mergedCheckbox").prop('checked')) {
             if (this.label == 1) {
                 window['track_list' + track_list[index].name].label = 0
             }

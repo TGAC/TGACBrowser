@@ -116,7 +116,7 @@ function gen_wordsize(word_size){
 }
 
 function toogleParams(){
-    if(jQuery("#short_seq").attr('checked')){
+    if(jQuery("#short_seq").prop('checked')){
         jQuery("#word_size").attr("disabled", true)
         jQuery("#gap_cost").attr("disabled", true)
         jQuery("#match-mismatch").attr("disabled", true)
