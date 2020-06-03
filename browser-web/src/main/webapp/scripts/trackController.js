@@ -991,7 +991,7 @@ function dispSAMTrack(div, trackName, className) {
     var j = 0;
 
     if (window['track_list' + trackName].label == 0) {
-        labeltoogle = "none;";
+        labeltoogle = "none";
     }
 
 
@@ -1212,7 +1212,7 @@ function dispTrack(div, trackName, className) {
     var j = 0;
 
     if (window['track_list' + trackName].label == 0) {
-        labeltoogle = "none;";
+        labeltoogle = "none";
     }
 
 
