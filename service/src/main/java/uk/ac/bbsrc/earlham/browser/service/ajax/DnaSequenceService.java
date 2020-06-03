@@ -278,7 +278,7 @@ public class DnaSequenceService {
         String seqName = "";
         JSONObject response = new JSONObject();
         try {
-            response.put("seqregion", sequenceStore.getSeqRegionSearchMap(seqName));
+            response.put("seqregion", sequenceStore.getSeqRegionSearchMap());
             return response;
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
