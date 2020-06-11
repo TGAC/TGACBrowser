@@ -52,6 +52,11 @@ function setBlast() {
         });
         jQuery("#blastdbs").show();
     }
+    else if (jQuery("#blastType").text().indexOf('grassroot') >= 0) {
+        jQuery.getScript("scripts/blast_grassroot.js", function (data, textStatus, jqxhr) {
+        });
+        jQuery("#grassrootblastdbs").show();
+    }
     else if (jQuery("#blastType").text().indexOf('ncbi') >= 0) {
         jQuery.getScript("scripts/blast_ncbi.js", function (data, textStatus, jqxhr) {
         });

@@ -40,6 +40,10 @@
           class="uk.ac.bbsrc.earlham.browser.service.ajax.BlastNCBI">
     </bean>
 
+    <bean id="blastGrassroot"
+          class="uk.ac.bbsrc.earlham.browser.service.ajax.BlastGrassroot">
+    </bean>
+
     <bean id="blastserviceslurm"
           class="uk.ac.bbsrc.earlham.browser.service.ajax.BlastServiceSLURM">
     </bean>

@@ -440,18 +440,20 @@ function parseBLAST(json) {
 function sub_seq(seq, qseq) {
     var id = "";//seq.split("<br>")[0];
     //  seq =  seq.split("<br>")[1];
-    jQuery.colorbox({
-        width: "90%",
-        height: "100%",
-        html: "<table><tr><td><button id=\"subbutton\" class='ui-state-default ui-corner-all' " +
-            "onclick=\"blastToogle();\">Alignemt Sequence</button><br/>" +
-            "</td></td></tr></table><br/>" +
-            "<br/><b>Subject Sequence:</b> <br/>" +
-            "<div id=\"btop_output\" style='display : inline;  font-family: Courier, \"Courier New\", monospace'> " + id + "<br>" + convertSeqtoBLAST(seq, qseq) + "</div>" +
-            "<div id=\"sub_output\" style=' display: none; font-family: Courier, \"Courier New\", monospace'> <table><tr><td><button class='ui-state-default ui-corner-all' " +
-            "onclick=\"selectText('sub_output');\"')\">Select Sequence</button><br/>" +
-            "<td><div id=fastadownload></div></td></td></tr></table><br/> " + id + "<br>" + convertFasta(seq) + "</div>"
-    });
+
+    jQuery("#blast_aln_content").html(convertSeqtoBLAST(seq, qseq))
+    // jQuery.colorbox({
+    //     width: "90%",
+    //     height: "100%",
+    //     html: "<table><tr><td><button id=\"subbutton\" class='ui-state-default ui-corner-all' " +
+    //         "onclick=\"blastToogle();\">Alignemt Sequence</button><br/>" +
+    //         "</td></td></tr></table><br/>" +
+    //         "<br/><b>Subject Sequence:</b> <br/>" +
+    //         "<div id=\"btop_output\" style='display : inline;  font-family: Courier, \"Courier New\", monospace'> " + id + "<br>" + convertSeqtoBLAST(seq, qseq) + "</div>" +
+    //         "<div id=\"sub_output\" style=' display: none; font-family: Courier, \"Courier New\", monospace'> <table><tr><td><button class='ui-state-default ui-corner-all' " +
+    //         "onclick=\"selectText('sub_output');\"')\">Select Sequence</button><br/>" +
+    //         "<td><div id=fastadownload></div></td></td></tr></table><br/> " + id + "<br>" + convertFasta(seq) + "</div>"
+    // });
 }
 
 function blastToogle() {
@@ -471,7 +473,7 @@ function resetBLAST() {
 }
 
 function toogleTable(id) {
-    jQuery("th.header").closest("table").hide();
+    jQuery('[id^=blasttable]').hide()
     jQuery("#blasttable" + id).show()
 }
 
@@ -514,7 +516,6 @@ function convertSeqtoBLAST(seq, qseq) {
     newString += "<br />" + oldString;
     newString = newString + '<br/>' + oldbtopString;
     newString = newString + '<br/>' + oldQString
-
     return newString.replace(/ /g, "&nbsp;");
 }
 
