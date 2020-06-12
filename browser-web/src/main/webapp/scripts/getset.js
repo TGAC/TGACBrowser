@@ -131,7 +131,7 @@ function setBegin(begin) {
              begin_scale = (begin_scale).toFixed(2)
         }
         jQuery("#begin").val(parseInt(begin));
-        jQuery("#begin_scale").val(parseInt(begin_scale));
+        jQuery("#begin_scale").val(parseInt(begin_scale).toLocaleString());
 
     }
     else {
@@ -139,7 +139,14 @@ function setBegin(begin) {
         jQuery("#begin_scale").val(parseInt(1));
 
     }
-    jQuery("#begin").size(begin.length);
+
+    jQuery("#ruler").html((begin*scale).toLocaleString());
+
+    var inLength = jQuery("#ruler").width();
+
+    jQuery("#begin_scale").width(inLength);
+
+
 }
 
 function getEnd() {
@@ -160,13 +167,17 @@ function setEnd(end) {
         }
 
         jQuery("#end").val(parseInt(end));
-        jQuery("#end_scale").val(parseInt(end_scale));
+        jQuery("#end_scale").val(parseInt(end_scale).toLocaleString());
     }
     else {
         jQuery("#end").val(sequencelength);
         jQuery("#end_scale").val((sequencelength*scale).toFixed(2));
     }
-    jQuery("#end").size(end.length);
+    jQuery("#ruler").html((end*scale).toLocaleString());
+
+    var inLength = jQuery("#ruler").width();
+
+    jQuery("#end_scale").width(inLength);
 
 
 }
