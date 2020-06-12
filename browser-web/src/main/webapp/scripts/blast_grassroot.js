@@ -54,6 +54,7 @@ function blastSearch(query, db, type) {
             },
             'doOnError': function (json) {
                 alert(json.error);
+                jQuery("#" + id).html("<b>BLAST job " + id + "</b><br> Failed.> </span> ")
             }
         });
 }
@@ -86,7 +87,7 @@ function grassrootBLASTResult(BlastAccession, id) {
                     }, 5000);
                 } else {
                     alert("else")
-                    jQuery("#" + json.id).html("<b>BLAST job " + json.BlastAccession + "</b><br> Failed. <span onclick=deleteTable('" + json.BlastAccession + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
+                    jQuery("#" + json.BlastAccession).html("<b>BLAST job " + json.BlastAccession + "</b><br> Failed. <span onclick=deleteTable('" + json.BlastAccession + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
                 }
             },
             'doOnError': function (json) {
