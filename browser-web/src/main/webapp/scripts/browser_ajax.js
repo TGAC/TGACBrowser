@@ -548,6 +548,8 @@ function getReferences(callback) {
                     return o.length;
                 }));
 
+
+
                 var referenceLength = json.seqregion.length;
                 if (!maxLen) {
                     maxLen = jQuery(window).width();
@@ -558,7 +560,6 @@ function getReferences(callback) {
                 jQuery("#mapmarker").hide()
 
 
-                json.seqregion.sort(naturalSort)
                 jQuery("#refmap").html("");
                 if (referenceLength > 0 && referenceLength < 50) {
                     changeCSS();
