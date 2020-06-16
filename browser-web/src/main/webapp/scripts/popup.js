@@ -101,7 +101,7 @@ function newpopup(track, i, j) {
     }
     else {
         if (window["track_list" + track] != null) {
-            jQuery("#Linkme").html("<a target='_blank' href='" + window["track_list" + track].ensembl + "" + window[track][i].desc + "'> <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\"></span></a>");
+            jQuery("#Linkme").html("<a target='_blank' href='" + window[track][i].desc + "'> <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\"></span></a>");
         }
         jQuery("#makemetop").html('');
         jQuery("#peptides").html('');

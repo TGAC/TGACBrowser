@@ -25,11 +25,7 @@
     <script type="text/javascript">
 
 
-        jQuery(document).ready(function () {
-            var chr = metaData();
-            listMiscFeatures();
-        });
-
+        var loaded = false;
         var common = [];
 
         function listMiscFeatures() {
@@ -40,7 +36,7 @@
                 {
                     'doOnSuccess': function (json) {
 
-                        loadDeletions("All");
+                        //               loadDeletions("All");
 
                         var chr = json.chromosomes;
                         var referenceLength = json.chromosomes.length;
@@ -103,24 +99,28 @@
                             var args = JSON.stringify(evt.params, function (key, value) {
                                 var item = evt["params"]["data"]["text"]
                                 var markers = jQuery(".markers_on_map")
-                                if(markers.hasClass("all_markers")){
+                                if (markers.hasClass("all_markers")) {
                                     markers.hide();
-                                }else{
+                                } else {
                                     markers.remove();
                                 }
 
-                                if(item == "All"){
-                                    jQuery(".all_markers").show()
-                                }else{
+                                if (item == "All") {
+                                    if (jQuery(".all_markers").length > 0) {
+                                        jQuery(".all_markers").show()
+                                    } else {
+                                        loadDeletions(item)
+                                    }
+                                } else {
                                     loadDeletions(item)
                                 }
                             });
                         })
 
+                        loaded = true;
 
                     }
                 });
-
 
         }
 
@@ -129,6 +129,8 @@
         }
 
         function loadDeletions(name) {
+            var url = "/" + jQuery('#title').text() + "/deletion.jsp?query=" + name
+            window.history.pushState(name, jQuery('#title').text() + "-" + name, url)
             Fluxion.doAjax(
                 'dnaSequenceService',
                 'getMiscFeature',
@@ -137,7 +139,6 @@
                     'doOnSuccess': function (json) {
                         var marker = json.features;
                         if (json.type == "graph") {
-
                             var height = 18;
 
                             for (var parent in json.features) {
@@ -169,6 +170,7 @@
                             }
 
                         } else {
+                            jQuery("#lines_searchable_list").val(json.features[0].line_id).trigger('change')
                             var marker_length = marker.length;
                             while (marker_length--) {
                                 var marker = json.features[marker_length]
@@ -183,7 +185,6 @@
                                     }
                                     var coord = jQuery("#parent_" + marker.parent).attr("coord")
                                     var parent_name = jQuery("#parent_" + marker.parent).attr("name")
-
                                     jQuery("#parent_" + marker.parent).append("<div " +
                                         "title='" + marker.start + ":" + marker.end + "' " +
                                         "class='markers_on_map line" + marker.line_id + "' " +
@@ -198,8 +199,39 @@
                 });
 
         }
+
+
+        jQuery(document).ready(function () {
+            var chr = metaData();
+            listMiscFeatures()
+            jQuery.urlParam = function (name) {
+                var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href);
+                if (results == null) {
+                    return null;
+                } else {
+                    return results[1] || 0;
+                }
+            }
+            waitForIt();
+
+            function waitForIt() {
+                if (loaded == false) {
+                    setTimeout(function () {
+                        waitForIt()
+                    }, 100);
+                } else {
+                    if (jQuery.urlParam("query") != null) {
+                        loadDeletions(jQuery.urlParam("query"))
+                    } else {
+                        loadDeletions("All");
+                    }
+                }
+            }
+
+        });
+
+
     </script>
 
 
-    <%@ include file="footer.jsp" %>
-
+<%@ include file="footer.jsp" %>
