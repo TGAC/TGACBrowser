@@ -2550,7 +2550,7 @@ span.deleteicon input {
     height: 150px;
     position: fixed;
     top: 60px;
-    /*width: 100%;*/
+    width: 100%;
     /*border-left: 1px solid black;*/
     /*border-right: 1px solid black;*/
     z-index: 999;

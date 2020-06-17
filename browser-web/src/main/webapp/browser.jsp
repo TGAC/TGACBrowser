@@ -484,6 +484,29 @@
 
 </div>
 
+<div class="modal fade tgacbrowsermodal" id="fastaModal" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">BLAST Alignment</h4>
+            </div>
+            <div class="modal-body">
+                <div id="fastaoutput" style='font-family: Courier, "Courier New", monospace; min-height: 50px;'>
+                    <img style='position: absolute; left: 50%;' src='./images/browser/loading_big.gif' alt='Loading'>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
 <div id="track-upload-form" title="Upload Your Track Data">
     <p class="validateTips">Select Your Data Type.</p>
 
