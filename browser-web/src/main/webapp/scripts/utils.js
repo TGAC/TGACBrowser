@@ -442,6 +442,7 @@ function sub_seq(seq, qseq) {
     //  seq =  seq.split("<br>")[1];
 
     jQuery("#blast_aln_content").html(convertSeqtoBLAST(seq, qseq))
+    jQuery('#alnModal').modal('show')
     // jQuery.colorbox({
     //     width: "90%",
     //     height: "100%",
