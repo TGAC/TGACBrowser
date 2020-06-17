@@ -188,7 +188,7 @@
                                     jQuery("#parent_" + marker.parent).append("<div " +
                                         "title='" + marker.start + ":" + marker.end + "' " +
                                         "class='markers_on_map line" + marker.line_id + "' " +
-                                        "style='opacity:0.3; left:" + left + "px; top:0px;  width:" + width + "px; height:" + height + "px;' " +
+                                        "style='left:" + left + "px; top:0px;  width:" + width + "px; height:" + height + "px;' " +
                                         " onclick='jumpToRef(\"" + parent_name + "\",\"" + coord + "\"," + marker.start + "," + marker.end + ");'>" +
                                         "</div>");
 

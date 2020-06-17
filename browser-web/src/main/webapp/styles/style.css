@@ -2924,5 +2924,9 @@ body {
     cursor: pointer;
     position:absolute;
     background:red;
-    opacity: 0.1;
+    opacity: 0.3;
+}
+
+.markers_on_map:hover {
+    opacity: 1;
 }
