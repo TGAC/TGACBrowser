@@ -107,7 +107,7 @@ public class BlastGrassroot {
             parameters.add(param);
             param = new JSONObject();
             param.put("param", "Available Databases provided by EI Grassroots development server -> Chinese Spring");
-            param.put("current_value", true);
+            param.put("current_value", false);
 
             parameters.add(param);
             param = new JSONObject();
@@ -153,6 +153,11 @@ public class BlastGrassroot {
             param = new JSONObject();
             param.put("param", "Available Databases provided by EI Grassroots development server -> Cadenza");
             param.put("current_value", false);
+
+            parameters.add(param);
+            param = new JSONObject();
+            param.put("param", "Available Databases provided by EI Grassroots development server -> IWGSC v1.0");
+            param.put("current_value", true);
 
             parameters.add(param);
             param = new JSONObject();
