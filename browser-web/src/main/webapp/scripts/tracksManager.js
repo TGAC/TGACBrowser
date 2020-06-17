@@ -110,7 +110,7 @@ function track_div_html(trackname) {
         jQuery("#" + track.name + "_wrapper").append("<div align='left' class='handle'>" +
             "<table>" +
             "<tr>" +
-            "<td><div class='closehandle ui-icon ui-icon-close' onclick=removeTrack(\"" + track.name + "_div\",\"" + track.name + "\");></div></td>" +
+            "<td><div title=\"Hide Track\" class='closehandle ui-icon ui-icon-close' onclick=removeTrack(\"" + track.name + "_div\",\"" + track.name + "\");></div></td>" +
             "</tr>" +
             "</table>" +
             "</div>" +
@@ -121,8 +121,8 @@ function track_div_html(trackname) {
             "<table>" +
             "<tr>" +
             "<td><b>" + track.display_label + "</b></td>" +
-            "<td><div class=\"ui-icon ui-icon-comment\" onclick=toogleLabel(\"" + track.name + "\");> </div></td>" + checkGene(track.name) +
-            "<td><div class='closehandle ui-icon ui-icon-close' onclick=removeTrack(\"" + track.name + "_div\",\"" + track.name + "\");></div></td>" +
+            "<td><div title=\"Track names\"  class=\"closehandle ui-icon ui-icon-comment\" onclick=toogleLabel(\"" + track.name + "\");> </div></td>" + checkGene(track.name) +
+            "<td><div title=\"Hide Track\" class='closehandle ui-icon ui-icon-close' onclick=removeTrack(\"" + track.name + "_div\",\"" + track.name + "\");></div></td>" +
             "</tr>" +
             "</table>" +
             "</div>" +
