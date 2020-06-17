@@ -153,12 +153,12 @@ function onLoad() {
         }
     });
 
-    jQuery('#wrapper #tracks').dblclick(function (e) {
-        var clicked = jQuery('#currentposition').html();
-        setBegin(parseInt(getBegin()) + ( (clicked - parseInt(getBegin())) * 0.4));
-        setEnd(parseInt(getEnd()) - ( (parseInt(getEnd()) - clicked) * 0.4));
-        jumpToSeq();
-    });
+    // jQuery('#wrapper #tracks').dblclick(function (e) {
+    //     var clicked = jQuery('#currentposition').html();
+    //     setBegin(parseInt(getBegin()) + ( (clicked - parseInt(getBegin())) * 0.4));
+    //     setEnd(parseInt(getEnd()) - ( (parseInt(getEnd()) - clicked) * 0.4));
+    //     jumpToSeq();
+    // });
 
     jQuery(".track").on('click', function (e) {
         if (e.ctrlKey) {
@@ -454,7 +454,7 @@ function displayCursorPosition() {
             });
         }
     });
-    jQuery('#canvas').mouseleave(function () {
+    jQuery('#wrapper').mouseleave(function () {
         jQuery('#currentposition').hide();
         jQuery('#guideline').hide();
     });
