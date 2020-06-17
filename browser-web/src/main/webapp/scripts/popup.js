@@ -881,16 +881,8 @@ function fetchFasta(begin, end, track, i, j) {
         reverseText = "<br/><b>(Minus strand, you will need to reverse-complement)</b><br/><br/>";
     }
 
-    jQuery.colorbox({
-        width: "90%",
-        height: "100%",
-        html: "<table><tr><td><button class='ui-state-default ui-corner-all' " +
-        "onclick=\"selectText('fastaoutput');\"')\">Select Sequence</button><br/>" +
-        "<td><div id=fastadownload></div></td></td></tr></table><br/>" +
-            // "<b>Position: </b>" + begin + " - " + end+
-        "<br/><b>Fasta:</b> <br/>" + reverseText +
-        "<div id=\"fastaoutput\" style=' font-family: Courier, \"Courier New\", monospace'><img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'></div>"
-    });
+    jQuery('#fastaModal').modal('show')
+    jQuery("#fastaoutput").html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>");
 
     Fluxion.doAjax(
         'dnaSequenceService',
@@ -977,8 +969,7 @@ function fetchFasta(begin, end, track, i, j) {
                         jQuery('#fastaoutput').html(">" + seqregname + ": " + (begin) + "" + unit + " - " + (end) + "" + unit + convertFasta(seq));
                     }
                 }
-                jQuery('#fastadownload').html("<button class='ui-state-default ui-corner-all' " +
-                    "onclick=fastaFile('" + seq + "'," + begin + "," + end + ") \">Prepare Download Sequence File</button>");
+
             }
         });
 
