@@ -91,7 +91,7 @@ function gen_penalties(penalties){
         penalty_string += "<option value='"+penalties[i]+"'> Existence: "+penalties[i][0]+" Extension: "+penalties[i][1]+"</option>";
     }
     penalty_string += "</select>";
-        jQuery("#penalty_div").html(penalty_string)
+    jQuery("#penalty_div").html(penalty_string)
 }
 
 function setWordSize(){
@@ -159,7 +159,20 @@ function setBLASTTrack(){
 
     jQuery("#BLASTmergegroup-table").append("<div id=blasttrackspan> <input type=\"checkbox\" id='blasttrackmergedCheckbox' name='blasttrackmergedCheckbox' onClick=mergeTrack(\"blasttrack\"); value=blasttrack >Blast Track</div>");
 
-    jQuery("#tracks").append("<div id='blasttrack_div' class='feature_tracks'> Blast Track </div>");
+    jQuery("#tracks").append("<div id='blasttrack_wrapper' class='feature_tracks ui-resizable' style='max-height:110px; overflow: hidden;'>");
+    // jQuery("#tracks").append("<div id='blasttrack_div' class='feature_tracks'> Blast Track </div>");
+
+    jQuery("#blasttrack_wrapper").append("<div align='left' class='handle'>" +
+        "<table>" +
+        "<tr>" +
+        "<td><b>Blast</b></td>" +
+        "<td><div title=\"Track names\"  class=\"closehandle ui-icon ui-icon-comment\" onclick=toogleLabel(\"blasttrack\");> </div></td>" +
+        "<td><div title=\"Hide Track\" class='closehandle ui-icon ui-icon-close' onclick=removeTrack(\"blasttrack_div\",\"blasttrack\");></div></td>" +
+        "</tr>" +
+        "</table>" +
+        "</div>" +
+        "<div id='blasttrack_div' class='feature_tracks' style=\"display:block; top:10px; overflow-y: auto; overflow-x: hidden\" > </div>"
+    );
 
     jQuery("#blasttrack_div").html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
 
