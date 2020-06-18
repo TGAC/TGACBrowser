@@ -105,11 +105,7 @@ public class BlastGrassroot {
             param.put("current_value", null);
 
             parameters.add(param);
-            param = new JSONObject();
-            param.put("param", "Available Databases provided by EI Grassroots development server -> Chinese Spring");
-            param.put("current_value", false);
 
-            parameters.add(param);
             param = new JSONObject();
             param.put("param", "max_target_seqs");
             param.put("current_value", 5);
@@ -145,99 +141,11 @@ public class BlastGrassroot {
             param.put("current_value", -3);
 
             parameters.add(param);
-            param = new JSONObject();
-            param.put("param", "Available Databases provided by EI Grassroots development server -> Fielder Chinese Spring");
-            param.put("current_value", false);
 
-            parameters.add(param);
-            param = new JSONObject();
-            param.put("param", "Available Databases provided by EI Grassroots development server -> Cadenza");
-            param.put("current_value", false);
-
-            parameters.add(param);
             param = new JSONObject();
             param.put("param", "Available Databases provided by EI Grassroots development server -> IWGSC v1.0");
+
             param.put("current_value", true);
-
-            parameters.add(param);
-            param = new JSONObject();
-            param.put("param", "Available Databases provided by EI Grassroots development server -> Kronos");
-            param.put("current_value", false);
-
-            parameters.add(param);
-            param = new JSONObject();
-            param.put("param", "Available Databases provided by EI Grassroots development server -> Paragon");
-            param.put("current_value", false);
-
-            parameters.add(param);
-            param = new JSONObject();
-            param.put("param", "Available Databases provided by EI Grassroots development server -> Robigus");
-            param.put("current_value", false);
-
-            parameters.add(param);
-            param = new JSONObject();
-            param.put("param", "Available Databases provided by EI Grassroots development server -> Claire");
-            param.put("current_value", false);
-
-            parameters.add(param);
-            param = new JSONObject();
-            param.put("param", "Available Databases provided by EI Grassroots development server -> CS42 cdna");
-            param.put("current_value", false);
-
-            parameters.add(param);
-            param = new JSONObject();
-            param.put("param", "Available Databases provided by EI Grassroots development server -> CS42 cds");
-            param.put("current_value", false);
-
-            parameters.add(param);
-            param = new JSONObject();
-            param.put("param", "Available Databases provided by EI Grassroots development server -> Aegilops Tauschii");
-            param.put("current_value", false);
-
-            parameters.add(param);
-            param = new JSONObject();
-            param.put("param", "Available Databases provided by EI Grassroots development server -> Chinese Spring CS42");
-            param.put("current_value", false);
-
-            parameters.add(param);
-            param = new JSONObject();
-            param.put("param", "Available Databases provided by EI Grassroots development server -> Chinses Sping CS42 5x");
-            param.put("current_value", false);
-
-            parameters.add(param);
-            param = new JSONObject();
-            param.put("param", "Available Databases provided by EI Grassroots development server -> Chinese Spring CS42 orthologous group sub-assemblies");
-            param.put("current_value", false);
-
-            parameters.add(param);
-            param = new JSONObject();
-            param.put("param", "Available Databases provided by EI Grassroots development server -> IWGSC v2");
-            param.put("current_value", false);
-
-            parameters.add(param);
-            param = new JSONObject();
-            param.put("param", "Available Databases provided by EI Grassroots development server -> Draft genome of the wheat A-genome progenitor Triticum Urartu");
-            param.put("current_value", false);
-
-            parameters.add(param);
-            param = new JSONObject();
-            param.put("param", "Available Databases provided by EI Grassroots development server -> Synthetic W7984 WGS");
-            param.put("current_value", false);
-
-            parameters.add(param);
-            param = new JSONObject();
-            param.put("param", "Available Databases provided by EI Grassroots development server -> Wild Winter Wheat G3116");
-            param.put("current_value", false);
-
-            parameters.add(param);
-            param = new JSONObject();
-            param.put("param", "Available Databases provided by EI Grassroots development server -> Domesticated Spring Wheat DV92");
-            param.put("current_value", false);
-
-            parameters.add(param);
-            param = new JSONObject();
-            param.put("param", "Available Databases provided by EI Grassroots development server -> Golden Promise");
-            param.put("current_value", false);
 
             parameters.add(param);
 
@@ -256,12 +164,8 @@ public class BlastGrassroot {
             String urlParameters = params.toString();
 
 
-            log.info("\n\n\n\n\t\t\t" + urlParameters);
-//            String urlParameters = "QUERY=" + query +
-//                    "&PROGRAM=" + type +
-//                    "&DATABASE=" + blastdb +
-//                    "&ALIGNMENT_VIEW=" + "Tabular" +
-//                    "&ALIGNMENTS=" + "100";
+            log.info("\n\n\n\n\t\t\t urlParameters" + urlParameters);
+
 
             URL url = new URL("https://grassroots.tools/dev/public_backend");
 
@@ -293,6 +197,7 @@ public class BlastGrassroot {
 
             result_obj.put("result_string", result);
             JSONObject web = result_obj.getJSONObject("result_string");
+            result_obj.put("result", result);//.getJSONArray("results").getJSONObject(0).getString("job_uuid"));
             result_obj.put("id", web.getJSONArray("results").getJSONObject(0).getString("job_uuid"));
             result_obj.put("BlastAccession", BlastAccession);
 
@@ -322,40 +227,19 @@ public class BlastGrassroot {
             String BlastAccession = json.getString("BlastAccession");
             String id = json.getString("id");
 
-//            {"operations": {"operation": "get_service_results"}, "services": ["cc595396-4b0b-416b-adf8-07f4329f96ad"]}"
-
             JSONObject url_req = new JSONObject();
             JSONObject operation = new JSONObject();
             String[] ids = {id};
             operation.put("operation", 5);
-//            operation.put("services", ids);
             url_req.put("operations", operation);
             url_req.put("services", ids);
 
-
-
-
             JSONObject jsonObject = new JSONObject();
-            JSONArray jsonArray = new JSONArray();
             String urlParameters = url_req.toString();
 
-            StringBuilder sb = new StringBuilder();
             String str;
-            int i = 0;
-
-//            sb.append(connectNCBI(urlParameters));//;new DataInputStream(connection.getInputStream());
             str = connectGrassRoot(urlParameters);
 
-//            while (str == "running") {
-//                str = connectNCBI(urlParameters);
-//                if (str == "finished") {
-//                    jsonArray = parseNCBI(urlParameters);
-//                    break;
-//                }
-//            }
-
-
-            String result = null;
             jsonObject.put("id", id);
             jsonObject.put("response", str);
             jsonObject.put("BlastAccession", BlastAccession);
@@ -406,8 +290,6 @@ public class BlastGrassroot {
             while (null != (str = input.readLine())) {
                 result += str;
             }
-
-            JSONArray status = new JSONArray();
 
             input.close();
             connection.disconnect();

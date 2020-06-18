@@ -83,7 +83,6 @@ function showObject(start, end, objStart, objEnd) {
     else if (parseInt(start) <= parseInt(objStart) && parseInt(end) >= parseInt(objStart)) {
         show = true;
     }
-
     else {
         show = parseInt(start) >= parseInt(objStart) && parseInt(end) <= parseInt(objEnd);
     }
@@ -201,7 +200,7 @@ function dispBLAST(div, track) {
     else {
 
         if (blasts.length > 0) {
-            var track_html = "<div align='left' class='handle'><table><tr><td><b>" + track + "</b></td><td><div title='Label Toggle' class=\"closehandle ui-icon ui-icon-comment\" onclick=toogleLabel(\"" + track + "\");> </div></td><td><div title='Close' class='closehandle ui-icon ui-icon-close' onclick=removeTrack(\"" + div + "\",\"" + track + "\");></div></td></tr></table></div>";
+            var track_html = "";
 
 
             var layers = blasts.length + 1;
@@ -258,7 +257,7 @@ function dispBLAST(div, track) {
                         "src=\"" + image + "\" alt=" + startposition + "-" + stopposition + "  " +
                         "title=" + track + ":" + blast_start + "-" + blast_stop + ",Score:" + score + " > <br> </div>";
                     track_html = track_html.replace("undefined", "");
-                    track_html += dispBLASTindel(i, blast_start);
+                    // track_html += dispBLASTindel(i, blast_start);
                 }
             }
 

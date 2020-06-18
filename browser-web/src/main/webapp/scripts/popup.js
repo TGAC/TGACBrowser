@@ -271,7 +271,7 @@ function zoomHere(begin, end) {
 // set blast parameters and call blast
 function preBlast(begin, end, popup) {
 
-    if(jQuery("#fasta").html() == true){
+    if(jQuery("#fasta").html() == true || jQuery("#fasta").html() == "true"){
         if (begin > end) {
             var temp = end;
             end = begin;
@@ -279,55 +279,55 @@ function preBlast(begin, end, popup) {
         }
 
         jQuery('#EditTrack').hide();
-        var blast_selector = "<table width='100%'>" +
-            "<tr><td>Number of Hits<select name=\"blasthit\" id=\"blasthit\">  " +
-            "<option value=\"1\">1</option>  " +
-            "<option value=\"2\">2</option> " +
-            "<option value=\"3\">3</option>  " +
-            "<option value=\"4\">4</option>  " +
-            "<option value=\"5\">5</option>            " +
-            "<option value=\"6\">6</option>  " +
-            "<option value=\"7\">7</option>  " +
-            "<option value=\"8\">8</option> " +
-            "<option value=\"9\">9</option>   " +
-            "<option value=\"10\">10</option>  " +
-            "</select> </td>" +
-            "</select> " +
-            "<td><span class=\"fg-button ui-icon ui-widget ui-state-default ui-corner-all ui-icon-close\" id=\"dontblast\"></span>" +
-            "<span class=\"fg-button ui-icon ui-widget ui-state-default ui-corner-all ui-icon-check\" id=\"doblast\"></span> </td></tr></table>";
+        // var blast_selector = "<table width='100%'>" +
+        //     "<tr><td>Number of Hits<select name=\"blasthit\" id=\"blasthit\">  " +
+        //     "<option value=\"1\">1</option>  " +
+        //     "<option value=\"2\">2</option> " +
+        //     "<option value=\"3\">3</option>  " +
+        //     "<option value=\"4\">4</option>  " +
+        //     "<option value=\"5\">5</option>            " +
+        //     "<option value=\"6\">6</option>  " +
+        //     "<option value=\"7\">7</option>  " +
+        //     "<option value=\"8\">8</option> " +
+        //     "<option value=\"9\">9</option>   " +
+        //     "<option value=\"10\">10</option>  " +
+        //     "</select> </td>" +
+        //     "</select> " +
+        //     "<td><span class=\"fg-button ui-icon ui-widget ui-state-default ui-corner-all ui-icon-close\" id=\"dontblast\"></span>" +
+        //     "<span class=\"fg-button ui-icon ui-widget ui-state-default ui-corner-all ui-icon-check\" id=\"doblast\"></span> </td></tr></table>";
+        //
+        //
+        // jQuery('#blastselectorpanel').html(blast_selector);
+        // jQuery('#blastselector').show();
+        // if (parseInt(mouseX) + parseInt(jQuery("#blastselector").width()) > jQuery("#main1").width()) {
+        //     jQuery('#blastselector').css({"left": mouseX - jQuery("#blastselector").width()});
+        //     jQuery("#blastselector").css({"top": mouseY + 10});
+        // }
+        // else {
+        //     jQuery('#blastselector').css({"left": mouseX});
+        //     jQuery("#blastselector").css({"top": mouseY + 10});
+        // }
 
+        // jQuery("#doblast").click(function () {
+        //     var hit = jQuery('#blasthit').val();
+        //     var blastdb = ""
+        //     if (jQuery("#blastType").text().indexOf('local') >= 0 || jQuery("#blastType").text().indexOf('server') >= 0 || jQuery("#blastType").text().indexOf('slurm') >= 0) {
+        //         blastdb = jQuery('#blastdb').val();
+        //     }
+        //     else {
+        //         blastdb = jQuery('#ncbiblastdb').val();
+        //
+        //     }
 
-        jQuery('#blastselectorpanel').html(blast_selector);
-        jQuery('#blastselector').show();
-        if (parseInt(mouseX) + parseInt(jQuery("#blastselector").width()) > jQuery("#main1").width()) {
-            jQuery('#blastselector').css({"left": mouseX - jQuery("#blastselector").width()});
-            jQuery("#blastselector").css({"top": mouseY + 10});
-        }
-        else {
-            jQuery('#blastselector').css({"left": mouseX});
-            jQuery("#blastselector").css({"top": mouseY + 10});
-        }
-
-        jQuery("#doblast").click(function () {
-            var hit = jQuery('#blasthit').val();
-            var blastdb = ""
-            if (jQuery("#blastType").text().indexOf('local') >= 0 || jQuery("#blastType").text().indexOf('server') >= 0 || jQuery("#blastType").text().indexOf('slurm') >= 0) {
-                blastdb = jQuery('#blastdb').val();
-            }
-            else {
-                blastdb = jQuery('#ncbiblastdb').val();
-
-            }
-
-            blast(begin, end, hit, blastdb, 'blastn');
+            blast(begin, end);
             removePopup();
 
             jQuery('#blastselector').hide();
-        });
+        // });
 
-        jQuery("#dontblast").click(function () {
-            jQuery('#blastselector').hide();
-        });
+        // jQuery("#dontblast").click(function () {
+        //     jQuery('#blastselector').hide();
+        // });
     }
     else{
         jQuery('#blastselectorpanel').html("Ref database does not have sequence")
@@ -976,7 +976,7 @@ function fetchFasta(begin, end, track, i, j) {
 }
 
 
-function blast(begin, end, hit, blastdb, type) {
+function blast(begin, end) {
 //  if (end - begin < 10000) {
     Fluxion.doAjax(
         'dnaSequenceService',
@@ -985,7 +985,7 @@ function blast(begin, end, hit, blastdb, type) {
         {
             'doOnSuccess': function (json) {
                 var seq = json.seq;
-                blastTrackSearch(seq, begin, end, hit, blastdb, type);
+                blastTrackSearch(seq, begin, end);
             }
         });
 
