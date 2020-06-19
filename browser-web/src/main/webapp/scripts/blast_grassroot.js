@@ -101,14 +101,13 @@ function parseGrassRootBLAST(result, id) {
     //      "<tr><th> Query id </th> <th> Subject id </th>  <th> alignment length </th>  <th> mismatches </th>  <th> gap openings </th>  <th> q.start </th>  <th> q.end </th>  <th> s.start </th>  <th> s.end </th> <th> e-value </th> <th> bit score </th> <th> Subject db </th><th> Download Sequence </th>        </tr>        </thead>        <tbody>        </tbody>    </table>")
 
     for (var i = 0; i < hits.length; i++) {
-        console.log(hits[i])
         if (hits[i].indexOf("#") == 0) {
             if (hits[i].indexOf("Fields") > 0) {
                 var row = hits[i].replace("# Fields: ", "");
-                jQuery("#blasttable" + id + " thead").append("<tr>" + row.replaceAll(",", "<th>"))
+                jQuery("#blasttable" + id + " thead").append("<tr><th>" + row.replaceAll(",", "<th>"))
             }
         } else {
-            jQuery("#blasttable" + id + " tbody").append("<tr>" + hits[i].replaceAll("\t", "<td>"))
+            jQuery("#blasttable" + id + " tbody").append("<tr><td>" + hits[i].replaceAll("\t", "<td>"))
             /*var hit_seq = hits[i]["hsps"][0]["hit_sequence"]
             var q_seq = hits[i]["hsps"][0]["query_sequence"]
             jQuery("#blasttable" + id + " tbody").append("<tr>" +
@@ -222,13 +221,13 @@ function parseGrassRootBLASTTrack(result, id, start) {
         } else {
             var row = hits[i].split("\t");
             var each_track = {};
-            each_track['start'] = parseInt(start) + parseInt(row[5]);
-            each_track['end'] = parseInt(start) + parseInt(row[6]);
-            each_track['desc'] = row[0] + ":" + row[7] + "-" + row[8];
-            each_track['score'] = row[10];
+            each_track['start'] = parseInt(start) + parseInt(row[6]);
+            each_track['end'] = parseInt(start) + parseInt(row[7]);
+            each_track['desc'] = row[1] + ":" + row[8] + "-" + row[9];
+            each_track['score'] = row[11];
             blast.push(each_track);
         }
-        if(i > 10){
+        if(blast.length > 20){
             break;
         }
     }
