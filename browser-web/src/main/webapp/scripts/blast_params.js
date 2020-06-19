@@ -155,7 +155,7 @@ function setBLASTTrack(){
     jQuery("#BLASTgroup").append("<table id='BLASTgroup-table' width=100%> <tr>");
     jQuery("#BLASTmergegroup").append("<table id='BLASTmergegroup-table' width=100%> <tr>");
 
-    jQuery("#BLASTgroup-table").append("<div title='blast' id=blastcheck><input type=\"checkbox\" checked id='blasttrackCheckbox' name='blasttrackCheckbox' onClick=loadTrackAjax(\"blasttrack\",\"blasttrack\");>  Blasttrack  </div>");
+    jQuery("#BLASTgroup-table").append("<div title='blast' id=blastcheck><input type=\"checkbox\" checked id='blasttrackCheckbox' name='blasttrackCheckbox' onClick=loadTrackAjax(\"noid\",\"blasttrack\");>  Blasttrack  </div>");
 
     jQuery("#BLASTmergegroup-table").append("<div id=blasttrackspan> <input type=\"checkbox\" id='blasttrackmergedCheckbox' name='blasttrackmergedCheckbox' onClick=mergeTrack(\"blasttrack\"); value=blasttrack >Blast Track</div>");
 

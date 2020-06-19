@@ -169,7 +169,11 @@ function trackToggle(trackname) {
                 }
             } else {
                 jQuery("#" + track_list[i].name + "_wrapper").fadeOut();
-                window[trackName] = []
+                if ((jQuery("#track_files").val() != null && jQuery("#track_files").val().indexOf(trackName) >= 0) || trackName.toLowerCase().indexOf("blasttrack") >= 0){
+
+                }else{
+                    window[trackName] = []
+                }
             }
         }
     } else {
@@ -207,7 +211,11 @@ function trackToggle(trackname) {
             }
         } else {
             jQuery("#" + trackname + "_wrapper").fadeOut();
-            window[trackname] = []
+            if ((jQuery("#track_files").val() != null && jQuery("#track_files").val().indexOf(trackname) >= 0) || trackname.toLowerCase().indexOf("blasttrack") >= 0){
+
+            }else{
+                window[trackname] = []
+            }
 
         }
 
