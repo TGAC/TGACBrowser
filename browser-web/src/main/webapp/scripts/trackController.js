@@ -479,6 +479,8 @@ function dispGenes(div, track, expand, className) {
 
                     clone_new_div.appendChild(clone_label_div);
                 }
+
+
             }
             else {
                 if (div.indexOf("mergedtrack") <= 0) {
@@ -1385,6 +1387,7 @@ function dispTrack(div, trackName, className) {
                     jQuery(dispCigarLine(track[track_len].cigarline, track[track_len].start, top)).appendTo(div);
                 }
             }
+            jQuery("#" + trackName + "_div").css("height", 200);
         }
         else if (track.length >= 1000) {
             trackToGraph(div, trackName, className)
@@ -1394,6 +1397,7 @@ function dispTrack(div, trackName, className) {
     max = parseInt(jQuery(div)[0].scrollHeight) + 50;
 
     jQuery("#" + trackName + "_wrapper").css("max-height", max);
+    jQuery("#" + trackName + "_wrapper").css("height", 200);
 
     if (max > parseInt(jQuery("#" + trackName + "_wrapper").css("height"))) {
         jQuery("#" + trackName + "_wrapper").children(".ui-resizable-handle").addClass("resize-arrow")

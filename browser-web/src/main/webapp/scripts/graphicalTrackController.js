@@ -92,6 +92,8 @@ function dispGraph(div, trackName, className) {
 
         }
     }
+    jQuery(div).css("height", 100);
+
 }
 
 
