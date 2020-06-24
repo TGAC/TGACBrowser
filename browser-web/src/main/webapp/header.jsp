@@ -29,7 +29,8 @@
     <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery.drawinglibrary.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/scripts/jquery/js/jquery.cookie.js'/>"></script>
 
-    <script type="text/javascript" src="<c:url value='https://cdn.datatables.net/v/dt/dt-1.10.18/datatables.min.js'/>"></script>
+    <script type="text/javascript"
+            src="<c:url value='https://cdn.datatables.net/v/dt/dt-1.10.18/datatables.min.js'/>"></script>
     <%--<script type="text/javascript" src="<c:url value='/scripts/jquery/js/jcanvas.min.js'/>"></script>--%>
     <%--BioJS--%>
     <script type="text/javascript" src="<c:url value='/scripts/biojs/wigExplorer/resources/Biojs.js'/>"></script>
@@ -53,9 +54,11 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/js/select2.min.js"></script>
 
-    <link rel="stylesheet" href="<c:url value='https://cdn.datatables.net/v/dt/dt-1.10.18/datatables.min.css'/>" type="text/css">
+    <link rel="stylesheet" href="<c:url value='https://cdn.datatables.net/v/dt/dt-1.10.18/datatables.min.css'/>"
+          type="text/css">
 
-    <link rel="stylesheet" href="<c:url value='/scripts/jquery/css/smoothness/jquery-ui-1.8.custom.css'/>" type="text/css">
+    <link rel="stylesheet" href="<c:url value='/scripts/jquery/css/smoothness/jquery-ui-1.8.custom.css'/>"
+          type="text/css">
     <script type="text/javascript" src="<c:url value='/scripts/jquery/colorbox/jquery.colorbox-min.js'/>"></script>
     <link rel="stylesheet" href="<c:url value='/scripts/jquery/colorbox/colorbox.css'/>" type="text/css">
     <script type="text/javascript">jQuery.noConflict();</script>
@@ -103,7 +106,7 @@
 
 
 <div class="headerbar">
-    <div id="logo">    <img height="20px" src="images/EI_full.png" alt=""></a>
+    <div id="logo"><img height="20px" src="images/EI_full.png" alt=""></a>
     </div>
     <%--<div id="dbinfo"></div>--%>
     <center>
@@ -121,7 +124,8 @@
     <div class="blasttab">
 
 
-        <input type="text" id="search" class="seachbox" value='${initParam.defaultRef}'/>
+        <input type="text" id="search" class="seachbox" value='' placeholder="Search with keyword"
+               title="Search with Keyword for reference, gene, genomic features etc"/>
 
         <c:set var="databases">${initParam.blastdblink} </c:set>
 
