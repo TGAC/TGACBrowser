@@ -490,11 +490,22 @@
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">BLAST Alignment</h4>
+                <table width="100%">
+                    <tr>
+                        <td>
+                            <h4 class="modal-title">Sequence</h4>
+                        </td>
+                        <td>
+                            <button onclick=CopyToClipboard('fastaoutput')>Copy Sequence</button>
+                        </td>
+                        <td>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </td>
+                    </tr>
+                </table>
             </div>
             <div class="modal-body">
-                <div id="fastaoutput" style='font-family: Courier, "Courier New", monospace; min-height: 50px;'>
+                <div id="fastaoutput" style='font-family: Courier, "Courier New", monospace; min-height: 50px; text-align: left'>
                     <img style='position: absolute; left: 50%;' src='./images/browser/loading_big.gif' alt='Loading'>
                 </div>
             </div>
