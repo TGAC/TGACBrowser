@@ -36,7 +36,7 @@ function setBLASTDB() {
 
 
 function setBLASTParams(){
-    if (jQuery('#blast_type').val().indexOf('blastn') == 0) {
+    if (jQuery('#blast_type').val().indexOf('blastn') == 0 || jQuery('#blast_type').val().indexOf('megablast') >= 0) {
         jQuery("#blastn_para").show()
         jQuery("#blastp_para").hide()
     }
@@ -88,28 +88,33 @@ function setBLASTPenalty(){
 function gen_penalties(penalties){
     var penalty_string = "<select name='penalty' id='penalty'>"
     for(var i=0; i<penalties.length; i++){
-        penalty_string += "<option value='"+penalties[i]+"'> Existence: "+penalties[i][0]+" Extension: "+penalties[i][1]+"</option>";
+        penalty_string += "<option value="+penalties[i]+"> Existence: "+penalties[i][0]+" Extension: "+penalties[i][1]+"</option>";
     }
     penalty_string += "</select>";
     jQuery("#penalty_div").html(penalty_string)
 }
 
 function setWordSize(){
-    var blastn = [16,20,24,28,32,48,64,128,256];
+    var megablast = [16,20,24,28,32,48,64,128,256];
     var blastp = [3,2];
+    var blastn = [7, 11, 15];
+    var dcblastn = [11,12];
 
     if (jQuery('#blast_type').val().indexOf('blastn') == 0) {
         gen_wordsize(blastn)
     }
-    else {
-        gen_wordsize(blastp)
+    else if (jQuery('#blast_type').val().indexOf('dc-megablast') == 0) {
+        gen_wordsize(dcblastn)
+    }
+    else if (jQuery('#blast_type').val().indexOf('megablast') == 0) {
+        gen_wordsize(megablast)
     }
 }
 
 function gen_wordsize(word_size){
     var word_string = "<select name='word_size' id='word_size'>"
     for(var i=0; i<word_size.length; i++){
-        word_string += "<option value='"+word_size[i]+"'> "+word_size[i]+"</option>";
+        word_string += "<option value="+word_size[i]+"> "+word_size[i]+"</option>";
     }
     word_string += "</select>";
 

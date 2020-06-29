@@ -35,6 +35,7 @@ import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,6 +52,7 @@ import java.util.regex.Pattern;
 public class BlastGrassroot {
 
     private Logger log = LoggerFactory.getLogger(getClass());
+
 
     /**
      * Return JSONObject
@@ -71,6 +73,7 @@ public class BlastGrassroot {
             String query = json.getString("querystring");
             String type = json.getString("type");
             String BlastAccession = json.getString("BlastAccession");
+            JSONObject in_params = json.getJSONObject("params");
             int format = json.getInt("format");
             query = query.replaceAll(">+", "#>");
 
@@ -123,22 +126,22 @@ public class BlastGrassroot {
             parameters.add(param);
             param = new JSONObject();
             param.put("param", "word_size");
-            param.put("current_value", 11);
+            param.put("current_value", in_params.getInt("word_size"));
 
             parameters.add(param);
             param = new JSONObject();
             param.put("param", "task");
-            param.put("current_value", "megablast");
+            param.put("current_value", type);
 
             parameters.add(param);
             param = new JSONObject();
             param.put("param", "reward");
-            param.put("current_value", 2);
+            param.put("current_value", in_params.getInt("reward"));
 
             parameters.add(param);
             param = new JSONObject();
             param.put("param", "penalty");
-            param.put("current_value", -3);
+            param.put("current_value", in_params.getInt("penalty"));
 
             parameters.add(param);
 
@@ -163,8 +166,10 @@ public class BlastGrassroot {
 
             String urlParameters = params.toString();
 
+            JSONObject result_obj = new JSONObject();
 
             log.info("\n\n\n\n\t\t\t urlParameters" + urlParameters);
+            result_obj.put("urlParameters", urlParameters);
 
 
             URL url = new URL("https://grassroots.tools/dev/public_backend");
@@ -193,7 +198,6 @@ public class BlastGrassroot {
             input.close();
             connection.disconnect();
 
-            JSONObject result_obj = new JSONObject();
 
             result_obj.put("result_string", result);
             JSONObject web = result_obj.getJSONObject("result_string");

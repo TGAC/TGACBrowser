@@ -29,7 +29,29 @@
  * Time: 12:29 PM
  * To change this template use File | Settings | File Templates.
  */
-function blastSearch(query, db, type) {
+
+
+function getParams(){
+    ajaxurl = '/' + jQuery('#title').text() + '/' + jQuery('#title').text() + '/fluxion.ajax';
+    Fluxion.doAjax(
+        'blastGrassroot',
+        'getParams',
+        {
+            'url': ajaxurl
+        },
+        {
+            'doOnSuccess': function (json) {
+                console.log(json)
+            },
+            'doOnError': function (json) {
+                alert(json.error);
+            }
+        });
+}
+
+
+
+function blastSearch(query, db, type, params) {
     ajaxurl = '/' + jQuery('#title').text() + '/' + jQuery('#title').text() + '/fluxion.ajax';
     var link = "";
     var id = randomString(8);
@@ -46,7 +68,8 @@ function blastSearch(query, db, type) {
             'location': link,
             'BlastAccession': id,
             'format': format,
-            'type': type
+            'type': type,
+            'params': params
         },
         {
             'doOnSuccess': function (json) {

@@ -48,109 +48,110 @@
             </td>
             <td>
                 <select name="blast_type" id="blast_type" onchange="setBLASTParams()">
-                    <option value="blastn"> blastn</option>
-                    <option value="tblastn">tblastn</option>
-                    <option value="blastx">blastx</option>
+                    <option value="blastn" title="Traditional BLASTN requiring an exact match of 11"> blastn</option>
+                    <option value="blastn-short" title="BLASTN program optimized for sequences shorter than 50 bases">blastn short</option>
+                    <option value="megablast" title="Traditional megablast used to find very similar (e.g., intraspecies or closely related species) sequences">megablast</option>
+                    <option value="dc-megablast" title="Discontiguous megablast used to find more distant (e.g., interspecies) sequences">dc-megablast</option>
                 </select>
 
             </td>
 
         </tr>
 
-        <%--        <tr>--%>
-        <%--            <td colspan="3"><b> Advanced Parameters: </b>--%>
-        <%--            </td>--%>
-        <%--        </tr>--%>
-        <%--        <tr>--%>
-        <%--            <td> Repeats</td>--%>
-        <%--            <td>--%>
-        <%--                <input type="checkbox" id="filter" name="filter" checked=""> Include Repeats--%>
-        <%--            </td>--%>
-        <%--        </tr>--%>
-        <%--        <tr>--%>
-        <%--            <td>--%>
-        <%--            </td>--%>
-        <%--            <td>--%>
+                <tr>
+                    <td colspan="3"><b> Advanced Parameters: </b>
+                    </td>
+                </tr>
+<%--                <tr>--%>
+<%--                    <td> Repeats</td>--%>
+<%--                    <td>--%>
+<%--                        <input type="checkbox" id="filter" name="filter" checked=""> Include Repeats--%>
+<%--                    </td>--%>
+<%--                </tr>--%>
+                <tr>
+                    <td>
+                    </td>
+                    <td>
 
 
-        <%--            </td>--%>
-        <%--        </tr>--%>
-        <%--        <tr valign=top>--%>
-        <%--            <td><b> Scoring Parameter </b></td>--%>
-        <%--            <td>--%>
-        <%--                <div id=blastn_para>--%>
-        <%--                    <table>--%>
-        <%--                        <tbody>--%>
-        <%--                        <tr>--%>
-        <%--                            <td> Match/Mismatch</td>--%>
-        <%--                            <td><select name="match-mismatch" id="match-mismatch">--%>
-        <%--                                <option value="1,-2">1, -2</option>--%>
-        <%--                                <option value="1,-3">1, -3</option>--%>
-        <%--                                <option value="1,-4">1, -4</option>--%>
-        <%--                                <option value="2,-3">2, -3</option>--%>
-        <%--                                <option value="4,-5">4, -5</option>--%>
-        <%--                                <option value="1,-1">1, -1</option>--%>
-        <%--                            </select></td>--%>
-        <%--                        </tr>--%>
-        <%--                        <tr>--%>
-        <%--                            <td> Gap Costs</td>--%>
-        <%--                            <td>--%>
-        <%--                                <select name="gap_cost" id="gap_cost">--%>
-        <%--                                    <option value="5,2">Existence: 5 Extension: 2</option>--%>
-        <%--                                    <option value="2,2">Existence: 2 Extension: 2</option>--%>
-        <%--                                    <option value="1,2">Existence: 1 Extension: 2</option>--%>
-        <%--                                    <option value="0,2">Existence: 0 Extension: 2</option>--%>
-        <%--                                    <option value="3,1">Existence: 3 Extension: 1</option>--%>
-        <%--                                    <option value="2,1">Existence: 2 Extension: 1</option>--%>
-        <%--                                    <option value="1,1">Existence: 1 Extension: 1</option>--%>
-        <%--                                </select>--%>
-        <%--                            </td>--%>
-        <%--                        </tr>--%>
-        <%--                        </tbody>--%>
-        <%--                    </table>--%>
-        <%--                </div>--%>
-        <%--                <br>--%>
+                    </td>
+                </tr>
+                <tr valign=top>
+                    <td><b> Scoring Parameter </b></td>
+                    <td>
+                        <div id=blastn_para>
+                            <table>
+                                <tbody>
+                                <tr>
+                                    <td> Match/Mismatch</td>
+                                    <td><select name="match-mismatch" id="match-mismatch">
+                                        <option value="1,-2">1, -2</option>
+                                        <option value="1,-3">1, -3</option>
+                                        <option value="1,-4">1, -4</option>
+                                        <option value="2,-3">2, -3</option>
+                                        <option value="4,-5">4, -5</option>
+                                        <option value="1,-1">1, -1</option>
+                                    </select></td>
+                                </tr>
+<%--                                <tr>--%>
+<%--                                    <td> Gap Costs</td>--%>
+<%--                                    <td>--%>
+<%--                                        <select name="gap_cost" id="gap_cost">--%>
+<%--                                            <option value="5,2">Existence: 5 Extension: 2</option>--%>
+<%--                                            <option value="2,2">Existence: 2 Extension: 2</option>--%>
+<%--                                            <option value="1,2">Existence: 1 Extension: 2</option>--%>
+<%--                                            <option value="0,2">Existence: 0 Extension: 2</option>--%>
+<%--                                            <option value="3,1">Existence: 3 Extension: 1</option>--%>
+<%--                                            <option value="2,1">Existence: 2 Extension: 1</option>--%>
+<%--                                            <option value="1,1">Existence: 1 Extension: 1</option>--%>
+<%--                                        </select>--%>
+<%--                                    </td>--%>
+<%--                                </tr>--%>
+                                </tbody>
+                            </table>
+                        </div>
+                        <br>
 
-        <%--                <div id="blastp_para" style="display: none;">--%>
-        <%--                    <b>Matrix</b>--%>
-        <%--                    <select name="matrix" id="matrix" onchange="setBLASTPenalty()">--%>
-        <%--                        <option value="PAM30">PAM-30</option>--%>
-        <%--                        <option value="PAM70">PAM-70</option>--%>
-        <%--                        <option value="PAM250">PAM-250</option>--%>
-        <%--                        <option value="BLOSUM80" selected>BLOSUM-80</option>--%>
-        <%--                        <option value="BLOSUM62">BLOSUM-62</option>--%>
-        <%--                        <option value="BLOSUM45">BLOSUM-45</option>--%>
-        <%--                        <option value="BLOSUM50">BLOSUM-50</option>--%>
-        <%--                        <option value="BLOSUM90">BLOSUM-90</option>--%>
-        <%--                    </select>--%>
-        <%--                    <br>--%>
-        <%--                    <b>Gap Costs:</b>--%>
+<%--                        <div id="blastp_para" style="display: none;">--%>
+<%--                            <b>Matrix</b>--%>
+<%--                            <select name="matrix" id="matrix" onchange="setBLASTPenalty()">--%>
+<%--                                <option value="PAM30">PAM-30</option>--%>
+<%--                                <option value="PAM70">PAM-70</option>--%>
+<%--                                <option value="PAM250">PAM-250</option>--%>
+<%--                                <option value="BLOSUM80" selected>BLOSUM-80</option>--%>
+<%--                                <option value="BLOSUM62">BLOSUM-62</option>--%>
+<%--                                <option value="BLOSUM45">BLOSUM-45</option>--%>
+<%--                                <option value="BLOSUM50">BLOSUM-50</option>--%>
+<%--                                <option value="BLOSUM90">BLOSUM-90</option>--%>
+<%--                            </select>--%>
+<%--                            <br>--%>
+<%--                            <b>Gap Costs:</b>--%>
 
-        <%--                    <div id="penalty_div">--%>
+<%--                            <div id="penalty_div">--%>
 
-        <%--                    </div>--%>
-        <%--                </div>--%>
-        <%--            </td>--%>
-        <%--        </tr>--%>
-        <%--        <tr>--%>
-        <%--            <td>--%>
-        <%--                Word Size:--%>
-        <%--            </td>--%>
-        <%--            <td>--%>
-        <%--                <div id="word_size_div">--%>
+<%--                            </div>--%>
+<%--                        </div>--%>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Word Size:
+                    </td>
+                    <td>
+                        <div id="word_size_div">
 
-        <%--                </div>--%>
-        <%--            </td>--%>
-        <%--        </tr>--%>
-        <%--        <tr>--%>
-        <%--            <td>--%>
-        <%--                Short Queries:--%>
-        <%--            </td>--%>
-        <%--            <td>--%>
-        <%--                <input type="checkbox" id="short_seq" onchange="toogleParams()"> Automatically adjust parameters for--%>
-        <%--                short input sequences.--%>
-        <%--            </td>--%>
-        <%--        </tr>--%>
+                        </div>
+                    </td>
+                </tr>
+<%--                <tr>--%>
+<%--                    <td>--%>
+<%--                        Short Queries:--%>
+<%--                    </td>--%>
+<%--                    <td>--%>
+<%--                        <input type="checkbox" id="short_seq" onchange="toogleParams()"> Automatically adjust parameters for--%>
+<%--                        short input sequences.--%>
+<%--                    </td>--%>
+<%--                </tr>--%>
         <tr>
             <td>
 
@@ -223,7 +224,7 @@
 
         var dbs = jQuery('#blastdb').val()
         var count = jQuery("#blastsearch").val().match(/>/g);
-        var params = "-num_threads 2 ";
+        var params = {};
 
         // if(count != null && count.length > 0){
         //     var no_of_seq = parseInt(100/count.length)
@@ -251,9 +252,11 @@
         //
         //     if (jQuery('#blast_type').val().indexOf('blastn') == 0) {
         //
-        //         var match_mismatch = jQuery("#match-mismatch").val();
+                var match_mismatch = jQuery("#match-mismatch").val();
         //         var gap = jQuery("#gap_cost").val();
-        //         params += " -reward " + match_mismatch.split(",")[0] + " -penalty " + match_mismatch.split(",")[1] + " -gapopen " + gap.split(",")[0] + " -gapextend " + gap.split(",")[1];
+                params['reward'] = parseInt(match_mismatch.split(",")[0])
+                params['penalty'] = parseInt(match_mismatch.split(",")[1])
+                    // + " -gapopen " + gap.split(",")[0] + " -gapextend " + gap.split(",")[1];
         //     }
         //     else {
         //         var matrix = jQuery("#matrix").val();
@@ -262,7 +265,7 @@
         //         params += " -matrix " + matrix + " -gapopen " + gap.split(",")[0] + " -gapextend " + gap.split(",")[1];
         //     }
         //
-        //     params += " -word_size " + jQuery("#word_size").val();
+            params['word_size'] = jQuery("#word_size").val();
         // }
 
         blastSearch(jQuery('#blastsearch').val(), dbs, type, params);
