@@ -64,17 +64,26 @@ public class BlastGrassroot {
     public JSONObject getParams(HttpSession session, JSONObject json) throws IOException {
 
         JSONObject query = new JSONObject();
-
+        String type = json.getString("type");
         JSONObject response = new JSONObject();
-        JSONObject operation = new JSONObject();
         JSONArray services = new JSONArray();
         JSONObject service = new JSONObject();
 
-        operation.put("operation", "get_named_service");
         service.put("so:alternateName","blast-blastn");
+        service.put("refresh_service",true);
+
+        JSONObject parameter_set =  new JSONObject();
+        parameter_set.put("level", "advanced");
+        JSONArray parameters = new JSONArray();
+        JSONObject parameter = new JSONObject();
+        parameter.put("param", "task");
+        parameter.put("current_value", type);
+        parameters.add(parameter);
+        parameter_set.put("parameters", parameters);
+        service.put("parameter_set", parameter_set);
+
         services.add(service);
 
-        query.put("operations", operation);
         query.put("services", services);
         response.put("query", query);
 
@@ -111,12 +120,12 @@ public class BlastGrassroot {
 
         JSONArray groups = result_obj.getJSONArray("services").getJSONObject(0).getJSONObject("operation").getJSONObject("parameter_set").getJSONArray("groups");
 
-        JSONArray parameters = result_obj.getJSONArray("services").getJSONObject(0).getJSONObject("operation").getJSONObject("parameter_set").getJSONArray("parameters");
+        JSONArray new_parameters = result_obj.getJSONArray("services").getJSONObject(0).getJSONObject("operation").getJSONObject("parameter_set").getJSONArray("parameters");
 
-        response.put("parameters", parameters);
+        response.put("parameters", new_parameters);
         JSONObject params = new JSONObject();
-        for (int i=0; i< parameters.size(); i++){
-            JSONObject param = parameters.getJSONObject(i);
+        for (int i=0; i< new_parameters.size(); i++){
+            JSONObject param = new_parameters.getJSONObject(i);
             String key = param.getString("group");
             if(params.containsKey(key)){
                 params.getJSONArray(key).addAll(Collections.singleton(param));

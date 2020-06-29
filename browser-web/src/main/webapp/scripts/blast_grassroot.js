@@ -31,13 +31,14 @@
  */
 
 
-function getParams(){
+function getParams(type){
     ajaxurl = '/' + jQuery('#title').text() + '/' + jQuery('#title').text() + '/fluxion.ajax';
     Fluxion.doAjax(
         'blastGrassroot',
         'getParams',
         {
-            'url': ajaxurl
+            'url': ajaxurl,
+            'type': type
         },
         {
             'doOnSuccess': function (json) {
