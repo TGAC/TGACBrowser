@@ -53,12 +53,89 @@ public class BlastGrassroot {
 
     private Logger log = LoggerFactory.getLogger(getClass());
 
+    /**
+     * Method to get Params from Grassroot backend
+     * At the moment not in use
+     * @param session
+     * @param json
+     * @return
+     * @throws IOException
+     */
+    public JSONObject getParams(HttpSession session, JSONObject json) throws IOException {
+
+        JSONObject query = new JSONObject();
+
+        JSONObject response = new JSONObject();
+        JSONObject operation = new JSONObject();
+        JSONArray services = new JSONArray();
+        JSONObject service = new JSONObject();
+
+        operation.put("operation", "get_named_service");
+        service.put("so:alternateName","blast-blastn");
+        services.add(service);
+
+        query.put("operations", operation);
+        query.put("services", services);
+        response.put("query", query);
+
+        String urlParameters = query.toString();
+
+        URL url = new URL("https://grassroots.tools/dev/public_backend");
+
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setDoOutput(true);
+        connection.setDoInput(true);
+        connection.setInstanceFollowRedirects(false);
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        connection.setRequestProperty("charset", "utf-8");
+        connection.setRequestProperty("Content-Length", "" + Integer.toString(urlParameters.getBytes().length));
+        connection.setUseCaches(false);
+        DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+        wr.writeBytes(urlParameters);
+        wr.flush();
+        wr.close();
+        BufferedReader input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+        String result = "";
+        String str;
+
+        while (null != (str = input.readLine())) {
+            result += str;
+        }
+        input.close();
+        connection.disconnect();
+        response.put("response", result);
+
+        JSONObject result_obj = response.getJSONObject("response");
+
+        JSONArray groups = result_obj.getJSONArray("services").getJSONObject(0).getJSONObject("operation").getJSONObject("parameter_set").getJSONArray("groups");
+
+        JSONArray parameters = result_obj.getJSONArray("services").getJSONObject(0).getJSONObject("operation").getJSONObject("parameter_set").getJSONArray("parameters");
+
+        response.put("parameters", parameters);
+        JSONObject params = new JSONObject();
+        for (int i=0; i< parameters.size(); i++){
+            JSONObject param = parameters.getJSONObject(i);
+            String key = param.getString("group");
+            if(params.containsKey(key)){
+                params.getJSONArray(key).addAll(Collections.singleton(param));
+            }else{
+                params.put(key,Collections.singleton(param));
+            }
+        }
+
+        response.put("groups", groups);
+        response.put("params", params);
+
+        return response;
+    }
 
     /**
      * Return JSONObject
      * <p>
-     * Generate url for NCBI BLAST submission and
-     * make a HTTPCOnnection to submit a job to NCBI BLAST
+     * Generate url for Grassroot BLAST submission and
+     * make a HTTPCOnnection to submit a job to Grassroot BLAST
      * </p>
      *
      * @param session an HTTPSession comes from ajax call
@@ -216,7 +293,7 @@ public class BlastGrassroot {
     /**
      * Return JSONObject
      * <p>
-     * call connectNCBI to check BLAST is finished or running
+     * call connectGrassRoot to check BLAST is finished or running
      * if finished call method parseNCBI
      * </p>
      *
@@ -260,7 +337,7 @@ public class BlastGrassroot {
     /**
      * Return String
      * <p>
-     * Connect to NCBI for BLAST result and decide from RegEx that BLAST finished or running
+     * Connect to Grassroot for BLAST result and decide from RegEx that BLAST finished or running
      * </p>
      *
      * @param urlParameters String urlParameters for NCBI connection
