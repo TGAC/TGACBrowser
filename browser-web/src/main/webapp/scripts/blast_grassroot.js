@@ -31,7 +31,7 @@
  */
 
 
-function getParams(type){
+function getParams(type) {
     ajaxurl = '/' + jQuery('#title').text() + '/' + jQuery('#title').text() + '/fluxion.ajax';
     Fluxion.doAjax(
         'blastGrassroot',
@@ -49,7 +49,6 @@ function getParams(type){
             }
         });
 }
-
 
 
 function blastSearch(query, db, type, params) {
@@ -108,8 +107,27 @@ function grassrootBLASTResult(BlastAccession, id) {
                         grassrootBLASTResult(BlastAccession, id)
                     }, 5000);
                 } else {
-                    alert("else")
-                    jQuery("#" + json.BlastAccession).html("<b>BLAST job " + json.BlastAccession + "</b><br> Failed. <span onclick=deleteTable('" + json.BlastAccession + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
+                    var msg = json.response[0]["errors"]["runtime_errors"]["errors"][0];
+
+                    jQuery("#" + json.BlastAccession).html("<b>BLAST job " + json.BlastAccession + "</b><br> Failed")
+
+                    var errmsg = document.createElement('span');
+                    errmsg.className = "ui-button ui-icon ui-icon-info";
+                    errmsg.onclick = (function () {
+                        return function () {
+                            alert(msg);
+                        }
+                    })();
+                    jQuery("#" + json.BlastAccession).append(errmsg)
+
+                    var delEntry = document.createElement('span');
+                    delEntry.className = "ui-button ui-icon ui-icon-trash";
+                    delEntry.onclick = (function () {
+                        return function () {
+                            deleteTable(json.BlastAccession)
+                        }
+                    })();
+                    jQuery("#" + json.BlastAccession).append(delEntry)
                 }
             },
             'doOnError': function (json) {
@@ -251,7 +269,7 @@ function parseGrassRootBLASTTrack(result, id, start) {
             each_track['score'] = row[11];
             blast.push(each_track);
         }
-        if(blast.length > 20){
+        if (blast.length > 20) {
             break;
         }
     }
