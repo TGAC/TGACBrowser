@@ -93,20 +93,23 @@
                                         <option value="1,-1">1, -1</option>
                                     </select></td>
                                 </tr>
-<%--                                <tr>--%>
-<%--                                    <td> Gap Costs</td>--%>
-<%--                                    <td>--%>
-<%--                                        <select name="gap_cost" id="gap_cost">--%>
-<%--                                            <option value="5,2">Existence: 5 Extension: 2</option>--%>
-<%--                                            <option value="2,2">Existence: 2 Extension: 2</option>--%>
-<%--                                            <option value="1,2">Existence: 1 Extension: 2</option>--%>
-<%--                                            <option value="0,2">Existence: 0 Extension: 2</option>--%>
-<%--                                            <option value="3,1">Existence: 3 Extension: 1</option>--%>
-<%--                                            <option value="2,1">Existence: 2 Extension: 1</option>--%>
-<%--                                            <option value="1,1">Existence: 1 Extension: 1</option>--%>
-<%--                                        </select>--%>
-<%--                                    </td>--%>
-<%--                                </tr>--%>
+                                <tr>
+                                    <td> Gap Costs</td>
+                                    <td>
+                                        <div id="penalty_div">
+                                            <select name="penalty" id="gap_cost">
+                                                <option value="5,2">Existence: 5 Extension: 2</option>
+                                                <option value="2,2">Existence: 2 Extension: 2</option>
+                                                <option value="1,2">Existence: 1 Extension: 2</option>
+                                                <option value="0,2">Existence: 0 Extension: 2</option>
+                                                <option value="3,1">Existence: 3 Extension: 1</option>
+                                                <option value="2,1">Existence: 2 Extension: 1</option>
+                                                <option value="1,1">Existence: 1 Extension: 1</option>
+                                            </select>
+                                        </div>
+
+                                    </td>
+                                </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -260,12 +263,14 @@
         //     }
         //     else {
         //         var matrix = jQuery("#matrix").val();
-        //         var gap = jQuery("#penalty").val();
+                var gap = jQuery("#penalty").val();
         //
         //         params += " -matrix " + matrix + " -gapopen " + gap.split(",")[0] + " -gapextend " + gap.split(",")[1];
         //     }
         //
             params['word_size'] = jQuery("#word_size").val();
+        params['gapopen'] = parseInt(gap.split(",")[0]);
+        params['gapextend'] = parseInt(gap.split(",")[1]);
         // }
 
         blastSearch(jQuery('#blastsearch').val(), dbs, type, params);

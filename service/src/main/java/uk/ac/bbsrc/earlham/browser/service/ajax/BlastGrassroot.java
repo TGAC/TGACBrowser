@@ -216,6 +216,16 @@ public class BlastGrassroot {
 
             parameters.add(param);
             param = new JSONObject();
+            param.put("param", "gapopen");
+            param.put("current_value", in_params.getInt("gapopen"));
+
+            parameters.add(param);
+            param = new JSONObject();
+            param.put("param", "gapextend");
+            param.put("current_value", in_params.getInt("gapextend"));
+
+            parameters.add(param);
+            param = new JSONObject();
             param.put("param", "task");
             param.put("current_value", type);
 

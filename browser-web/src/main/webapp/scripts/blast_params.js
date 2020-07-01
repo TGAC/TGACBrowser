@@ -60,6 +60,9 @@ function setBLASTPenalty(){
     var blosum50 = [[13,3],[12,3],[11,3],[10,3],[9,3],[16,2],[15,2],[14,2],[13,2],[12,2],[19,1],[18,1],[17,1],[16,1],[15,1]];
     var blosum90 = [[9,2],[8,2],[7,2],[6,2],[11,1],[10,1],[9,1]];
 
+    var blastn = [[5,2],[4,4],[2,4],[0,4],[3,3],[6,2],[4,2],[2,2]];
+    var megablast = [[0,0],[5,2],[2,2],[1,2],[0,2],[3,1],[2,1],[1,1]];
+
     if (jQuery('#matrix').val()){
         if (jQuery('#matrix').val() == "PAM30") {
             gen_penalties(pam30)
@@ -81,6 +84,13 @@ function setBLASTPenalty(){
         }
         else  {
             alert("else")
+        }
+    }else{
+        if (jQuery('#blast_type').val().indexOf('blastn') == 0 || jQuery('#blast_type').val().indexOf('dc-megablast') == 0) {
+            gen_penalties(blastn)
+        }
+        else if (jQuery('#blast_type').val().indexOf('megablast') >= 0) {
+            gen_penalties(megablast)
         }
     }
 }
