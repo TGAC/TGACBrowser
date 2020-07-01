@@ -477,7 +477,7 @@ function blastToogle() {
 }
 
 function resetBLAST() {
-    jQuery('#blasttextsearch').html("");
+    jQuery('#blastsearch').val("");
     //jQuery('#blastresult').fadeOut();
 }
 
