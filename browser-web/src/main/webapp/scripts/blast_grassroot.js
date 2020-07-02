@@ -143,7 +143,7 @@ function grassrootBLASTResult(BlastAccession, id) {
 function parseGrassRootBLAST(result, id) {
     var hits = result.split("\n")
 
-    if(hits.length() > 1){
+    if(hits.length > 1){
         jQuery('#blastresult').fadeIn();
         jQuery('#blastresult').append("<table style=\"display: none;\" class='list' id='blasttable" + id + "'> <thead></thead><tbody></tbody></table>")
         //      "<tr><th> Query id </th> <th> Subject id </th>  <th> alignment length </th>  <th> mismatches </th>  <th> gap openings </th>  <th> q.start </th>  <th> q.end </th>  <th> s.start </th>  <th> s.end </th> <th> e-value </th> <th> bit score </th> <th> Subject db </th><th> Download Sequence </th>        </tr>        </thead>        <tbody>        </tbody>    </table>")
