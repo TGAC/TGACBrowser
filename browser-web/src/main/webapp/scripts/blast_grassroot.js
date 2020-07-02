@@ -100,7 +100,11 @@ function grassrootBLASTResult(BlastAccession, id) {
                     jQuery("#" + json.BlastAccession).html("BLAST job " + json.BlastAccession + " <span title=\"Finished\" class=\"ui-button ui-icon ui-icon-check\"></span> <br>  <span onclick=toogleTable('" + json.BlastAccession + "') class=\"ui-button ui-icon ui-icon-zoomin\" > </span> <span onclick=deleteTable('" + json.BlastAccession + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
                     jQuery('#main').animate({"height": "0px"}, {duration: 300, queue: false});
                     jQuery('#main').fadeOut();
-                    parseGrassRootBLAST(json.response[0]["results"][0]["data"], json.BlastAccession);
+                    if(json.response[0]["results"][0]["data"].indexOf("0 hits found") > 0){
+                        jQuery("#" + json.BlastAccession).html("<b>BLAST job " + json.BlastAccession + "</b><br> No hits found. <span style=\"float: right; position: relative;\" onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
+                    }else{
+                        parseGrassRootBLAST(json.response[0]["results"][0]["data"], json.BlastAccession);
+                    }
                 } else if (json.response[0]["status_text"] == "Started" || json.response[0]["status_text"] == "Pending") {
 
                     setTimeout(function () {
@@ -138,35 +142,35 @@ function grassrootBLASTResult(BlastAccession, id) {
 
 function parseGrassRootBLAST(result, id) {
     var hits = result.split("\n")
-    jQuery('#blastresult').fadeIn();
-    jQuery('#blastresult').append("<table style=\"display: none;\" class='list' id='blasttable" + id + "'> <thead></thead><tbody></tbody></table>")
-    //      "<tr><th> Query id </th> <th> Subject id </th>  <th> alignment length </th>  <th> mismatches </th>  <th> gap openings </th>  <th> q.start </th>  <th> q.end </th>  <th> s.start </th>  <th> s.end </th> <th> e-value </th> <th> bit score </th> <th> Subject db </th><th> Download Sequence </th>        </tr>        </thead>        <tbody>        </tbody>    </table>")
 
-    for (var i = 0; i < hits.length; i++) {
-        if (hits[i].indexOf("#") == 0) {
-            if (hits[i].indexOf("Fields") > 0) {
-                var row = hits[i].replace("# Fields: ", "");
-                jQuery("#blasttable" + id + " thead").append("<tr><th>" + row.replaceAll(",", "<th>"))
+    if(hits.length() > 1){
+        jQuery('#blastresult').fadeIn();
+        jQuery('#blastresult').append("<table style=\"display: none;\" class='list' id='blasttable" + id + "'> <thead></thead><tbody></tbody></table>")
+        //      "<tr><th> Query id </th> <th> Subject id </th>  <th> alignment length </th>  <th> mismatches </th>  <th> gap openings </th>  <th> q.start </th>  <th> q.end </th>  <th> s.start </th>  <th> s.end </th> <th> e-value </th> <th> bit score </th> <th> Subject db </th><th> Download Sequence </th>        </tr>        </thead>        <tbody>        </tbody>    </table>")
+
+        for (var i = 0; i < hits.length; i++) {
+            if (hits[i].indexOf("#") == 0) {
+                if (hits[i].indexOf("Fields") > 0) {
+                    var row = hits[i].replace("# Fields: ", "");
+                    jQuery("#blasttable" + id + " thead").append("<tr><th>" + row.replaceAll(",", "<th>"))
+                }
+            } else {
+                var cols = hits[i].split("\t");
+                var col_html = "<tr>"
+                for (var col = 0; col < cols.length; col++) {
+                    if (col == 1) {
+                        col_html += "<td><a href='../tgac_browser/index.jsp?query=" + cols[col] + "&&from=" + cols[8] + "&&to=" + cols[9] + "'>" + cols[col] + "</a></td>";
+                    } else {
+                        col_html += "<td>" + cols[col] + "</td>";
+                    }
+                }
+                jQuery("#blasttable" + id + " tbody").append(col_html)
             }
-        } else {
-            jQuery("#blasttable" + id + " tbody").append("<tr><td>" + hits[i].replaceAll("\t", "<td>"))
-            /*var hit_seq = hits[i]["hsps"][0]["hit_sequence"]
-            var q_seq = hits[i]["hsps"][0]["query_sequence"]
-            jQuery("#blasttable" + id + " tbody").append("<tr>" +
-                "<td>" + result["query_id"] + "</td>" +
-                "<td>" + hits[i]["scaffolds"][0]["scaffold"] + "</td><td>-</td>" +
-                "<td>" + hits[i]["hsps"][0]["hit_sequence"].length + "</td>" +
-                "<td>" + hits[i]["hsps"][0]["polymorphisms"].length + "</td>" +
-                "<td>" + hits[i]["hsps"][0]["query_location"]["faldo:begin"]["faldo:position"] + "</td>" +
-                "<td>" + hits[i]["hsps"][0]["query_location"]["faldo:end"]["faldo:position"] + "</td>" +
-                "<td>" + hits[i]["hsps"][0]["hit_location"]["faldo:begin"]["faldo:position"] + "</td>" +
-                "<td>" + hits[i]["hsps"][0]["hit_location"]["faldo:end"]["faldo:position"] + "</td>" +
-                "<td>" + hits[i]["hsps"][0].evalue + "</td><td>" + hits[i]["hsps"][0].bit_score + "</td>" +
-                "<td>" + result["database"]["database_name"] + "</td>" +
-                "<td><div class=\"ui-widget ui-state-default ui-corner-all ui-button ui-icon ui-icon-arrow-1-s\" id=\"openmenu\" data-toggle=\"modal\" data-target=\"#controlModal\" onclick=\"sub_seq('" + hit_seq + "','" + q_seq + "')\" title=\"More Option\"> </div></td>" +
-                "</tr>");*/
         }
+    } else {
+        jQuery("#" + id).html("<b>BLAST job " + json.id + "</b><br> No hits found. <span style=\"float: right; position: relative;\" onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
     }
+
     jQuery("#blasttable" + json.id).tablesorter();
     jQuery("'#blasttable" + json.id + "'").trigger("update");
 }
