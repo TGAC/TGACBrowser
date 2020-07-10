@@ -141,9 +141,9 @@ function track_div_html(trackname) {
 
     function checkGene(name) {
         if (name.toLowerCase().indexOf('gene') >= 0 || name.toLowerCase().indexOf("gff") >= 0) {
-            return "<td><div title='Expand/Shrink' class=\"closehandle ui-icon ui-icon-carat-2-n-s\" onclick=toogleTrackView(\"" + name + "\");> </div></td>"
+            return "<td><div title='Expand/Shrink' class=\"closehandle ui-icon ui-icon-carat-2-n-s\" onclick=toogleTrackView(\"" + name + "\");> </div></td>";
         } else {
-            return "";
+            return "<td><div class=\"ui-icon ui-icon-extlink\" onclick=exportTrack(\"" + name + "\");> </div></td>";
         }
     }
 
