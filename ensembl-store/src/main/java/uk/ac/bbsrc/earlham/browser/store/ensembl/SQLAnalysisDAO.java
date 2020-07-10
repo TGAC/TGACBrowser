@@ -37,7 +37,9 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import uk.ac.bbsrc.earlham.browser.core.store.AnalysisStore;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -87,6 +89,7 @@ public class SQLAnalysisDAO implements AnalysisStore {
     private JdbcTemplate template;
 
     static final String[] ALLOWED_DATATYPES = {"BAM", "bam", "gff3"};
+    static final String[] ALLOWED_CONFTYPES = {"txt", "cfg", "conf", "tsv"};
 
     public void setJdbcTemplate(JdbcTemplate template) {
         this.template = template;
@@ -230,7 +233,7 @@ public class SQLAnalysisDAO implements AnalysisStore {
                 annotationid.put("name", "misc_feature");
                 annotationid.put("id", "ms1");
                 annotationid.put("desc", "Miscellaneous Features");
-                annotationid.put("disp", 0);
+                annotationid.put("disp", 1);
                 annotationid.put("display_label", "Misc Feature");
                 annotationid.put("merge", "0");
                 annotationid.put("label", "0");
@@ -321,6 +324,29 @@ public class SQLAnalysisDAO implements AnalysisStore {
 
         paths = f.list();
 
+        JSONObject lines_info = new JSONObject();
+
+        Boolean rename = false;
+
+        for (String path : paths) {
+
+            String ext = FilenameUtils.getExtension(path);
+            // Reads mapping file with allowed config extension where first column is display label and last column is file name separated by tab
+            if (contains(ALLOWED_CONFTYPES, ext)) {
+
+                BufferedReader br = new BufferedReader(new FileReader(dir+"/"+path));
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String[] line_name = line.split("\t");
+
+                    lines_info.put(line_name[line_name.length-1],line_name[0]);
+                }
+                br.close();
+
+                rename = true;
+
+            }
+        }
         for (String path : paths) {
 
             JSONObject annotation = new JSONObject();
@@ -344,12 +370,18 @@ public class SQLAnalysisDAO implements AnalysisStore {
                 web.put("source", "file");
                 web.put("trackgroup", ext);
                 annotation.put("web", web);
-                annotationlist.add(annotation);
+                if(rename && !lines_info.getString(name+"."+ext).equals("-"))
+                {
+                    annotation.put("display_label", lines_info.getString(name+"."+ext));
+                    annotationlist.add(annotation);
+
+                }else if(rename == false){
+                    annotationlist.add(annotation);
+                }
 //                break;
             }
 
         }
-
         return annotationlist;
     }
 }
