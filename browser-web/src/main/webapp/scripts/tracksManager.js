@@ -161,7 +161,7 @@ function trackListfromFiles(tracklist) {
     var track_html = "Genomic annotations from files: <br> <select class=\"js-example-basic-multiple\" id=\"track_files\" name=\"sam_files\" multiple='multiple' style=\"width: 75%\">"
 
     for (var i = 0; i < Tracklist.length; i++) {
-        track_html += "<option value='" + Tracklist[i].name + "'>" + Tracklist[i].name + "</option>"
+        track_html += "<option value='" + Tracklist[i].name + "'>" + Tracklist[i].display_label + "</option>"
     }
     track_html += "</select>"
 
@@ -178,7 +178,7 @@ function trackListfromFiles(tracklist) {
         if (r == false) {
             e.preventDefault();
         } else {
-            var item = e["params"]["args"]["data"]["text"]
+            var item = e["params"]["args"]["data"]["text"]["element"]["value"]
             jQuery("#" + item + "_wrapper").fadeOut();
             window[item] = []
             return true;
@@ -186,7 +186,8 @@ function trackListfromFiles(tracklist) {
     })
     jQuery('.js-example-basic-multiple').on('select2:select', function (evt) {
         var args = JSON.stringify(evt.params, function (key, value) {
-            var item = evt["params"]["data"]["text"]
+            var item = evt["params"]["data"]["element"]["value"]
+            //             var item = evt["params"]["data"]["text"]
             tracks_div(item)
             tracks_css(item);
             loadTrackAjax(window['track_list' + item].id, item);
