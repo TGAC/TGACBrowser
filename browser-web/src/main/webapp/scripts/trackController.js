@@ -254,6 +254,10 @@ function dispBLAST(div, track) {
                     track_html = track_html.replace(/tracks_image/g, 'merged_tracks_image')
                 }
                 jQuery(div).html(track_html);
+                jQuery(div).html(track_html);
+                var max = parseInt(jQuery(div)[0].scrollHeight) + 50;
+
+            jQuery("#" + track + "_wrapper").css("max-height", max);
         }
         else {
             alert(track + " not Found");
