@@ -100,9 +100,9 @@ function grassrootBLASTResult(BlastAccession, id) {
                     jQuery("#" + json.BlastAccession).html("BLAST job " + json.BlastAccession + " <span title=\"Finished\" class=\"ui-button ui-icon ui-icon-check\"></span> <br>  <span onclick=toogleTable('" + json.BlastAccession + "') class=\"ui-button ui-icon ui-icon-zoomin\" > </span> <span onclick=deleteTable('" + json.BlastAccession + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
                     jQuery('#main').animate({"height": "0px"}, {duration: 300, queue: false});
                     jQuery('#main').fadeOut();
-                    if(json.response[0]["results"][0]["data"].indexOf("0 hits found") > 0){
+                    if (json.response[0]["results"][0]["data"].indexOf("0 hits found") > 0) {
                         jQuery("#" + json.BlastAccession).html("<b>BLAST job " + json.BlastAccession + "</b><br> No hits found. <span style=\"float: right; position: relative;\" onclick=deleteTable('" + json.id + "') class=\"ui-button ui-icon ui-icon-trash\" > </span> ")
-                    }else{
+                    } else {
                         parseGrassRootBLAST(json.response[0]["results"][0]["data"], json.BlastAccession);
                     }
                 } else if (json.response[0]["status_text"] == "Started" || json.response[0]["status_text"] == "Pending") {
@@ -143,7 +143,7 @@ function grassrootBLASTResult(BlastAccession, id) {
 function parseGrassRootBLAST(result, id) {
     var hits = result.split("\n")
 
-    if(hits.length > 1){
+    if (hits.length > 1) {
         jQuery('#blastresult').fadeIn();
         jQuery('#blastresult').append("<table style=\"display: none;\" class='list' id='blasttable" + id + "'> <thead></thead><tbody></tbody></table>")
         //      "<tr><th> Query id </th> <th> Subject id </th>  <th> alignment length </th>  <th> mismatches </th>  <th> gap openings </th>  <th> q.start </th>  <th> q.end </th>  <th> s.start </th>  <th> s.end </th> <th> e-value </th> <th> bit score </th> <th> Subject db </th><th> Download Sequence </th>        </tr>        </thead>        <tbody>        </tbody>    </table>")
@@ -199,7 +199,8 @@ function blastTrackSearch(query, start, end) {
             'type': 'blastn',
             'location': link,
             'BlastAccession': id,
-            'format': format
+            'format': format,
+            'custom_outfmt': 'qseqid sseqid qstart qend sstart send bitscore qseq sseq btop'
         },
         {
             'doOnSuccess': function (json) {
@@ -255,11 +256,11 @@ function grassrootBLASTResultTrack(BlastAccession, id, start) {
         });
 }
 
+
 function parseGrassRootBLASTTrack(result, id, start) {
     var hits = result.split("\n")
     var blast = [];
     for (var i = 0; i < hits.length; i++) {
-        console.log(hits[i])
         if (hits[i].indexOf("#") == 0) {
             if (hits[i].indexOf("Fields") > 0) {
                 var row = hits[i].replace("# Fields: ", "");
@@ -267,17 +268,66 @@ function parseGrassRootBLASTTrack(result, id, start) {
         } else {
             var row = hits[i].split("\t");
             var each_track = {};
-            each_track['start'] = parseInt(start) + parseInt(row[6]);
-            each_track['end'] = parseInt(start) + parseInt(row[7]);
-            each_track['desc'] = row[1] + ":" + row[8] + "-" + row[9];
-            each_track['score'] = row[11];
+            each_track['start'] = parseInt(start) + parseInt(row[2]);
+            each_track['end'] = parseInt(start) + parseInt(row[3]);
+            each_track['desc'] = row[1] + ":" + row[4] + "-" + row[5];
+            each_track['score'] = row[6];
+            each_track['indels'] = []
+            row[9] = row[9].replace(/(\d+)/g, " $1 ");
+            row[9] = row[9].replace(" ", "")
+            row[9] = row[9].substring(0, row[9].length - 1);
+            var btop_array = row[9].split(" ");
+
+            var indels = []
+            var pos = 0;
+            var reg = /^\d+$/;
+            for (var j = 0; j < btop_array.length; j++) {
+                var indel = {}
+                if (reg.test(btop_array[j])) {
+                    pos = Number(pos) + Number(btop_array[j])
+                } else {
+                    if (btop_array[j].length == 2) {
+                        pos = Number(pos) + Number(btop_array[j].length / 2)
+                        var from = pos - 4;
+                        indel['position'] = pos
+                        indel['query'] = row[7].substr(from, 7)
+                        indel['hit'] = row[8].substr(from, 7)
+                        indels.push(indel)
+                    } else {
+                        var spos = pos;
+                        for (var k = 0; k < btop_array[j].length; k++) {
+                            if (k % 2 == 0) {
+                                //query
+                                if (btop_array[j].substr(k, 1) == "-") {
+                                } else {
+                                    pos = Number(pos) + 1;
+                                }
+                            } else {
+                                //subk=ject
+                                if (btop_array[j].substr(k, 1) == "-") {
+                                } else {
+                                    spos = Number(spos) + 1;
+                                }
+                            }
+                        }
+
+                        indel['position'] = pos
+                        var from = pos - 4;
+                        var sfrom = spos - 4;
+                        indel['query'] = row[7].substr(from, Number(btop_array[j].length) + Number(3))
+                        indel['hit'] = row[8].substr(sfrom, Number(btop_array[j].length) + Number(3))
+                        indels.push(indel)
+                    }
+                    each_track['indels'] = indels
+                }
+            }
             blast.push(each_track);
-        }
-        if (blast.length > 20) {
-            break;
+            if (blast.length > 20) {
+                break;
+            }
+
         }
     }
-
     if (!window['blasttrack']) {
         window['blasttrack'] = "running";
     }
@@ -288,8 +338,4 @@ function parseGrassRootBLASTTrack(result, id, start) {
     }
     jQuery('input[name=blasttrackCheckbox]').attr('checked', true);
     trackToggle("blasttrack");
-
-
-    jQuery("#blasttable" + json.id).tablesorter();
-    jQuery("'#blasttable" + json.id + "'").trigger("update");
 }

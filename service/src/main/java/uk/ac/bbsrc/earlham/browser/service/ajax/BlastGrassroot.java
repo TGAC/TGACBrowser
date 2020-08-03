@@ -56,6 +56,7 @@ public class BlastGrassroot {
     /**
      * Method to get Params from Grassroot backend
      * At the moment not in use
+     *
      * @param session
      * @param json
      * @return
@@ -69,10 +70,10 @@ public class BlastGrassroot {
         JSONArray services = new JSONArray();
         JSONObject service = new JSONObject();
 
-        service.put("so:alternateName","blast-blastn");
-        service.put("refresh_service",true);
+        service.put("so:alternateName", "blast-blastn");
+        service.put("refresh_service", true);
 
-        JSONObject parameter_set =  new JSONObject();
+        JSONObject parameter_set = new JSONObject();
         parameter_set.put("level", "advanced");
         JSONArray parameters = new JSONArray();
         JSONObject parameter = new JSONObject();
@@ -124,13 +125,13 @@ public class BlastGrassroot {
 
         response.put("parameters", new_parameters);
         JSONObject params = new JSONObject();
-        for (int i=0; i< new_parameters.size(); i++){
+        for (int i = 0; i < new_parameters.size(); i++) {
             JSONObject param = new_parameters.getJSONObject(i);
             String key = param.getString("group");
-            if(params.containsKey(key)){
+            if (params.containsKey(key)) {
                 params.getJSONArray(key).addAll(Collections.singleton(param));
-            }else{
-                params.put(key,Collections.singleton(param));
+            } else {
+                params.put(key, Collections.singleton(param));
             }
         }
 
@@ -176,76 +177,88 @@ public class BlastGrassroot {
 
             param.put("param", "job_id");
             param.put("current_value", null);
-
             parameters.add(param);
+
             param = new JSONObject();
             param.put("param", "query");
             param.put("current_value", query);
-
-
             parameters.add(param);
-            param = new JSONObject();
-            param.put("param", "subrange_from");
-            param.put("current_value", null);
 
-            parameters.add(param);
-            param = new JSONObject();
+//            param = new JSONObject();
+//            param.put("param", "subrange_from");
+//            param.put("current_value", null);
+//            parameters.add(param);
+
+            /*param = new JSONObject();
             param.put("param", "subrange_to");
             param.put("current_value", null);
-
-            parameters.add(param);
+            parameters.add(param);*/
 
             param = new JSONObject();
             param.put("param", "max_target_seqs");
             param.put("current_value", 5);
-
             parameters.add(param);
+
             param = new JSONObject();
             param.put("param", "evalue");
             param.put("current_value", 10);
-
             parameters.add(param);
+
             param = new JSONObject();
             param.put("param", "outfmt");
             param.put("current_value", format);
-
             parameters.add(param);
-            param = new JSONObject();
-            param.put("param", "word_size");
-            param.put("current_value", in_params.getInt("word_size"));
 
-            parameters.add(param);
-            param = new JSONObject();
-            param.put("param", "gapopen");
-            param.put("current_value", in_params.getInt("gapopen"));
-
-            parameters.add(param);
-            param = new JSONObject();
-            param.put("param", "gapextend");
-            param.put("current_value", in_params.getInt("gapextend"));
-
-            parameters.add(param);
             param = new JSONObject();
             param.put("param", "task");
             param.put("current_value", type);
-
             parameters.add(param);
-            param = new JSONObject();
-            param.put("param", "reward");
-            param.put("current_value", in_params.getInt("reward"));
 
-            parameters.add(param);
-            param = new JSONObject();
-            param.put("param", "penalty");
-            param.put("current_value", in_params.getInt("penalty"));
 
-            parameters.add(param);
+            if (in_params.containsKey("word_size")) {
+                param = new JSONObject();
+                param.put("param", "word_size");
+                param.put("current_value", in_params.getInt("word_size"));
+                parameters.add(param);
+            }
+            if (in_params.containsKey("gapopen")) {
+                param = new JSONObject();
+                param.put("param", "gapopen");
+                param.put("current_value", in_params.getInt("gapopen"));
+                parameters.add(param);
+            }
+
+            if (json.containsKey("custom_outfmt")) {
+                param = new JSONObject();
+                param.put("param", "custom_outfmt");
+                param.put("current_value", json.getString("custom_outfmt"));
+                parameters.add(param);
+            }
+
+
+            if (in_params.containsKey("gapextend")) {
+                param = new JSONObject();
+                param.put("param", "gapextend");
+                param.put("current_value", in_params.getInt("gapextend"));
+                parameters.add(param);
+            }
+
+            if (in_params.containsKey("reward")) {
+                param = new JSONObject();
+                param.put("param", "reward");
+                param.put("current_value", in_params.getInt("reward"));
+                parameters.add(param);
+            }
+            if (in_params.containsKey("penalty")) {
+                param = new JSONObject();
+                param.put("param", "penalty");
+                param.put("current_value", in_params.getInt("penalty"));
+                parameters.add(param);
+            }
 
             param = new JSONObject();
             param.put("param", "Available Databases provided by EI Grassroots development server -> IWGSC v1.0");
-
             param.put("current_value", true);
-
             parameters.add(param);
 
             parameter_set.put("level", "simple");
@@ -366,7 +379,7 @@ public class BlastGrassroot {
 
         try {
 
-            log.info("\n\n\n\n\t connectNCBI "+ urlParameters);
+            log.info("\n\n\n\n\t connectNCBI " + urlParameters);
             URL url = new URL("https://grassroots.tools/dev/public_backend");
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
