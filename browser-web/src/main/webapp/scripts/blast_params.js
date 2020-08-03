@@ -171,8 +171,15 @@ function setBLASTTrack(){
         "</tr>" +
         "</table>" +
         "</div>" +
-        "<div id='blasttrack_div' class='feature_tracks' style=\"display:block; top:10px; overflow-y: auto; overflow-x: hidden\" > </div>"
+        "<div id='blasttrack_div' class='feature_tracks' style=\"display:block; top:0px; overflow-y: auto; overflow-x: hidden\" > </div>"
     );
+
+    jQuery("#blasttrack_wrapper").resizable({
+        handles: "s",
+        alsoResize: "#mergedtrack",
+        minHeight: "50px",
+        borderBottom: '1px solid black'
+    });
 
     jQuery("#blasttrack_div").html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
 
