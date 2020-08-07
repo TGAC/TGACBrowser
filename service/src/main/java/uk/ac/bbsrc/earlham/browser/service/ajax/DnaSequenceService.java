@@ -80,6 +80,14 @@ public class DnaSequenceService {
         this.dafStore = dafStore;
     }
 
+
+    @Autowired
+    private SimpleFeatureStore sfStore;
+
+    public void setSimpleFeatureStore(SimpleFeatureStore sfStore) {
+        this.sfStore = sfStore;
+    }
+
     @Autowired
     private AssemblyStore assemblyStore;
 
@@ -469,7 +477,25 @@ public class DnaSequenceService {
                     response.put("graphtype", "bar");
                     response.put(trackName, geneStore.getGeneGraph(queryid, trackId, start, end));
                 }
-            } else {
+            } else if (analysisStore.presentInSimpleFeature(trackId.toString())) {
+                log.info("\n\n\n loading simple feature");
+                count = sfStore.countHit(queryid, trackId, start, end);
+                if (count == 0) {
+                    count = sfStore.countHit(queryid, trackId, 0, sequenceStore.getSeqLengthbyId(queryid, coord));
+                    if (count == 0) {
+                        response.put(trackName, "getHit no result found");
+                    } else {
+                        response.put(trackName, new JSONArray());
+                    }
+                } else if (count < 1000) {
+                    response.put(trackName, sfStore.processHit(sfStore.getHit(queryid, trackId, start, end), start, end, delta, queryid, trackId));
+                } else {
+                    response.put("type", "graph");
+                    response.put("graphtype", "bar");
+                    response.put(trackName, sfStore.getHitGraph(queryid, trackId, start, end));
+                }
+            }
+            else {
                 log.info("\n\n\n loading dna_align_feature");
                 count = dafStore.countHit(queryid, trackId, start, end);
                 if (count == 0) {

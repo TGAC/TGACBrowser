@@ -84,6 +84,7 @@ public class SQLAnalysisDAO implements AnalysisStore {
     public static final String GET_DISTINCT_ANALYSIS_ID_FROM_Marker = "SELECT DISTINCT analysis_id from marker_feature where analysis_id = ? LIMIT 1";
     public static final String GET_DISTINCT_ANALYSIS_ID_FROM_DAF = "SELECT DISTINCT analysis_id from dna_align_feature where analysis_id = ? LIMIT 1";
     public static final String GET_DISTINCT_ANALYSIS_ID_FROM_Repeat = "SELECT DISTINCT analysis_id from repeat_feature where analysis_id = ? LIMIT 1";
+    public static final String GET_DISTINCT_ANALYSIS_ID_FROM_SimpleFeature = "SELECT DISTINCT analysis_id from simple_feature where analysis_id = ? LIMIT 1";
     public static final String GET_SNPS = "SELECT a.analysis_id, ad.display_label FROM analysis a, analysis_description ad where a.logic_name like '%SNP%' and a.analysis_id = ad.analysis_id";
     public static final String COUNT_MISC_FEATURE = "SELECT count(*) from misc_feature";
     private JdbcTemplate template;
@@ -182,7 +183,7 @@ public class SQLAnalysisDAO implements AnalysisStore {
                     annotationid.put("name", map.get("name").toString().replaceAll("[^A-Za-z0-9]+", "_") + "_gene");
                     annotationlist.add(annotationid);
                 } else if (presentInDAF(map.get("id").toString())) {
-                    web.put("trackgroup", "Alignment features");
+                    web.put("trackgroup", "Alignment_features");
                     annotationid.put("name", map.get("name").toString().replaceAll("[^A-Za-z0-9]+", "_"));
                     annotationlist.add(annotationid);
 
@@ -196,6 +197,10 @@ public class SQLAnalysisDAO implements AnalysisStore {
                     annotationid.put("name", map.get("name").toString().replaceAll("[^A-Za-z0-9]+", "_") + "_repeat");
                     annotationlist.add(annotationid);
 
+                } if (presentInSimpleFeature(map.get("id").toString())) {
+                    web.put("trackgroup", "Simple_Feature");
+                    annotationid.put("name", map.get("name").toString().replaceAll("[^A-Za-z0-9]+", "_") + "_simplefeature");
+                    annotationlist.add(annotationid);
                 } else {
 //                    annotationid.put("name", map.get("name").toString().replaceAll("[^A-Za-z0-9]+", "_"));
 //                    annotationlist.add(annotationid);
@@ -296,6 +301,15 @@ public class SQLAnalysisDAO implements AnalysisStore {
 
     public boolean presentInRepeat(String id) {
         List<Map<String, Object>> distinct_id = template.queryForList(GET_DISTINCT_ANALYSIS_ID_FROM_Repeat, new Object[]{id});
+        if (distinct_id.size() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean presentInSimpleFeature(String id) {
+        List<Map<String, Object>> distinct_id = template.queryForList(GET_DISTINCT_ANALYSIS_ID_FROM_SimpleFeature, new Object[]{id});
         if (distinct_id.size() > 0) {
             return true;
         } else {
