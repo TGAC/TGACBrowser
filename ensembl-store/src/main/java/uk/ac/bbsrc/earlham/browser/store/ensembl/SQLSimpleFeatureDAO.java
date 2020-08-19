@@ -347,7 +347,7 @@ public class SQLSimpleFeatureDAO implements SimpleFeatureStore {
      */
     public List<Map<String, Object>> getHit(int id, String trackId, long start, long end) throws IOException {
         try {
-            String GET_HIT = "SELECT simple_feature_id as id,cast(seq_region_start as signed) as start, cast(seq_region_start as signed) as end, display_label, score " +
+            String GET_HIT = "SELECT simple_feature_id as id,cast(seq_region_start as signed) as start, cast(seq_region_end as signed) as end, display_label, score " +
                     "FROM simple_feature " +
                     "WHERE seq_region_id = " + id + " AND analysis_id = " + trackId + " and (seq_region_start >= " + start + " AND seq_region_start <= " + end + ")" +
                     " order by seq_region_start";
@@ -365,7 +365,7 @@ public class SQLSimpleFeatureDAO implements SimpleFeatureStore {
         try {
 
 
-            String GET_HIT = "SELECT simple_feature_id as id,cast(seq_region_start as signed) as start, display_label, score  " +
+            String GET_HIT = "SELECT simple_feature_id as id,cast(seq_region_start as signed) as start, cast(seq_region_end as signed) as end, display_label, score  " +
                     "FROM simple_feature " +
                     "WHERE seq_region_id " + query + " AND analysis_id = " + trackId +
                     " order by seq_region_start";
