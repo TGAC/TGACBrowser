@@ -82,6 +82,14 @@ public class DnaSequenceService {
         this.dafStore = dafStore;
     }
 
+
+    @Autowired
+    private SimpleFeatureStore sfStore;
+
+    public void setSimpleFeatureStore(SimpleFeatureStore sfStore) {
+        this.sfStore = sfStore;
+    }
+
     @Autowired
     private MiscFeatureStore mfStore;
 
@@ -171,7 +179,7 @@ public class DnaSequenceService {
                 response.put("seqregname", seqRegName);
                 response.put("tracklists", analysisStore.getAnnotationId(query));
                 response.put("coord_sys", sequenceStore.getSeqRegionCoordId(seqName));
-                if(dir != null){
+                if (dir != null) {
                     response.put("filetrack", analysisStore.tracksFromDir(dir));
                 }
             }
@@ -233,7 +241,7 @@ public class DnaSequenceService {
                 response.put("seqregname", seqRegName);
                 response.put("tracklists", analysisStore.getAnnotationId(query));
                 response.put("coord_sys", sequenceStore.getSeqRegionCoordId(seqName));
-                if(dir != null){
+                if (dir != null) {
                     response.put("filetrack", analysisStore.tracksFromDir(dir));
                 }
             }
@@ -274,7 +282,7 @@ public class DnaSequenceService {
             response.put("seqregname", seqRegName);
             response.put("tracklists", analysisStore.getAnnotationId(query));
             response.put("coord_sys", coord);
-            if(dir != null){
+            if (dir != null) {
                 response.put("filetrack", analysisStore.tracksFromDir(dir));
             }
             return response;
@@ -331,11 +339,71 @@ public class DnaSequenceService {
         int count;
         try {
             Integer queryid = sequenceStore.getSeqRegionWithCoord(seqName, coord);
-            if (trackId.toLowerCase().contains(".bw") || trackId.toLowerCase().contains(".bigwig") || trackId.toLowerCase().contains(".wig")) {
+
+            boolean group = false;
+            String line = "";
+            String inline_id = null;
+            if (json.containsKey("group")) {
+                group = json.getBoolean("group");
+                line = json.getString("line");
+                inline_id = line + "_" + trackId;
+            }
+
+            response.put("test", inline_id);
+            if (inline_id.contains("_coverage")) {
+                String analysisID = analysisStore.getTrackIDfromAnalysisDescriptionUsingDisplayLabel(inline_id);
+                log.info("\n\n\n\t analysis id " + analysisID);
+                response.put("analysisID", analysisID);
+
+                count = sfStore.countHit(queryid, analysisID, start, end);
+                if (count == 0) {
+                    response.put(trackName, new JSONArray());
+                } else if (count < 50000) {
+                    response.put(trackName, sfStore.processHit(sfStore.getHit(queryid, analysisID, start, end), start, end, delta, queryid, analysisID));
+                    response.put("graphtype", "manhattan");
+                    response.put("type", "graph");
+                } else {
+                    response.put("type", "graph");
+                    response.put("graphtype", "bar");
+                    response.put(trackName, sfStore.getHitGraph(queryid, analysisID, start, end));
+                }
+            } else if (inline_id.contains("_deletion")) {
+                String analysisID = analysisStore.getTrackIDfromAnalysisDescriptionUsingDisplayLabel(inline_id);
+                response.put("analysisID", analysisID);
+                log.info("\n\n\n\t analysis id " + analysisID);
+
+                count = sfStore.countHit(queryid, analysisID, start, end);
+                if (count == 0) {
+                    response.put(trackName, new JSONArray());
+                } else if (count < 1000) {
+                    response.put(trackName, sfStore.processHit(sfStore.getHit(queryid, analysisID, start, end), start, end, delta, queryid, analysisID));
+                } else {
+                    response.put("type", "graph");
+                    response.put("graphtype", "bar");
+                    response.put(trackName, sfStore.getHitGraph(queryid, analysisID, start, end));
+                }
+
+            } else if (inline_id.contains("_consensus")) {
+                String analysisID = analysisStore.getTrackIDfromAnalysisDescriptionUsingDisplayLabel(inline_id);
+                response.put("analysisID", analysisID);
+                log.info("\n\n\n\t analysis id " + analysisID);
+
+                count = sfStore.countHit(queryid, analysisID, start, end);
+                if (count == 0) {
+                    response.put(trackName, new JSONArray());
+                } else if (count < 1000) {
+                    response.put(trackName, sfStore.processHit(sfStore.getHit(queryid, analysisID, start, end), start, end, delta, queryid, analysisID));
+                } else {
+                    response.put("type", "graph");
+                    response.put("graphtype", "bar");
+                    response.put(trackName, sfStore.getHitGraph(queryid, analysisID, start, end));
+                }
+
+            } else if (trackId.toLowerCase().contains(".bw") || trackId.toLowerCase().contains(".bigwig") || trackId.toLowerCase().contains(".wig")) {
                 response.put(trackName, BigWigService.getWig(start, end, delta, trackId, seqName));
             } else if (trackId.contains(".sam") || trackId.contains(".bam")) {
                 count = SamBamService.countBAM(start, end, delta, trackId, seqName);
-                log.info("\n\n\t\t count "+count);
+                log.info("\n\n\t\t count " + count);
                 if (count == 0) {
                     count = SamBamService.countBAM(0, sequenceStore.getSeqLengthbyId(queryid, coord), delta, trackId, seqName);
                     if (count == 0) {
@@ -344,7 +412,7 @@ public class DnaSequenceService {
                         response.put(trackName, new JSONArray());
                     }
 
-                } else if (count < 1000 || (end-start) < 400) {
+                } else if (count < 1000 || (end - start) < 400) {
                     response.put(trackName, samBamService.getBAMReads(start, end, delta, trackId, seqName));
                 } else {
                     response.put("type", "graph");
@@ -355,7 +423,7 @@ public class DnaSequenceService {
                 log.info("\n\n\n loading gff");
 
                 count = GFFService.countGFF(start, end, delta, trackId, seqName);
-                log.info("\n\n GFF count "+count);
+                log.info("\n\n GFF count " + count);
                 if (count == 0) {
                     count = GFFService.countGFF(0, sequenceStore.getSeqLengthbyId(queryid, coord), delta, trackId, seqName);
                     if (count == 0) {
@@ -383,8 +451,7 @@ public class DnaSequenceService {
                         response.put(trackName, new JSONArray());
                     }
 
-                } else
-                if (count < 1000) {
+                } else if (count < 1000) {
                     response.put(trackName, vcfService.getVCFReads(start, end, delta, trackId, seqName));
                 } else {
                     response.put("type", "graph");
@@ -395,11 +462,10 @@ public class DnaSequenceService {
                 log.info("\n\n\n loading bed");
                 response.put(trackName, SamBamService.getBed(start, end, delta, trackId, seqName));
             } else if (trackId.indexOf("cs") >= 0) {
-                int rank_track =  assemblyStore.getRank(trackId.replace("cs", ""));
-                int rank_query =  assemblyStore.getRank(trackId.replace("cs", ""));
+                int rank_track = assemblyStore.getRank(trackId.replace("cs", ""));
+                int rank_query = assemblyStore.getRank(trackId.replace("cs", ""));
 
-                if(rank_track > rank_query)
-                {
+                if (rank_track > rank_query) {
                     log.info("\n\n\n loading assembly");
                     count = assemblyStore.countAssembly(queryid, trackId, start, end);
                     if (count == 0) {
@@ -421,8 +487,7 @@ public class DnaSequenceService {
                         response.put("graphtype", "heat");
                         response.put(trackName, assemblyStore.getAssemblyOverviewGraph(queryid, trackId, start, end));
                     }
-                }
-                else{
+                } else {
                     response.put(trackName, "getHit no result found");
                 }
 
@@ -482,26 +547,77 @@ public class DnaSequenceService {
             } else if (trackId.equals("ms1")) {
                 log.info("\n\n\n loading misc");
                 log.info("update1 graph");
+                List<Map<String, Object>> features;
 
-                count = mfStore.countMiscFeature(queryid, trackId, start, end);
-                log.info("\n\n update1 count "+ count);
 
-                response.put("count", count);
+                if (group == true) {
+                    int line_id = mfStore.getLineID(line);
 
-                if (count == 0) {
-                    count = mfStore.countMiscFeature(queryid, trackId, 0, sequenceStore.getSeqLengthbyId(queryid, coord));
+
+                    count = mfStore.countMiscFeature(queryid, trackId, start, end, line_id);
+                    log.info("\n\n update1 count " + count);
+
+                    response.put("count", count);
+
                     if (count == 0) {
-                        response.put(trackName, "getMiscFeature no result found");
+                        count = mfStore.countMiscFeature(queryid, trackId, 0, sequenceStore.getSeqLengthbyId(queryid, coord), line_id);
+                        if (count == 0) {
+                            response.put(trackName, "getMiscFeature no result found");
+                        } else {
+                            response.put(trackName, new JSONArray());
+                        }
+                    } else if (count < 1000) {
+
+                        features = mfStore.getFeatures(queryid, trackId, start, end, line_id);
+                        response.put(trackName, mfStore.processFeatures(features, start, end, delta, queryid, trackId));
+
+
+                    } else {
+                        response.put("type", "graph");
+                        response.put("graphtype", "bar");
+                        response.put(trackName, mfStore.getFeatureGraph(queryid, trackId, start, end, line_id));
+                    }
+                } else {
+                    count = mfStore.countMiscFeature(queryid, trackId, start, end);
+                    log.info("\n\n update1 count " + count);
+
+                    response.put("count", count);
+
+                    if (count == 0) {
+                        count = mfStore.countMiscFeature(queryid, trackId, 0, sequenceStore.getSeqLengthbyId(queryid, coord));
+                        if (count == 0) {
+                            response.put(trackName, "getMiscFeature no result found");
+                        } else {
+                            response.put(trackName, new JSONArray());
+                        }
+                    } else if (count < 1000) {
+
+                        features = mfStore.getFeatures(queryid, trackId, start, end);
+                        response.put(trackName, mfStore.processFeatures(features, start, end, delta, queryid, trackId));
+
+                    } else {
+                        response.put("type", "graph");
+                        response.put("graphtype", "bar");
+                        response.put(trackName, mfStore.getFeatureGraph(queryid, trackId, start, end));
+                    }
+
+                }
+            } else if (analysisStore.presentInSimpleFeature(trackId.toString())) {
+                log.info("\n\n\n loading simple feature");
+                count = sfStore.countHit(queryid, trackId, start, end);
+                if (count == 0) {
+                    count = sfStore.countHit(queryid, trackId, 0, sequenceStore.getSeqLengthbyId(queryid, coord));
+                    if (count == 0) {
+                        response.put(trackName, "getSimpleFeature no result found");
                     } else {
                         response.put(trackName, new JSONArray());
                     }
                 } else if (count < 1000) {
-                    List<Map<String, Object>> features = mfStore.getFeatures(queryid, trackId, start, end);
-                    response.put(trackName, mfStore.processFeatures(features, start, end, delta, queryid, trackId));
+                    response.put(trackName, sfStore.processHit(sfStore.getHit(queryid, trackId, start, end), start, end, delta, queryid, trackId));
                 } else {
                     response.put("type", "graph");
                     response.put("graphtype", "bar");
-                    response.put(trackName, mfStore.getFeatureGraph(queryid, trackId, start, end));
+                    response.put(trackName, sfStore.getHitGraph(queryid, trackId, start, end));
                 }
             } else {
                 log.info("\n\n\n loading dna_align_feature");
@@ -562,7 +678,7 @@ public class DnaSequenceService {
                 response.put("link", sequenceStore.getLink());
             }
 
-            if(blast_dir != null){
+            if (blast_dir != null) {
                 response.put("blast", BlastServiceLocal.getDatabases(blast_dir));
             }
 
@@ -817,17 +933,32 @@ public class DnaSequenceService {
         }
     }
 
+
+    public JSONObject initMiscSet(HttpSession session, JSONObject json) {
+
+        log.info("herere");
+        JSONObject response = new JSONObject();
+
+        try {
+            response.put("set", mfStore.getMiscSet());
+            return response;
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return JSONUtils.SimpleJSONError(e.getMessage());
+        }
+    }
+
     public JSONObject getMiscFeature(HttpSession session, JSONObject json) {
 
         log.info("herere");
         String name = json.getString("name");
         JSONObject response = new JSONObject();
-        log.info("\n\n\t name "+name);
+        log.info("\n\n\t name " + name);
         try {
-            if(name.equals("All")){
+            if (name.equals("All")) {
                 response.put("type", "graph");
                 response.put("features", mfStore.getAllMiscFeatures());
-            }else{
+            } else {
                 response.put("features", mfStore.getMiscFeaturesbyID(name));
             }
             return response;
