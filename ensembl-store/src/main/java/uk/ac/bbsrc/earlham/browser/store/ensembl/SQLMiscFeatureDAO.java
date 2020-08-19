@@ -85,15 +85,23 @@ public class SQLMiscFeatureDAO implements MiscFeatureStore {
     public static final String GET_ALL_MISC_FEATURE = "select mf.*, ms.misc_set_id, ms.code, a.name  from misc_feature mf left join misc_feature_misc_set mfms on mf.misc_feature_id = mfms.misc_feature_id left join misc_set ms on mfms.misc_set_id = ms.misc_set_id left join misc_attrib ma on mf.misc_feature_id = ma.misc_feature_id left join attrib_type a on a.attrib_type_id = ma.attrib_type_id";
     public static final String GET_ALL_MISC_FEATURE_REF = "select distinct seq_region_id from misc_feature";
     public static final String GET_ALL_ATTRIB_TYPE = "select * from attrib_type where attrib_type_id in (select attrib_type_id from misc_attrib)";
+    public static final String GET_ALL_MISC_SET = "select * from misc_set";
     public static final String GET_MISC_FEATURE_BY_ID = "select mf.*, a.name  from misc_feature mf, misc_attrib ma, attrib_type a where mf.misc_feature_id = ma.misc_feature_id and a.attrib_type_id = ma.attrib_type_id and a.attrib_type_id = ?";
     public static final String GET_ATTRIB_ID_NAME = "select attrib_type_id from attrib_type where name = ?";
     public static final String GET_MISC_FEATURE_SIZE_SLICE = "SELECT COUNT(mf.misc_feature_id) FROM misc_feature mf, misc_attrib ma, attrib_type a where mf.seq_region_id =? and (mf.misc_feature_id = ma.misc_feature_id and a.attrib_type_id = ma.attrib_type_id and a.attrib_type_id = ?) and ((mf.seq_region_start >= ? AND mf.seq_region_end <= ?) OR (mf.seq_region_start <= ? AND mf.seq_region_end >= ?) OR (mf.seq_region_end >= ?  AND  mf.seq_region_end <= ?) OR (mf.seq_region_start >= ? AND mf.seq_region_start <= ?))";
     public static final String GET_MISC_FEATURE_SIZE_SLICE_FOR_ALL = "SELECT COUNT(misc_feature_id) FROM misc_feature where seq_region_id =? and ((seq_region_start >= ? AND seq_region_end <= ?)" +
             " OR (seq_region_start <= ? AND seq_region_end >= ?) OR (seq_region_end >= ?  AND  seq_region_end <= ?) OR (seq_region_start >= ? AND seq_region_start <= ?)" +
             ")";
+
+    public static final String GET_MISC_FEATURE_SIZE_SLICE_FOR_ALL_FOR_LINE = "SELECT count(mf.misc_feature_id) " +
+            "FROM misc_feature mf, misc_attrib ma, attrib_type a " +
+            "WHERE mf.seq_region_id = ? and ((mf.seq_region_start >= ? AND mf.seq_region_end <= ?) OR (mf.seq_region_start <= ? AND mf.seq_region_end >= ?) OR (mf.seq_region_end >= ?  AND mf.seq_region_start <= ?) OR (mf.seq_region_start <= ? AND mf.seq_region_end >= ?)) and mf.misc_feature_id = ma.misc_feature_id and ma.attrib_type_id = a.attrib_type_id and a.attrib_type_id = ? order by seq_region_start;";
+
+
     public static final String GET_MISC_FEATURE_BY_REF = "SELECT * FROM misc_feature where seq_region_id =? order by seq_region_start";
     public static final String GET_MISC_FEATURES = "SELECT * FROM misc_feature order by seq_region_start";
     public static final String GET_FEATURE_SIZE = "SELECT COUNT(misc_feature_id) FROM misc_feature where seq_region_id =?";
+    public static final String GET_LINE_ID = "SELECT attrib_type_id from attrib_type where name = ?";
 
 
     private JdbcTemplate template;
@@ -138,6 +146,22 @@ public class SQLMiscFeatureDAO implements MiscFeatureStore {
 
     }
 
+    public JSONArray getMiscSet() throws Exception {
+        JSONObject eachTrack_temp = new JSONObject();
+        JSONArray trackList = new JSONArray();
+        List<Map<String, Object>> maps = template.queryForList(GET_ALL_MISC_SET, new Object[]{});
+        for (Map<String, Object> map : maps) {
+            eachTrack_temp.put("id", map.get("misc_set_id"));
+            eachTrack_temp.put("name", map.get("name"));
+            trackList.add(eachTrack_temp);
+
+        }
+        return trackList;
+
+
+    }
+
+
     public JSONArray getMiscFeaturesbyID(String name) throws Exception {
         JSONObject eachTrack_temp = new JSONObject();
         JSONArray trackList = new JSONArray();
@@ -172,6 +196,20 @@ public class SQLMiscFeatureDAO implements MiscFeatureStore {
         }
     }
 
+
+    public int countMiscFeature(int id, String trackId, long start, long end, int line_id) throws Exception {
+        int size = 0;
+        try {
+            size = template.queryForObject(GET_MISC_FEATURE_SIZE_SLICE_FOR_ALL_FOR_LINE, new Object[]{id, start, end, start, end, start, end, start, end, line_id}, Integer.class);
+            return size;
+        } catch (IncorrectResultSizeDataAccessException irsde) {
+            return size;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception("Count Gene " + e.getMessage());
+        }
+    }
+
     public List<Map<String, Object>> getFeatures(int id, String trackId, long start, long end) throws IOException {
         log.info("\n\n\n\t get features");
 
@@ -188,6 +226,38 @@ public class SQLMiscFeatureDAO implements MiscFeatureStore {
             e.printStackTrace();
             throw new IOException("Get gene " + e.getMessage());
         }
+    }
+
+    public List<Map<String, Object>> getFeatures(int id, String trackId, long start, long end, int line_id) throws IOException {
+        log.info("\n\n\n\t get features");
+
+        try {
+            String GET_Feature_by_view = "SELECT mf.misc_feature_id as id, mf.seq_region_start as start, mf.seq_region_end as end, mf.seq_region_strand as strand, a.name as description " +
+                    "FROM misc_feature mf, misc_attrib ma, attrib_type a " +
+                    "WHERE mf.seq_region_id = " + id + " and ((mf.seq_region_start >= " + start + " AND mf.seq_region_end <= " + end + ") OR (mf.seq_region_start <= " + start + " AND mf.seq_region_end >= " + end + ") OR (mf.seq_region_end >= " + end + "  AND mf.seq_region_start <= " + end + ") OR (mf.seq_region_start <= " + start + " AND mf.seq_region_end >= " + start + ")) " +
+                    "and mf.misc_feature_id = ma.misc_feature_id and ma.attrib_type_id = a.attrib_type_id " +
+                    " and a.attrib_type_id = " + line_id+
+                    " order by seq_region_start";
+            log.info("\n\n\n\t get features " + GET_Feature_by_view);
+
+            return template.queryForList(GET_Feature_by_view, new Object[]{});
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new IOException("Get gene " + e.getMessage());
+        }
+    }
+
+    public int getLineID(String line)throws IOException {
+
+        try {
+            int lineId = template.queryForInt(GET_LINE_ID, new Object[]{line});
+            return lineId;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new IOException("Get gene " + e.getMessage());
+        }
+
+
     }
 
     public JSONArray processFeatures(List<Map<String, Object>> maps, long start, long end, int delta, int id, String trackId) throws Exception {
@@ -243,7 +313,7 @@ public class SQLMiscFeatureDAO implements MiscFeatureStore {
                 eachTrack_temp.put("strand", map.get("strand"));
                 eachTrack_temp.put("layer", util.stackLayerInt(ends, start_pos, delta, end_pos));
                 eachTrack_temp.put("desc", map.get("description"));
-                String line[] = map.get("description").toString().split("\\.");
+                String line[] = map.get("description").toString().split("\\-");
                 line[0] = line[0].replaceAll("[A-Za-z]", "");
                 int r = Integer.parseInt(line[0]) * 30;
                 int g = Integer.parseInt(line[1]) * 2;
@@ -275,6 +345,39 @@ public class SQLMiscFeatureDAO implements MiscFeatureStore {
                     JSONObject eachTrack = new JSONObject();
                     to = start + (i * (end - start) / 200);
                     no_of_tracks = template.queryForObject(GET_MISC_FEATURE_SIZE_SLICE_FOR_ALL, new Object[]{id, from, to, from, to, from, to, from, to}, Integer.class);
+                    eachTrack.put("start", from);
+                    eachTrack.put("end", to);
+                    eachTrack.put("graph", no_of_tracks);
+                    trackList.add(eachTrack);
+                    from = to;
+                }
+            } else {
+//                trackList.addAll(recursiveGeneGraph(0, id, trackId, start, end));
+            }
+            return trackList;
+        } catch (EmptyResultDataAccessException e) {
+            e.printStackTrace();
+            throw new IOException("getGene no result found");
+        }
+    }
+
+    public JSONArray getFeatureGraph(int id, String trackId, long start, long end, int line_id) throws IOException {
+        log.info("\n\n\n getGeneGraph " + trackId + " " + id);
+
+        try {
+
+            JSONArray trackList = new JSONArray();
+            long from = start;
+            long to;
+            int no_of_tracks = 0;
+
+            no_of_tracks = template.queryForObject(GET_MISC_FEATURE_SIZE_SLICE_FOR_ALL_FOR_LINE, new Object[]{id, from, end, from, end, from, end, from, end, line_id}, Integer.class);
+
+            if (no_of_tracks > 0) {
+                for (int i = 1; i <= 200; i++) {
+                    JSONObject eachTrack = new JSONObject();
+                    to = start + (i * (end - start) / 200);
+                    no_of_tracks = template.queryForObject(GET_MISC_FEATURE_SIZE_SLICE_FOR_ALL_FOR_LINE, new Object[]{id, from, to, from, to, from, to, from, to, line_id}, Integer.class);
                     eachTrack.put("start", from);
                     eachTrack.put("end", to);
                     eachTrack.put("graph", no_of_tracks);

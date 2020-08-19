@@ -47,11 +47,16 @@ public interface MiscFeatureStore extends Store {
 
     public JSONObject getAllMiscFeatures() throws Exception;
     public JSONArray getAllAttrib_type() throws Exception;
+    public JSONArray getMiscSet() throws Exception;
     public JSONArray getMiscFeaturesbyID(String name) throws Exception;
     public int countMiscFeature(int id, String trackId, long start, long end) throws Exception;
+    public int countMiscFeature(int id, String trackId, long start, long end, int line_id) throws Exception;
     public List<Map<String, Object>> getFeatures(int query, String trackId, long start, long end) throws IOException;
+    public List<Map<String, Object>> getFeatures(int id, String trackId, long start, long end, int line_id) throws IOException;
+    public int getLineID(String line) throws IOException;
     public JSONArray processFeatures(List<Map<String, Object>> maps, long start, long end, int delta, int id, String trackId) throws Exception;
     public JSONArray getFeatureGraph(int id, String trackId, long start, long end) throws IOException;
+    public JSONArray getFeatureGraph(int id, String trackId, long start, long end, int line_id) throws IOException;
 
 
 
