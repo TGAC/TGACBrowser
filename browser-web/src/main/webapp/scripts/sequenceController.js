@@ -186,7 +186,16 @@ function jumpToSeq() {
         setDragableWidth(width);
         setbglayerLeft(seqStart, false);
         setbglayerWidth(width);
-        window.history.pushState('TGAC Browser', 'Title', "index.jsp?query="+seqregname+"&&coord="+coord+"&&from="+getBegin()+'&&to='+getEnd());
+        // var newUrl = location.href.replace("from=", "from="+getBegin());
+        // newUrl = newUrl.replace("to=", "to="+getEnd());
+
+        var currentUrl = location.href;
+        var url = new URL(currentUrl);
+        url.searchParams.set("from", getBegin()); // setting your param
+        url.searchParams.set("to", getEnd()); // setting your param
+        var newUrl = url.href;
+        console.log(newUrl);
+        window.history.pushState('TGAC Browser', 'Title', newUrl);
         changeSeq(begin, end);
     }
 
