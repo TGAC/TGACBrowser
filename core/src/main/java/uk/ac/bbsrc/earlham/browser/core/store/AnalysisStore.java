@@ -41,6 +41,8 @@ import java.util.Map;
 public interface AnalysisStore extends Store {
     public String getTrackIDfromName(String trackName) throws IOException;
 
+    public String getTrackIDfromAnalysisDescriptionUsingDisplayLabel(String trackName) throws IOException;
+
     public JSONArray getAnnotationId(int query) throws IOException;
 
     public String getLogicNameByAnalysisId(int query) throws IOException;

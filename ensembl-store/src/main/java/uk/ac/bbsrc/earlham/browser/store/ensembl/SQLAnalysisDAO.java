@@ -69,6 +69,7 @@ public class SQLAnalysisDAO implements AnalysisStore {
     }
 
     public static final String GET_DISPLAYABLE_FROM_ANALYSIS_ID = "SELECT displayable FROM analysis_description where analysis_id =?";
+    public static final String GET_ANALYSIS_ID_USING_DISPLAYLABLE = "SELECT analysis_id FROM analysis_description where display_label =?";
     public static final String GET_DISPLAYLABLE_FROM_ANALYSIS_ID = "SELECT display_label FROM analysis_description where analysis_id =?";
     public static final String GET_LOGIC_NAME_FROM_ANALYSIS_ID = "SELECT logic_name FROM analysis where analysis_id =?";
     public static final String GET_DESCRIPTION_FROM_ANALYSIS_ID = "SELECT description FROM analysis_description where analysis_id =?";
@@ -135,6 +136,25 @@ public class SQLAnalysisDAO implements AnalysisStore {
             throw new IOException("Analysis id not found for logic name " + trackName + "-" + e.getMessage());
         }
     }
+
+
+    /**
+     * Get analysis_id from logic_name
+     *
+     * @param trackName
+     * @return analysis_id
+     * @throws IOException
+     */
+    public String getTrackIDfromAnalysisDescriptionUsingDisplayLabel(String trackName) throws IOException {
+        try {
+            String str = template.queryForObject(GET_ANALYSIS_ID_USING_DISPLAYLABLE, new Object[]{trackName}, String.class);
+            return str;
+        } catch (EmptyResultDataAccessException e) {
+            e.printStackTrace();
+            throw new IOException("Analysis id not found for logic name " + trackName + "-" + e.getMessage());
+        }
+    }
+
 
 
     /**
