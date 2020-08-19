@@ -34,6 +34,8 @@ var ajaxurl = '/' + jQuery('#title').text() + '/' + jQuery('#title').text() + '/
 
 
 function scrollZoom(event) {
+    console.log( arguments.callee.name );
+
     event.preventDefault();
     var delta = 0;
 
@@ -62,6 +64,8 @@ function scrollZoom(event) {
 }
 
 function zoomIn(zoom_len) {
+    console.log( arguments.callee.name );
+
     var tempBegin = (parseInt(getBegin()) + parseInt(zoom_len));
     var tempEnd = (parseInt(getEnd()) - parseInt(zoom_len));
 
@@ -81,6 +85,8 @@ function zoomIn(zoom_len) {
 }
 
 function jumpToHere(e) {
+    console.log( arguments.callee.name );
+
     var top = parseFloat(e.pageY - jQuery('#' + seqregname).offset().top);
     //if (top > parseFloat(getMapMarkerTop())) {
     top = top - parseFloat(getMapMarkerHeight()) / 2;
@@ -94,6 +100,8 @@ function jumpToHere(e) {
 }
 
 function jumpToOther(e, length, name, coord) {
+    console.log( arguments.callee.name );
+
     var top = parseFloat(e.pageY - jQuery('#' + name).offset().top);
     //if (top > parseFloat(getMapMarkerTop())) {
     top = top - parseFloat(getMapMarkerHeight()) / 2;
@@ -127,6 +135,8 @@ function jumpToOther(e, length, name, coord) {
 }
 
 function zoomOut(zoom_len) {
+    console.log( arguments.callee.name );
+
     var newbegin = parseInt(getBegin()) - parseInt(zoom_len);
     var newend = parseInt(getEnd()) + parseInt(zoom_len)
 
@@ -144,6 +154,7 @@ function zoomOut(zoom_len) {
 }
 
 function reset() {
+    console.log( arguments.callee.name );
 
     setBegin((sequencelength - minWidth) / 2);
     setEnd(parseInt(getBegin()) + minWidth)
@@ -152,12 +163,15 @@ function reset() {
 
 
 function expand() {
+    console.log( arguments.callee.name );
+
     setBegin(1);
     setEnd(sequencelength)
     jumpToSeq();
 }
 
 function dragLeft() {
+    console.log( arguments.callee.name );
 
     var begin = getBegin();
     var end = getEnd();
@@ -181,6 +195,8 @@ function dragLeft() {
 }
 
 function keyControl(e) {
+    console.log( arguments.callee.name );
+
     if (e.keyCode == 39) {
         dragRight();
     }
@@ -191,6 +207,8 @@ function keyControl(e) {
 }
 
 function dragRight() {
+    console.log( arguments.callee.name );
+
     var begin = getBegin();
     var end = getEnd();
 
@@ -214,6 +232,8 @@ function dragRight() {
 }
 
 function dragtohere(e) {
+    console.log( arguments.callee.name );
+
     var left = parseFloat(e.pageX);// - jQuery('#canvas').offset().left);
 
     if (left > parseFloat(getDragableLeft())) {
@@ -225,6 +245,7 @@ function dragtohere(e) {
 }
 
 function seqLeft() {
+    console.log( arguments.callee.name );
 
 
     var begin = getBegin();
@@ -240,6 +261,9 @@ function seqLeft() {
 }
 
 function seqRight() {
+
+    console.log( arguments.callee.name );
+
     var begin = getBegin();
     var end = getEnd();
     if (parseFloat(end) < sequencelength) {
@@ -253,14 +277,28 @@ function seqRight() {
 }
 
 function auto_drag() {
+
+    console.log( "auto_drag" );
+
     var drag = parseFloat(getDragableLeft());
     setbglayerLeft(drag, true);
-    window.history.pushState('TGAC Browser', 'Title', "index.jsp?query=" + seqregname + "&&coord=" + coord + "&&from=" + getBegin() + '&&to=' + getEnd());
+
+    var currentUrl = location.href;
+    var url = new URL(currentUrl);
+    url.searchParams.set("from", getBegin()); // setting your param
+    url.searchParams.set("to", getEnd()); // setting your param
+    var newUrl = url.href;
+    console.log(newUrl);
+    window.history.pushState('TGAC Browser', 'Title', newUrl);
+    // window.history.pushState('TGAC Browser', 'Title', "index.jsp?query=" + seqregname + "&&coord=" + coord + "&&from=" + getBegin() + '&&to=' + getEnd());
 
 }
 
 
 function setNavPanel() {
+
+    console.log( arguments.callee.name );
+
     var left = 0;
     var height = parseFloat(jQuery("#sequence").position().top) - (parseFloat(jQuery("#draggable").position().top) + parseFloat(jQuery("#draggable").css("height"))) + "px solid #cccccc";
     var border_left = parseFloat(jQuery("#draggable").css("left")) - left + "px";
@@ -279,6 +317,9 @@ function setNavPanel() {
 
 // Tracks can be drag
 function trackDrag() {
+
+    console.log( "trackDrag" );
+
 
     var temp = parseFloat(1) - parseFloat(jQuery('#wrapper').css("left"));
     if (temp > 10 || temp < -10) {
@@ -308,6 +349,9 @@ function trackDrag() {
     }
 }
 function updateJSON() {
+
+    console.log( "updateJSON" );
+
     console.log("update json")
     var from, to;
     var partial = (getEnd() - getBegin()) / 2;
@@ -371,6 +415,13 @@ function addJSON(from, to, trackName, trackId) {
 
     console.log("add json " + trackName)
 
+    var group = false;
+    var line = ""
+    if (jQuery(("input[name='lineRadioBox']:checked")).val() == "singlelineRadiobox"){
+        group = true;
+        line = jQuery("#lines_searchable_list").val()
+    }
+
     if (from < 0) {
         from = 0;
     }
@@ -404,7 +455,9 @@ function addJSON(from, to, trackName, trackId) {
                     'start': from,
                     'end': to,
                     'delta': deltaWidth,
-                    'url': ajaxurl
+                    'url': ajaxurl,
+                    'group': group,
+                    'line': line
                 },
                 {
                     'doOnSuccess': function (json) {
@@ -455,7 +508,7 @@ function addJSON(from, to, trackName, trackId) {
                 }
                 else if ((jQuery("#" + Tracklist[i].name + "Checkbox").is(':checked') && Tracklist[i].id.toString().indexOf('noid') < 0) || (jQuery("#track_files").val() != null && jQuery("#track_files").val().indexOf(Tracklist[i].name) >= 0)) {
                     window[Tracklist[i].name] = "loading";
-                    window['track_list' + Tracklist[i].name].graph = "false";
+                    // window['track_list' + Tracklist[i].name].graph = "false";
                     trackToggle(Tracklist[i].name)
                     var trackname = Tracklist[i].name;
                     var trackid = Tracklist[i].id;
@@ -471,7 +524,9 @@ function addJSON(from, to, trackName, trackId) {
                                 'start': from,
                                 'end': to,
                                 'delta': deltaWidth,
-                                'url': ajaxurl
+                                'url': ajaxurl,
+                                'group':group,
+                                'line': line
                             },
                             {
                                 'doOnSuccess': function (json) {
@@ -519,6 +574,7 @@ function addJSON(from, to, trackName, trackId) {
 }
 
 function updateUploadedTrack(trackName) {
+    console.log( "updateUploadedTrack" );
 
     var temp_data = []
     var start = getBegin();
@@ -589,9 +645,14 @@ function removeJSON(from, to) {
         if (jQuery("#" + Tracklist[i].name + "Checkbox").is(':checked') || (jQuery("#track_files").val() != null && jQuery("#track_files").val().indexOf(Tracklist[i].name) >= 0)) {
             if (window['track_list' + Tracklist[i].name].graph == "true" && Tracklist[i].name.indexOf("upload") < 0) {
                 window[Tracklist[i].name] = "loading";
-                window['track_list' + Tracklist[i].name].graph = "false";
+                // window['track_list' + Tracklist[i].name].graph = "false";
                 trackToggle(Tracklist[i].name)
-
+                var group = false;
+                var line = ""
+                if (jQuery(("input[name='lineRadioBox']:checked")).val() == "singlelineRadiobox"){
+                    group = true;
+                    line = jQuery("#lines_searchable_list").val()
+                }
                 Fluxion.doAjax(
                     'dnaSequenceService',
                     'loadTrack',
@@ -603,7 +664,9 @@ function removeJSON(from, to) {
                         'start': from,
                         'end': to,
                         'delta': deltaWidth,
-                        'url': ajaxurl
+                        'url': ajaxurl,
+                        'group':group,
+                        'line':line
                     },
                     {
                         'doOnSuccess': function (json) {
@@ -652,18 +715,21 @@ function removeJSON(from, to) {
                     data = window[Tracklist[i].name];
                 }
 
-                window['track_list' + Tracklist[i].name].graph = "false";
+                //window['track_list' + Tracklist[i].name].graph = "false";
                 //console.log(data.length)
                 var temp_data = []
                 if (Tracklist[i].name.indexOf("uploadWig") >= 0) {
                     temp_data = data
                 } else {
-                    jQuery.each(data, function (index, value) {
-                        if ((parseInt(value.start) >= parseInt(from) && parseInt(value.end) <= parseInt(to)) || (parseInt(value.start) <= parseInt(from) && parseInt(value.end) >= parseInt(to)) || (parseInt(value.end) >= parseInt(from) && parseInt(value.end) <= parseInt(to)) || (parseInt(value.start) >= parseInt(from) && parseInt(value.start) <= parseInt(to))) {
-                            temp_data.push(value)
-                        }
+                    if(jQuery.isArray(data)){
+                        jQuery.each(data, function (index, value) {
+                            if ((parseInt(value.start) >= parseInt(from) && parseInt(value.end) <= parseInt(to)) || (parseInt(value.start) <= parseInt(from) && parseInt(value.end) >= parseInt(to)) || (parseInt(value.end) >= parseInt(from) && parseInt(value.end) <= parseInt(to)) || (parseInt(value.start) >= parseInt(from) && parseInt(value.start) <= parseInt(to))) {
+                                temp_data.push(value)
+                            }
 
-                    })
+                        })
+                    }
+
                 }
                 window[Tracklist[i].name] = temp_data
                 trackToggle(Tracklist[i].name)

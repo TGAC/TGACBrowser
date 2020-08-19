@@ -33,12 +33,13 @@ var blast_dir = null;
 var track_list, minWidth;
 var start_global, end_global, hit_global, blastid = 0, blastdb = "", oldTracklist;
 
-
+var preset_line = null;
 function seqregionSearch(query) {
     jQuery(window.location).attr('href', "./index.jsp?query=" + query + "&&blast=").attr("target", "_new");
 }
 
 function seqregionSearchPopup(query, from, to, blast) {
+    console.log("seqregionSearchPopup")
     jQuery('#seqnameh1').html(query);
     seqregname = null;
     jQuery("#searchresult").fadeOut();
@@ -69,6 +70,7 @@ function seqregionSearchPopup(query, from, to, blast) {
 }
 
 function seqregionSearchwithCoord(query, coord, from, to, blast) {
+    console.log("seqregionSearchwithCoord")
     jQuery('#seqnameh1').html(query);
     seqregname = null;
     jQuery("#searchresult").fadeOut();
@@ -100,6 +102,7 @@ function seqregionSearchwithCoord(query, coord, from, to, blast) {
 
 
 function search(query, from, to, blast) {
+    console.log("search")
     jQuery('#seqnameh1').html(query);
     seqregname = null;
 
@@ -136,7 +139,47 @@ function search(query, from, to, blast) {
         });
 }
 
+function searchWithLine(query, from, to, line) {
+    console.log("searchWithLine")
+    jQuery('#seqnameh1').html(query);
+    seqregname = null;
+
+    if (track_list) {
+        jQuery.cookie('trackslist', track_list.toJSON(), {path: '/', expires: 10});
+        removeTrackslist(track_list);
+    }
+
+    jQuery('#sessioninput').fadeOut();
+    jQuery("#sessionid").html("");
+    minWidth = null;
+    removeAllPopup();
+    jQuery('#canvas').hide();
+    jQuery('#tabGenes').html('');
+    jQuery('#tabGO').html('');
+    jQuery('#tabTranscripts').html('');
+    jQuery("#map").fadeOut();
+    jQuery("#refmap").html("");
+    jQuery("#searchresultHead").html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>");
+    jQuery("#searchresult").fadeIn();
+
+    Fluxion.doAjax(
+        'dnaSequenceService',
+        'searchSequence',
+        {'query': query, 'url': ajaxurl},
+        {
+            'doOnSuccess': function (json) {
+                jQuery('#canvas').hide();
+                jQuery('#currentposition').hide();
+                jQuery("#searchresultMap").fadeOut();
+
+                ajax_processing(json, from, to, false, line)
+            }
+        });
+}
+
 function generateFileLink(data) {
+    console.log( arguments.callee.name );
+
     var filelink;
     Fluxion.doAjax(
         'fileService',
@@ -151,9 +194,8 @@ function generateFileLink(data) {
 }
 
 function loadTrackAjax(trackId, trackname) {
-    console.log(trackId+" "+trackname)
+    console.log("loadTrackAjax " + trackId + " " + trackname)
 
-    // mergeTrackList(trackname);
     var query = jQuery('#search').val();
 
     jQuery(track_list).each(function (index) {
@@ -161,22 +203,27 @@ function loadTrackAjax(trackId, trackname) {
         if (jQuery("#" + track_list[index].name + "Checkbox").prop('checked')) {//
             window['track_list' + track_list[index].name].disp = 1
             jQuery("#unSelectAllCheckbox").attr('checked', false)
-        }
-        else {
+        } else {
             window['track_list' + track_list[index].name].disp = 0
             jQuery("#selectAllCheckbox").attr('checked', false)
         }
     });
-    console.log("here")
+
+    var group = false;
+    var line = ""
+    if (jQuery(("input[name='lineRadioBox']:checked")).val() == "singlelineRadiobox") {
+        group = true;
+        line = jQuery("#lines_searchable_list").val()
+    }
 
     if (window[trackname] || window[trackname] == "running" || window[trackname] == "loading") {
-       trackToggle(trackname);
+        trackToggle(trackname);
 //    need to think abt it
     }
-    console.log("herreee")
-    console.log(jQuery("#track_files").val())
-    if ((jQuery("#" + trackname + "Checkbox").prop('checked') && trackId.indexOf('noid') < 0) || (jQuery("#track_files").val() != null && jQuery("#track_files").val().indexOf(trackname) >=0)) {
-        console.log("here")
+    if ((jQuery("#" + trackname + "Checkbox").prop('checked') && trackId.indexOf('noid') < 0) ||
+        (jQuery("#track_files").val() != null && jQuery("#track_files").val().indexOf(trackname) >= 0) ||
+        (jQuery("#searchable_tracks"))
+    ) {
         var partial = (getEnd() - getBegin()) + ((getEnd() - getBegin()) / 2);
         var start = (getBegin() - partial);
         var end = parseInt(getEnd()) + parseFloat(partial);
@@ -188,8 +235,7 @@ function loadTrackAjax(trackId, trackname) {
         }
         deltaWidth = parseInt(end - start) / parseInt(maxLen);
         window[trackname] = "loading";
-       trackToggle(trackname);
-        console.log("here")
+        trackToggle(trackname);
         Fluxion.doAjax(
             'dnaSequenceService',
             'loadTrack',
@@ -201,7 +247,9 @@ function loadTrackAjax(trackId, trackname) {
                 'start': start,
                 'end': end,
                 'delta': deltaWidth,
-                'url': ajaxurl
+                'url': ajaxurl,
+                'group': group,
+                'line': line
             },
             {
                 'doOnSuccess': function (json) {
@@ -210,8 +258,7 @@ function loadTrackAjax(trackId, trackname) {
                     if (json.type == "graph") {
                         window['track_list' + json.name].graph = "true";
                         window['track_list' + json.name].graphtype = json.graphtype;
-                    }
-                    else {
+                    } else {
                         window['track_list' + json.name].graph = "false";
                     }
                     window[trackname] = json[trackname];
@@ -222,6 +269,8 @@ function loadTrackAjax(trackId, trackname) {
 }
 
 function metaData() {
+    console.log( arguments.callee.name );
+
     ajaxurl = '/' + jQuery('#title').text() + '/' + jQuery('#title').text() + '/fluxion.ajax';
 
     Fluxion.doAjax(
@@ -236,8 +285,7 @@ function metaData() {
                 scale = json.scale ? json.scale : 1;
                 link = json.link ? json.link : null;
                 var blast = json.blast ? json.blast : null;
-                if(blast != null)
-                {
+                if (blast != null) {
                     databases = json.blast.join(",")
                 }
                 jQuery(".unit").html(unit)
@@ -247,6 +295,8 @@ function metaData() {
 }
 
 function saveSession() {
+    console.log( arguments.callee.name );
+
     var tracks = getTracks();
     var edited_tracks = getEditedTracks();
     var removed_tracks = getRemovedTracks();
@@ -284,6 +334,8 @@ function saveSession() {
 }
 
 function loadSession(query) {
+    console.log( arguments.callee.name );
+
     Fluxion.doAjax(
         'fileService',
         'loadSession',
@@ -327,6 +379,8 @@ function loadSession(query) {
 }
 
 function loadSeq(query, from, to) {
+    console.log( arguments.callee.name );
+
     Fluxion.doAjax(
         'dnaSequenceService',
         'loadSequence',
@@ -340,14 +394,15 @@ function loadSeq(query, from, to) {
 }
 
 function reloadTracks(tracks, tracklist, blast) {
+    console.log( arguments.callee.name );
+
     for (var i = 0; i < tracklist.length; i++) {
         if (tracklist[i].name.indexOf('blasttrack') >= 0) {
             jQuery('#' + tracklist[i].name + 'Checkbox').attr('checked', true);
             window['blasttrack'] = tracks[tracks.length - 1].child;
 
             trackToggle('blasttrack');
-        }
-        else if (tracklist[i].disp == 1 && tracklist[i].id.toString().indexOf('noid') < 0) {
+        } else if (tracklist[i].disp == 1 && tracklist[i].id.toString().indexOf('noid') < 0) {
             jQuery('#' + tracklist[i].name + 'Checkbox').attr('checked', true);
             if (tracklist[i].merge == "1") {
                 mergeTrackList(tracklist[i].name);
@@ -361,6 +416,13 @@ function reloadTracks(tracks, tracklist, blast) {
             }
             if (end > sequencelength) {
                 end = sequencelength;
+            }
+
+            var group = false;
+            var line = ""
+            if (jQuery(("input[name='lineRadioBox']:checked")).val() == "singlelineRadiobox") {
+                group = true;
+                line = jQuery("#lines_searchable_list").val()
             }
             var deltaWidth = parseInt(end - start) / parseInt(maxLen);
             window[tracklist[i].name] == "loading";
@@ -376,7 +438,9 @@ function reloadTracks(tracks, tracklist, blast) {
                     'start': start,
                     'end': end,
                     'delta': deltaWidth,
-                    'url': ajaxurl
+                    'url': ajaxurl,
+                    'group': group,
+                    'line': line
                 },
                 {
                     'doOnSuccess': function (json) {
@@ -385,16 +449,14 @@ function reloadTracks(tracks, tracklist, blast) {
                         if (json.type == "graph") {
                             window['track_list' + json.name].graph = "true";
                             window['track_list' + json.name].graphtype = json.graphtype;
-                        }
-                        else {
+                        } else {
                             window['track_list' + json.name].graph = "false";
                         }
                         window[trackname] = json[trackname];
                         trackToggle(trackname);
                     }
                 });
-        }
-        else {
+        } else {
         }
     }
     if (blast == "true" || blast == 1) {
@@ -425,6 +487,8 @@ function reloadTracks(tracks, tracklist, blast) {
 
 
 function randomString(length) {
+    console.log( arguments.callee.name );
+
     var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz'.split('');
 
     if (!length) {
@@ -439,6 +503,8 @@ function randomString(length) {
 }
 
 function fastaFile(seq, start, end) {
+    console.log( arguments.callee.name );
+
     var fastaseq = seq;
     Fluxion.doAjax(
         'fileService',
@@ -453,6 +519,8 @@ function fastaFile(seq, start, end) {
 }
 
 function VCFFile(data) {
+    console.log( arguments.callee.name );
+
     Fluxion.doAjax(
         'fileService',
         'saveVCF',
@@ -466,6 +534,7 @@ function VCFFile(data) {
 }
 
 function loadPreBlast(jsonid, refid) {
+    console.log( arguments.callee.name );
 
     var refseq = refid;
     if (!window['blasttrack']) {
@@ -517,6 +586,8 @@ function loadPreBlast(jsonid, refid) {
 }
 
 function fileUploadProgress(formname, divname, successfunc) {
+    console.log( arguments.callee.name );
+
     var self = this;
     Fluxion.doAjaxUpload(
         formname,
@@ -537,6 +608,7 @@ function fileUploadSuccess() {
 }
 
 function getReferences(callback) {
+    console.log("getreference")
     Fluxion.doAjax(
         'dnaSequenceService',
         'searchSeqRegionforMap',
@@ -547,7 +619,6 @@ function getReferences(callback) {
                 var max = Math.max.apply(Math, json.seqregion.map(function (o) {
                     return o.length;
                 }));
-
 
 
                 var referenceLength = json.seqregion.length;
@@ -577,11 +648,10 @@ function getReferences(callback) {
                         var top = parseInt(jQuery("#map").css('top')) + parseInt(jQuery("#map").css('height')) - (height + 20);
                         if (seqregname == json.seqregion[referenceLength].name) {
                             jQuery("#refmap").append("<div length=" + json.seqregion[referenceLength].length + " onclick='jumpToHere(event);' class='refmap' id='" + json.seqregion[referenceLength].name + "' style='left: " + left + "px; width:" + width + "px; height:" + height + "px;'></div>");
-                        }
-                        else {
+                        } else {
                             jQuery("#refmap").append("<div length=" + json.seqregion[referenceLength].length + " onclick='jumpToOther(event, " + length + ",\"" + json.seqregion[referenceLength].name + "\",\"" + json.seqregion[referenceLength].coord + "\");' class='refmap' id='" + json.seqregion[referenceLength].name + "' style='left: " + left + "px; width:" + width + "px; height:" + height + "px;'></div>");
                         }
-                        jQuery("#refmap").append("<div onclick='jumpToOther(event, " + length + ",\"" + json.seqregion[referenceLength].name + "\",\"" + json.seqregion[referenceLength].coord + "\");' style='position:absolute; cursor: pointer; color:blue; bottom: 0px; left: " + (left) + "px; transform: rotate(270deg);transform-origin: top left; '> <u>" + stringTrim(json.seqregion[referenceLength].name, (width +distance)) + "</u></div>");
+                        jQuery("#refmap").append("<div onclick='jumpToOther(event, " + length + ",\"" + json.seqregion[referenceLength].name + "\",\"" + json.seqregion[referenceLength].coord + "\");' style='position:absolute; cursor: pointer; color:blue; bottom: 0px; left: " + (left) + "px; transform: rotate(270deg);transform-origin: top left; '> <u>" + stringTrim(json.seqregion[referenceLength].name, (width + distance)) + "</u></div>");
                         jQuery("#map").fadeIn();
                     }
                 }
@@ -593,6 +663,8 @@ function getReferences(callback) {
 }
 
 function dispOnMap(json) {
+    console.log( arguments.callee.name );
+
     var width = 15;
     jQuery("#searchResultLegend").html("")
     jQuery("#searchResultLegend").fadeIn();
@@ -643,6 +715,8 @@ function dispOnMap(json) {
 }
 
 function clicked_func(element) {
+    console.log( arguments.callee.name );
+
     element = element.replace(/\./g, '\\.')
     var seqregioncontent = "";
 
@@ -720,6 +794,8 @@ function clicked_func(element) {
 }
 
 function getMarkers(query) {
+    console.log( arguments.callee.name );
+
     Fluxion.doAjax(
         'dnaSequenceService',
         'loadMarker',
@@ -757,6 +833,8 @@ function getMarkers(query) {
 }
 
 function loadMarker(start, end) {
+    console.log( arguments.callee.name );
+
     jQuery("#marker_div").html("");
     setBegin(start);
     setEnd(end);
@@ -796,6 +874,8 @@ function loadMarker(start, end) {
 }
 
 function changeCSS() {
+    console.log( arguments.callee.name );
+
     jQuery("#bar_image").css('top', '210px');
     jQuery("#nav_panel").css('top', '225px');
     jQuery(".vertical-line").css('top', '264px');
@@ -809,6 +889,7 @@ function changeCSS() {
 }
 
 function drawBrowser(json, from, to, blast) {
+    console.log( arguments.callee.name );
 
     var url = "/" + jQuery('#title').text() + "/index.jsp?query=" + json.seqregname + "&coord=" + json.coord_sys
 
@@ -861,15 +942,13 @@ function drawBrowser(json, from, to, blast) {
             if (parseInt(from) < parseInt(to)) {
                 setBegin(from);
                 setEnd(parseInt(to));
-            }
-            else {
+            } else {
                 setBegin(to);
                 setEnd(parseInt(from));
             }
 
             url += "&&from=" + from + "&&to=" + to
-        }
-        else {
+        } else {
             setBegin((sequencelength - minWidth) / 2);
             setEnd(parseInt(getBegin()) + minWidth);
         }
@@ -883,12 +962,11 @@ function drawBrowser(json, from, to, blast) {
         setNavPanel();
 
         //jQuery("#controlsbutton").colorbox({width: "90%", inline: true, href: "#controlpanel"});
-    }
-    else {
+    } else {
 
     }
 
-    window.history.pushState(json.seqregname, jQuery('#title').text() + "-" + json.seqregname, url)
+    // window.history.pushState(json.seqregname, jQuery('#title').text() + "-" + json.seqregname, url)
 
     dispSeqCoord();
 
@@ -899,6 +977,8 @@ function drawBrowser(json, from, to, blast) {
 }
 
 function makeSeqRegionList(json, from, to, blast) {
+    console.log( arguments.callee.name );
+
     jQuery('#canvas').hide();
     jQuery('#currentposition').hide();
     jQuery("#searchresult").fadeIn();
@@ -914,8 +994,7 @@ function makeSeqRegionList(json, from, to, blast) {
 
         if (from && to) {
             seqregioncontent += "<tr><td>" + json.seqregion[i].Type + "<td>" + json.seqregion[i].coord + "<td> " + json.seqregion[i].seq_region_id + "<td>" + json.seqregion[i].name + " <td><a target='_blank' href='index.jsp?query=" + json.seqregion[i].name + "&coord=" + json.seqregion[i].coord + "&from=" + from + "&to=" + to + "&blast=" + blast + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span><a/></td>";
-        }
-        else {
+        } else {
             seqregioncontent += "<tr><td>" + json.seqregion[i].Type + "<td>" + json.seqregion[i].coord + "<td> " + json.seqregion[i].seq_region_id + "<td>" + json.seqregion[i].name + " <td><a target='_blank' href='index.jsp?query=" + json.seqregion[i].name + "&coord=" + json.seqregion[i].coord + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span><a/></td>";
         }
 
@@ -929,6 +1008,8 @@ function makeSeqRegionList(json, from, to, blast) {
 }
 
 function makeFeatureList(json, from, to) {
+    console.log( arguments.callee.name );
+
     jQuery('#currentposition').hide();
     jQuery("#searchresult").html("<h1>Results for searched query</h1> " +
         "<br> (Limited to first 100 match) " +
@@ -960,14 +1041,15 @@ function makeFeatureList(json, from, to) {
     jQuery("#searchresultHead").html("<h2>Search Result</h2>");
 }
 
-function ajax_processing(json, from, to, blast) {
+function ajax_processing(json, from, to, blast, line) {
+    console.log( arguments.callee.name );
+
     jQuery("#searchresultMap").fadeOut();
 
 
     if (json.html == "none") {
         jQuery("#searchresultHead").html("<center><h1>No result found.</h1></center>");
-    }
-    else if (json.chromosome == true) {
+    } else if (json.chromosome == true) {
         jQuery("#map").fadeIn();
         jQuery("#searchresult").fadeOut();
         if (json.html == "one") {
@@ -1002,8 +1084,11 @@ function ajax_processing(json, from, to, blast) {
         makeSeqRegionList(json, from, to, blast)
     } else if (json.html == "gene") {
         makeFeatureList(json, from, to, blast)
-    }
-    else {
+    } else {
         drawBrowser(json, from, to, blast)
+    }
+
+    if(line){
+        preset_line = line;
     }
 }

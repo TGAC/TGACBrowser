@@ -139,7 +139,7 @@ function trackToggle(trackname) {
             trackid = window['track_list' + trackName].id;
             graph = window['track_list' + trackName].graph;
 
-            if (jQuery("#" + track_list[i].name + "Checkbox").is(':checked') || (jQuery("#track_files").val() != null && jQuery("#track_files").val().indexOf(trackName) >= 0)) {
+            if (jQuery("#" + track_list[i].name + "Checkbox").is(':checked') || (jQuery("#track_files").val() != null && jQuery("#track_files").val().indexOf(trackName) >= 0) || (jQuery("#searchable_tracks"))) {
                 if (graph == "true") {
                     if (window['track_list' + trackName].graphtype == "bar") {
                         dispGraph("#" + trackName + "_div", trackName, window['track_list' + trackName].display_label);
@@ -322,9 +322,6 @@ function groupCancel() {
 }
 
 function stringTrim(string, width, newClass) {
-    console.log(string)
-    console.log(width)
-    console.log(newClass)
     if (newClass) {
         jQuery("#ruler").addClass(newClass.toString())
     } else {
@@ -566,9 +563,12 @@ function convertSeqtoBLAST(seq, qseq) {
 //}
 
 function processURL(urlParam) {
+    console.log( arguments.callee.name );
 
     if (jQuery.urlParam("query") != null && jQuery.urlParam("from") != null && jQuery.urlParam("to") != null && jQuery.urlParam("coord") != null && jQuery.urlParam("blasttrack") != null) {
         seqregionSearchwithCoord(urlParam("query"), urlParam("coord"), urlParam("from"), urlParam("to"), urlParam("blasttrack"))
+    } else if (jQuery.urlParam("query") != null && jQuery.urlParam("from") != null && jQuery.urlParam("to") != null && jQuery.urlParam("line") != null) {
+        searchWithLine(urlParam("query"), urlParam("from"), urlParam("to"), urlParam("line"))
     } else if (jQuery.urlParam("query") != null && jQuery.urlParam("from") != null && jQuery.urlParam("to") != null && jQuery.urlParam("blasttrack") != null) {
         seqregionSearchPopup(urlParam("query"), urlParam("from"), urlParam("to"), urlParam("blasttrack"))
     } else if (jQuery.urlParam("query") != null && jQuery.urlParam("from") != null && jQuery.urlParam("to") != null && jQuery.urlParam("coord") != null) {
@@ -584,9 +584,13 @@ function processURL(urlParam) {
     } else {
         getReferences(true)
     }
+
+
 }
 
 function format_numbers(number) {
+    console.log( arguments.callee.name );
+
     var diff = parseInt(number);
     var bp = "";
 
@@ -604,6 +608,7 @@ function format_numbers(number) {
 }
 
 function trackToGraph(div, trackName, className) {
+    console.log( arguments.callee.name );
 
     var start = getBegin();
     var end = getEnd();

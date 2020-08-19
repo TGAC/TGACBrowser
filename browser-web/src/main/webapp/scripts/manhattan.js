@@ -135,6 +135,48 @@ function readCDSfromGem(trackName, trackId, div) {
 }
 
 
+function initSVG(div, trackName) {
+    var margin = {top: 10, right: 0, bottom: 10, left: 0};
+    var width = jQuery("#wrapper").width(),
+        height = 90;
+
+
+    var y = d3.scale.linear().range([height, 0]);
+
+    jQuery(div).html("")
+    window[trackName+"svg"] = d3.select(div)
+        .append("svg")
+        .attr("width", width )
+        .attr("height", height+margin.top+margin.bottom )
+        .append("g")
+        .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")");
+    var gem = window[trackName];
+
+    var yScale = d3.scale.linear()
+        .domain(d3.extent(gem, function (d) {
+            return d.log10P;
+        }))
+        .range([height, 0]);
+    var yAxis = d3.svg.axis().scale(yScale).orient("left");
+    var svg = window[trackName+"svg"]
+
+
+    svg.append("g")
+        .attr("class", "y axis")
+        .attr("transform", "translate("+width/2+",0)")
+        .call(yAxis)
+        .append("text")
+        .attr("class", "label")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", "10px")
+        .style("fill", "none")
+        .style("text-anchor", "end")
+        .text("log10P");
+
+}
+
 function dispGraphManhattan(div, trackName, trackId) {
 
     var data = window[trackName];
@@ -145,7 +187,15 @@ function dispGraphManhattan(div, trackName, trackId) {
     var partial = (newEnd_temp - newStart_temp) / 2;
 
 
-    if(data.length > 0){
+    if (!window[trackName] || window[trackName] == "loading") {
+        if (div.indexOf("mergedtrack") <= 0) {
+            jQuery(div).html("<img style='position: relative; left: 50%; ' src='./images/browser/loading_big.gif' alt='Loading'>")
+            window[trackName+"svg"] = undefined;
+            jQuery(div).fadeIn();
+            jQuery("#" + trackName + "_wrapper").fadeIn();
+        }
+    }
+    else if (data.length > 0){
         data.forEach(function (d, i) {
             if(d.start >= newStart_temp-partial && d.start <= parseInt(newEnd_temp) + parseInt(partial)){
                 gem.push(d)
@@ -167,6 +217,10 @@ function dispGraphManhattan(div, trackName, trackId) {
 
 
         var svg = window[trackName+"svg"]
+        if(svg == undefined){
+            initSVG(div, trackName)
+            svg = window[trackName+"svg"]
+        }
 
         var xScale = d3.scale.linear()
             .domain([newStart_temp - partial, parseInt(newEnd_temp) + parseInt(partial)])
@@ -196,10 +250,15 @@ function dispGraphManhattan(div, trackName, trackId) {
             .attr("cy", function (d) {
                 return yScale(d.log10P);
             })
-            .style("fill", "black")
+            .style("fill", function(d) {
+                return d.colour
+            })
+            .style("stroke", function(d) {
+                return d.colour
+            })
             .append("svg:title")
             .text(function (d) {
-                return d.ref+":"+d.start
+                return d.desc+":"+d.start
             })
             .attr("transform",
                 "translate(" + margin.left + "," + margin.top + ")");
@@ -211,6 +270,12 @@ function dispGraphManhattan(div, trackName, trackId) {
             })
             .attr("cy", function (d) {
                 return yScale(d.log10P);
+            })
+            .style("fill", function(d) {
+                return d.colour
+            })
+            .style("stroke", function(d) {
+                return d.colour
             })
             .attr("transform",
                 "translate(" + margin.left + "," + margin.top + ")");

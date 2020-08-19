@@ -17,8 +17,77 @@
             setBLASTDB()
 
             initUpload();
+
+
+            // jQuery('#myTab a').on('click', function (e) {
+            //     e.preventDefault()
+            //     jQuery(this).tab('show')
+            //     if(this.id == "singleline-tab"){
+            //         jQuery(".singleline").css("visibility", "visible");
+            //     }else {
+            //         jQuery(".singleline").css("visibility", "hidden");
+            //     }
+            // })
+
         });
+
+
+        function checkLine() {
+            if (jQuery(("input[name='lineRadioBox']:checked")).val() == "singlelineRadiobox") {
+                jQuery("#singleline_tracks").css("visibility", "visible");
+                jQuery(".singleline").show()
+                track_list = track_list.concat(single_line_track_list);
+                console.log(track_list)
+                jQuery(".singleLineCheckbox").prop("checked", true);
+                loadSelectedLine()
+            } else {
+                jQuery("#singleline_tracks").css("visibility", "hidden");
+                jQuery(".singleline").hide()
+                jQuery(".singleLineCheckbox").prop("checked", false);
+                track_list = filterArray(track_list, single_line_track_list);
+                console.log(track_list)
+                var Tracklist = track_list;
+                for (var i = 0; i < Tracklist.length; i++) {
+                    var trackname = Tracklist[i].name;
+                    var trackid = Tracklist[i].id;
+                    if(trackid == "ms1"){
+                        loadTrackAjax(trackid, trackname);
+                    }
+                }
+                var currentUrl = location.href;
+                var url = new URL(currentUrl);
+
+
+                url.searchParams.delete("line");
+                var newUrl = url.href;
+                console.log(newUrl);
+                window.history.pushState('TGAC Browser', 'Title', newUrl);
+
+            }
+        }
+
+        function filterArray(a, b) {
+
+
+            var result = [], found;
+            for (var i = 0; i < a.length; i++) {
+                found = false;
+                // find a[i] in b
+                for (var j = 0; j < b.length; j++) {
+                    if (a[i] == b[j]) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    result.push(a[i]);
+                }
+            }
+            return (result);
+        }
+
     </script>
+
 </head>
 
 <body>
@@ -194,6 +263,9 @@
         <div id="wrapper">
             <div id=tracks>
             </div>
+            <div id="line-view" style="visibility: hidden;">
+
+            </div>
             <div class="fakediv">
             </div>
             <div id="sequence">
@@ -247,23 +319,23 @@
                         Tracks List
                         <div id="Tracksdiv_arrowclick" class="toggleLeftDown"></div>
                     </div>
+
+
+                    <%--                    <ul class="nav nav-tabs" id="myTab" role="tablist">--%>
+                    <%--                        <li class="nav-item">--%>
+                    <%--                            <a class="nav-link active" id="multitrack-tab" data-toggle="tab" href="#multitrack" role="tab" aria-controls="home" aria-selected="true">Multi Line View</a>--%>
+                    <%--                        </li>--%>
+                    <%--                        <li class="nav-item">--%>
+                    <%--                            <a class="nav-link" id="singleline-tab" data-toggle="tab" href="#singleline" role="tab" aria-controls="profile" aria-selected="false">Single Line View</a>--%>
+                    <%--                        </li>--%>
+
+                    <%--                    </ul>--%>
+
+                    <%--                    <div class="tab-content" id="myTabContent">--%>
+                    <%--                        <div class="tab-pane fade show active" id="multitrack" role="tabpanel" aria-labelledby="home-tab">--%>
                     <div id="Tracksdiv">
                         <table width=100%>
-                            <tr>
-                                <th>
-                                    Track List
 
-                                    <span title='selectAll'><input type="checkbox" id='selectAllCheckbox'
-                                                                   name='selectAllCheckbox'
-                                                                   onClick=selectAllCheckbox();>  Select All</span>
-
-                                    <span title='unSelectAll'><input type="checkbox" id='unSelectAllCheckbox'
-                                                                     name='unSelectAllCheckbox'
-                                                                     onClick=unSelectAllCheckbox();>  Deselect All</span>
-
-                                </th>
-
-                            </tr>
                             <tr>
                                 <td>
                                     <div id="tracklist" align="left">
@@ -271,6 +343,35 @@
                                     </div>
                                 </td>
 
+                            </tr>
+                            <tr>
+                                <th>
+                                    <b>Select view: </b>
+
+                                    <span title='Multi Line'><input type="radio" value='multilineRadiobox' id="mixedLineRadio"
+                                                                    name='lineRadioBox'
+                                                                    onClick=checkLine(); checked> Mixed Line </span>
+
+                                    <span title='Single Line'><input type="radio" value='singlelineRadiobox' id="singleLineRadio"
+                                                                     name='lineRadioBox'
+                                                                     onClick=checkLine();> Line Specific </span>
+
+                                </th>
+
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div id="singleline_tracks" style="visibility: hidden">
+
+                                        <div id="line_list">
+
+                                        </div>
+
+                                        <div id="line_tracklist">
+
+                                        </div>
+                                    </div>
+                                </td>
                             </tr>
                         </table>
                     </div>
@@ -299,14 +400,22 @@
                         </table>
                     </div>
                 </div>
+                <%--                        <div class="tab-pane fade" id="singleline" role="tabpanel" aria-labelledby="profile-tab">--%>
+                <div>
+
+                    <%--                        </div>--%>
+                </div>
+
 
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
+
         </div>
-
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
     </div>
+
+</div>
 </div>
 
 
@@ -505,7 +614,8 @@
                 </table>
             </div>
             <div class="modal-body">
-                <div id="fastaoutput" style='font-family: Courier, "Courier New", monospace; min-height: 50px; text-align: left'>
+                <div id="fastaoutput"
+                     style='font-family: Courier, "Courier New", monospace; min-height: 50px; text-align: left'>
                     <img style='position: absolute; left: 50%;' src='./images/browser/loading_big.gif' alt='Loading'>
                 </div>
             </div>
@@ -585,29 +695,29 @@
 
     <div id=blastdbs style="display: none">
         Blast DB <select name="blastdb" id="blastdb">
-<%--        <c:set var="databases">${initParam.blastdblink} </c:set>--%>
+        <%--        <c:set var="databases">${initParam.blastdblink} </c:set>--%>
 
-<%--        <c:set var="dateParts" value="${fn:split(databases, ',')}"/>--%>
+        <%--        <c:set var="dateParts" value="${fn:split(databases, ',')}"/>--%>
 
-<%--        <c:set var="databasesloc">${initParam.blastdblocation} </c:set>--%>
+        <%--        <c:set var="databasesloc">${initParam.blastdblocation} </c:set>--%>
 
-<%--        <c:set var="datePartsloc" value="${fn:split(databasesloc, ',')}"/>--%>
+        <%--        <c:set var="datePartsloc" value="${fn:split(databasesloc, ',')}"/>--%>
 
 
-<%--        <c:forEach var="i" begin="1" end='${fn:length(dateParts)}' step="1">--%>
-<%--            &lt;%&ndash;splitting by /&ndash;%&gt;--%>
-<%--            <c:set var="text" value="${fn:split(datePartsloc[i-1],'/')}"/>--%>
-<%--            &lt;%&ndash;considering last entry&ndash;%&gt;--%>
-<%--            <c:set var="text" value="${text[fn:length(text)-1]}"/>--%>
-<%--            &lt;%&ndash;index of . &ndash;%&gt;--%>
-<%--            <c:set var="to" value="${fn:indexOf(text,'.' )}"/>--%>
-<%--            &lt;%&ndash;substring to . &ndash;%&gt;--%>
-<%--            <c:set var="filename" value="${fn:substring(text,0,to) }"/>--%>
+        <%--        <c:forEach var="i" begin="1" end='${fn:length(dateParts)}' step="1">--%>
+        <%--            &lt;%&ndash;splitting by /&ndash;%&gt;--%>
+        <%--            <c:set var="text" value="${fn:split(datePartsloc[i-1],'/')}"/>--%>
+        <%--            &lt;%&ndash;considering last entry&ndash;%&gt;--%>
+        <%--            <c:set var="text" value="${text[fn:length(text)-1]}"/>--%>
+        <%--            &lt;%&ndash;index of . &ndash;%&gt;--%>
+        <%--            <c:set var="to" value="${fn:indexOf(text,'.' )}"/>--%>
+        <%--            &lt;%&ndash;substring to . &ndash;%&gt;--%>
+        <%--            <c:set var="filename" value="${fn:substring(text,0,to) }"/>--%>
 
-<%--            <option value="${datePartsloc[i-1]}:${dateParts[i-1]}">${filename}</option>--%>
+        <%--            <option value="${datePartsloc[i-1]}:${dateParts[i-1]}">${filename}</option>--%>
 
-<%--            &lt;%&ndash;<option value=${datePartsloc[i-1]}>${dateParts[i-1]}</option>&ndash;%&gt;--%>
-<%--        </c:forEach>--%>
+        <%--            &lt;%&ndash;<option value=${datePartsloc[i-1]}>${dateParts[i-1]}</option>&ndash;%&gt;--%>
+        <%--        </c:forEach>--%>
     </select>
 
     </div>
