@@ -467,13 +467,13 @@ public class SQLSimpleFeatureDAO implements SimpleFeatureStore {
                     }
                     eachTrack_temp.put("desc", map_temp.get("display_label"));
                     String colour = "black";
-                    if(map_temp.get("display_label").toString().contains("75K")){
+                    if(map_temp.get("display_label").toString().toUpperCase().contains("75K")){
                         colour = "purple";
-                    }else if(map_temp.get("display_label").toString().contains("100K")){
+                    }else if(map_temp.get("display_label").toString().toUpperCase().contains("100K")){
                         colour = "orange";
-                    }else if(map_temp.get("display_label").toString().contains("200K")){
+                    }else if(map_temp.get("display_label").toString().toUpperCase().contains("200K")){
                         colour = "green";
-                    } else if(map_temp.get("display_label").toString().contains("200K")){
+                    } else if(map_temp.get("display_label").toString().toUpperCase().contains("200K")){
                         colour = "brown";
                     }
                     eachTrack_temp.put("colour" , colour);
