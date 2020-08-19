@@ -349,7 +349,7 @@ public class SQLSimpleFeatureDAO implements SimpleFeatureStore {
         try {
             String GET_HIT = "SELECT simple_feature_id as id,cast(seq_region_start as signed) as start, cast(seq_region_start as signed) as end, display_label, score " +
                     "FROM simple_feature " +
-                    "WHERE seq_region_id = " + id + " AND analysis_id = " + trackId + " and ((seq_region_start >= " + start + " AND seq_region_end <= " + end + ") OR (seq_region_start <= " + start + " AND seq_region_end >= " + end + ") OR (seq_region_end >= " + start + "  AND  seq_region_end <= " + end + ") OR (seq_region_start <= " + start + " AND seq_region_start <= " + end + "))" +
+                    "WHERE seq_region_id = " + id + " AND analysis_id = " + trackId + " and (seq_region_start >= " + start + " AND seq_region_start <= " + end + ")" +
                     " order by seq_region_start";
 
             return template.queryForList(GET_HIT, new Object[]{});
@@ -451,7 +451,7 @@ public class SQLSimpleFeatureDAO implements SimpleFeatureStore {
                         "FROM simple_feature " +
                         "WHERE simple_feature_id = " + map_temp.get("id");
 
-                int start_addition = template.queryForInt(GET_HIT_addition, new Object[]{});
+                int start_addition = 0;//template.queryForInt(GET_HIT_addition, new Object[]{});
 
 
                 int track_start = start_pos + Integer.parseInt(map_temp.get("start").toString());
@@ -465,8 +465,19 @@ public class SQLSimpleFeatureDAO implements SimpleFeatureStore {
                         eachTrack_temp.put("layer", util.stackLayerInt(ends, Integer.parseInt(map_temp.get("start").toString()), delta, Integer.parseInt(map_temp.get("end").toString())));
                         ends = util.stackLayerList(ends, Integer.parseInt(map_temp.get("start").toString()), delta, Integer.parseInt(map_temp.get("end").toString()));
                     }
-                    eachTrack_temp.put("displau_label", map_temp.get("displau_label"));
-                    eachTrack_temp.put("score", map_temp.get("score"));
+                    eachTrack_temp.put("desc", map_temp.get("display_label"));
+                    String colour = "black";
+                    if(map_temp.get("display_label").toString().contains("75K")){
+                        colour = "purple";
+                    }else if(map_temp.get("display_label").toString().contains("100K")){
+                        colour = "orange";
+                    }else if(map_temp.get("display_label").toString().contains("200K")){
+                        colour = "green";
+                    } else if(map_temp.get("display_label").toString().contains("200K")){
+                        colour = "brown";
+                    }
+                    eachTrack_temp.put("colour" , colour);
+                    eachTrack_temp.put("log10P", map_temp.get("score"));
 
                     hitTracks.add(eachTrack_temp);
                 }
