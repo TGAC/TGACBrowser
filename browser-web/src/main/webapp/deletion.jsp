@@ -27,6 +27,7 @@
 
         var loaded = false;
         var common = [];
+        var line_name = null;
 
         function listMiscFeatures() {
             Fluxion.doAjax(
@@ -189,7 +190,7 @@
                                         "title='" + marker.start + ":" + marker.end + "' " +
                                         "class='markers_on_map line" + marker.line_id + "' " +
                                         "style='left:" + left + "px; top:0px;  width:" + width + "px; height:" + height + "px;' " +
-                                        " onclick='jumpToRef(\"" + parent_name + "\",\"" + coord + "\"," + marker.start + "," + marker.end + ");'>" +
+                                        "onclick='window.location=\"./index.jsp?query=" + parent_name+"&&coord="+coord+"&&from="+marker.start+"&&to="+marker.end+"&&line="+name+"\";'>" +
                                         "</div>");
 
                                 }
