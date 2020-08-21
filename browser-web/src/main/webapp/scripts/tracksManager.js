@@ -234,7 +234,7 @@ function loadSelectedLine() {
         var url = new URL(currentUrl);
 
 
-            url.searchParams.set("line", someVariable);
+        url.searchParams.set("line", someVariable);
         var newUrl = url.href;
         console.log(newUrl);
         window.history.pushState('TGAC Browser', 'Title', newUrl);
@@ -252,7 +252,6 @@ function loadSelectedLine() {
                 loadTrackAjax(trackid, trackname);
             }
         }
-
 
 
     } else {
@@ -276,7 +275,9 @@ function prepare_single_line() {
                 for (var i = 0; i < lines.length; i++) {
                     if (preset_line == null && i == 0) {
                         track_html += "<option value='" + lines[i].name + "' selected>" + lines[i].name + "</option>"
-                    } else {
+                    } else  if (preset_line != null && preset_line == lines[i].name) {
+                        track_html += "<option value='" + lines[i].name + "' selected>" + lines[i].name + "</option>"
+                    } else{
                         track_html += "<option value='" + lines[i].name + "'>" + lines[i].name + "</option>"
                     }
                 }
