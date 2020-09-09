@@ -666,7 +666,7 @@ function dispOnMap(json) {
     console.log( arguments.callee.name );
 
     var width = 15;
-    jQuery("#searchResultLegend").html("")
+    jQuery("#searchResultLegend").html("<b>Filter Search Results: </b><br> ")
     jQuery("#searchResultLegend").fadeIn();
     jQuery("#searchresultMap").html("<center><h1>Result for the search</h1><br> (Limited to first 100 match)</center>");
 

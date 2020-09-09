@@ -111,7 +111,7 @@
     <%--<div id="dbinfo"></div>--%>
     <center>
 
-        <a class="headerlink" href="<c:url value="/"/>"> <font color=white> ${initParam.header} : </font></a>
+        <a class="headerlink" href="<c:url value="/"/>"> <font color=white> TGAC Browser - Deletion : </font></a>
         </td>
         <td>
             <font color=white>

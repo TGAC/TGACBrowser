@@ -34,14 +34,14 @@
 
         function checkLine() {
             if (jQuery(("input[name='lineRadioBox']:checked")).val() == "singlelineRadiobox") {
-                jQuery("#singleline_tracks").css("visibility", "visible");
+                jQuery("#singleline_tracks").show();
                 jQuery(".singleline").show()
                 track_list = track_list.concat(single_line_track_list);
                 console.log(track_list)
                 jQuery(".singleLineCheckbox").prop("checked", true);
                 loadSelectedLine()
             } else {
-                jQuery("#singleline_tracks").css("visibility", "hidden");
+                jQuery("#singleline_tracks").hide();
                 jQuery(".singleline").hide()
                 jQuery(".singleLineCheckbox").prop("checked", false);
                 track_list = filterArray(track_list, single_line_track_list);
@@ -361,7 +361,7 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <div id="singleline_tracks" style="visibility: hidden">
+                                    <div id="singleline_tracks" style="display: none">
 
                                         <div id="line_list">
 
@@ -376,14 +376,14 @@
                         </table>
                     </div>
 
-                    <div class="sectionDivider"
+                    <div class="sectionDivider" style="display: none"
                          onclick="toggleLeftInfo(jQuery('#MergeTracksdiv_arrowclick'), 'MergeTracksdiv');">
                         Merge
                         Tracks List
                         <div id="MergeTracksdiv_arrowclick" class="toggleLeftDown"></div>
                     </div>
 
-                    <div id="MergeTracksdiv">
+                    <div id="MergeTracksdiv" style="display: none">
 
                         <table width=100%>
                             <tr>

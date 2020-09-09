@@ -2046,12 +2046,13 @@ span.counter {
 
 #searchResultLegend {
     position: fixed;
-    top: 80px;
+    bottom: 80px;
+    border: 1px solid grey;
+    padding: 5px;
 }
 
 .searchResultLegend {
     position: relative;
-    height: 10px;
     /*width: 200px;*/
     z-index: 1999;
     text-align: left;

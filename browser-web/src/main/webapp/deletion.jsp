@@ -107,12 +107,14 @@
                                 }
 
                                 if (item == "All") {
+                                    jQuery("#seqnameh1").html("All")
                                     if (jQuery(".all_markers").length > 0) {
                                         jQuery(".all_markers").show()
                                     } else {
                                         loadDeletions(item)
                                     }
                                 } else {
+                                    jQuery("#seqnameh1").html(item)
                                     loadDeletions(item)
                                 }
                             });
@@ -223,6 +225,8 @@
                 } else {
                     if (jQuery.urlParam("query") != null) {
                         loadDeletions(jQuery.urlParam("query"))
+                        jQuery("#seqnameh1").html(jQuery.urlParam("query"))
+
                     } else {
                         loadDeletions("All");
                     }
