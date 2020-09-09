@@ -285,22 +285,34 @@ public class SQLGeneDAO implements GeneStore {
             JSONArray trackList = new JSONArray();
             long from = start;
             long to;
-            int no_of_tracks = template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{id, trackId, from, end,from, end,from, end,from, end}, Integer.class);
 
-            if (no_of_tracks > 0) {
+            String GENE_COUNT = "select";
+            for (int i = 1; i < 200; i++) {
+                JSONObject eachTrack = new JSONObject();
+                to = start + (i * (end - start) / 200);
+                GENE_COUNT += " count(CASE WHEN seq_region_start BETWEEN "+from+ " AND "+to+" THEN 1 END) AS COUNT"+from+"_"+to+",";
+                from = to;
+            }
+            to = start + (200 * (end - start) / 200);
+            GENE_COUNT += " count(CASE WHEN seq_region_start BETWEEN "+from+ " AND "+to+" THEN 1 END) AS COUNT"+from+"_"+to + " ";
+            GENE_COUNT += "FROM gene where seq_region_id = "+id+" and analysis_id = "+trackId;
+
+            log.info("\n\n\n new_query "+GENE_COUNT);
+
+            from = start;
+
+            Map<String, Object> no_of_tracks = template.queryForMap(GENE_COUNT, new Object[]{});
+
                 for (int i = 1; i <= 200; i++) {
                     JSONObject eachTrack = new JSONObject();
                     to = start + (i * (end - start) / 200);
-                    no_of_tracks = template.queryForObject(GET_Gene_SIZE_SLICE, new Object[]{id, trackId, from, to,from, to,from, to,from, to}, Integer.class);
+                    String no = no_of_tracks.get("COUNT"+from+"_"+to).toString();
                     eachTrack.put("start", from);
                     eachTrack.put("end", to);
-                    eachTrack.put("graph", no_of_tracks);
+                    eachTrack.put("graph", no);
                     trackList.add(eachTrack);
                     from = to;
                 }
-            } else {
-                trackList.addAll(recursiveGeneGraph(0, id, trackId, start, end));
-            }
             return trackList;
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
@@ -663,15 +675,15 @@ public class SQLGeneDAO implements GeneStore {
                     eachExon.put("id", genes.get(i).get("exon_id"));
                     eachExon.put("start", start_addition+start_add + Integer.parseInt(genes.get(i).get("exon_start").toString()));
                     eachExon.put("end", start_addition+start_add + Integer.parseInt(genes.get(i).get("exon_end").toString()));
-                    if(genes.get(i).get("translation_start") != null){
-                        eachTrack.put("transcript_start", start_addition+Integer.parseInt(genes.get(i).get("translation_start").toString()));
-                        Translation.put("start" ,  start_addition+Integer.parseInt(genes.get(i).get("translation_start").toString()));
-                    }
-                    if(genes.get(i).get("translation_end") != null){
-                        eachTrack.put("transcript_end", start_addition+Integer.parseInt(genes.get(i).get("translation_end").toString()));
-                        Translation.put("end" ,  start_addition+Integer.parseInt(genes.get(i).get("translation_end").toString()));
-
-                    }
+//                    if(genes.get(i).get("translation_start") != null){
+//                        eachTrack.put("transcript_start", start_addition+Integer.parseInt(genes.get(i).get("translation_start").toString()));
+//                        Translation.put("start" ,  start_addition+Integer.parseInt(genes.get(i).get("translation_start").toString()));
+//                    }
+//                    if(genes.get(i).get("translation_end") != null){
+//                        eachTrack.put("transcript_end", start_addition+Integer.parseInt(genes.get(i).get("translation_end").toString()));
+//                        Translation.put("end" ,  start_addition+Integer.parseInt(genes.get(i).get("translation_end").toString()));
+//
+//                    }
                     exonList.add(eachExon);
 
                     lastsize = thissize;
