@@ -537,7 +537,7 @@ public class DnaSequenceService {
                     } else {
                         response.put(trackName, new JSONArray());
                     }
-                } else if (count < 1000) {
+                } else if (count < 500) {
                     response.put(trackName, geneStore.processGenes(geneStore.getGenes(queryid, trackId, start, end), start, end, delta, queryid, trackId));
                 } else {
                     response.put("type", "graph");
