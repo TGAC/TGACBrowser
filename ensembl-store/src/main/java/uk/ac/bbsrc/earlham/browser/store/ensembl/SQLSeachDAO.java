@@ -460,6 +460,7 @@ public class SQLSeachDAO implements SearchStore {
                     eachGene.put("start", pos + Integer.parseInt(map.get("seq_region_start").toString()));
                     eachGene.put("end", pos + Integer.parseInt(map.get("seq_region_end").toString()));
                     eachGene.put("parent", getSeqRegionName(getAssemblyReference(Integer.parseInt(map.get("seq_region_id").toString()))));
+                    eachGene.put("coord", template.queryForObject(GET_coord_sys_id, new Object[]{map.get("seq_region_id")}, String.class));
                 } else {
                     eachGene.put("start", map.get("seq_region_start"));
                     eachGene.put("end", map.get("seq_region_end"));
@@ -502,6 +503,7 @@ public class SQLSeachDAO implements SearchStore {
                         eachGo.put("start", pos + Integer.parseInt(gene.get("seq_region_start").toString()));
                         eachGo.put("end", pos + Integer.parseInt(gene.get("seq_region_end").toString()));
                         eachGo.put("parent", getSeqRegionName(getAssemblyReference(Integer.parseInt(gene.get("seq_region_id").toString()))));
+                        eachGo.put("coord", template.queryForObject(GET_coord_sys_id, new Object[]{map.get("seq_region_id")}, String.class));
                     } else {
                         eachGo.put("start", gene.get("seq_region_start"));
                         eachGo.put("end", gene.get("seq_region_end"));
