@@ -293,7 +293,7 @@
         <jetty-version>6.1.7</jetty-version>
         <spring-version>3.0.5.RELEASE</spring-version>
         <spring-hibernate-version>2.0.8</spring-hibernate-version>
-        <spring-integration-version>2.0.3.RELEASE</spring-integration-version>
+        <spring-integration-version>5.1.12.RELEASE</spring-integration-version>
         <mysql-version>8.0.18</mysql-version>
     </properties>
 
