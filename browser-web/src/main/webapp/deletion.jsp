@@ -11,13 +11,15 @@
 
     <center>
 
-        <div id="chr_map" style="top: 30px; position: relative; height: 1000px;">
+        <div id="lines_list" style="position:absolute; left: 10px; top:50px; width:300px; height: 100px;">
 
         </div>
 
-        <div id="lines_list" style="position:absolute; right:10px; top:50px; width:300px; height: 500px;">
+        <div id="chr_map" style="top: 130px; position: relative; height: 1000px;">
 
         </div>
+
+
 
 
     </center>
@@ -66,8 +68,9 @@
                             }
                             var left = "10%";
                             jQuery("#chr_map").append("<div length=" + length + " coord=" + json.chromosomes[referenceLength].coord + " name=" + json.chromosomes[referenceLength].name + " id='parent_" + json.chromosomes[referenceLength].seq_region_id + "' style='position: absolute; border: 1px solid grey; background-color: whitesmoke; cursor: default; border-radius:0;left:55px; top: " + top + "px; width:" + width + "px; height:" + height + "px;'></div>");
-                            jQuery("#chr_map").append("<div style='position:absolute; color:blue; top: " + (top) + "px; left:0px; width:50px; text-align:right;'> " + json.chromosomes[referenceLength].name + "</div>");
-
+                            jQuery("#chr_map").append("<div " +
+                                "onclick='window.location=\"./index.jsp?query=" +  json.chromosomes[referenceLength].name+"&&coord="+json.chromosomes[referenceLength].coord+"\";'" +
+                                "style='cursor: pointer ;position:absolute; color:blue; top: " + (top) + "px; left:0px; width:50px; text-align:right;'> " + json.chromosomes[referenceLength].name + "</div>");
                         }
                         //    new func
 
@@ -107,6 +110,8 @@
                                 }
 
                                 if (item == "All") {
+                                    var url = "/" + jQuery('#title').text() + "/deletion.jsp?query=All"
+                                    window.history.pushState(name, jQuery('#title').text() + "-All", url)
                                     jQuery("#seqnameh1").html("All")
                                     if (jQuery(".all_markers").length > 0) {
                                         jQuery(".all_markers").show()
