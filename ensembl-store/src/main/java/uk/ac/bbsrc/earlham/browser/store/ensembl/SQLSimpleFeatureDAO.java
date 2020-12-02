@@ -76,7 +76,7 @@ public class SQLSimpleFeatureDAO implements SimpleFeatureStore {
     public static final String GET_length_from_seqreg_id = "SELECT length FROM seq_region where seq_region_id =?";
     public static final String COUNT_ASSEMBLIES = "SELECT COUNT(asm_seq_region_id) FROM assembly WHERE asm_seq_region_id = ?";
     public static final String GET_HIT_SIZE = "SELECT COUNT(simple_feature_id) FROM simple_feature where seq_region_id =? and analysis_id = ?";
-    public static final String GET_HIT_SIZE_SLICE = "SELECT COUNT(simple_feature_id) FROM simple_feature where seq_region_id =? and analysis_id = ? and seq_region_start >= ? and seq_region_start <= ?";
+    public static final String GET_HIT_SIZE_SLICE = "SELECT COUNT(simple_feature_id) FROM simple_feature where seq_region_id =? and analysis_id = ? and ((seq_region_start >= ? AND seq_region_start <= ?) OR (seq_region_start <= ? AND seq_region_end >= ?) OR (seq_region_end >= ?  AND seq_region_start <= ?) OR (seq_region_start <= ? AND seq_region_end >= ?));";
     public static final String GET_HIT = "SELECT simple_feature_id as id,cast(seq_region_start as signed) as start, cast(seq_region_end as signed) as end,seq_region_strand as strand, display_label, score FROM simple_feature where seq_region_id =? and analysis_id = ? AND ((seq_region_start >= ? AND seq_region_end <= ?) OR (seq_region_start <= ? AND seq_region_end >= ?) OR (seq_region_end >= ? AND seq_region_end <= ?) OR (seq_region_start >= ? AND seq_region_start <= ?)) ORDER BY (end-start) desc"; //seq_region_start ASC";//" AND ((hit_start >= ? AND hit_end <= ?) OR (hit_start <= ? AND hit_end >= ?) OR (hit_end >= ? AND hit_end <= ?) OR (hit_start >= ? AND hit_start <= ?))";
     public static final String GET_Assembly_for_reference = "SELECT * FROM assembly where asm_seq_region_id =?";
     public static final String GET_hit_name_from_ID = "SELECT hit_name FROM simple_feature where simple_feature_id =?";
@@ -305,7 +305,9 @@ public class SQLSimpleFeatureDAO implements SimpleFeatureStore {
      */
     public int countHit(int id, String trackId, long start, long end) throws Exception {
         try {
-            int hit_size = template.queryForObject(GET_HIT_SIZE_SLICE, new Object[]{id, trackId, start, end}, Integer.class);
+            int hit_size = template.queryForObject(GET_HIT_SIZE_SLICE, new Object[]{id, trackId, start, end, start, end, end ,end, start, start}, Integer.class);
+            //    ((seq_region_start >= " + start + " AND seq_region_start <= " + end + ") OR (seq_region_start <= " + start + " AND seq_region_end >= " + end + ") OR (seq_region_end >= " + end + "  AND seq_region_start <= " + end + ") OR (seq_region_start <= " + start + " AND seq_region_end >= " + start + ")) " +
+
 
             int assemblies = template.queryForInt(COUNT_ASSEMBLIES, new Object[]{id});
             log.info("\n\n\n\t assembly "+assemblies+"\n\n\n\n");
@@ -349,7 +351,8 @@ public class SQLSimpleFeatureDAO implements SimpleFeatureStore {
         try {
             String GET_HIT = "SELECT simple_feature_id as id,cast(seq_region_start as signed) as start, cast(seq_region_end as signed) as end, display_label, score " +
                     "FROM simple_feature " +
-                    "WHERE seq_region_id = " + id + " AND analysis_id = " + trackId + " and (seq_region_start >= " + start + " AND seq_region_start <= " + end + ")" +
+                    "WHERE seq_region_id = " + id + " AND analysis_id = " + trackId + " and ((seq_region_start >= " + start + " AND seq_region_start <= " + end + ") OR (seq_region_start <= " + start + " AND seq_region_end >= " + end + ") OR (seq_region_end >= " + end + "  AND seq_region_start <= " + end + ") OR (seq_region_start <= " + start + " AND seq_region_end >= " + start + ")) " +
+//                    OR (mf.seq_region_start <= " + start + " AND mf.seq_region_end >= " + end + ") OR (mf.seq_region_end >= " + end + "  AND mf.seq_region_start <= " + end + ") OR (mf.seq_region_start <= " + start + " AND mf.seq_region_end >= " + start + ")) " +
                     " order by seq_region_start";
 
             return template.queryForList(GET_HIT, new Object[]{});
@@ -468,17 +471,17 @@ public class SQLSimpleFeatureDAO implements SimpleFeatureStore {
                     eachTrack_temp.put("desc", map_temp.get("display_label"));
                     String colour = "black";
                     if(map_temp.get("display_label").toString().toUpperCase().contains("25K")){
-                        colour = "#8dd3c7";
+                        colour = "#4DAF4A";
                     }else if(map_temp.get("display_label").toString().toUpperCase().contains("50K")){
-                        colour = "#bebada";
+                        colour = "#377EB8";
                     }else if(map_temp.get("display_label").toString().toUpperCase().contains("75K")){
-                        colour = "#fb8072";
+                        colour = "#E41A1C";
                     }else if(map_temp.get("display_label").toString().toUpperCase().contains("100K")){
-                        colour = "#fdb462";
+                        colour = "#FF7F00";
                     }else if(map_temp.get("display_label").toString().toUpperCase().contains("200K")){
-                        colour = "#fccde5";
+                        colour = "#984EA3";
                     } else {
-                        colour = "brown";
+                        colour = "#A65628";
                     }
                     eachTrack_temp.put("colour" , colour);
                     eachTrack_temp.put("log10P", map_temp.get("score"));
