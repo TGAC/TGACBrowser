@@ -127,6 +127,8 @@
         <input type="text" id="search" class="seachbox" value='' placeholder="Search with keyword"
                title="Search with Keyword for reference, gene, genomic features etc"/>
 
+        <span onclick="search(jQuery('#search').val())" style="color: steelblue; top: 5px;background: white;border-radius: 5px;"> Search </span>
+
         <c:set var="databases">${initParam.blastdblink} </c:set>
 
         <c:set var="dateParts" value="${fn:split(databases, ',')}"/>
