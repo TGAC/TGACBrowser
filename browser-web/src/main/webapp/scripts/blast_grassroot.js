@@ -56,7 +56,7 @@ function blastSearch(query, db, type, params) {
     var link = "";
     var id = randomString(8);
     var format = 7;// qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore sseq qseq";//"format";
-    jQuery("#blast_list").append("<div id='" + id + "' class='blast_list_node'> <b>BLAST job " + id + " </b> <img style='position: relative;' src='./images/browser/loading_big.gif' height=15px alt='Loading'></div>")
+    jQuery("#blast_list").append("<div id='" + id + "' class='blast_list_node'> <b>BLAST job " + id + " </b> is running. <p> <center><img style='position: relative;' src='./images/browser/loading_big.gif' height=15px alt='Loading'></center></div>")
 
     Fluxion.doAjax(
         'blastGrassroot',
@@ -159,7 +159,9 @@ function parseGrassRootBLAST(result, id) {
                 var col_html = "<tr>"
                 for (var col = 0; col < cols.length; col++) {
                     if (col == 1) {
-                        col_html += "<td><a href='../tgac_browser/index.jsp?query=" + cols[col] + "&&from=" + cols[8] + "&&to=" + cols[9] + "'>" + cols[col] + "</a></td>";
+                        var from = parseInt(cols[8]) - 100;
+                        var to = parseInt(cols[9]) + 100;
+                        col_html += "<td><a target='_blank' href='../tgac_browser/index.jsp?query=" + cols[col] + "&&from=" + from + "&&to=" + to + "'>" + cols[col] + "</a></td>";
                     } else {
                         col_html += "<td>" + cols[col] + "</td>";
                     }

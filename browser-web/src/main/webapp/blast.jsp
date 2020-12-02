@@ -4,8 +4,13 @@
 
 <div style="position: absolute; left: 20px; width: 50%; top:50px;" id="blasttextsearch">
 
+    <h1> TGAC Browser BLAST service </h1>
+    <h6> TGAC Browser supports running multiple BLAST at the same time. Results will be available in History Panel</h6>
+
+    <p>
     Enter sequence below in FASTA or RAW format (Only one sequence at a time.)
     <br>
+
     <textarea class="ui-corner-all" id="blastsearch" rows="6" cols="60"
               style="margin: 2px 2px 2px 2px; height: 100px; width: 98%; "></textarea>
 

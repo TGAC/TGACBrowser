@@ -90,7 +90,11 @@ public class BlastGrassroot {
 
         String urlParameters = query.toString();
 
-        URL url = new URL("https://grassroots.tools/dev/public_backend");
+//        URL url = new URL("https://grassroots.tools/dev/public_backend");
+//        URL url = new URL("http://10.0.152.84/grassroots/public_backend ");
+        URL url = new URL("https://grassroots.tools/public_backend");
+
+
 
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setDoOutput(true);
@@ -257,7 +261,7 @@ public class BlastGrassroot {
             }
 
             param = new JSONObject();
-            param.put("param", "Available Databases provided by EI Grassroots development server -> IWGSC v1.0");
+            param.put("param", "Available Databases provided by EI Grasssroots public server -> IWGSC release 46");
             param.put("current_value", true);
             parameters.add(param);
 
@@ -281,7 +285,12 @@ public class BlastGrassroot {
             result_obj.put("urlParameters", urlParameters);
 
 
-            URL url = new URL("https://grassroots.tools/dev/public_backend");
+//            URL url = new URL("https://grassroots.tools/dev/public_backend");
+//            URL url = new URL("http://10.0.152.84/grassroots/public_backend ");
+            URL url = new URL("https://grassroots.tools/public_backend");
+
+
+
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setDoOutput(true);
@@ -380,7 +389,10 @@ public class BlastGrassroot {
         try {
 
             log.info("\n\n\n\n\t connectNCBI " + urlParameters);
-            URL url = new URL("https://grassroots.tools/dev/public_backend");
+//            URL url = new URL("https://grassroots.tools/dev/public_backend");
+//            URL url = new URL("http://10.0.152.84/grassroots/public_backend ");
+            URL url = new URL("https://grassroots.tools/public_backend");
+
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setDoOutput(true);
