@@ -104,6 +104,7 @@ function track_div_html(trackname) {
     console.log("track_div_html")
 
     var track = window['track_list' + trackname]
+
     var style = "display:block;";
     if (track.disp == false || track.disp == 0) {
         style = "display:none;";
@@ -122,6 +123,20 @@ function track_div_html(trackname) {
             "</table>" +
             "</div>" +
             "<div id='" + track.name + "_div' class='feature_tracks' style=\"display:none; top:0px; overflow-y: auto; overflow-x: hidden\" > " + track.name + "</div>"
+        );
+    } else if (track.display_label == "Deletions") {
+        jQuery("#" + track.name + "_wrapper").append("<div align='left' class='handle'>" +
+            "<table>" +
+            "<tr>" +
+            "<td><b>" + track.display_label + "</b></td>" +
+            // "<td><div title=\"Hide Track\" class='closehandle ui-icon ui-icon-close' onclick=removeTrack(\"" + track.name + "_div\",\"" + track.name + "\");></div></td>" +
+            "<td><div title=\"Line names\"  style='display: none' class=\"line-control\"> in Line <span  id=\"line_label\" > </span></div></td>" +
+            "<td><div title=\"Show All Line\"  style='display: none' class=\"line-control closehandle ui-icon ui-icon-close\" onclick=AllLine();> </div></td>"+
+            "<td><div title=\"Track names\"  class=\"closehandle ui-icon ui-icon-comment\" onclick=toogleLabel(\"" + track.name + "\");> </div></td>" + checkGene(track.name) +
+            "</tr>" +
+            "</table>" +
+            "</div>" +
+            "<div id='" + track.name + "_div' class='feature_tracks' style=\"display:block; top:10px; overflow-y: auto; overflow-x: hidden\" > </div>"
         );
     } else {
         jQuery("#" + track.name + "_wrapper").append("<div align='left' class='handle'>" +
@@ -155,6 +170,11 @@ function track_div_html(trackname) {
     }
 
 
+}
+
+function AllLine() {
+    jQuery("#mixedLineRadio").prop("checked", true);
+    checkLine()
 }
 
 
@@ -235,6 +255,8 @@ function loadSelectedLine() {
 
 
         url.searchParams.set("line", someVariable);
+        jQuery("#line_label").html(someVariable)
+
         var newUrl = url.href;
         console.log(newUrl);
         window.history.pushState('TGAC Browser', 'Title', newUrl);
@@ -467,6 +489,7 @@ function prepare_single_line() {
                 }
                 if (preset_line != null) {
                     jQuery("#singleLineRadio").prop("checked", true)
+                    jQuery(".line-control").show()
                     jQuery("#singleline_tracks").css("visibility", "visible");
                     jQuery(".singleline").show()
                     track_list = track_list.concat(single_line_track_list);
