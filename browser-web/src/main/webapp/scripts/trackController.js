@@ -1347,6 +1347,12 @@ function dispTrack(div, trackName, className) {
                     label = track_start + "-" + track_stop;
                 }
 
+                if (startposition < 0)
+                {
+                    stopposition = stopposition - startposition;
+                    startposition = 0;
+                }
+
                 var clone_new_div = new_div.cloneNode(true)
 
                 clone_new_div.className = trackClass + " " + className;
@@ -1401,13 +1407,13 @@ function dispTrack(div, trackName, className) {
     max = parseInt(jQuery(div)[0].scrollHeight) + 50;
 
     jQuery("#" + trackName + "_wrapper").css("max-height", max);
-    jQuery("#" + trackName + "_wrapper").css("height", 200);
 
     if (max > parseInt(jQuery("#" + trackName + "_wrapper").css("height"))) {
+        jQuery("#" + trackName + "_wrapper").css("height", 200);
         jQuery("#" + trackName + "_wrapper").children(".ui-resizable-handle").addClass("resize-arrow")
     } else {
         jQuery("#" + trackName + "_wrapper").children(".ui-resizable-handle").removeClass("resize-arrow")
-
+        jQuery("#" + trackName + "_wrapper").css("height", max);
     }
 
     var d = new Date();
