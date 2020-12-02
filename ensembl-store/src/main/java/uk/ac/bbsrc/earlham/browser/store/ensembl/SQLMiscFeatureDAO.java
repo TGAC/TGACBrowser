@@ -214,7 +214,7 @@ public class SQLMiscFeatureDAO implements MiscFeatureStore {
         log.info("\n\n\n\t get features");
 
         try {
-            String GET_Feature_by_view = "SELECT mf.misc_feature_id as id, mf.seq_region_start as start, mf.seq_region_end as end, mf.seq_region_strand as strand, a.name as description " +
+            String GET_Feature_by_view = "SELECT mf.misc_feature_id as id, mf.seq_region_start as start, mf.seq_region_end as end, mf.seq_region_strand as strand, a.name as description, a.code as link " +
                     "FROM misc_feature mf, misc_attrib ma, attrib_type a " +
                     "WHERE mf.seq_region_id = " + id + " and ((mf.seq_region_start >= " + start + " AND mf.seq_region_end <= " + end + ") OR (mf.seq_region_start <= " + start + " AND mf.seq_region_end >= " + end + ") OR (mf.seq_region_end >= " + end + "  AND mf.seq_region_start <= " + end + ") OR (mf.seq_region_start <= " + start + " AND mf.seq_region_end >= " + start + ")) " +
                     "and mf.misc_feature_id = ma.misc_feature_id and ma.attrib_type_id = a.attrib_type_id " +
@@ -232,7 +232,7 @@ public class SQLMiscFeatureDAO implements MiscFeatureStore {
         log.info("\n\n\n\t get features");
 
         try {
-            String GET_Feature_by_view = "SELECT mf.misc_feature_id as id, mf.seq_region_start as start, mf.seq_region_end as end, mf.seq_region_strand as strand, a.name as description " +
+            String GET_Feature_by_view = "SELECT mf.misc_feature_id as id, mf.seq_region_start as start, mf.seq_region_end as end, mf.seq_region_strand as strand, a.name as description, a.code as link " +
                     "FROM misc_feature mf, misc_attrib ma, attrib_type a " +
                     "WHERE mf.seq_region_id = " + id + " and ((mf.seq_region_start >= " + start + " AND mf.seq_region_end <= " + end + ") OR (mf.seq_region_start <= " + start + " AND mf.seq_region_end >= " + end + ") OR (mf.seq_region_end >= " + end + "  AND mf.seq_region_start <= " + end + ") OR (mf.seq_region_start <= " + start + " AND mf.seq_region_end >= " + start + ")) " +
                     "and mf.misc_feature_id = ma.misc_feature_id and ma.attrib_type_id = a.attrib_type_id " +
@@ -313,6 +313,7 @@ public class SQLMiscFeatureDAO implements MiscFeatureStore {
                 eachTrack_temp.put("strand", map.get("strand"));
                 eachTrack_temp.put("layer", util.stackLayerInt(ends, start_pos, delta, end_pos));
                 eachTrack_temp.put("desc", map.get("description"));
+                eachTrack_temp.put("link", map.get("link"));
                 String line[] = map.get("description").toString().split("\\-");
                 line[0] = line[0].replaceAll("[A-Za-z]", "");
                 int r = Integer.parseInt(line[0]) * 30;
