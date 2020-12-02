@@ -144,6 +144,14 @@ function newpopup(track, i, j) {
 
         }
 
+        if (window[track][i].link) {
+            jQuery("#seedstore").html("<a target='_new' href='https://www.seedstor.ac.uk/search-infoaccession.php?idPlant=" + window[track][i].link + "' > <span title=\"SeedStore\" class=\"ui-button ui-seedstore\"></span> </a>");
+            jQuery("#changeline").html('<span title="Show this line" class="ui-button ui-icon ui-icon-shuffle" onclick=changeLine(\"' + window[track][i].desc + '\");></span>');
+
+        }
+
+
+
     }
 
 
@@ -163,6 +171,20 @@ function newpopup(track, i, j) {
 }
 
 
+function changeLine(newline){
+    jQuery("#singleLineRadio").prop("checked", true)
+
+    jQuery("#lines_searchable_list").val(newline);
+    jQuery(".line-control").show()
+    jQuery("#singleline_tracks").css("visibility", "visible");
+    jQuery(".singleline").show()
+    track_list = track_list.concat(single_line_track_list);
+    console.log(track_list)
+    jQuery(".singleLineCheckbox").prop("checked", true);
+    jQuery("#lines_searchable_list").val(newline)
+    loadSelectedLine()
+
+}
 function removeBlastPopup() {
     jQuery("#indel").html("");
     jQuery('#blastpopup').hide();

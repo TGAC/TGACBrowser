@@ -37,11 +37,12 @@
                 jQuery("#singleline_tracks").show();
                 jQuery(".singleline").show()
                 track_list = track_list.concat(single_line_track_list);
-                console.log(track_list)
+                jQuery(".line-control").show()
                 jQuery(".singleLineCheckbox").prop("checked", true);
                 loadSelectedLine()
             } else {
                 jQuery("#singleline_tracks").hide();
+                jQuery(".line-control").hide()
                 jQuery(".singleline").hide()
                 jQuery(".singleLineCheckbox").prop("checked", false);
                 track_list = filterArray(track_list, single_line_track_list);
@@ -487,13 +488,16 @@
 
                 ${initParam.fasta == "true" && length > 1 ? "<div class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" id=\"BLASTme\"> </div>" : ""}
 
+                <div class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" id="seedstore">
+                </div>
                 <div class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" id="ZoomHere">
                 </div>
 
                 <div class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" id="flagTrack">
                 </div>
-                <div class="ui-widget ui-state-default ui-corner-all ui-button ui-icon ui-icon-arrow-1-s" id="openmenu"
-                     onclick="tooglehangingmenu()" title="More Option">
+                <div class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" id="Linkme">
+                </div>
+                <div class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" id="changeline">
                 </div>
             </td>
         </tr>
@@ -502,24 +506,24 @@
 
 </div>
 
-<div id=popup_hanging style="display : none; z-index: 1999;">
-    <div class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" id="revertme">
-    </div>
-    <div class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"
-         id="EditDescription">
-    </div>
-    <div class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" id="deleteTrack">
-    </div>
-    <p>
+<%--<div id=popup_hanging style="display : none; z-index: 1999;">--%>
+<%--    <div class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" id="revertme">--%>
+<%--    </div>--%>
+<%--    <div class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"--%>
+<%--         id="EditDescription">--%>
+<%--    </div>--%>
+<%--    <div class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" id="deleteTrack">--%>
+<%--    </div>--%>
+<%--    <p>--%>
 
-    <div class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" id="Linkme">
-    </div>
-    <div class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" id="makemetop">
-    </div>
+<%--    <div class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" id="Linkme">--%>
+<%--    </div>--%>
+<%--    <div class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" id="makemetop">--%>
+<%--    </div>--%>
 
-    ${initParam.fasta == "true" ? "<div class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" id=\"peptides\"> </div>" : ""}
+<%--    ${initParam.fasta == "true" ? "<div class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" id=\"peptides\"> </div>" : ""}--%>
 
-</div>
+<%--</div>--%>
 
 <div id="dragpopup" class="bubbleleft">
 

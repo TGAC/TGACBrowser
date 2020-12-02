@@ -1942,7 +1942,7 @@ span.counter {
 
 #blastresult {
     position: relative;
-    top: 400px;
+    top: 500px;
 }
 
 /*#popup:before{*/
@@ -2359,6 +2359,12 @@ span.counter {
     height: 16px;
 }
 
+.ui-seedstore {
+    background-image: url("https://www.seedstor.ac.uk/SeedStorIcon.ico");
+    width: 16px;
+    height: 16px;
+    background-size: cover;
+}
 .ui-ensembl {
     background-image: url("../images/browser/ensembl.jpg");
     width: 16px;
@@ -2746,6 +2752,7 @@ span.deleteicon input {
     border: 1px solid gray;
     border-radius: 5px 5px 5px 5px;
     margin: 5px;
+    padding: 5px;
 }
 
 
