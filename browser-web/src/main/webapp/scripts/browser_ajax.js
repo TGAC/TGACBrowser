@@ -698,7 +698,7 @@ function dispOnMap(json) {
                         "title='" + marker.name + ":" + marker.start + "-" + marker.end + "' " +
                         "class='refmapsearchmarker" + key + " " + marker.Type + "' " +
                         "style='left:" + left + "px; top:" + maptop + "px;  width:" + width + "px; height:" + mapheight + "px;' " +
-                        "onclick=clicked_func('" + marker.name + "'); >" +
+                        // "onclick=clicked_func('" + marker.name + "'); >" +
                         "</div>");
                 } else {
                     var link = "<a target='_blank' href='index.jsp?query=" + marker.name + "&&coord=" + marker.coord + "&&from=0&&to=" + marker.length + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span><a/>"
@@ -1028,12 +1028,15 @@ function makeFeatureList(json, from, to) {
             jQuery("#listSearch").append("<li> <a href='#tab" + key + "'><span>" + key + "</span></a></li>");
             jQuery("#searchnavtabs").append("<div id='tab" + key + "'></div>");
             genecontent += "<table class='list' id='" + key + "_hit'><thead><tr><th>Track</th><th>Gene</th><th>Reference Name</th><th>Reference Coord Sys</th><th>Position</th><th>Link</th></tr></thead>";
+
+            var from = parseInt(data.start) - parseInt(100)
+            var to =  parseInt(data.end) + parseInt(100)
             jQuery.each(data, function (index, data) {
-                genecontent += "<tr><td>" + data.Type + "<td> " + data.name + "<td>" + data.parent + "<td> " + data.coord + "<td>" + data.start + "-" + data.end + "<td> <a target='_blank' href='index.jsp?query=" + data.parent + "&&coord=" + data.coord + "&&from=" + data.start + "&&to=" + data.end + "' > <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span> </a></td>";
+                genecontent += "<tr><td>" + data.Type + "<td> " + data.name + "<td>" + data.parent + "<td> " + data.coord + "<td>" + data.start + "-" + data.end + "<td> <a target='_blank' href='index.jsp?query=" + data.parent + "&&coord=" + data.coord + "&&from=" + (parseInt(data.start) -200 )+ "&&to=" +( parseInt(data.end) + 200) + "' >  <span title=\"Link\" class=\"ui-button ui-icon ui-icon-link\" </span> </a></td>";
             })
             genecontent += "</table>";
             jQuery("#tab" + key).append(genecontent);
-            jQuery("#" + key + "_hit").tablesorter();
+            jQuery("#" + key + "_hit").dataTable();
         }
     })
 
@@ -1069,11 +1072,14 @@ function ajax_processing(json, from, to, blast, line) {
 
         } else {
             jQuery("#mapmarker").hide()
-            getReferences(function () {
-                dispOnMap(json);
-            })
-            jQuery("#searchresultMap").fadeIn();
-            jQuery("#searchresultMap").show;
+            // getReferences(function () {
+            //     dispOnMap(json);
+            // })
+            // jQuery("#searchresultMap").fadeIn();
+            // jQuery("#searchresultMap").show;
+
+            makeFeatureList(json, from, to, blast)
+
         }
 
 
@@ -1090,5 +1096,6 @@ function ajax_processing(json, from, to, blast, line) {
 
     if(line){
         preset_line = line;
+
     }
 }
