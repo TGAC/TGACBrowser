@@ -289,11 +289,11 @@
         <javassist-version>3.8.0.GA</javassist-version>
         <hibernate-version>3.3.1.GA</hibernate-version>
         <log4j-version>1.2.16</log4j-version>
-        <slf4j-log4j-version>1.6.0</slf4j-log4j-version>
+        <slf4j-log4j-version>1.7.34</slf4j-log4j-version>
         <jetty-version>6.1.7</jetty-version>
         <spring-version>3.0.5.RELEASE</spring-version>
         <spring-hibernate-version>2.0.8</spring-hibernate-version>
-        <spring-integration-version>2.0.3.RELEASE</spring-integration-version>
+        <spring-integration-version>3.0.0.RELEASE</spring-integration-version>
         <mysql-version>8.0.18</mysql-version>
     </properties>
 
